@@ -599,21 +599,3 @@ set(gca,'YTick',1:size(all_dataRaw,2),'YTickLabels',var_names)
 set(gca,'TickLabelInterpreter','none')
 title('Correlation between variables')
 colorbar
-%% OFF Plot data in function of a given parameter
-
-% close all
-% 
-% %define the target parameter
-% tar_par = 13; %pial distance
-% 
-% %sort the matrix in function of pial distance
-% [~,ind] = sort(ep_cluster(:,tar_par));
-% ep_sorted = ep_cluster(ind,:);
-% 
-% %plot
-% figure
-% imagesc(ep_sorted)
-% 
-% %also plot distribution of the target parameter
-% figure
-% histogram(all_data(:,tar_par))
