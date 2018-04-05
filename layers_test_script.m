@@ -1,15 +1,23 @@
 close all
 %define the image dimensions in microns
-image_xmicro = 2548;
-image_ymicro = 1903;
+%Setup1
+image_xmicro = 1580;
+image_ymicro = 1183;
+
+% %Setup 2
+% image_xmicro = 2548;
+% image_ymicro = 1903;
+
 %define the number of points in the grid
 x_points = 16;
 y_points = 16;
 %load the image
-% im_load = imread('I:\Simon Weiler\EXPLORER ONE\161013iviv\SW0002\images\videoImg_SW0002_1.tif'); 
-im_load = imread('I:\Simon Weiler\EXPLORER ONE\180219iviv\i1.tif');
+
+im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\images\videoImg_SW0002_1.bmp');
+% im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup2\160826iviv\SW0002\images\videoImg_SW0002_1.tif');
+
 %get the image dimensions in pixels
-[image_ypix,image_xpix] = size(im_load);
+[image_ypix,image_xpix] = size(im_load(:,:,1));
 
 %calculate the micron to pixel conversion factor
 micro2pix_x = image_xpix/image_xmicro;
@@ -23,9 +31,8 @@ axis equal
 % setappdata(gcf,'im_load',im_load)
 
 %load the grid data
-% grid_path = 'I:\Simon Weiler\EXPLORER ONE\161013iviv\SW0002\map01\SW0002MAAA0001.xsg';
-grid_path = 'I:\Simon Weiler\EXPLORER ONE\180219iviv\SW0002\map01\SW0002MAAA0001.xsg';
-
+grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\map01\SW0002MAAA0001.xsg';
+% grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup2\160826iviv\SW0002\map01\SW0002MAAA0001.xsg'; 
 
 xsg_data = load(grid_path,'-mat');
 %load the grid spacing (convert to pixels)
@@ -93,11 +100,41 @@ grid_coord(:,2) = grid_coord(:,2) + x_toend + grid_xoffset;
 %plot the grid on the image
 hold('on')
 plot(grid_coord(:,2),grid_coord(:,1),'*')
-plot(image_xpix/2,image_ypix/2,'ro')
+%calculate the new grid center
+new_x_center = x_center + x_toend + grid_xoffset;
+new_y_center = y_center + y_toend - grid_yoffset;
+plot(new_x_center,new_y_center,'ro')
+% plot(image_xpix/2,image_ypix/2,'ro')
 % plot(x_center,y_center,'ro')
 % set(gca,'XLim',[-100 100],'YLim',[-100 100])
 
-% %apply offset and rotation
-% grid_coord2 = grid_coord;
-% grid_coord2(:,1) = grid_coord2(:,1) + ;
-% grid_coord2(:,2) = grid_coord2(:,2) + ;
+%get the soma coordinates
+soma_coord = xsg_data.header.mapper.mapper.soma1Coordinates .*[micro2pix_y,micro2pix_x];
+% somax = soma_coord(1) + x_center + x_toend + grid_xoffset;
+% somay = -soma_coord(2)+ y_center + y_toend - grid_yoffset;
+
+% somax = soma_coord(1) + new_x_center;
+% somay = soma_coord(2) + new_y_center;
+somax = soma_coord(1) + image_xpix/2;
+somay = -soma_coord(2) + image_ypix/2;
+
+plot(somax,somay,'go')
+
+%define the spacing in microns of the ticks
+tick_space = 200;
+%calculate the axes with respect to the grid center
+x_axis = (0:image_xmicro) - new_x_center/micro2pix_x;
+y_axis = (0:image_ymicro) - new_y_center/micro2pix_y;
+%calculate the tick positions
+x_ticks = x_axis(1:tick_space:end).*micro2pix_x + new_x_center;
+y_ticks = y_axis(1:tick_space:end).*micro2pix_y + new_y_center;
+%and define the labels
+x_labels = x_axis(1:tick_space:end);
+y_labels = -y_axis(1:tick_space:end);
+
+
+set(gca,'XTick',x_ticks,'XTickLabels',x_labels,...
+    'YTick',y_ticks,'YTickLabels',y_labels,...
+    'XTickLabelRotation',45)
+xlabel('Distance (um)')
+ylabel('Distance (um)')

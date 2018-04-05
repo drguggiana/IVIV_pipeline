@@ -67,18 +67,15 @@ setappdata(gcf,'xsg_path',varargin{3})
 %load the text counters
 set(handles.curr_cell,'String',num2str(varargin{4}))
 set(handles.tot_cells,'String',num2str(varargin{5}))
+%and the image size in microns
+setappdata(gcf,'x_micro',varargin{6}(1))
+setappdata(gcf,'y_micro',varargin{6}(2))
 
 %load the image
-% im_load = imread('I:\Simon Weiler\EXPLORER ONE\161013iviv\SW0002\images\videoImg_SW0002_1.tif'); 
-% im_load = imread('I:\Simon Weiler\EXPLORER ONE\180219iviv\i1.tif');
 im_load = imread(getappdata(gcf,'im_path'));
 
-%send the image to appdata
-setappdata(gcf,'im_load',im_load)
-
-%load the grid data
-% grid_path = 'I:\Simon Weiler\EXPLORER ONE\161013iviv\SW0002\map01\SW0002MAAA0001.xsg';
-% grid_path = 'I:\Simon Weiler\EXPLORER ONE\180219iviv\SW0002\map01\SW0002MAAA0001.xsg';
+%send the image to appdata (only one channel in case it's a bmp with 3)
+setappdata(gcf,'im_load',im_load(:,:,1))
 
 %load the xsg data
 xsg_data = load(getappdata(gcf,'xsg_path'),'-mat');
@@ -183,9 +180,9 @@ im_load = getappdata(gcf,'im_load');
 %load the xsg data
 xsg_data = getappdata(gcf,'xsg_data');
 
-%define the image dimensions in microns
-image_xmicro = 2548;
-image_ymicro = 1903;
+%load the image dimensions in microns
+image_xmicro = getappdata(gcf,'x_micro');
+image_ymicro = getappdata(gcf,'y_micro');
 %define the number of points in the grid
 x_points = 16;
 y_points = 16;
@@ -295,11 +292,37 @@ else
         plot(layer_data{layers}(:,1),layer_data{layers}(:,2),'o-','Color',c_map(layers,:))
     end
 end
-% plot(image_xpix/2,image_ypix/2,'go')
+
+%calculate the new grid center and plot
+new_x_center = x_center + x_toend + grid_xoffset;
+new_y_center = y_center + y_toend - grid_yoffset;
+plot(new_x_center,new_y_center,'ro')
 %get the soma coordinates
 soma_coord = xsg_data.header.mapper.mapper.soma1Coordinates .* [micro2pix_y,micro2pix_x];
-plot(soma_coord(1) + x_center + x_toend + grid_xoffset,-soma_coord(2)+ y_center + y_toend - grid_yoffset,'go')
+%coordinates are given with respect to image center, so correct
+somax = soma_coord(1) + image_xpix/2;
+somay = -soma_coord(2) + image_ypix/2;
+%plot the center
+plot(somax,somay,'go')
 
+%define the spacing in microns of the ticks
+tick_space = 200;
+%calculate the axes with respect to the grid center
+x_axis = (0:image_xmicro) - new_x_center/micro2pix_x;
+y_axis = (0:image_ymicro) - new_y_center/micro2pix_y;
+%calculate the tick positions
+x_ticks = x_axis(1:tick_space:end).*micro2pix_x + new_x_center;
+y_ticks = y_axis(1:tick_space:end).*micro2pix_y + new_y_center;
+%and define the labels
+x_labels = x_axis(1:tick_space:end);
+y_labels = -y_axis(1:tick_space:end);
+
+%add axis in microns with respect to the grid center
+set(gca,'XTick',x_ticks,'XTickLabels',x_labels,...
+    'YTick',y_ticks,'YTickLabels',y_labels,...
+    'XTickLabelRotation',45)
+xlabel('Distance (um)')
+ylabel('Distance (um)')
 %send the array points to appdata
 setappdata(gcf,'grid_coord',grid_coord)
 %and the map
@@ -387,7 +410,7 @@ trace_mat = trace_reorder;
 function plot_traces(handles)
 
 %define the subsampling ratio for time
-sub_rat = 100;
+sub_rat = 80;
 %define the amplitude factor
 amp_rat = handles.amp_rat_slider.Value;
 
