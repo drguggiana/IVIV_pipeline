@@ -512,7 +512,7 @@ axes(handles.axes2)
 prog_vec(1:curr_level) = 1;
 imagesc(prog_vec)
 %configure the progress bar axes
-prog_labels = {'L6','L5','L4','L2/3','L1'};
+prog_labels = {'L1','L2/3','L4','L5','L6'};
 set(handles.axes2,'YTick',1:5,'YTickLabels',prog_labels)
 colormap(handles.axes2,[0.94 0.94 0.94;1 0 0])
 %return the target to the first axis

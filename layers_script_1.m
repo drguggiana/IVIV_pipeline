@@ -71,14 +71,14 @@ pixel_all = vertcat(pixel_cell{:});
 cell_num = size(folder_all,1);
 %run the GUI for all the cells, save in every iteration
 %for all the cells
-for cells = 1:cell_num
+for cells = 1%:cell_num
     %run the GUI with the paths from this cell
     gui_handle = layer_GUI_1([],folder_all{cells,1},folder_all{cells,2},cells,cell_num,pixel_all(cells,:));
     waitfor(gui_handle)
     %save the output in a unique file for this cell
     %get the cell's name
     cell_name = strsplit(folder_all{cells,1},'\');
-    cell_name = strcat(cell_name{4},'_',cell_name{5});
+    cell_name = strcat(cell_name{6}(1:2),cell_name{5}(1:6),cell_name{6}(3:6));
     %save the variable
     save(fullfile(out_path,cell_name),'new_grid')
     
