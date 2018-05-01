@@ -6,6 +6,8 @@ folder_list = uipickfiles('FilterSpec','I:\Simon Weiler\INPUT MAPS_final');
 
 %define the path to save the output files
 out_path = 'R:\Share\Simon\Drago_Volker_Simon\layer_GUI_out';
+%define the path to the default grid
+default_grid = 'R:\Share\Simon\Drago_Volker_Simon\default_grid.mat';
 %get the number of folders
 folder_num = length(folder_list);
 %allocate memory to store the subfolders that qualify
@@ -71,9 +73,9 @@ pixel_all = vertcat(pixel_cell{:});
 cell_num = size(folder_all,1);
 %run the GUI for all the cells, save in every iteration
 %for all the cells
-for cells = 1%:cell_num
+for cells = 1:cell_num
     %run the GUI with the paths from this cell
-    gui_handle = layer_GUI_1([],folder_all{cells,1},folder_all{cells,2},cells,cell_num,pixel_all(cells,:));
+    gui_handle = layer_GUI_1([],folder_all{cells,1},folder_all{cells,2},cells,cell_num,pixel_all(cells,:),default_grid);
     waitfor(gui_handle)
     %save the output in a unique file for this cell
     %get the cell's name

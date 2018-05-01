@@ -83,12 +83,24 @@ xsg_data = load(getappdata(gcf,'xsg_path'),'-mat');
 %send the xsg data to appdata
 setappdata(gcf,'xsg_data',xsg_data)
 
+%define the number of dividers (so layers-1)
+layer_num = 5;
+%put it in app data
+setappdata(gcf,'layer_num',layer_num);
+
 %configure the progress bar
-prog_bar(handles,0,4)
+prog_bar(handles,0,5)
 %set the current axes to axis 1
 axes(handles.axes1)
+%load default grid (set to the following)
+%L1(1-3) L2/3(4-6) L4(7-8) L5(9-11) L6(12-14) 
+default_grid = load(varargin{7});
+default_grid = default_grid.default_grid;
+%send the grid to appdata
+setappdata(gcf,'new_grid',default_grid)
+
 %plot the image and grid
-draw_image(handles,0)
+draw_image(handles,2)
 
 
 % --- Outputs from this function are returned to the command line.
@@ -110,8 +122,8 @@ function draw_1_Callback(hObject, eventdata, handles)
 
 %clear the axis
 cla
-%define the number of layers to use
-layer_num = 4;
+%get the number of layers
+layer_num = getappdata(gcf,'layer_num');
 
 %draw the image and grid
 draw_image(handles,0)
@@ -257,24 +269,29 @@ x_toend = image_xpix/2 - x_center;
 grid_coord(:,1) = grid_coord(:,1) + y_toend - grid_yoffset;
 grid_coord(:,2) = grid_coord(:,2) + x_toend + grid_xoffset;
 
+%get the number of layers
+layer_num = getappdata(gcf,'layer_num');
+
 %plot the grid on the image
 hold('on')
 if flag == 0
     %just plot the original grid and the traces on top
     plot(grid_coord(:,2),grid_coord(:,1),'b*')
     
-else
+elseif flag == 1
     %plot the grid with layer color assignments
     %load the new grid
     new_grid = getappdata(gcf,'new_grid');
     
-    %load the grid map
-    grid_map = getappdata(gcf,'grid_map');
+%     %load the grid map
+%     grid_map = getappdata(gcf,'grid_map');
     %load the layer data
     layer_data = getappdata(gcf,'layer_data');
     
-    %get the number of layers
-    layer_num = size(layer_data,1);
+%     assignin('base','new_grid',new_grid)
+%     assignin('base','grid_map',grid_map)
+%     assignin('base','layer_data',layer_data)
+    
     %replace the 0s with layer_num + 1 so the non-assigned points show up in white
     new_grid(new_grid==0) = layer_num + 1;
     %create a color map for the layers
@@ -290,6 +307,24 @@ else
     %for all the layers
     for layers = 1:layer_num
         plot(layer_data{layers}(:,1),layer_data{layers}(:,2),'o-','Color',c_map(layers,:))
+    end
+else
+    %plot the grid with layer color assignments
+    %load the new grid
+    new_grid = getappdata(gcf,'new_grid');
+    
+%     %load the grid map
+%     grid_map = getappdata(gcf,'grid_map');
+   
+    %replace the 0s with layer_num + 1 so the non-assigned points show up in white
+    new_grid(new_grid==0) = layer_num + 1;
+    %create a color map for the layers
+    c_map = [jet(layer_num+1);[1 1 1]];
+    
+    %for all the grid points
+    for points = 1:numel(new_grid)
+        %plot each point with it's corresponding color
+        plot(grid_coord(points,2),grid_coord(points,1),'b*','Color',c_map(new_grid(grid_map==points),:))
     end
 end
 
@@ -512,8 +547,8 @@ axes(handles.axes2)
 prog_vec(1:curr_level) = 1;
 imagesc(prog_vec)
 %configure the progress bar axes
-prog_labels = {'L1','L2/3','L4','L5','L6'};
-set(handles.axes2,'YTick',1:5,'YTickLabels',prog_labels)
+prog_labels = {'L1','L2/3','L4','L5','L6','WM'};
+set(handles.axes2,'YTick',1:length(prog_labels),'YTickLabels',prog_labels)
 colormap(handles.axes2,[0.94 0.94 0.94;1 0 0])
 %return the target to the first axis
 axes(handles.axes1)
