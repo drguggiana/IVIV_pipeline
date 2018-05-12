@@ -141,17 +141,19 @@ for cells = 1:cell_num
     %for each layer, calculate the charge normalized to whole cell
     for layers = 1:layer_num
         
-        excinh_perlayer(layers,1) = nansum(exc(lyr==layer_list(layers)))/nansum(exc(:));
-        excinh_perlayer(layers,2) = nansum(inh(lyr==layer_list(layers)))/nansum(inh(:));
+        excinh_perlayer(layers,1) = nansum(abs(exc(lyr==layer_list(layers))))/nansum(abs(exc(:)));
+        excinh_perlayer(layers,2) = nansum(abs(inh(lyr==layer_list(layers))))/nansum(abs(inh(:)));
         
-        excinh_perlayer_total(layers,1) = nansum(exc(lyr==layer_list(layers)));
-        excinh_perlayer_total(layers,2) = nansum(inh(lyr==layer_list(layers)));
+        excinh_perlayer_total(layers,1) = nansum(abs(exc(lyr==layer_list(layers))));
+        excinh_perlayer_total(layers,2) = nansum(abs(inh(lyr==layer_list(layers))));
     end
     %add this information as a field in the structure
-    invitro_struct(cells).excinhPerLayer = excinh_perlayer;
-    invitro_struct(cells).excinhTotalPerLayer = excinh_perlayer_total;
+    invitro_struct(cells).excFracPerLayer = excinh_perlayer(:,1);
+    invitro_struct(cells).inhFracPerLayer = excinh_perlayer(:,2);
+    invitro_struct(cells).excRawPerLayer = excinh_perlayer_total(:,1);
+    invitro_struct(cells).inhRawPerLayer = excinh_perlayer_total(:,2);
     %also add the total charge per map
-    invitro_struct(cells).excinhTotal = [nansum(exc(:)),nansum(inh(:))];
+    invitro_struct(cells).excinhTotal = [nansum(abs(exc(:)));nansum(abs(inh(:)))];
     
 end
 %% Calculate side bias per layer, separately for Exc and Inh
@@ -206,7 +208,8 @@ for cells = 1:cell_num
     end
     
     %save the indexes in the structure
-    invitro_struct(cells).sideBias = sideBias_perlayer;
+    invitro_struct(cells).excSideBias = sideBias_perlayer(:,1);
+    invitro_struct(cells).inhSideBias = sideBias_perlayer(:,2);
 end
 %close the waitbar
 close(w_bar)
