@@ -90,7 +90,7 @@ for experiment = 1:exp_num
 % %         plot(data(:,1))
 %         hold on
 %         plot((0:length(data)-1)./sample_rate,filt_data(:,1))
-% %         plot(filt_data(:,1))
+%         plot(filt_data(:,1))
 %         figure
 %         imagesc(data)
         
@@ -100,104 +100,159 @@ for experiment = 1:exp_num
 
     end
 end
-
-%Plot a target experiment for quality control
-%define the target experiment
-tar_exp = 19;
-figure
-imagesc(f_cell{tar_exp,1})
-figure
-imagesc(f_cell{tar_exp,2})
 %close the waitbar
 close(h)
+%% Plot a target experiment for quality control
+close all
+%define the target experiment
+tar_exp = 1;%:32;
+%for all the target experiments
+for exper = tar_exp
+%     figure
+%     imagesc(f_cell{exper,1})
+    figure
+    imagesc(f_cell{exper,2})
+end
 %% Calculate dRoR
 close all
-%allocate memory for the dRoR
-dRoR_cell = cell(exp_num,1);
-%initialize a wait bar
-h = waitbar(0,'dRoR calculation progress');
-%for all the experiments
-for experiment = 1:exp_num
-    %update the waitbar
-    waitbar(experiment/exp_num,h)
-    %calculate R(t)
-    R_t = f_cell{experiment,1}./f_cell{experiment,2};
-    
-    %detrend
-    %get the sampling rate (i.e. frame rate)
-    sample_rate = meta_exp{experiment}.framerate/4;
-    %define the length in time of the window (in s)
-    window_time = 14;
-    %define the anonymous function to use in the moving window
-    function_handle = @(x) prctile(x,8,1);
-    
-    %perform the detrending
-    R_detrend = R_t - moving_window(R_t,round(sample_rate*window_time),function_handle);
-    
-%     %calculate R0
-%     %define the length of the moving window (in s)
-%     r0_time = 20;
-%     %get the moving window function
-%     r0_function = @(x) prctile(x,8,1);
-%     r0_function = @(x) min(x,[],1);
-%     r0_function = @(x) mean(x,1);
-%     %calculate the baseline
-%     R0 = median(moving_window(R_detrend,round(sample_rate*r0_time),r0_function));
-    
-%     %calculate and save dRoR
-%     dRoR_cell{experiment} = (R_detrend-R0)./R0;
-    %use R_detrend instead, the de-trended trace, since it is scaled better
-    dRoR_cell{experiment} = R_detrend;
-end
 
-%Plot a target experiment for quality control
-%define the target experiment
-tar_exp = 6;
-figure
-imagesc(((dRoR_cell{tar_exp})'))
-figure
-histogram(dRoR_cell{tar_exp})
-figure
-plot(dRoR_cell{tar_exp}(:,1:5))
-%close the waitbar
-close(h)
-%% Event detection
+%define the percentile levels to explore
+% prctile_levels = [1 10:10:100];
+prctile_levels = 80;
+%get the number of levels
+level_num = length(prctile_levels);
+%allocate memory to store the number of events detected for each percentile
+events_mat = cell(level_num,1);
 
-%allocate memory for the results
-event_store = cell(exp_num,1);
-%for all the experiments
-for experiment = 1:exp_num
-    %load the data
-    data = dRoR_cell{experiment};
-    %define the threshold
-%     thres = std(data,0,1);
-    thres = mean(data,1);
-    %mark the places with supra-threshold signal
-    thres_map = data>2.*thres;
-    %get the number of cells
-    cell_num = size(thres_map,2);
-    %allocate memory to store the events per cell
-    events_percell = zeros(cell_num,1);
-    %get the event timings
-    [event_time_all,event_cell] = find(thres_map==1);
-    %for all the cells
-    for cells = 1:cell_num
-        %get the event times only for this cell
-        event_time = event_time_all(event_cell==cells);
-        %get the event ends
-        event_ends = event_time(diff(event_time)>1);
-        %and the event starts
-        event_starts = [event_time(1);event_time(find(diff(event_time(1:end))>1)+1)];
-        event_starts = event_starts(1:end-1);
-        %get the event lenghts
-        event_duration = event_ends-event_starts;
-        %eliminate the events shorter than 2 frames and count
-        events_percell(cells) = sum(event_duration>2);
+%for all the levels
+for levels = 1:level_num
+    
+    fprintf(strcat('Current level: ',num2str(levels),'\r\n'))
+    %allocate memory for the dRoR
+    dRoR_cell = cell(exp_num,1);
+    %initialize a wait bar
+    h = waitbar(0,'dRoR calculation progress');
+    %for all the experiments
+    for experiment = 1:exp_num
+        %update the waitbar
+        waitbar(experiment/exp_num,h)
+        %calculate R(t)
+        R_t = f_cell{experiment,1}./f_cell{experiment,2};
+        
+        %detrend
+        %get the sampling rate (i.e. frame rate)
+        sample_rate = meta_exp{experiment}.framerate/4;
+        %define the length in time of the window (in s)
+        window_time = 14;
+        %define the anonymous function to use in the moving window
+        function_handle = @(x) prctile(x,8,1);
+        
+        %perform the detrending
+        R_detrend = R_t - moving_window(R_t,round(sample_rate*window_time),function_handle);
+        
+        %calculate R0
+        %define the length of the moving window (in s), from Winnubst et al.
+        %2015
+        r0_time = 20;
+        %get the moving window function
+        r0_function = @(x) prctile(x,prctile_levels(levels),1);
+        %     r0_function = @(x) min(x,[],1);
+        %     r0_function = @(x) mean(x,1);
+        %calculate the baseline
+        R0 = median(moving_window(R_detrend,round(sample_rate*r0_time),r0_function));
+        
+        %calculate and save dRoR
+        dRoR_cell{experiment} = (R_detrend-R0)./R0;
+        %     %use R_detrend instead, the de-trended trace, since it is scaled better
+        %     dRoR_cell{experiment} = R_detrend;
     end
-    %store the results in the main cell
-    event_store{experiment} = events_percell;
+    %close the waitbar
+    close(h)
+    %% OFF Plot a target experiment for quality control
+    % close all
+    % %define the target experiment
+    % tar_exp = 2;
+    % %define the target traces
+    % tar_traces = 1:5;
+    % %for all the target experiments
+    % for exper = tar_exp
+    %
+    %     figure
+    %     imagesc(((dRoR_cell{exper})'))
+    % %     figure
+    % %     histogram(dRoR_cell{tar_exp})
+    %     figure
+    %     plot((0:size(dRoR_cell{exper},1)-1)./sample_rate,dRoR_cell{exper}(:,tar_traces))
+    % end
+    %% Event detection
+    
+    %allocate memory for the results
+    event_store = cell(exp_num,1);
+    %for all the experiments
+    for experiment = 1:exp_num
+        %load the data
+        data = dRoR_cell{experiment};
+        %define the threshold
+        %     thres = std(data,0,1);
+        thres = mean(data,1);
+        %mark the places with supra-threshold signal (also from Winnubst et al.
+        %2015)
+        thres_map = data>2.*thres;
+        %get the number of cells
+        cell_num = size(thres_map,2);
+        %allocate memory to store the events per cell
+        events_percell = zeros(cell_num,1);
+        %get the event timings
+        [event_time_all,event_cell] = find(thres_map==1);
+        %for all the cells
+        for cells = 1:cell_num
+            %get the event times only for this cell
+            event_time = event_time_all(event_cell==cells);
+            %get the event ends
+            event_ends = event_time(diff(event_time)>1);
+            %and the event starts
+            event_starts = [event_time(1);event_time(find(diff(event_time(1:end))>1)+1)];
+            event_starts = event_starts(1:end-1);
+            %get the event lenghts
+            event_duration = event_ends-event_starts;
+            %eliminate the events shorter than 2 frames and count
+            events_percell(cells) = sum(event_duration>2);
+        end
+        %store the results in the main cell
+        event_store{experiment} = events_percell;
+    end
+%store the number of events
+events_mat{levels} = event_store;
 end
-%plot the results
+%% Plot results of the percentile finder
+close all
+%allocate memory for the counts per animal
+counts_peranimal = zeros(exp_num,level_num);
+
+%for all the experiments
+for levels = 1:level_num
+    %for all the experiments
+    for experiment = 1:exp_num
+        counts_peranimal(experiment,levels) = sum(vertcat(events_mat{levels}{experiment}));
+    end
+end
+figure
+imagesc(counts_peranimal)
+xlabel('Percentile used')
+ylabel('Animal')
+title('Detected events as a function of animal and percentile')
+colorbar
+figure
+plot(counts_peranimal')
+xlabel('Percentile used')
+ylabel('Events detected')
+%% Define the percentile to use as the max
+
+%get the max for each animal
+[~,idx] = max(counts_peranimal,[],2);
+%set the event_store matrix as the mode of the max coordinate
+event_store = events_mat{mode(idx)};
+%% Plot the results of the event detection
 close all
 
 figure
@@ -228,7 +283,7 @@ end
 
 close all
 %allocate memory to store the population couplings
-popcop_cell = cell(exp_num,1);
+popcop_cell = cell(exp_num,2);
 figure
 %for each cell
 for experiment = 1:exp_num
@@ -236,20 +291,40 @@ for experiment = 1:exp_num
 %     ROIs = ROI_exp{experiment};
     %load the traces into a matrix
     trace_mat = dRoR_cell{experiment};
+    %get the number of traces
+    trace_num = size(trace_mat,2);
+%     %calculate the average signal
+%     ave_signal = mean(trace_mat,2);
     
-    %calculate the average signal
-    ave_signal = mean(trace_mat,2);
-
-    %calculate the correlation matrix for the activity traces
-    popcop_cell{experiment} = corr(ave_signal,trace_mat);
+    %allocate memory for the pop couplings
+    pop_mat = zeros(trace_num,1);
+    %for all the traces
+    for traces = 1:trace_num
+        %get the target trace
+        tar_trace = trace_mat(:,traces);
+        %get a vector pointing to the other traces
+        point_vec = ones(trace_num,1)==1;
+%         point_vec(traces) = 0;
+        %get the signal from the rest of the cells
+        rest_signal = mean(trace_mat(:,point_vec),2);
+        %calculate the correlation
+        pop_mat(traces) = corr(tar_trace,rest_signal);
+    end
+%     %calculate the correlation matrix for the activity traces
+%     popcop_cell{experiment} = corr(ave_signal,trace_mat);
+    %store the matrix in the main cell
+    popcop_cell{experiment,1} = zscore(pop_mat);
+    %also store the number of traces going into the calculation
+    popcop_cell{experiment,2} = trace_num;
     %plot the matrix
     subplot(ceil(sqrt(exp_num)),round(sqrt(exp_num)),experiment)
-    histogram(popcop_cell{experiment})
+    histogram(popcop_cell{experiment,1})
+    title(num2str(trace_num))
 end
 
 %plot the overall population coupling histogram
 figure
-histogram(horzcat(popcop_cell{:}))
+histogram(vertcat(popcop_cell{:,1}))
 %% Calculate the "noise" correlation
 
 close all
@@ -270,3 +345,14 @@ for experiment = 1:exp_num
     subplot(ceil(sqrt(exp_num)),round(sqrt(exp_num)),experiment)
     imagesc(noise_mat{experiment})
 end
+%% Save the calculated metrics
+
+%define the save path
+save_path = 'R:\Share\Simon\Drago_Volker_Simon\Spont_activity_out';
+
+%assemble the file name
+save_name = strcat(datestr(now,'yymmdd_HHMM'),'_spontAct.mat');
+
+%save the file
+save(fullfile(save_path,save_name),'popcop_cell','event_store','noise_mat',...
+    'corr_mat','counts_peranimal','prctile_levels','dRoR_cell')
