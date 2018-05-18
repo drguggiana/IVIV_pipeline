@@ -13,8 +13,9 @@ x_points = 16;
 y_points = 16;
 %load the image
 
-im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\images\videoImg_SW0002_1.bmp');
+% im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\images\videoImg_SW0002_1.bmp');
 % im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup2\160826iviv\SW0002\images\videoImg_SW0002_1.tif');
+im_load = imread('I:\Simon Weiler\INPUT MAPS_final\Setup1\160331\SW0002\images\capture_20160331_152144.bmp');
 
 %get the image dimensions in pixels
 [image_ypix,image_xpix] = size(im_load(:,:,1));
@@ -31,8 +32,9 @@ axis equal
 % setappdata(gcf,'im_load',im_load)
 
 %load the grid data
-grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\map01\SW0002MAAA0001.xsg';
+% grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup1\151204\SW0002\map01\SW0002MAAA0001.xsg';
 % grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup2\160826iviv\SW0002\map01\SW0002MAAA0001.xsg'; 
+grid_path = 'I:\Simon Weiler\INPUT MAPS_final\Setup1\160331\SW0002\map02\SW0002MAAB0001.xsg';
 
 xsg_data = load(grid_path,'-mat');
 %load the grid spacing (convert to pixels)

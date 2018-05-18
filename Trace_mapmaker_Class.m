@@ -2,69 +2,7 @@
 clearvars
 close all
 % addpath(genpath('C:\Users\drguggiana\Dropbox\Bonhoeffer_code'))
-%% OFF Load paths
-
-% %pick the folders to use
-% folder_list = uipickfiles('FilterSpec','I:\Simon Weiler\INPUT MAPS_final\Setup2');
-% 
-% 
-% % %define the path to save the output files
-% % out_path = 'R:\Share\Simon\Drago_Volker_Simon\layer_GUI_out';
-% %get the number of folders
-% folder_num = length(folder_list);
-% %allocate memory to store the subfolders that qualify
-% folder_cell = cell(folder_num,1);
-% %for all the folders
-% for folders = 1:folder_num
-% 
-%     %get the subfolders in the first level of this folder
-%     subfolder_list = dir(folder_list{folders});
-% 
-%     %also, get rid of the non-folders
-%     subfolder_list = subfolder_list(vertcat(subfolder_list(:).isdir)==1);
-%     %leave only the folders that have SW in them
-%     subfolder_list = subfolder_list(contains({subfolder_list(:).name},'SW'));
-%     %finally, build the full paths for the folders, including the "images"
-%     %folder and the "map01"
-%     path_list = cell(size(subfolder_list,1),1);
-%     %for all the subfolders
-%     for subs = 1:size(subfolder_list,1)
-% 
-%         %load all the map paths in a given cell
-%         
-%         %get the list of paths
-%         xsg_paths = dir(strcat(subfolder_list(subs).folder,'\',subfolder_list(subs).name,'\*map*'));
-%         %and create a cell to store the full paths
-%         xsg_cell = cell(length(xsg_paths),1);
-%         %also a vector to keep track of the empty folders
-%         elim_vec = ones(size(xsg_cell,1),1);
-%         %for each path
-%         for paths = 1:length(xsg_paths)
-%             %load the files in the directory
-%             xsg_files = dir(strcat(xsg_paths(paths).folder,'\',xsg_paths(paths).name,'\*.xsg'));
-%             %if there is no file, skip the entry and update the vector
-%             %accordingly
-%             if isempty(xsg_files)
-%                 elim_vec(paths) = 0;
-%                 continue
-%             end
-%             %append the name of the file to the path
-%             xsg_cell{paths} = strcat(xsg_files(1).folder,'\',xsg_files(1).name);
-%         end
-%         %store the cell with paths in the larger storage cell
-%         path_list{subs} = xsg_cell(elim_vec == 1);
-%     end
-% %     %update the folder cell only with the cells that had an image
-% %     folder_cell{folders} = path_list(elim_vec==1,:);
-%     %update the folder cell
-%     folder_cell{folders} = vertcat(path_list{:});
-% end
-% 
-% %concatenate the entire list of paths
-% folder_targets = vertcat(folder_cell{:});
-% %get the number of maps to do
-% map_num = size(folder_targets,1);
-%% Load the gaussian models
+%% Load the pre-processed traces
 
 %define the main file path
 model_path = 'R:\Share\Simon\Drago_Volker_Simon\Trace_cluster_out';
@@ -98,8 +36,7 @@ map_num = max(trace2folder(:,2));
 % trace_range = 1001:3000;
 % %define the time interval for the background
 % trace_background = 1:1000;
-%define the target (synaptic) window
-target_window = 71:1570;
+
 
 % %turn the throw away traces that were still over 3 stds into NaNs too
 % trace2folder(trace2folder(:,5)==0,5) = NaN;
@@ -113,7 +50,7 @@ w_bar = waitbar(0,'Calculating maps');
 %INH:1 %pos/total 2 #direct and neg bigger, 3 #direct, pos bigger, 4
 %#synaptic neg bigger,5 %  synaptic, pos bigger
 %allocate memory to store the cell's name and maps
-all_maps = cell(cell_num,6);
+all_maps = cell(cell_num,8);
 %for all the cells
 for cells = 1:cell_num
     %show progress
@@ -122,7 +59,7 @@ for cells = 1:cell_num
     %save the cell's name
     all_maps{cells,1} = uni_cells{cells};
     %also the cells soma coordinates
-    all_maps{cells,6} = soma_unique(cells,:);
+    all_maps{cells,8} = soma_unique(cells,:);
     
     %get the info for the traces from this cell
     curr_cell = trace2folder(trace2folder(:,4)==cells,:);
@@ -137,15 +74,30 @@ for cells = 1:cell_num
             cell_paths = folder_all(curr_maps);
             %allocate memory to store the processed maps
             proc_maps = zeros(num_positions,length(cell_paths));
+            %allocate memory to store the 16x16x6 trace2folder array
+            pixel_sub = zeros(num_positions,size(trace2folder,2),length(cell_paths));
 
             %for all the maps
             for maps = 1:length(cell_paths)
-                %fetch the background subtracted map
-                bsub_map = trace_fetch(cell_paths{maps},trace_range,trace_background,num_positions);
                 %also get the info for the current traces
                 curr_traces = curr_cell(curr_cell(:,3)==polars-1&curr_cell(:,2)==curr_maps(maps),:);
+                %if there are interpolated traces, load the corresponding
+                %map
+                if exist('interp_cell','var')
+                    %define the target (synaptic) window
+                    target_window = 8:157;
+                    %load the map from the interpolation cell
+                    bsub_map = interp_cell{curr_maps(maps)};
+                else
+                    %define the target (synaptic) window
+                    target_window = 71:1570;
+                    %fetch the background subtracted map from the raw data
+                    bsub_map = trace_fetch(cell_paths{maps},trace_range,trace_background,num_positions);
+                end
                 %count the types of responses for this map
                 map_info = response_counter(curr_traces,polars,bsub_map);
+                %store the trace2folder info
+                pixel_sub(:,:,maps) = curr_traces;
                 
                 %process the traces according to the type of response
                 %for all the traces
@@ -173,6 +125,8 @@ for cells = 1:cell_num
             all_maps{cells,polars+1} = nanmean(reshape(proc_maps,sqrt(num_positions),sqrt(num_positions),[]),3);
             %store the extra info
             all_maps{cells,polars+3} = map_info;
+            %and also the pixel by pixel info in an array
+            all_maps{cells,polars+5} = reshape(mode(pixel_sub,3),sqrt(num_positions),sqrt(num_positions),[]);
     end
  
 end

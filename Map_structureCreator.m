@@ -33,7 +33,7 @@ cell_num = size(all_data,1);
 %% Assemble the data structure to store the entire data set
 
 %create the fields corresponding to the info in the mapmaker files
-invitro_struct = cell2struct(all_data,{'cellName','excMap','inhMap','excCounts','inhCount','somaCenter'},2);
+invitro_struct = cell2struct(all_data,{'cellName','excMap','inhMap','excCounts','inhCount','excPixInfo','inhPixInfo','somaCenter'},2);
 %% Load the flip map (cell name, hemisphere(not relevant), slice orientation,
 %pial distance, cell ID (from Simon))
 

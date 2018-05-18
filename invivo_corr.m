@@ -118,7 +118,8 @@ close all
 
 %define the percentile levels to explore
 % prctile_levels = [1 10:10:100];
-prctile_levels = 80;
+% prctile_levels = 80;
+prctile_levels = 20;
 %get the number of levels
 level_num = length(prctile_levels);
 %allocate memory to store the number of events detected for each percentile
@@ -148,7 +149,7 @@ for levels = 1:level_num
         function_handle = @(x) prctile(x,8,1);
         
         %perform the detrending
-        R_detrend = R_t - moving_window(R_t,round(sample_rate*window_time),function_handle);
+        R_detrend = R_t - moving_window(R_t,round(sample_rate*window_time),function_handle,0);
         
         %calculate R0
         %define the length of the moving window (in s), from Winnubst et al.
@@ -159,7 +160,8 @@ for levels = 1:level_num
         %     r0_function = @(x) min(x,[],1);
         %     r0_function = @(x) mean(x,1);
         %calculate the baseline
-        R0 = median(moving_window(R_detrend,round(sample_rate*r0_time),r0_function));
+%         R0 = median(moving_window(R_detrend,round(sample_rate*r0_time),r0_function));
+        R0 = mean(moving_window(R_detrend,round(sample_rate*r0_time),r0_function,1));
         
         %calculate and save dRoR
         dRoR_cell{experiment} = (R_detrend-R0)./R0;
@@ -169,21 +171,21 @@ for levels = 1:level_num
     %close the waitbar
     close(h)
     %% OFF Plot a target experiment for quality control
-    % close all
-    % %define the target experiment
-    % tar_exp = 2;
-    % %define the target traces
-    % tar_traces = 1:5;
-    % %for all the target experiments
-    % for exper = tar_exp
-    %
-    %     figure
-    %     imagesc(((dRoR_cell{exper})'))
-    % %     figure
-    % %     histogram(dRoR_cell{tar_exp})
-    %     figure
-    %     plot((0:size(dRoR_cell{exper},1)-1)./sample_rate,dRoR_cell{exper}(:,tar_traces))
-    % end
+%     close all
+%     %define the target experiment
+%     tar_exp = 2;
+%     %define the target traces
+%     tar_traces = 1:5;
+%     %for all the target experiments
+%     for exper = tar_exp
+%     
+%         figure
+%         imagesc(((dRoR_cell{exper})'))
+%     %     figure
+%     %     histogram(dRoR_cell{tar_exp})
+%         figure
+%         plot((0:size(dRoR_cell{exper},1)-1)./sample_rate,dRoR_cell{exper}(:,tar_traces))
+%     end
     %% Event detection
     
     %allocate memory for the results
@@ -192,32 +194,55 @@ for levels = 1:level_num
     for experiment = 1:exp_num
         %load the data
         data = dRoR_cell{experiment};
+        %bin the data to 5Hz
+        %define the binning factor
+        bin_factor = 1.5;
+        %allocate memory for the binned data
+        bin_matrix = zeros(floor(size(data,1)/bin_factor),size(data,2));
+        
+        %get the binning map
+        bin_map = discretize(1:size(data,1),1:bin_factor:size(data,1));
+        
+        %for all the bins
+        for bins = 1:max(bin_map)
+            %bin the data
+            bin_matrix(bins,:) = mean(data(bin_map==bins,:),1);
+        end
+        %replace the original data matrix with the binned one for
+        %processing
+        data = bin_matrix;
+        %zscore the data
+%         data = zscore(data);
         %define the threshold
         %     thres = std(data,0,1);
-        thres = mean(data,1);
-        %mark the places with supra-threshold signal (also from Winnubst et al.
-        %2015)
-        thres_map = data>2.*thres;
+%         thres = mean(data,1);
+        thres = 2;
         %get the number of cells
-        cell_num = size(thres_map,2);
-        %allocate memory to store the events per cell
-        events_percell = zeros(cell_num,1);
-        %get the event timings
-        [event_time_all,event_cell] = find(thres_map==1);
-        %for all the cells
-        for cells = 1:cell_num
-            %get the event times only for this cell
-            event_time = event_time_all(event_cell==cells);
-            %get the event ends
-            event_ends = event_time(diff(event_time)>1);
-            %and the event starts
-            event_starts = [event_time(1);event_time(find(diff(event_time(1:end))>1)+1)];
-            event_starts = event_starts(1:end-1);
-            %get the event lenghts
-            event_duration = event_ends-event_starts;
-            %eliminate the events shorter than 2 frames and count
-            events_percell(cells) = sum(event_duration>2);
-        end
+        cell_num = size(data,2);
+        %mark the places with supra-threshold signal 
+        thres_map = [zeros(1,cell_num);zscore(diff(data,1,1))>thres];
+        %get the sampling rate (i.e. frame rate)
+        sample_rate = meta_exp{experiment}.framerate/4;
+        %count the events
+        events_percell = sum(thres_map,1)./(size(data,1)/(sample_rate/bin_factor));
+%         %allocate memory to store the events per cell
+%         events_percell = zeros(cell_num,1);
+%         %get the event timings
+%         [event_time_all,event_cell] = find(thres_map==1);
+%         %for all the cells
+%         for cells = 1:cell_num
+%             %get the event times only for this cell
+%             event_time = event_time_all(event_cell==cells);
+%             %get the event ends
+%             event_ends = event_time(diff(event_time)>1);
+%             %and the event starts
+%             event_starts = [event_time(1);event_time(find(diff(event_time(1:end))>1)+1)];
+%             event_starts = event_starts(1:end-1);
+% %             %get the event lenghts
+% %             event_duration = event_ends-event_starts;
+% %             %eliminate the events shorter than 2 frames and count
+% %             events_percell(cells) = sum(event_duration>2);
+%         end
         %store the results in the main cell
         event_store{experiment} = events_percell;
     end
@@ -225,33 +250,38 @@ for levels = 1:level_num
 events_mat{levels} = event_store;
 end
 %% Plot results of the percentile finder
-close all
-%allocate memory for the counts per animal
-counts_peranimal = zeros(exp_num,level_num);
 
-%for all the experiments
-for levels = 1:level_num
+%if there are more than 1 level
+if length(prctile_levels) > 1
+    close all
+    %allocate memory for the counts per animal
+    counts_peranimal = zeros(exp_num,level_num);
+
     %for all the experiments
-    for experiment = 1:exp_num
-        counts_peranimal(experiment,levels) = sum(vertcat(events_mat{levels}{experiment}));
+    for levels = 1:level_num
+        %for all the experiments
+        for experiment = 1:exp_num
+            counts_peranimal(experiment,levels) = sum(vertcat(events_mat{levels}{experiment}));
+        end
     end
-end
-figure
-imagesc(counts_peranimal)
-xlabel('Percentile used')
-ylabel('Animal')
-title('Detected events as a function of animal and percentile')
-colorbar
-figure
-plot(counts_peranimal')
-xlabel('Percentile used')
-ylabel('Events detected')
-%% Define the percentile to use as the max
+    figure
+    imagesc(counts_peranimal)
+    xlabel('Percentile used')
+    ylabel('Animal')
+    title('Detected events as a function of animal and percentile')
+    colorbar
+    figure
+    plot(counts_peranimal')
+    xlabel('Percentile used')
+    ylabel('Events detected')
 
-%get the max for each animal
-[~,idx] = max(counts_peranimal,[],2);
-%set the event_store matrix as the mode of the max coordinate
-event_store = events_mat{mode(idx)};
+    %% Define the percentile to use as the max
+
+    %get the max for each animal
+    [~,idx] = max(counts_peranimal,[],2);
+    %set the event_store matrix as the mode of the max coordinate
+    event_store = events_mat{mode(idx)};
+end
 %% Plot the results of the event detection
 close all
 
@@ -260,6 +290,7 @@ figure
 for experiment = 1:exp_num
     subplot(ceil(sqrt(exp_num)),round(sqrt(exp_num)),experiment)
     histogram(event_store{experiment})
+    xlabel('Firing rate')
 end
 %% Calculate the correlation metrics
 
@@ -355,4 +386,4 @@ save_name = strcat(datestr(now,'yymmdd_HHMM'),'_spontAct.mat');
 
 %save the file
 save(fullfile(save_path,save_name),'popcop_cell','event_store','noise_mat',...
-    'corr_mat','counts_peranimal','prctile_levels','dRoR_cell')
+    'corr_mat','prctile_levels','dRoR_cell')

@@ -24,6 +24,44 @@ for tags = 1:length(file_tags)
     %load all the variables in the file
     load(fullfile(model_path,load_name));
 end
+%get the number of cells
+cell_num = length(invitro_struct);
+%% Plot maps
+close all
+
+% %select the target polarity
+% polars = 1;
+
+%for both polarities
+for polars = 1:2
+    
+    %select the corresponding field
+    switch polars
+        case 1
+            field_name = 'excMap';
+        case 2
+            field_name = 'inhMap';
+    end
+    %initialize a counter for the subplots
+    plot_c = 1;
+    %for all the cells
+    for cells = 1:cell_num
+
+        %create a new figure every 10 cells
+        if mod(cells,25)==1
+            figure
+            plot_c = 1;
+        end
+
+        subplot(5,5,plot_c)
+
+        imagesc(invitro_struct(cells).(field_name),'AlphaData',~isnan(invitro_struct(cells).(field_name)))
+        set(gca,'XTick',[],'YTick',[])
+        %update the plot counter
+        plot_c = plot_c + 1;
+
+    end
+end
 %% Plot the distributions of the different values
 
 close all
@@ -78,6 +116,12 @@ end
 %construct a single vector for each cell (normalized)
 invitro_forpca = cat(1,[invitro_struct(:).excFracPerLayer],[invitro_struct(:).inhFracPerLayer],...
     [invitro_struct(:).excSideBias],[invitro_struct(:).inhSideBias],[invitro_struct(:).overlapPerLayer]);
+
+%find the cells with only an excitation on inhibition map and exclude them
+%create a vector to mark the cells with both maps
+both_maps = ~isnan(invitro_forpca(1,:))&~isnan(invitro_forpca(5,:));
+invitro_forpca = invitro_forpca(:,both_maps);
+
 %get rid of the NaNs
 invitro_forpca(isnan(invitro_forpca)) = 0;
 
@@ -85,7 +129,9 @@ invitro_forpca(isnan(invitro_forpca)) = 0;
 invitro_forpca = zscore(invitro_forpca');
 
 %remove desired columns
-invitro_forpca = invitro_forpca(:,[1 2 5 6 9:18]);
+% invitro_forpca = invitro_forpca(:,[1 2 5 6 9:18]);
+invitro_forpca = invitro_forpca(:,[1 2 3 5 6 7]);
+% invitro_forpca = invitro_forpca(:,[]);
 
 %show the matrix
 figure
@@ -128,12 +174,12 @@ ylabel('PC2')
 zlabel('PC3')
 %% Determine the number of clusters
 
-pc_num = 8;
+pc_num = 3;
 link_type = 'complete';
 dist_type = 'euclidean';
-[shuf_cell,invitro_clunum,cutoff_dist] = shuffle_cluster_1(invitro_score,100,pc_num,invitro_forpca,link_type,dist_type,95);
+[shuf_cell,invitro_clunum,cutoff_dist] = shuffle_cluster_1(invitro_forpca,100,pc_num,invitro_score(:,1:pc_num),link_type,dist_type,95);
 %% Cluster the cells including the side bias index
-close all
+% close all
 % %define the number of invitro_clusters
 % invitro_clunum = 3;
 
@@ -153,6 +199,7 @@ ov_cluster = invitro_score(:,1:pc_num);
 %cluster using linkage and cluster so that I can get the indexes
 l_tree = linkage(ov_cluster,link_type,dist_type);
 invitro_clusters = cluster(l_tree,'maxclust',invitro_clunum);
+% invitro_clusters = cluster(l_tree,'cutoff',cutoff_dist);
 %code to order the leaves more optimally
 D = pdist(ov_cluster);
 leafOrder = optimalleaforder(l_tree,D);
@@ -160,11 +207,23 @@ leafOrder = optimalleaforder(l_tree,D);
 figure
 dendrogram(l_tree,0,'orientation','top','Reorder',leafOrder)
 
-% %get the limits of the soma center distribution (shifted to not leave the
-% %last point at the edge
-% soma_lim = [min(soma_cent(:,2))-1,max(soma_cent(:,2))+1];
-soma_lim = cat(1,invitro_struct(:).pialD);
-soma_lim = [min(soma_lim)-1,max(soma_lim)+1];
+%load the maps, somas and sides bias and remove the single map cells
+excMap = cat(3,invitro_struct(:).excMap);
+inhMap = cat(3,invitro_struct(:).inhMap);
+pialD = cat(1,invitro_struct(:).pialD);
+excSideBias = cat(2,invitro_struct(:).excSideBias);
+
+excMap = excMap(:,:,both_maps);
+inhMap = inhMap(:,:,both_maps);
+pialD = pialD(both_maps);
+excSideBias = excSideBias(1,both_maps);
+
+%get the limits of the soma center distribution (shifted to not leave the
+%last point at the edge
+% soma_lim = cat(1,invitro_struct(:).pialD);
+% soma_lim = [min(soma_lim)-1,max(soma_lim)+1];
+soma_lim = [min(pialD)-1,max(pialD)+1];
+
 %plot maps of a set of invitro_clusters
 %for all the invitro_clusters
 for clu = 1:invitro_clunum
@@ -177,22 +236,27 @@ for clu = 1:invitro_clunum
 %     clu_cells = squeeze(mean(invitro_maps(:,:,invitro_clusters==clu,:),3));
 
     %get the maps for this cluster
-    clu_maps = cat(4,cat(3,invitro_struct(invitro_clusters==clu).excMap),...
-        cat(3,invitro_struct(invitro_clusters==clu).inhMap));
+%     clu_maps = cat(4,cat(3,invitro_struct(invitro_clusters==clu).excMap),...
+%         cat(3,invitro_struct(invitro_clusters==clu).inhMap));
+    clu_maps = cat(4,excMap(:,:,invitro_clusters==clu),inhMap(:,:,invitro_clusters==clu));
     clu_cells = squeeze(mean(clu_maps,3));
 
-    
+%     %plot the maps separately
+%     h = figure;
+%     map_plot3(clu_cells(:,:,1),strcat('Cluster No:',num2str(clu),',Members:',num2str(sum(invitro_clusters==clu))),2,h,10,0,1)
+%     h2 = figure;
+%     map_plot3(clu_cells(:,:,2),strcat('Cluster No:',num2str(clu),',Members:',num2str(sum(invitro_clusters==clu))),3,h2,10,0,1)
+
+
     %create a figure for the combined plot
     h = figure;
     %plot the overlap map
     subplot(1,2,1)
     map_plot3(clu_cells,strcat('Cluster No:',num2str(clu),',Members:',num2str(sum(invitro_clusters==clu))),1,h,10,1)
     %get the depths in the cluster
-    soma_clu = cat(1,invitro_struct(invitro_clusters==clu).pialD);
+    soma_clu = pialD(invitro_clusters==clu);
     %extract the side bias
-    side_clu = cat(2,invitro_struct(invitro_clusters==clu).excSideBias);
-    %use only the excitatory layer 2/3 one
-    side_clu = side_clu(1,:); 
+    side_clu = excSideBias(invitro_clusters==clu);
     %also plot the distribution of depths in the cluster
     subplot(1,2,2)
     plot(side_clu,soma_clu,'ok')
@@ -200,32 +264,12 @@ for clu = 1:invitro_clunum
     
     %and plot
     
-%     %also plot the functional cells
-%     [~,ia,ib] = intersect(soma_clu,soma_func(:,2));
-%     %create a binary vector with the coordinates of the clu members
-%     soma_bin = zeros(length(soma_func),1)==1;
-%     soma_bin(ib) = 1;
-%     %extract the cells of interest
-%     soma_clu_func = soma_clu(ia);
-%     %extract the side bias from the tar_par vector (selected above
-%     %from the functional cells)
-%     side_clu_func = side_clu(ia);
-% 
-%     %plot cells according to the criterion calculated above
-%     soma_1 = soma_clu_func(tar_par(ib));
-%     side_1 = side_clu_func(tar_par(ib));
-%     soma_2 = soma_clu_func(~tar_par(ib));
-%     side_2 = side_clu_func(~tar_par(ib));
-%     plot(side_1,soma_1,'*r')
-%     plot(side_2,soma_2,'*b')
     set(gca,'YLim',soma_lim,'XLim',[-1.1 1.1],'Ydir','reverse')
     %plot a cross in 0,0
     plot(zeros(2,1),get(gca,'YLim'),'-k')
     plot(get(gca,'XLim'),[sum(soma_lim)/2,sum(soma_lim)/2],'-k')
     %plot the average
     errorbar(mean(side_clu(:,1)),mean(soma_clu),std(soma_clu)./sqrt(length(soma_clu)),'go','MarkerFaceColor','g','MarkerSize',5,'LineWidth',3)
-%     yyaxis right
-%     ylabel(strcat('Soma depth,','Functional cells:',num2str(length(soma_clu_func))))
     xlabel('Side bias')
     ylabel('Soma depth')
 
@@ -233,16 +277,19 @@ for clu = 1:invitro_clunum
     set(gca,'YTick',[],'YColor','k')
 
 end
+%% Plot a dendrogram with the pialD and fractions under the clusters
+
+
 %% Calculate the cluster averages
 close all
 %allocate memory for the cluster average
-invitro_cluave = zeros(invitro_clunum,size(invitro_norm,2));
+invitro_cluave = zeros(invitro_clunum,size(invitro_forpca,2));
 %and for the number of cluster members
 invitro_clumem = zeros(invitro_clunum,1);
 %for all the clusters
 for clu = 1:invitro_clunum
     %calculate the average of this cluster
-    invitro_cluave(clu,:) = mean(invitro_norm(invitro_clusters==clu,:),1);
+    invitro_cluave(clu,:) = mean(invitro_forpca(invitro_clusters==clu,:),1);
     %and the number of members
     invitro_clumem(clu) = sum(invitro_clusters==clu);
 end
