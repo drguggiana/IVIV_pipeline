@@ -31,9 +31,6 @@ sf_plot = sf*size(data_in,1)/16;
 
 %define the number of values to plot on the scale
 scale_vals = 5;
-%calculate scaling factor for the pial distance. Assume 16x16 grid with
-%points spaced by 69 um
-pial_factor = 15*69;
 
 %if the third argument (plot type) is specified
 if nargin > 2
@@ -82,7 +79,7 @@ if nargin > 2
             set(gca,'Color',[0 0 0])
         case 2 %plot exc and inh separately
             
-            bin_map = abs(data_in);
+            bin_map = normr_2(abs(data_in));
             
             %generate a blank matrix to fill in the other color channels
             blank = ones(size(bin_map,1),size(bin_map,2));
@@ -97,8 +94,8 @@ if nargin > 2
             nan_map = imresize(squeeze(sum(isnan(im_ex),3)),sf);
             im_ex(cat(3,nan_map,nan_map,nan_map)>0) = NaN;
             
-            %normalize the image
-            im_ex = normr_2(im_ex);
+%             %normalize the image
+%             im_ex = normr_2(im_ex);
             
             %set the NaNs alpha to 0 so they show the background
             imAlpha = ones(size(im_ex,1),size(im_ex,2));
@@ -131,7 +128,7 @@ if nargin > 2
             set(gca,'Color',[0 0 0])
             
         case 3
-            bin_map = abs(data_in);
+            bin_map = normr_2(abs(data_in));
             
             %generate a blank matrix to fill in the other color channels
             blank = ones(size(bin_map,1),size(bin_map,2));
@@ -144,9 +141,9 @@ if nargin > 2
             %restore the NaNs
             nan_map = imresize(squeeze(sum(isnan(im_ex),3)),sf);
             im_ex(cat(3,nan_map,nan_map,nan_map)>0) = NaN;
-            
-            %normalize the image
-            im_ex = normr_2(im_ex);
+%             
+%             %normalize the image
+%             im_ex = normr_2(im_ex);
             
             %set the NaNs alpha to 0 so they show the background
             imAlpha = ones(size(im_ex,1),size(im_ex,2));
@@ -167,8 +164,7 @@ if nargin > 2
                 switch varargin{6}
                     case 1 %include the max and min pA values, and pA label at the bottom
                         
-                        Tick_labels = round(linspace(max_min(2),max_min(1)));
-                        
+                        Tick_labels = round(linspace(max_min(2),max_min(1),scale_vals));
                         set(c,'TickLabels',Tick_labels)
                         set(get(c,'Label'),'String','pA')
                         pos = get(c,'Position');
@@ -197,13 +193,13 @@ for ax_id = 1:length(axes_list)
     %(mode layer assignment: L1:1,2 L2/3:3,4,5,6 L4:7,8 L5:9,10,11 L6:12,13,14
     %WM:15,16 )
     hold('on')
-    set(gca,'YTick',[1.5, 4.5, 7.5, 10, 13, 15.5].*sf_plot,'YTickLabels',{'L1','L2/3','L4','L5','L6','WM'},...
+    set(gca,'YTick',[1.1, 4.1, 7.1, 9.6, 12.6, 15.1].*sf_plot,'YTickLabels',{'L1','L2/3','L4','L5','L6','WM'},...
         'TickLength',[0 0],'XTick',[])
-    plot(linspace(0,17*sf_plot,18),2.5.*ones(1,18).*sf_plot,'k--')
-    plot(linspace(0,17*sf_plot,18),6.5.*ones(1,18).*sf_plot,'k--')
-    plot(linspace(0,17*sf_plot,18),8.5.*ones(1,18).*sf_plot,'k--')
-    plot(linspace(0,17*sf_plot,18),11.5.*ones(1,18).*sf_plot,'k--')
-    plot(linspace(0,17*sf_plot,18),14.5.*ones(1,18).*sf_plot,'k--')
+    plot(linspace(0,17*sf_plot,18),2.1.*ones(1,18).*sf_plot,'k--')
+    plot(linspace(0,17*sf_plot,18),6.1.*ones(1,18).*sf_plot,'k--')
+    plot(linspace(0,17*sf_plot,18),8.1.*ones(1,18).*sf_plot,'k--')
+    plot(linspace(0,17*sf_plot,18),11.1.*ones(1,18).*sf_plot,'k--')
+    plot(linspace(0,17*sf_plot,18),14.1.*ones(1,18).*sf_plot,'k--')
     % plot(0:17,6.5.*ones(1,18),'k-')
     % plot(0:17,9.5.*ones(1,18),'k-')
 end
@@ -236,8 +232,12 @@ if nargin > 7
     %get the plot limits
     x_lim = get(gca,'XLim');
     y_lim = get(gca,'YLim');
-    %get the plot centers
-    x_cent = sum(x_lim)/2;
-    plot(x_cent,varargin{7}*(y_lim(2)-y_lim(1))/pial_factor,'^k'...
-        ,'MarkerFaceColor','k','MarkerEdgeColor','w')
+    %calculate the adjusted x and y coordinates (assuming a 16x16 grid and
+    %69 um separating the points in either dimension). There are 15
+    %intervals of 69 um in between points, but from center of the pixels to
+    %the edges is another 69 um in total, hence using 16 instead of 15
+    adj_x = ((16*69/2)-varargin{7}(1))*(x_lim(2)-x_lim(1))/(16*69);
+    adj_y = ((16*69/2)-varargin{7}(2))*(y_lim(2)-y_lim(1))/(16*69);
+    %plot the center
+    plot(adj_x,adj_y,'^k','MarkerFaceColor','k','MarkerEdgeColor','w')
 end

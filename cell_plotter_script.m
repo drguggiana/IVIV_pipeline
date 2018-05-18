@@ -30,7 +30,7 @@ cell_num = length(invitro_struct);
 
 close all
 %define the number of cells to plot
-cell_toplot = 3;
+cell_toplot = 10;
 
 %get the indexes
 cell_idx = randperm(cell_num,cell_toplot);
@@ -52,9 +52,9 @@ for cells = 1:cell_toplot
         %define the plot type (2 for excitatory)
         plot_type = 2;
         %get the pial distance
-        pialD = invitro_struct(cell_idx(cells)).pialD;
+        soma_info = invitro_struct(cell_idx(cells)).somaCenter;
         %plot the map
-        map_plot3(exc_map,'',plot_type,h,sf,0,1,pialD);
+        map_plot3(exc_map,'',plot_type,h,sf,0,1,soma_info);
     end
     
     %plot the inhibitory map
@@ -68,9 +68,9 @@ for cells = 1:cell_toplot
         %define the plot type (3 for inhibitory)
         plot_type = 3;
         %get the pial distance
-        pialD = invitro_struct(cell_idx(cells)).pialD;
+        soma_info = invitro_struct(cell_idx(cells)).somaCenter;
         %plot the map
-        map_plot3(inh_map,'',plot_type,h2,sf,0,1,pialD);
+        map_plot3(inh_map,'',plot_type,h2,sf,0,1,soma_info);
     end
     
     %plot the overlap map
@@ -84,8 +84,30 @@ for cells = 1:cell_toplot
         %define the plot type (1 for overlap)
         plot_type = 1;
         %get the pial distance
-        pialD = invitro_struct(cell_idx(cells)).pialD;
+        soma_info = invitro_struct(cell_idx(cells)).somaCenter;
         %plot the map
-        map_plot3(ove_map,'',plot_type,h3,sf,0,1,pialD);
+        map_plot3(ove_map,'',plot_type,h3,sf,0,1,soma_info);
     end
 end
+%% OFF Compare soma info and pialD variables
+% close all
+% 
+% for cells = 1:cell_num
+%     plot(invitro_struct(cells).somaCenter(2),invitro_struct(cells).pialD,'*')
+%     hold('on')
+%     
+% end
+% 
+% xlabel('Soma Center')
+% ylabel('pialD')
+% 
+% somacent = cat(1,invitro_struct(:).somaCenter);
+% somacent = somacent(:,2);
+% pial = cat(1,invitro_struct(:).pialD);
+% 
+% corr(somacent,pial)
+% 
+% mean(somacent-pial)
+% std(somacent-pial)
+% figure
+% histogram(somacent-pial)
