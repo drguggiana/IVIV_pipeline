@@ -3,11 +3,13 @@ function map_plot3(data_in,varargin)
 %arguments
 %1) data
 %2) label (default no label)
-%3) plot matrix directly (0, default) vs the overlap plot (1)
+%3) select the plot type: full matrix (0, default), the overlap plot (1), 
+%exc map(2) and inh map (3)
 %4) target figure handle (default none, create new figure)
 %5) smoothing factor (default 1)
 %6) if 1, draw crosshair in map
 %7) if 1, draw the colorbar scale in pA instead of normalized
+%8) if supplied (in um), will add pialD as a triangle to the plot, centered in x
 
 %if the fourth argument is specified, plot in the provided figure handle
 if nargin > 3
@@ -29,6 +31,9 @@ sf_plot = sf*size(data_in,1)/16;
 
 %define the number of values to plot on the scale
 scale_vals = 5;
+%calculate scaling factor for the pial distance. Assume 16x16 grid with
+%points spaced by 69 um
+pial_factor = 15*69;
 
 %if the third argument (plot type) is specified
 if nargin > 2
@@ -102,11 +107,10 @@ if nargin > 2
             %plot the image
             image(im_ex,'AlphaData',imAlpha)
             
-            
+            hold('on')
             %define the color scale for the colorbar
             color_column = ((0:255)/255)';
-            
-            
+
             colormap(gca,[ones(256,1),1-color_column,1-color_column])
             c = colorbar(gca,'Ticks',linspace(0,1,scale_vals),'TickLabels',linspace(0,1,scale_vals));
             
@@ -150,6 +154,7 @@ if nargin > 2
             
             %plot the image
             image(im_ex,'AlphaData',imAlpha)
+            hold('on')
             %define the color scale for the colorbar
             color_column = ((0:255)/255)';
             
@@ -172,7 +177,6 @@ if nargin > 2
                 end
             end
             set(gca,'Color',[0 0 0])
-            
     end
 else
     %standard plot the matrix directly
@@ -220,8 +224,20 @@ if nargin > 5
     end
 end
 
+%add title if provided and is an overlap map
 if nargin > 1
     if varargin{2} == 1
         title(varargin{1})
     end
+end
+
+%detect the pial D and plot
+if nargin > 7
+    %get the plot limits
+    x_lim = get(gca,'XLim');
+    y_lim = get(gca,'YLim');
+    %get the plot centers
+    x_cent = sum(x_lim)/2;
+    plot(x_cent,varargin{7}*(y_lim(2)-y_lim(1))/pial_factor,'^k'...
+        ,'MarkerFaceColor','k','MarkerEdgeColor','w')
 end
