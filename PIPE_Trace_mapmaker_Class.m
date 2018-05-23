@@ -77,45 +77,56 @@ for cells = 1:cell_num
             proc_maps = zeros(num_positions,length(cell_paths));
             %allocate memory to store the 16x16x6 trace2folder array
             pixel_sub = zeros(num_positions,size(trace2folder,2),length(cell_paths));
+            
+           
 
-            %for all the maps
-            for maps = 1:length(cell_paths)
-                %also get the info for the current traces
-                curr_traces = curr_cell(curr_cell(:,3)==polars-1&curr_cell(:,2)==curr_maps(maps),:);
-                %if there are interpolated traces, load the corresponding
-                %map
-                if exist('interp_cell','var')
-                    %define the target (synaptic) window
-                    target_window = 8:157;
-                    %load the map from the interpolation cell
-                    bsub_map = interp_cell{curr_maps(maps)};
-                else
-                    %define the target (synaptic) window
-                    target_window = 71:1570;
-                    %fetch the background subtracted map from the raw data
-                    bsub_map = trace_fetch(cell_paths{maps},trace_range,trace_background,num_positions);
-                end
-                %count the types of responses for this map
-                map_info = response_counter(curr_traces,polars,bsub_map);
-                %store the trace2folder info
-                pixel_sub(:,:,maps) = curr_traces;
-                
-                %process the traces according to the type of response
-                %for all the traces
-                for trace = 1:num_positions
-                    %get the response type
-                    resp_type = curr_traces(trace,5);
-                    %if it's a NaN, skip the processing (i.e. blank trace with a zero)
-                    if isnan(resp_type)
-                        continue
+                %for all the maps
+                for maps = 1:length(cell_paths)
+                    %also get the info for the current traces
+                    curr_traces = curr_cell(curr_cell(:,3)==polars-1&curr_cell(:,2)==curr_maps(maps),:);
+                    %if there are interpolated traces, load the corresponding
+                    %map
+                    if exist('interp_cell','var')
+                        %define the target (synaptic) window
+                        target_window = 8:157;
+                        %load the map from the interpolation cell
+                        bsub_map = interp_cell{curr_maps(maps)};
+                    else
+                        %define the target (synaptic) window
+                        target_window = 71:1570;
+                        %fetch the background subtracted map from the raw data
+                        bsub_map = trace_fetch(cell_paths{maps},trace_range,trace_background,num_positions);
                     end
-
-                    %process the trace accordingly
-                    proc_maps(trace,maps) = Trace_process(bsub_map(target_window,trace),resp_type,polars);
+                    %count the types of responses for this map
+                    map_info = response_counter(curr_traces,polars,bsub_map);
+                    %store the trace2folder info
+                    pixel_sub(:,:,maps) = curr_traces;
                     
-                end                
-                
-            end
+%                     %if there is a single rep for the map, skip it
+%                     if length(cell_paths) < 2
+%                         
+%                          proc_maps(:,maps) = zeros(num_positions,1);
+%                         
+%                     else
+                        
+                        %process the traces according to the type of response
+                        %for all the traces
+                        for trace = 1:num_positions
+                            %get the response type
+                            resp_type = curr_traces(trace,5);
+                            %if it's a NaN, skip the processing (i.e. blank trace with a zero)
+                            if isnan(resp_type)
+                                continue
+                            end
+                            
+                            %process the trace accordingly
+                            proc_maps(trace,maps) = Trace_process(bsub_map(target_window,trace),resp_type,polars);
+                            
+                        end
+%                     end
+
+                end
+            
 
             %blank the positions that only have a map in a single repetition
             %get the positions

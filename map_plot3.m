@@ -30,7 +30,7 @@ end
 sf_plot = sf*size(data_in,1)/16;
 
 %define the number of values to plot on the scale
-scale_vals = 5;
+scale_vals = 3;
 
 %if the third argument (plot type) is specified
 if nargin > 2
@@ -182,13 +182,13 @@ end
 
 %square the axis
 axis square
-%get the list of axes in the image
-axes_list = findall(gcf,'Type','axes');
-%for all the axes in the image
-for ax_id = 1:length(axes_list)
+% %get the list of axes in the image
+% axes_list = findall(gcf,'Type','axes');
+% %for all the axes in the image
+% for ax_id = 1:length(axes_list)
     
-    %set the target axis as current
-    axes(axes_list(ax_id))
+%     %set the target axis as current
+%     axes(axes_list(ax_id))
     %add the lines and labels for the layers
     %(mode layer assignment: L1:1,2 L2/3:3,4,5,6 L4:7,8 L5:9,10,11 L6:12,13,14
     %WM:15,16 )
@@ -202,12 +202,12 @@ for ax_id = 1:length(axes_list)
     plot(linspace(0,17*sf_plot,18),14.1.*ones(1,18).*sf_plot,'k--')
     % plot(0:17,6.5.*ones(1,18),'k-')
     % plot(0:17,9.5.*ones(1,18),'k-')
-end
+% end
 %if a 6th argument is provided and is a 1, plot a cross in the center of the map
 if nargin > 5
     if varargin{5} == 1
-        %for all the axes in the image
-        for ax_id = 1:length(axes_list)
+%         %for all the axes in the image
+%         for ax_id = 1:length(axes_list)
             %get the plot limits
             x_lim = get(gca,'XLim');
             y_lim = get(gca,'YLim');
@@ -216,7 +216,7 @@ if nargin > 5
             y_cent = sum(y_lim)/2;
             plot([x_cent x_cent],y_lim,'g-')
             plot(x_lim,[y_cent y_cent],'g-')
-        end
+%         end
     end
 end
 
