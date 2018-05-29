@@ -45,8 +45,10 @@ figure(h)
 
 % subplot(1,30,1:28)
 %define the patch coordinates
-x_data = [0 1 2 1.5 1.5 0.5 0.5]';
-y_data = [1 2 1 1 0 0 1]';
+% x_data = [0 1 2 1.5 1.5 0.5 0.5]';
+% y_data = [1 2 1 1 0 0 1]';
+x_data = [1 0 1 1 2 2 1];
+y_data = [0 1 2 1.5 1.5 0.5 0.5];
 p_center = [1,1,0];
 %define the arrow distance factor
 dist_f = 3;
@@ -63,7 +65,7 @@ for sf = 1:sf_dim
 %         plot_matrix(:,:,1) = normr_2(plot_matrix(:,:,1)).*255;
         %create the patch
         p = patch(x_data+sf*dist_f,y_data+tf*dist_f,c_map(floor(plot_matrix(sf,tf,1))+1,:));
-        rotate(p,[0 0 1],dir_vec(plot_matrix(sf,tf,2)),p_center + [sf*dist_f,tf*dist_f,0])
+        rotate(p,[0 0 1],-dir_vec(plot_matrix(sf,tf,2)),p_center + [sf*dist_f,tf*dist_f,0])
         
         
     end
@@ -131,10 +133,8 @@ if nargin > 5
 
                         %calculate the tuning curve of the sftf combo and plot
                         tc = normr_2(-tc_calc(psth_traces(:,x,y)));
-                        assignin('base','AAAA',tc)
                         x_vec = (1:length(tc)) + sep_factor*x;
                         y_vec = (tc./amp_rat) + sep_factor*y;
-                        assignin('base','AAAB',y_vec)
 
 %             %for all directions
 %             for dirs = 1:size(psth_traces,1)
@@ -151,6 +151,7 @@ if nargin > 5
             
 %             %plot the cluster of origin
 %             text(x_vec(1),-y_vec(1),num2str(clu_idx(trace_id(:,1)==curr_ind_clu &trace_id(:,2)==target_map)))
+            
             
         end
     end
