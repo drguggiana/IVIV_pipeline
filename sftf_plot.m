@@ -83,7 +83,7 @@ xlabel('Spatial Frequency (cyc/deg)')
 ylabel('Temporal Frequency (cyc/s)')
 
 %plot a colorbar
-colorbar
+colorbar(gca)
 
 % %plot the colorbar
 % subplot(1,30,29:30)

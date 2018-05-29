@@ -74,7 +74,7 @@ if nargin > 2
             
             color_column = ((0:255)/255)';
             color_column2 = ((255:-1:0)/255)';
-            colormap([color_column,zeros(256,1),color_column2])
+            colormap(gca,[color_column,zeros(256,1),color_column2])
             colorbar(gca,'Ticks',[0 1],'TickLabels',{'Inh','Exc'})
             set(gca,'Color',[0 0 0])
         case 2 %plot exc and inh separately
