@@ -19,7 +19,7 @@ function dendroplot(l_tree,leafOrder,cutoff_dist,varargin)
 %assign the variables based on the input
 param_mat = varargin{1};
 label_vec = varargin{2};
-pialD = varargin{3};
+
 
 %create new figure
 figure
@@ -69,6 +69,7 @@ end
 
 %if the soma depth is supplied
 if nargin > 5
+    pialD = varargin{3};
     %also plot the pial distance
     tar_rows = 17:20;
     tar_cols = 1:19;
