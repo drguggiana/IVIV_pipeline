@@ -138,8 +138,8 @@ for cells = 1:cell_num
     %for each layer, calculate the charge normalized to whole cell
     for layers = 1:layer_num
         
-        excinh_perlayer(layers,1) = nansum(abs(exc(lyr==layer_list(layers))))/nansum(abs(exc(:)));
-        excinh_perlayer(layers,2) = nansum(abs(inh(lyr==layer_list(layers))))/nansum(abs(inh(:)));
+        excinh_perlayer(layers,1) = nansum(abs(exc(lyr==layer_list(layers))))/nansum(abs(exc(ismember(lyr,layer_list))));
+        excinh_perlayer(layers,2) = nansum(abs(inh(lyr==layer_list(layers))))/nansum(abs(inh(ismember(lyr,layer_list))));
         
         excinh_perlayer_total(layers,1) = nansum(abs(exc(lyr==layer_list(layers))));
         excinh_perlayer_total(layers,2) = nansum(abs(inh(lyr==layer_list(layers))));
