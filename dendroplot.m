@@ -49,7 +49,9 @@ if nargin > 3
     tar_cols = 1:19;
     subplot_range(rows,columns,tar_rows,tar_cols);
     %plot the parameter matrix
-    imagesc(param_mat)
+   b= imagesc(param_mat)
+  
+ set(b,'AlphaData',~isnan(param_mat))
     %label the plot
     set(gca,'YTick',1:size(param_mat,1),'YTickLabels',label_vec,'TickLength',[0 0])
     set(gca,'XTick',[],'XLim',[0 size(param_mat,2)+1])
@@ -61,10 +63,12 @@ if nargin > 3
     subplot_range(rows,columns,tar_rows,tar_cols);
     %plot it and label
     imagesc((255:-1:0)')
+    colormap parula
     set(gca,'TickLength',[0 0])
     set(gca,'XTick',[])
     set(gca,'YTick',[1 256],'YTickLabels',[1 0],'YAxisLocation','right')
     ylabel('A.U.')
+    
 end
 
 %if the soma depth is supplied
@@ -75,7 +79,8 @@ if nargin > 5
     tar_cols = 1:19;
     subplot_range(rows,columns,tar_rows,tar_cols);
     %plot the soma depths and label
-    plot(1:size(param_mat,2),pialD(outperm,2),'k^','MarkerFaceColor','k')
+    %plot(1:size(param_mat,2),pialD(outperm,2),'k^','MarkerFaceColor','k')
+    plot(1:size(param_mat,2),pialD(outperm),'k^','MarkerFaceColor','k')
     set(gca,'YLim',[140 430],'TickLength',[0 0],'YDir','reverse')
     set(gca,'XLim',[0 size(param_mat,2)+1],'XTick',[])
     ylabel('Soma Depth (um)')

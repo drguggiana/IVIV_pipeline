@@ -5,7 +5,7 @@ close all
 %% Load the data structure
 
 %define the main file path
-model_path = 'R:\Share\Simon\Drago_Volker_Simon\Full_data_structure';
+model_path = 'R:\Share\Simon\Drago_Volker_Simon\Full_data_structure_joel';
 
 %load the file
 %define the file tags
@@ -30,13 +30,13 @@ cell_num = length(invitro_struct);
 
 close all
 %define the number of cells to plot
-cell_toplot = 10;
+cell_toplot = 1;
 
 %get the indexes
-cell_idx = randperm(cell_num,cell_toplot);
-
+%cell_idx = randperm(cell_num,cell_toplot);
+cell_idx = 1;
 %define the smoothing factor
-sf = 10;
+sf = 1;
 
 %for all the cells to plot
 for cells = 1:cell_toplot

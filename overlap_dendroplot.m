@@ -77,7 +77,7 @@ set(gca,'YTick',1:clu_num,'YTickLabels',clu_num:-1:1,'YAxisLocation','right')
 colormap(gca,cmap)
 %% Plot the morpho clusters
 %define the colormap
-cmap = 'cool';
+cmap = 'jet';
 %define the target coordinates of the param plot
 tar_rows = 11:15;
 tar_cols = 1:19;

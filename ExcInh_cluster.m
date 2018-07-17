@@ -64,7 +64,7 @@ for polars = 1:2
 end
 %% Plot the distributions of the different values
 
-close all
+%close all
 
 %define the fields to look at
 field_list = {'excFracPerLayer','inhFracPerLayer','excRawPerLayer','inhRawPerLayer',...
@@ -138,7 +138,7 @@ figure
 imagesc(invitro_forpca)
 %% PCA the data
 
-close all
+%close all
 %define the variable names
 % invitro_vars = {'OL1','OL2/3','OL4','ODL','CL1','CL2/3','CL4','CDL','PD'};
 
@@ -281,7 +281,7 @@ end
 
 
 %% Calculate the cluster averages
-close all
+%close all
 %allocate memory for the cluster average
 invitro_cluave = zeros(invitro_clunum,size(invitro_forpca,2));
 %and for the number of cluster members
