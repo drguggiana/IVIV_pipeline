@@ -269,6 +269,30 @@ coeff_display(coeff_com(1:352,:),coeff_com(353:end,:),bin_num,hbin_num);
 %% Display coefficent of PCs ALIGNED diff
 coeff_display(coeff_diff,[],bin_num,hbin_num);
 %% Display correlation between all PCs and pial depth Multiple comparison 
-com=[score_ex(:,1:3) score_in(:,1:3) pia_input(morph_cells_id)]; 
+com=[score_ex(:,1:3) score_in(:,1:3) score_com(:,1:3) score_diff(:,1:3) pia_input]; 
 correlation_matrix(com,1);
-
+%% %%Display desired correlations between PCs/pia
+corr_plot(score_ex(:,1),score_com(:,1),pia_input,{'PC1ex','PC1com','Pial depth'});
+%% Load fraction and absolute input of maps for ex and inh
+[frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
+%% Calculate the fraction from the overlap for verti and hori
+[frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
+%% Calculate difference between ex and in (ex-in) for L23, L4,  L5
+for i=1:length(nan_vector(incl_idx:end))
+diffL23(i)=sum(sum(diff_map(3:5,:,i),2));
+diffL4(i)=sum(sum(diff_map(6:8,:,i),2));
+diffL5(i)=sum(sum(diff_map(9:12,:,i),2));
+end
+%% Calculate the maximum horizontal span
+for i=1:length(nan_vector(incl_idx:end))
+tmp=find(frac_exh(i,:)>0);
+ex_spanh(i)=tmp(end)-tmp(1);
+tmp=[];
+tmp=find(frac_inh(i,:)>0);
+in_spanh(i)=tmp(end)-tmp(1);
+tmp=[];
+end
+%% Display both maximum horizontal span and diff betwen ex and in
+figure;set(gcf,'color','w');
+subplot(2,1,1);
+h = histogram(diffL23,8);h.BinWidth = 2;box off;hold on;h2 = histogram(diffL4,8);h2.BinWidth = 2;hold on;h3 = histogram(nonzeros(diffL5),8);h3.BinWidth = 2;
