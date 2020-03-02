@@ -95,9 +95,11 @@ for i=1:length(nan_vector)
     if ~isempty(str(nan_vector(i)).morph)==1;
         morph_cells(i)=1;
         m_flip_a(i)=str(nan_vector(i)).morph_flip_again;
+        morph_parameters(i,:)=str(nan_vector(i)).morph;
     else
         morph_cells(i)=0;
         m_flip_a(i)=NaN;
+         morph_parameters(i,:)=ones(1,24)*NaN;
     end
 end
 morph_cells_id=find(morph_cells==1);
@@ -275,15 +277,32 @@ correlation_matrix(com,1);
 corr_plot(score_ex(:,1),score_com(:,1),pia_input,{'PC1ex','PC1com','Pial depth'});
 %% Load fraction and absolute input of maps for ex and inh
 [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
+frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
+abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
 %% Calculate the fraction from the overlap for verti and hori
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
 %% Calculate difference between ex and in (ex-in) for L23, L4,  L5
 for i=1:length(nan_vector(incl_idx:end))
-diffL23(i)=sum(sum(diff_map(3:5,:,i),2));
-diffL4(i)=sum(sum(diff_map(6:8,:,i),2));
-diffL5(i)=sum(sum(diff_map(9:12,:,i),2));
+diffL23(i)=sum(sum(diff_map(3:5,:,i),2))/length(nonzeros(diff_map(3:5,:,i)));
+diffL4(i)=sum(sum(diff_map(6:8,:,i),2))/length(nonzeros(diff_map(6:8,:,i)));
+diffL5(i)=sum(sum(diff_map(9:11,:,i),2))/length(nonzeros(diff_map(9:11,:,i)));
 end
-%% Calculate the maximum horizontal span
+%% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions
+frac_diffv=frac_exv_m-frac_inv;
+frac_diffh=frac_exh-frac_inh;
+diffL23fr=nanmean(frac_diffv(:,3:5),2);
+diffL4fr=nanmean(frac_diffv(:,6:7),2);
+diffL5fr=nanmean(frac_diffv(:,8:10),2);
+%% Calculate VERTICAL ex and in fraction for L23, L4,  L5
+L23fr=[nanmean(frac_exv_m(:,3:5),2) nanmean(frac_inv(:,3:5),2)];
+L4fr=[nanmean(frac_exv_m(:,6:7),2) nanmean(frac_inv(:,6:7),2)];
+L5fr=[nanmean(frac_exv_m(:,8:10),2) nanmean(frac_inv(:,9:11),2)];
+%% 
+frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
+frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
+frh_diff_medial=nanmean(frac_diffh(:,1:8),2);
+frh_diff_lateral=nanmean(frac_diffh(:,9:end),2);
+%% Calculate the maximum horizontal span overall
 for i=1:length(nan_vector(incl_idx:end))
 tmp=find(frac_exh(i,:)>0);
 ex_spanh(i)=tmp(end)-tmp(1);
@@ -293,6 +312,71 @@ in_spanh(i)=tmp(end)-tmp(1);
 tmp=[];
 end
 %% Display both maximum horizontal span and diff betwen ex and in
-figure;set(gcf,'color','w');
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 800]);
+%Diff between ex and in shwon with histogram and CDF for L23 L4 and L5
 subplot(2,1,1);
-h = histogram(diffL23,8);h.BinWidth = 2;box off;hold on;h2 = histogram(diffL4,8);h2.BinWidth = 2;hold on;h3 = histogram(nonzeros(diffL5),8);h3.BinWidth = 2;
+yyaxis left;ylabel('Counts');
+h = histogram(diffL23fr,8);h.BinWidth = 0.01;box off;hold on;h2 = histogram(diffL4fr,8);h2.BinWidth =  0.01;hold on;h3 = histogram(nonzeros(diffL5fr),8);h3.BinWidth =  0.01;
+h.EdgeColor = 'k';h.FaceColor = [0.7 0 0];h2.EdgeColor = 'k';h2.FaceColor = [0 1 0];h3.FaceColor = [0 0 1];
+yyaxis right;p1=cdfplot(diffL23fr);hold on;p2=cdfplot(diffL4fr);hold on;p3=cdfplot(nonzeros(diffL5fr));grid off; title('');
+ylabel('Cumulative');xlabel('Ex-In');p1.Color=[1 0 0];p2.Color=[0 1 0];p3.Color=[0 0 1];legend('L23', 'L4','L5');%legend box off;
+subplot(2,1,2);
+scatter(ex_spanh,in_spanh,'ko');set(gcf,'color','w');refline(1,0);xlabel('Excitation');ylabel('Inhibition');title('Max. horizontal span');
+%% Display fraction for ex and in as well as diff for all 16 rows and columns 
+[stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,[]);
+%% Display fraction for ex and in as well as diff for all 16 rows and columns 
+%group based on pial depth
+g1=find(pia_input>=220);g2=find(pia_input<220);g3=[];
+gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+gv(g1)=1;gv(g2)=2;gv(g3)=3;
+%call function
+[stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
+g1=[];g2=[];g3=[];
+%% Display correlation between all PCs and pial depth Multiple comparison 
+com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr pia_input]; 
+correlation_matrix(com,1);title('Vertical');
+com=[score_ex(:,1:3) score_in(:,1:3) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral pia_input]; 
+correlation_matrix(com,1);title('Horizontal');
+%% %%Display desired correlations between PCs and actual data 
+%EX
+corr_plot(L23fr(:,1),score_ex(:,1),pia_input,{'PC1ex','L23ex','Pial depth'});
+corr_plot(L4fr(:,1),score_ex(:,1),pia_input,{'PC1ex','L4ex','Pial depth'});
+corr_plot(nonzeros(L5fr(:,1)),score_ex(find(nonzeros(L5fr(:,1))),1),pia_input(find(nonzeros(L5fr(:,1)))),{'PC1ex','L5ex','Pial depth'});
+%IN
+corr_plot(L23fr(:,2),score_in(:,1),pia_input,{'PC1in','L23in','Pial depth'});
+corr_plot(L4fr(:,2),score_in(:,1),pia_input,{'PC1in','L4in','Pial depth'});
+corr_plot(nonzeros(L5fr(:,2)),score_in(find(nonzeros(L5fr(:,2))),1),pia_input(find(nonzeros(L5fr(:,2)))),{'PC1in','L5in','Pial depth'});
+%% %%Display desired correlations between pial depth and L23/L4
+%EX
+corr_plot(L23fr(:,1),pia_input,[],{'L23ex input','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(L4fr(:,1),pia_input,[],{'L4ex input','Pial depth'});set(gca,'Ydir','reverse');
+%IN
+corr_plot(L23fr(:,2),pia_input,[],{'L23in input','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(L4fr(:,2),pia_input,[],{'L4in input','Pial depth'});set(gca,'Ydir','reverse');
+%% 
+%MORPHOLOGY AND INPUT
+%% Get 16x16 maps for basal and apical
+for i=1:length(nan_vector)
+     if isempty(morpho_basal{i,:,:})==0
+     ba_map(:,:,i)=morpho_basal{i,:,:};
+     ap_map(:,:,i)=morpho_apical{i,:,:};
+     else
+     ba_map(:,:,i)=ones(16,16)*NaN;
+     ap_map(:,:,i)=ones(16,16)*NaN;
+     end
+end
+%% Max density per cell apical and basal
+max_densba=[max(max(ba_map(:,:,:)))];
+max_densba=reshape(max_densba,1,148);
+max_densap=max(max(ap_map(:,:,:)));
+max_densap=reshape(max_densap,1,148);
+%% split in medial and lateral
+for i=1:length(nan_vector)
+MLba_diff(i)=(sum(nonzeros(ba_map(:,1:8,i)))/length(nonzeros(ba_map(:,1:8,i))))-(sum(nonzeros(ba_map(:,9:end,i)))/length(nonzeros(ba_map(:,9:end,i))));
+MLap_diff(i)=(sum(nonzeros(ap_map(:,1:8,i)))/length(nonzeros(ap_map(:,1:8,i))))-(sum(nonzeros(ap_map(:,9:end,i)))/length(nonzeros(ap_map(:,9:end,i))));
+end
+%% Morphology parameters vs PCs
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+correlation_matrix(com,1);title('Morphology vs PC input scores');
+%% %%Display desired correlations between pial depth and L23/L4
+corr_plot(score_in(:,2),morph_parameters(:,10),[],{'L23ex input','Pial depth'});set(gca,'Ydir','reverse');
