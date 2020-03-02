@@ -103,7 +103,7 @@ comb=[frac_v(:,3:10) groups'];
 for i=1:size(comb,2)-1   
 [p,tbl,stats] = kruskalwallis(comb(:,i),comb(:,end),'off');
 multicom(:,:,i) = multcompare(stats,'CType','bonferroni');
-signi_ev(i)=multicom(:,6,i)>0.05;
+signi_ev(i)=multicom(:,6,i)<0.05;
 end
 
 comb=[];
@@ -111,7 +111,7 @@ comb=[frac_v(:,19:26) groups'];
 for i=1:size(comb,2)-1   
 [p,tbl,stats] = kruskalwallis(comb(:,i),comb(:,end),'off');
 multicom(:,:,i) = multcompare(stats,'CType','bonferroni');
-signi_iv(i)=multicom(:,6,i)>0.05;
+signi_iv(i)=multicom(:,6,i)<0.05;
 end
 
 comb=[]
@@ -119,7 +119,7 @@ comb=[frac_h(:,5:12) groups'];
 for i=1:size(comb,2)-1   
 [p,tbl,stats] = kruskalwallis(comb(:,i),comb(:,end),'off');
 multicom(:,:,i) = multcompare(stats,'CType','bonferroni');
-signi_eh(i)=multicom(:,6,i)>0.05;
+signi_eh(i)=multicom(:,6,i)<0.05;
 end
 
 comb=[]
@@ -127,7 +127,7 @@ comb=[frac_h(:,21:28) groups'];
 for i=1:size(comb,2)-1   
 [p,tbl,stats] = kruskalwallis(comb(:,i),comb(:,end),'off');
 multicom(:,:,i) = multcompare(stats,'CType','bonferroni');
-signi_ih(i)=multicom(:,6,i)>0.05;
+signi_ih(i)=multicom(:,6,i)<0.05;
 end
 
 stats_g=[signi_ev;signi_iv;signi_eh;signi_ih]'

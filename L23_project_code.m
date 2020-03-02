@@ -332,10 +332,18 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 %call function
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
+%% Display fraction for ex and in as well as diff for all 16 rows and columns 
+%group based on pial depth
+g1=1:45;g2=46:148;g3=[];
+gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+gv(g1)=1;gv(g2)=2;gv(g3)=3;
+%call function
+[stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
+g1=[];g2=[];g3=[];
 %% Display correlation between all PCs and pial depth Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr pia_input]; 
 correlation_matrix(com,1);title('Vertical');
-com=[score_ex(:,1:3) score_in(:,1:3) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral pia_input]; 
+com=[score_ex(:,1:3) score_in(:,1:3) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' pia_input]; 
 correlation_matrix(com,1);title('Horizontal');
 %% %%Display desired correlations between PCs and actual data 
 %EX
@@ -349,7 +357,7 @@ corr_plot(nonzeros(L5fr(:,2)),score_in(find(nonzeros(L5fr(:,2))),1),pia_input(fi
 %% %%Display desired correlations between pial depth and L23/L4
 %EX
 corr_plot(L23fr(:,1),pia_input,[],{'L23ex input','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(L4fr(:,1),pia_input,[],{'L4ex input','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(L4fr(:,1),pia_input,[],{'L4ex input','Pial depth',;});set(gca,'Ydir','reverse');
 %IN
 corr_plot(L23fr(:,2),pia_input,[],{'L23in input','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(L4fr(:,2),pia_input,[],{'L4in input','Pial depth'});set(gca,'Ydir','reverse');
@@ -378,5 +386,22 @@ end
 %% Morphology parameters vs PCs
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
 correlation_matrix(com,1);title('Morphology vs PC input scores');
+%% %% Morphology parameters vs real parameters vertical
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+correlation_matrix(com,1);title('Morphology vs Vertical input');
+%% %% Morphology parameters vs real parameters horizontal
+com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+correlation_matrix(com,1);title('Morphology vs Horizontal input');
 %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(score_in(:,2),morph_parameters(:,10),[],{'L23ex input','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(L4fr(:,1),morph_parameters(:,8),morph_parameters(:,9),{'L4ex input','Apical width/height','XSA'});
+%% 
+% %% Display fraction for ex and in as well as diff for all 16 rows and columns based on TMD groups
+% load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\com_189_withTMDclusteridx.mat');
+% [val idxt idxm] = intersect(cellID_str,com_TMDidx(:,28))
+% tmd_gr=com_TMDidx(idxm,27);
+% g1=find(tmd_gr==1);g2=find(tmd_gr==2);g3=[];
+% gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+% gv(g1)=1;gv(g2)=2;gv(g3)=3;
+% %call function
+% [stats_g] = display_inputs([frac_exv_m(idxt,:) frac_inv(idxt,:)],[frac_exh(idxt,:) frac_inh(idxt,:)],frac_diffv(idxt,:),frac_diffh(idxt,:),gv);
+% g1=[];g2=[];g3=[];
