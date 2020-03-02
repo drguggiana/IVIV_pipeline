@@ -284,8 +284,8 @@ abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
 %% Calculate difference between ex and in (ex-in) for L23, L4,  L5
 for i=1:length(nan_vector(incl_idx:end))
 diffL23(i)=sum(sum(diff_map(3:5,:,i),2))/length(nonzeros(diff_map(3:5,:,i)));
-diffL4(i)=sum(sum(diff_map(6:8,:,i),2))/length(nonzeros(diff_map(6:8,:,i)));
-diffL5(i)=sum(sum(diff_map(9:11,:,i),2))/length(nonzeros(diff_map(9:11,:,i)));
+diffL4(i)=sum(sum(diff_map(6:7,:,i),2))/length(nonzeros(diff_map(6:7,:,i)));
+diffL5(i)=sum(sum(diff_map(8:11,:,i),2))/length(nonzeros(diff_map(8:11,:,i)));
 end
 %% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions
 frac_diffv=frac_exv_m-frac_inv;
@@ -332,14 +332,14 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 %call function
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
-%% Display fraction for ex and in as well as diff for all 16 rows and columns 
-%group based on pial depth
-g1=1:45;g2=46:148;g3=[];
-gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
-gv(g1)=1;gv(g2)=2;gv(g3)=3;
-%call function
-[stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
-g1=[];g2=[];g3=[];
+% %% Display fraction for ex and in as well as diff for all 16 rows and columns 
+% %group based on pial depth
+% g1=1:45;g2=46:148;g3=[];
+% gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+% gv(g1)=1;gv(g2)=2;gv(g3)=3;
+% %call function
+% [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
+% g1=[];g2=[];g3=[];
 %% Display correlation between all PCs and pial depth Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr pia_input]; 
 correlation_matrix(com,1);title('Vertical');
@@ -405,3 +405,18 @@ corr_plot(L4fr(:,1),morph_parameters(:,8),morph_parameters(:,9),{'L4ex input','A
 % %call function
 % [stats_g] = display_inputs([frac_exv_m(idxt,:) frac_inv(idxt,:)],[frac_exh(idxt,:) frac_inh(idxt,:)],frac_diffv(idxt,:),frac_diffh(idxt,:),gv);
 % g1=[];g2=[];g3=[];
+
+%% In vivo features alone
+
+%% LOAD data structure, you need uipickfiles function
+out_dir='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str_out'
+directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitymoph atm:191804
+filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
+load(char(filename));%load mat file
+%% %% Read out ori pref of all 
+ [od_out sftf_out spon_out] = concat_invivo(L23_PC);
+%%  
+com=[od_out(:,[1 2 3 4 5 8]) sftf_out spon_out]; 
+correlation_matrix(com,1);title('In vivo alone');
+ %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(com(:,9),com(:,6),com(:,6),{'L4ex input','Apical width/height','XSA'});
