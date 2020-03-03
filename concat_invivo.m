@@ -1,22 +1,67 @@
 function [od_out sftf_out spon_out] = concat_invivo(L23_PC)
 for i=1:length(L23_PC)
+    %pia
     pia{i,:}=L23_PC(i).pial_depth;
+    %OD protocol
      con_all{i,:}=L23_PC(i).OD.contra;
      ips_all{i,:}=L23_PC(i).OD.ipsi;
      ODI_all{i,:}=L23_PC(i).OD.ODI;
      prefOri_all{i,:}=L23_PC(i).OD.prefOri(:,:);
      prefDir_all{i,:}=L23_PC(i).OD.prefDir(:,:);
      OSIall{i,:}=L23_PC(i).OD.gOSI(:,:); 
-     DSIall{i,:}=L23_PC(i).OD.gDSI(:,:);   
+     DSIall{i,:}=L23_PC(i).OD.gDSI(:,:); 
+      %SFTF protocol
      sf_all{i,:}=L23_PC(i).SFTF.sf;
      tf_all{i,:}=L23_PC(i).SFTF.tf;
      osi_all_sftf{i,:}=L23_PC(i).SFTF.OSI;
      dsi_all_sftf{i,:}=L23_PC(i).SFTF.DSI;
      oripref_all_sftf{i,:}=L23_PC(i).SFTF.oripref;
      dirpref_all_sftf{i,:}=L23_PC(i).SFTF.dirpref;
+     sftf_resp_all{i,:}=L23_PC(i).SFTF.ov_resp;
+     
+     osi_sftf1{i,:}=L23_PC(i).SFTF.OSI1;
+     osi_sftf2{i,:}=L23_PC(i).SFTF.OSI2;
+     osi_sftf3{i,:}=L23_PC(i).SFTF.OSI3;
+     osi_sftf4{i,:}=L23_PC(i).SFTF.OSI4;
+     osi_sftf5{i,:}=L23_PC(i).SFTF.OSI5;
+     osi_sftf6{i,:}=L23_PC(i).SFTF.OSI6;
+     osi_sftf7{i,:}=L23_PC(i).SFTF.OSI7;
+     osi_sftf8{i,:}=L23_PC(i).SFTF.OSI8;
+     osi_sftf9{i,:}=L23_PC(i).SFTF.OSI9;
+     
+     dsi_sftf1{i,:}=L23_PC(i).SFTF.DSI1;
+     dsi_sftf2{i,:}=L23_PC(i).SFTF.DSI2;
+     dsi_sftf3{i,:}=L23_PC(i).SFTF.DSI3;
+     dsi_sftf4{i,:}=L23_PC(i).SFTF.DSI4;
+     dsi_sftf5{i,:}=L23_PC(i).SFTF.DSI5;
+     dsi_sftf6{i,:}=L23_PC(i).SFTF.DSI6;
+     dsi_sftf7{i,:}=L23_PC(i).SFTF.DSI7;
+     dsi_sftf8{i,:}=L23_PC(i).SFTF.DSI8;
+     dsi_sftf9{i,:}=L23_PC(i).SFTF.DSI9;
+     
+     ori_sftf1{i,:}=L23_PC(i).SFTF.oripref1;
+     ori_sftf2{i,:}=L23_PC(i).SFTF.oripref2;
+     ori_sftf3{i,:}=L23_PC(i).SFTF.oripref3;
+     ori_sftf4{i,:}=L23_PC(i).SFTF.oripref4;
+     ori_sftf5{i,:}=L23_PC(i).SFTF.oripref5;
+     ori_sftf6{i,:}=L23_PC(i).SFTF.oripref6;
+     ori_sftf7{i,:}=L23_PC(i).SFTF.oripref7;
+     ori_sftf8{i,:}=L23_PC(i).SFTF.oripref8;
+     ori_sftf9{i,:}=L23_PC(i).SFTF.oripref9;
+     
+     dir_sftf1{i,:}=L23_PC(i).SFTF.dirpref1;
+      dir_sftf2{i,:}=L23_PC(i).SFTF.dirpref2;
+      dir_sftf3{i,:}=L23_PC(i).SFTF.dirpref3;
+      dir_sftf4{i,:}=L23_PC(i).SFTF.dirpref4;
+      dir_sftf5{i,:}=L23_PC(i).SFTF.dirpref5;
+      dir_sftf6{i,:}=L23_PC(i).SFTF.dirpref6;
+      dir_sftf7{i,:}=L23_PC(i).SFTF.dirpref7;
+      dir_sftf8{i,:}=L23_PC(i).SFTF.dirpref8;
+      dir_sftf9{i,:}=L23_PC(i).SFTF.dirpref9;
+     %Spon protocol
      sad_all{i,:}=L23_PC(i).spon.sad;
      pci_all{i,:}=L23_PC(i).spon.pci;
-     sftf_resp_all{i,:}=L23_PC(i).SFTF.ov_resp;
+     
      if isempty(L23_PC(i).SFTF.Fit)==0
      sftf_ori{i,:}=[L23_PC(i).SFTF.Fit.PrefRsp];
      else
@@ -42,11 +87,20 @@ end
   sf_a=horzcat(sf_all{:});
   tf_a=horzcat(tf_all{:});
   sftfs_res_a=horzcat(sftf_resp_all{:});
-  sftf_ori_a=horzcat(sftf_ori{:});
+  %sftf_ori_a=horzcat(sftf_ori{:});
+  
   osi_sftf=horzcat(osi_all_sftf{:});
   dsi_sftf=horzcat(dsi_all_sftf{:});
   ori_sftf=horzcat(oripref_all_sftf{:});
   dir_sftf=horzcat(dirpref_all_sftf{:});
+  osi_s=[horzcat(osi_sftf1{:});horzcat(osi_sftf2{:});horzcat(osi_sftf3{:});horzcat(osi_sftf4{:});...
+      horzcat(osi_sftf5{:});horzcat(osi_sftf6{:});horzcat(osi_sftf7{:});horzcat(osi_sftf8{:});horzcat(osi_sftf9{:})]';
+   dsi_s=[horzcat(dsi_sftf1{:});horzcat(dsi_sftf2{:});horzcat(dsi_sftf3{:});horzcat(dsi_sftf4{:});...
+      horzcat(dsi_sftf5{:});horzcat(dsi_sftf6{:});horzcat(dsi_sftf7{:});horzcat(dsi_sftf8{:});horzcat(dsi_sftf9{:})]';
+  dir_s=[horzcat(dir_sftf1{:});horzcat(dir_sftf2{:});horzcat(dir_sftf3{:});horzcat(dir_sftf4{:});...
+      horzcat(dir_sftf5{:});horzcat(dir_sftf6{:});horzcat(dir_sftf7{:});horzcat(dir_sftf8{:});horzcat(dir_sftf9{:})]';
+    ori_s=[horzcat(ori_sftf1{:});horzcat(ori_sftf2{:});horzcat(ori_sftf3{:});horzcat(ori_sftf4{:});...
+      horzcat(ori_sftf5{:});horzcat(ori_sftf6{:});horzcat(ori_sftf7{:});horzcat(ori_sftf8{:});horzcat(ori_sftf9{:})]';
   
   %% OD protocol
  
@@ -101,16 +155,58 @@ end
   for i=1:length(sftfs_res_a)
       if sftfs_res_a(i)==1;
           sf_com(i)=sf_a(i);
-          tf_com(i)=tf_a(i);    
+          tf_com(i)=tf_a(i);
+          
+          osi_pref_sftf(i)=osi_sftf(i);
+          dsi_pref_sftf(i)=dsi_sftf(i);
+          ori_pref_sftf(i)=ori_sftf(i);
+          dir_pref_sftf(i)=dir_sftf(i);
+          
+          osi_sc(i,:)=osi_s(i,:);
+          dsi_sc(i,:)=dsi_s(i,:);
+          ori_sc(i,:)=ori_s(i,:);
+          dir_sc(i,:)=dir_s(i,:);
       else 
        sf_com(i)=NaN;
        tf_com(i)=NaN;
+       
+        osi_pref_sftf(i)=NaN;
+          dsi_pref_sftf(i)=NaN;
+          ori_pref_sftf(i)=NaN;
+          dir_pref_sftf(i)=NaN;
+          
+         osi_sc(i,:)=ones(1,9)*NaN;
+          dsi_sc(i,:)=ones(1,9)*NaN;
+          ori_sc(i,:)=ones(1,9)*NaN;
+          dir_sc(i,:)=ones(1,9)*NaN;
       end
+  end
+  %% 
+  for i=1:length(osi_pref_sftf)
+      if isnan(osi_pref_sftf(i))==1;
+         ori_pref_sftf_f(i)=NaN;
+         dir_pref_sftf_f(i)=NaN;  
+      else 
+     ori_pref_sftf_f(i)=ori_pref_sftf(i);
+           dir_pref_sftf_f(i)=dir_pref_sftf(i);  
+      end
+  end
+  %% 
+  for k=1:9;
+   for i=1:length(osi_s)
+      if isnan(osi_sc(i,k))==1;
+         ori_sftf_f(i,k)=NaN;
+         dir_sftf_f(i,k)=NaN;  
+      else 
+    ori_sftf_f(i,k)=ori_sc(i,k);
+    dir_sftf_f(i,k)=dir_sc(i,k);
+      end
+   end
   end
   %% 
   od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; con; ips; pial_all]';
   spon_out=[sad_a;pci_a']';
-  sftf_out=[sf_com;tf_com]';
+  sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' 1-osi_sc 1-dsi_sc ori_sftf_f dir_sftf_f];
   
   
 end

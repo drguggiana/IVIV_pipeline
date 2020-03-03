@@ -71,8 +71,8 @@ for k=1:length(temp)
       oritemp=squeeze(temp(k,1,1,1:8))';
       [Fit1(k).FittedData, Fit1(k).BaselineRsp, Fit1(k).PrefRsp, Fit1(k).PrefDir, Fit1(k).Sigma, Fit1(k).OppResp ,...
       Fit1(k).Error, Fit1(k).R2]=FIT_Carandini(oritemp);
-      Fit1(k).orifit= TT_FoldedTuningCurve(Fit(k).FittedData);
-      Fit1(k).PrefOri = [mod([Fit(k).PrefDir]+180-1, 180)+1]';
+      Fit1(k).orifit= TT_FoldedTuningCurve(Fit1(k).FittedData);
+      Fit1(k).PrefOri = [mod([Fit1(k).PrefDir]+180-1, 180)+1]';
       OSI1(k)=TT_CircularVariance_ORI(oritemp);
       DSI1(k)=TT_CircularVariance(oritemp);
       oripref1(k)=Fit1(k).PrefOri;

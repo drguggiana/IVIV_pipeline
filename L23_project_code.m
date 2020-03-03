@@ -256,6 +256,7 @@ set(gca,'FontSize',14);
 [coeff_com,score_com,latent_com,~,explained_com,mu] = pca([cat(1,aligned_maps_ex) cat(1,aligned_maps_in)]);
 [coeff_basal,score_basal,latent_basal,~,explained_basal,mu] = pca(aligned_maps_basal(morph_cells_id,:,:));
 [coeff_apical,score_apical,latent_apical,~,explained_apical,mu] = pca(aligned_maps_apical(morph_cells_id,:,:));
+[coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(morph_parameters(morph_cells_id,1:21));
 %% Display variance explained for ex and in maps
 var_exp(explained_in,explained_ex,{'Inhibition','Excitation'});  
 %% %% Display variance explained combined
@@ -264,6 +265,8 @@ var_exp(explained_com,[],[]);
 var_exp(explained_diff,[],[]); 
 %% %% Display variance explained basal and apical
 var_exp(explained_basal,explained_apical,{'Basal','Apical'}); 
+%% %% Display variance explained morph
+var_exp(explained_morph,[],[]); 
 %% Display coefficent of PCs ALIGNED in and ex
 coeff_display(coeff_ex,coeff_in,bin_num,hbin_num);
 %% Display coefficent of PCs ALIGNED combined
@@ -297,7 +300,10 @@ diffL5fr=nanmean(frac_diffv(:,8:10),2);
 L23fr=[nanmean(frac_exv_m(:,3:5),2) nanmean(frac_inv(:,3:5),2)];
 L4fr=[nanmean(frac_exv_m(:,6:7),2) nanmean(frac_inv(:,6:7),2)];
 L5fr=[nanmean(frac_exv_m(:,8:10),2) nanmean(frac_inv(:,9:11),2)];
-%% 
+L23frov=[nanmean(frac_ovv(:,3:5),2)];
+L4frov=[nanmean(frac_ovv(:,6:7),2)];
+L5frov=[nanmean(frac_ovv(:,8:10),2)];
+%% Calculate difference between ex and in (ex-in) medial and lateral
 frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
 frh_diff_medial=nanmean(frac_diffh(:,1:8),2);
@@ -332,14 +338,6 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 %call function
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
-% %% Display fraction for ex and in as well as diff for all 16 rows and columns 
-% %group based on pial depth
-% g1=1:45;g2=46:148;g3=[];
-% gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
-% gv(g1)=1;gv(g2)=2;gv(g3)=3;
-% %call function
-% [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
-% g1=[];g2=[];g3=[];
 %% Display correlation between all PCs and pial depth Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr pia_input]; 
 correlation_matrix(com,1);title('Vertical');
@@ -373,27 +371,43 @@ for i=1:length(nan_vector)
      ap_map(:,:,i)=ones(16,16)*NaN;
      end
 end
-%% Max density per cell apical and basal
+%% Max density + total sum per cell apical and basal
 max_densba=[max(max(ba_map(:,:,:)))];
 max_densba=reshape(max_densba,1,148);
 max_densap=max(max(ap_map(:,:,:)));
 max_densap=reshape(max_densap,1,148);
+
+for i=1:length(nan_vector)
+    sum_densap(i)=sum(sum(ap_map(:,:,i)));
+    sum_densba(i)=sum(sum(ba_map(:,:,i)));
+end
 %% split in medial and lateral
 for i=1:length(nan_vector)
 MLba_diff(i)=(sum(nonzeros(ba_map(:,1:8,i)))/length(nonzeros(ba_map(:,1:8,i))))-(sum(nonzeros(ba_map(:,9:end,i)))/length(nonzeros(ba_map(:,9:end,i))));
 MLap_diff(i)=(sum(nonzeros(ap_map(:,1:8,i)))/length(nonzeros(ap_map(:,1:8,i))))-(sum(nonzeros(ap_map(:,9:end,i)))/length(nonzeros(ap_map(:,9:end,i))));
 end
 %% Morphology parameters vs PCs
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff' sum_densap' sum_densba']; 
 correlation_matrix(com,1);title('Morphology vs PC input scores');
 %% %% Morphology parameters vs real parameters vertical
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov morph_parameters(:,1:21) sum_densap' sum_densba']; 
 correlation_matrix(com,1);title('Morphology vs Vertical input');
 %% %% Morphology parameters vs real parameters horizontal
-com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff']; 
+com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff' sum_densap' sum_densba']; 
 correlation_matrix(com,1);title('Morphology vs Horizontal input');
 %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(L4fr(:,1),morph_parameters(:,8),morph_parameters(:,9),{'L4ex input','Apical width/height','XSA'});
+corr_plot(L4fr(:,1),morph_parameters(:,9),pia_input,{'L4ex input','Apical width/height','Pial depth'});
+%% %%Display desired correlations between pial depth and L23/L4
+corr_plot(diffL23,morph_parameters(:,13),pia_input,{'L4 ex/in ov','Max Apical','Pial depth'});
+%% Using the Morph PCs for correlation
+scores_m=ones(148,3)*NaN;
+scores_m(morph_cells_id,:)=score_morph(:,1:3);
+%% %% Morphology PCs vs PCs input
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) scores_m]; 
+correlation_matrix(com,1);title('PCscors input vs Morph scores');
+%% %% Morphology PCs vs PCs input
+com=[];com=[scores_m L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral]; 
+correlation_matrix(com,1);title('PCscors input vs Morph scores');
 %% 
 % %% Display fraction for ex and in as well as diff for all 16 rows and columns based on TMD groups
 % load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\com_189_withTMDclusteridx.mat');
@@ -420,3 +434,55 @@ com=[od_out(:,[1 2 3 4 5 8]) sftf_out spon_out];
 correlation_matrix(com,1);title('In vivo alone');
  %% %%Display desired correlations between pial depth and L23/L4
 corr_plot(com(:,9),com(:,6),com(:,6),{'L4ex input','Apical width/height','XSA'});
+%% Correlation all
+com=[];
+com=[spon_out od_out(:,:)]; 
+correlation_matrix(com,1);title('In vivo alone ORI');
+ %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(com(:,1),abs(com(:,7)),com(:,10),{'L4ex input','Apical width/height','XSA'});
+ %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(sftf_out(find(sftf_out(:,3)>0.01),5),od_out(find(sftf_out(:,3)>0.01),8),sftf_out(find(sftf_out(:,3)>0.01),2),{'L4ex input','Apical width/height','XSA'});
+
+%%  IN VIVO IN VITRO
+%% Read out paramteres from iviv structure
+[od_out_iviv spon_out_iviv sftf_out_iviv] = concat_iviv(str,nan_vector);
+%% Correlations PCs input and OD out
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) od_out_iviv]; 
+correlation_matrix(com,1);title('PC inputs ODout iviv');
+%% Correlations Input vertical vs ODout
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov od_out_iviv]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+ %% %%Display desired correlations between input and iviv
+corr_plot(L4fr(:,1),od_out_iviv(:,4),od_out_iviv(:,1),{'L4ex input','Apical width/height','XSA'});
+ %% %%Display desired correlations between input and iviv
+corr_plot(L4fr(:,1),sftf_out_iviv(:,27),sftf_out_iviv(:,31),{'L4ex input','Apical width/height','XSA'});
+%% Correlations Input horizontal vs ODout
+com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
+correlation_matrix(com,0);title('Input horizontal ODout iviv');
+%% Correlations PCs input and spon out
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) spon_out_iviv]; 
+correlation_matrix(com,1);title('PC inputs spon_out iviv');
+%% Correlations Vertical input and spon out
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov spon_out_iviv]; 
+correlation_matrix(com,1);title('Input vertical spon_out iviv');
+%% Correlations Horizontal input and spon out
+com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)'  spon_out_iviv]; 
+correlation_matrix(com,1);title('Input horizontal spon_out iviv');
+%% Correlations PCs input and sftf_out_iviv
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,[1:6])]; 
+correlation_matrix(com,0);title('PC inputs sftf_out iviv');
+%% Correlations PCs input and sftf_out_iviv
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov sftf_out_iviv(:,[1:6])]; 
+correlation_matrix(com,0);title('PC inputs sftf_out iviv');
+%% Correlations PCs input and sftf_out_iviv
+com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' sftf_out_iviv]; 
+correlation_matrix(com,1);title('PC inputs sftf_out iviv');
+%% Display fraction for ex and in groups 
+%group based on oripref
+g1=find(sftf_out_iviv(:,5)<90);g2=find(sftf_out_iviv(:,5)>90);g3=[];
+gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+gv(g1)=1;gv(g2)=2;gv(g3)=3;
+gv(find(gv==0))=NaN;
+%call function
+[stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
+g1=[];g2=[];g3=[];
