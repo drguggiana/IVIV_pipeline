@@ -1,4 +1,4 @@
-function [sx sy wx wy ang_a ang_b ang_a_v hypo vec_slope qd] = centroid_map(test_map,somax,pia_input,idx,row_shift);
+function [out_ang] = centroid_map(test_map,somax,pia_input,idx,row_shift);
 %Calculate weighted centroid and total mass
 for i=1:length(test_map)
 A=test_map(:,:,i);
@@ -17,7 +17,7 @@ tot_mass = sum(A(:));
 % end
 out(i,:) = [tot_mass,R,C];
 cell_cord(i,:)=[(8+somax(idx(i))/69) pia_input(idx(i))/69];
-val_hot(i)=A(round(R),round(C));
+%val_hot(i)=A(round(R),round(C));
 end
 %ALTERNATIVE for centroid
 %props2 = regionprops(true(size(test_map(:,:,i))), test_map(:,:,i), 'WeightedCentroid');
@@ -57,4 +57,6 @@ ang_a_v(i)=ang_a(i);
 qd(i)=4;
 end
 end
+%out
+out_ang=[sx sy wx wy ang_a' ang_b' ang_a_v' hypo' vec_slope' qd'];
 end

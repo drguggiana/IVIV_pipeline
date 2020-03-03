@@ -15,6 +15,7 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
      iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
      iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
      iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
+     iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_c);
     elseif str(non_nan_idx(i)).ipsi==1;
       oripref(i)=str(non_nan_idx(i)).Ori(2);
       dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -23,6 +24,7 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
       iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
       iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
       iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
+      iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_i);
     elseif str(non_nan_idx(i)).bino==1;
          if str(non_nan_idx(i)).ODI>=0;
         oripref(i)=str(non_nan_idx(i)).Ori(1);
@@ -32,6 +34,7 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
+        iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_c);
          else str(non_nan_idx(i)).ODI<0;
             oripref(i)=str(non_nan_idx(i)).Ori(2);
         dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -40,6 +43,7 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
+         iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_i);
     end
  else str(non_nan_idx(i)).unres==1;
         oripref(i)=NaN;
@@ -50,6 +54,7 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=NaN;
         iv_DSI(i)=NaN;
         iv_Ca(i)=NaN;
+        iv_Ca_peak(i)=NaN;
         %ori_both(:,i)=ones(1,2)*NaN;
  end
 
@@ -62,6 +67,7 @@ iv_ODI(i)=NaN;
 iv_OSI(i)=NaN;
 iv_DSI(i)=NaN;
 iv_Ca(i)=NaN;
+iv_Ca_peak(i)=NaN;
 end
 end
 %% Extract other in vivo paramters: PCI and spontenaeous events 
@@ -123,8 +129,8 @@ for i=1:length(non_nan_idx)
     end
 end
 %% Assemble out
-od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma'];
+od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma' iv_Ca_peak'];
 spon_out_iviv = [iv_spon' iv_popcop'];
-sftf_out_iviv = [iv_SF' iv_TF' osi_sftf' dsi_sftf' oripref_sftf' dirpref_sftf' osi_sftf_all dsi_sftf_all oripref_sftf_all dirpref_sftf_all];
+sftf_out_iviv = [iv_resp2' iv_SF' iv_TF' osi_sftf' dsi_sftf' oripref_sftf' dirpref_sftf' osi_sftf_all dsi_sftf_all oripref_sftf_all dirpref_sftf_all];
 
 end

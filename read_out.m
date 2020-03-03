@@ -56,7 +56,7 @@ for k=1:length(temp)
      tf_c(k)=TF(I_TF);
      sf_c(k)=SF(I_SF);
      %orie fit at best SF TF
-     oristft=squeeze(temp(k,I_TF,I_SF,1:8))';
+     oristft=squeeze(temp(k,I_SF,I_TF,1:8))';
     % figure;plot(oris,oristft);
      [Fit(k).FittedData, Fit(k).BaselineRsp, Fit(k).PrefRsp, Fit(k).PrefDir, Fit(k).Sigma, Fit(k).OppResp ,...
       Fit(k).Error, Fit(k).R2]=FIT_Carandini(oristft);
@@ -66,6 +66,7 @@ for k=1:length(temp)
       DSI(k)=TT_CircularVariance(oristft);
       oripref(k)=Fit(k).PrefOri;
       dirpref(k)=Fit(k).PrefDir;
+      peakresp(k)=M;
       % for individual SF TF combis
       %#1
       oritemp=squeeze(temp(k,1,1,1:8))';
@@ -77,6 +78,7 @@ for k=1:length(temp)
       DSI1(k)=TT_CircularVariance(oritemp);
       oripref1(k)=Fit1(k).PrefOri;
       dirpref1(k)=Fit1(k).PrefDir;
+      peakresp1(k)=max(oritemp);
       oritemp=[];
       %#2
       oritemp=squeeze(temp(k,2,1,1:8))';
@@ -88,6 +90,7 @@ for k=1:length(temp)
       DSI2(k)=TT_CircularVariance(oritemp);
       oripref2(k)=Fit2(k).PrefOri;
       dirpref2(k)=Fit2(k).PrefDir;
+      peakresp2(k)=max(oritemp);
       oritemp=[];
       %#3
       oritemp=squeeze(temp(k,3,1,1:8))';
@@ -99,6 +102,7 @@ for k=1:length(temp)
       DSI3(k)=TT_CircularVariance(oritemp);
       oripref3(k)=Fit3(k).PrefOri;
       dirpref3(k)=Fit3(k).PrefDir;
+      peakresp3(k)=max(oritemp);
       oritemp=[];
       %#4
       oritemp=squeeze(temp(k,1,2,1:8))';
@@ -110,6 +114,7 @@ for k=1:length(temp)
       DSI4(k)=TT_CircularVariance(oritemp);
       oripref4(k)=Fit4(k).PrefOri;
       dirpref4(k)=Fit4(k).PrefDir;
+      peakresp4(k)=max(oritemp);
       oritemp=[];
         %#5
       oritemp=squeeze(temp(k,2,2,1:8))';
@@ -121,6 +126,7 @@ for k=1:length(temp)
       DSI5(k)=TT_CircularVariance(oritemp);
       oripref5(k)=Fit5(k).PrefOri;
       dirpref5(k)=Fit5(k).PrefDir;
+      peakresp5(k)=max(oritemp);
       oritemp=[];
        %#6
       oritemp=squeeze(temp(k,3,2,1:8))';
@@ -132,6 +138,7 @@ for k=1:length(temp)
       DSI6(k)=TT_CircularVariance(oritemp);
       oripref6(k)=Fit6(k).PrefOri;
       dirpref6(k)=Fit6(k).PrefDir;
+      peakresp6(k)=max(oritemp);
       oritemp=[];
         %#7
       oritemp=squeeze(temp(k,1,3,1:8))';
@@ -143,6 +150,7 @@ for k=1:length(temp)
       DSI7(k)=TT_CircularVariance(oritemp);
       oripref7(k)=Fit7(k).PrefOri;
       dirpref7(k)=Fit7(k).PrefDir;
+      peakresp7(k)=max(oritemp);
       oritemp=[];
         %#8
       oritemp=squeeze(temp(k,2,3,1:8))';
@@ -154,6 +162,7 @@ for k=1:length(temp)
       DSI8(k)=TT_CircularVariance(oritemp);
       oripref8(k)=Fit8(k).PrefOri;
       dirpref8(k)=Fit8(k).PrefDir;
+      peakresp8(k)=max(oritemp);
       oritemp=[];
        %#9
       oritemp=squeeze(temp(k,3,3,1:8))';
@@ -165,6 +174,7 @@ for k=1:length(temp)
       DSI9(k)=TT_CircularVariance(oritemp);
       oripref9(k)=Fit9(k).PrefOri;
       dirpref9(k)=Fit9(k).PrefDir;
+      peakresp9(k)=max(oritemp);
       oritemp=[];
      else
         tf_c(k)=NaN;
@@ -189,6 +199,8 @@ SFTF.oripref=oripref;SFTF.oripref1=oripref1;SFTF.oripref2=oripref2;SFTF.oripref3
 SFTF.oripref7=oripref7;SFTF.oripref8=oripref8;SFTF.oripref9=oripref9;
 SFTF.dirpref=dirpref;SFTF.dirpref1=dirpref1;SFTF.dirpref2=dirpref2;SFTF.dirpref3=dirpref3;SFTF.dirpref4=dirpref4;SFTF.dirpref5=dirpref5;SFTF.dirpref6=dirpref6;
 SFTF.dirpref7=dirpref7;SFTF.dirpref8=dirpref8;SFTF.dirpref9=dirpref9;
+SFTF.peakresp=peakresp;SFTF.peakresp1=peakresp1;SFTF.peakresp2=peakresp2;SFTF.peakresp3=peakresp3;SFTF.peakresp4=peakresp4;SFTF.peakresp5=peakresp5;SFTF.peakresp6=peakresp6;
+SFTF.peakresp7=peakresp7;SFTF.peakresp8=peakresp8;SFTF.peakresp9=peakresp9;
 temp=[];
 sf_c=[];
 tf_c=[];
