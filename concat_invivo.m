@@ -1,4 +1,4 @@
-function [od_out sftf_out spon_out] = concat_invivo(L23_PC)
+function [od_out sftf_out sftf_sel sftf_pref spon_out pia_all] = concat_invivo(L23_PC)
 for i=1:length(L23_PC)
     %pia
     pia{i,:}=L23_PC(i).pial_depth;
@@ -10,6 +10,7 @@ for i=1:length(L23_PC)
      prefDir_all{i,:}=L23_PC(i).OD.prefDir(:,:);
      OSIall{i,:}=L23_PC(i).OD.gOSI(:,:); 
      DSIall{i,:}=L23_PC(i).OD.gDSI(:,:); 
+     Ca_od{i,:}=L23_PC(i).OD.deltapeaks_averagetrace(:,:)
       %SFTF protocol
      sf_all{i,:}=L23_PC(i).SFTF.sf;
      tf_all{i,:}=L23_PC(i).SFTF.tf;
@@ -17,7 +18,9 @@ for i=1:length(L23_PC)
      dsi_all_sftf{i,:}=L23_PC(i).SFTF.DSI;
      oripref_all_sftf{i,:}=L23_PC(i).SFTF.oripref;
      dirpref_all_sftf{i,:}=L23_PC(i).SFTF.dirpref;
+     Ca_peak_sftf{i,:}=L23_PC(i).SFTF.peakresp;
      sftf_resp_all{i,:}=L23_PC(i).SFTF.ov_resp;
+     
      
      osi_sftf1{i,:}=L23_PC(i).SFTF.OSI1;
      osi_sftf2{i,:}=L23_PC(i).SFTF.OSI2;
@@ -58,6 +61,27 @@ for i=1:length(L23_PC)
       dir_sftf7{i,:}=L23_PC(i).SFTF.dirpref7;
       dir_sftf8{i,:}=L23_PC(i).SFTF.dirpref8;
       dir_sftf9{i,:}=L23_PC(i).SFTF.dirpref9;
+      
+    peak_sftf1{i,:}=L23_PC(i).SFTF.peakresp1;
+    peak_sftf2{i,:}=L23_PC(i).SFTF.peakresp2;
+    peak_sftf3{i,:}=L23_PC(i).SFTF.peakresp3;
+    peak_sftf4{i,:}=L23_PC(i).SFTF.peakresp4;
+    peak_sftf5{i,:}=L23_PC(i).SFTF.peakresp5;
+    peak_sftf6{i,:}=L23_PC(i).SFTF.peakresp6;
+    peak_sftf7{i,:}=L23_PC(i).SFTF.peakresp7;
+    peak_sftf8{i,:}=L23_PC(i).SFTF.peakresp8;
+    peak_sftf9{i,:}=L23_PC(i).SFTF.peakresp9;
+    
+    resp1{i,:}=L23_PC(i).SFTF.res(1,:);
+    resp2{i,:}=L23_PC(i).SFTF.res(2,:);
+    resp3{i,:}=L23_PC(i).SFTF.res(3,:);
+    resp4{i,:}=L23_PC(i).SFTF.res(4,:);
+    resp5{i,:}=L23_PC(i).SFTF.res(5,:);
+    resp6{i,:}=L23_PC(i).SFTF.res(6,:);
+    resp7{i,:}=L23_PC(i).SFTF.res(7,:);
+    resp8{i,:}=L23_PC(i).SFTF.res(8,:);
+    resp9{i,:}=L23_PC(i).SFTF.res(9,:);
+    
      %Spon protocol
      sad_all{i,:}=L23_PC(i).spon.sad;
      pci_all{i,:}=L23_PC(i).spon.pci;
@@ -77,6 +101,7 @@ end
   pDSI_all=vertcat(prefDir_all{:});
   OSI_all=vertcat(OSIall{:});
   DSI_all=vertcat(DSIall{:});
+  Ca_peak_od=vertcat(Ca_od{:});
   %Pial depth
   pial_all=horzcat(pia{:});
   
@@ -93,6 +118,8 @@ end
   dsi_sftf=horzcat(dsi_all_sftf{:});
   ori_sftf=horzcat(oripref_all_sftf{:});
   dir_sftf=horzcat(dirpref_all_sftf{:});
+  Ca_sftf=horzcat(Ca_peak_sftf{:});
+  
   osi_s=[horzcat(osi_sftf1{:});horzcat(osi_sftf2{:});horzcat(osi_sftf3{:});horzcat(osi_sftf4{:});...
       horzcat(osi_sftf5{:});horzcat(osi_sftf6{:});horzcat(osi_sftf7{:});horzcat(osi_sftf8{:});horzcat(osi_sftf9{:})]';
    dsi_s=[horzcat(dsi_sftf1{:});horzcat(dsi_sftf2{:});horzcat(dsi_sftf3{:});horzcat(dsi_sftf4{:});...
@@ -101,7 +128,10 @@ end
       horzcat(dir_sftf5{:});horzcat(dir_sftf6{:});horzcat(dir_sftf7{:});horzcat(dir_sftf8{:});horzcat(dir_sftf9{:})]';
     ori_s=[horzcat(ori_sftf1{:});horzcat(ori_sftf2{:});horzcat(ori_sftf3{:});horzcat(ori_sftf4{:});...
       horzcat(ori_sftf5{:});horzcat(ori_sftf6{:});horzcat(ori_sftf7{:});horzcat(ori_sftf8{:});horzcat(ori_sftf9{:})]';
-  
+  Ca_sftf_all=[horzcat(peak_sftf1{:});horzcat(peak_sftf2{:});horzcat(peak_sftf3{:});horzcat(peak_sftf4{:});...
+      horzcat(peak_sftf5{:});horzcat(peak_sftf6{:});horzcat(peak_sftf7{:});horzcat(peak_sftf8{:});horzcat(peak_sftf9{:})]';
+   res_sftf_all=[horzcat(resp1{:});horzcat(resp2{:});horzcat(resp3{:});horzcat(resp4{:});...
+      horzcat(resp5{:});horzcat(resp6{:});horzcat(resp7{:});horzcat(resp8{:});horzcat(resp9{:})]';
   %% OD protocol
  
   for i=1:length(odi)
@@ -111,29 +141,34 @@ end
           pDIR_a(i)=pDSI_all(i,1);
           pOSI_a(i)=OSI_all(i,1);
           pDSI_a(i)=DSI_all(i,1);
+          pCa_a(i)=max(Ca_peak_od(i,1:8));
           
       elseif con(i)==0 & ips(i)==1;
           pORI_a(i)=pOSI_all(i,2);
           pDIR_a(i)=pDSI_all(i,2);
           pOSI_a(i)=OSI_all(i,2);
           pDSI_a(i)=DSI_all(i,2);
+           pCa_a(i)=max(Ca_peak_od(i,9:16));
       elseif con(i)==1 & ips(i)==1;
           if odi(i)>0
               pORI_a(i)=pOSI_all(i,1);
               pDIR_a(i)=pDSI_all(i,1);
               pOSI_a(i)=OSI_all(i,1);
               pDSI_a(i)=DSI_all(i,1);
+               pCa_a(i)=max(Ca_peak_od(i,1:8));
           else odi(i)<0
               pORI_a(i)=pOSI_all(i,2);
               pDIR_a(i)=pDSI_all(i,2);
               pDSI_a(i)=DSI_all(i,2);
               pOSI_a(i)=OSI_all(i,2);
+              pCa_a(i)=max(Ca_peak_od(i,9:16));
           end
       else con(i)==0 & ips(i)==0
        pORI_a(i)=NaN;
        pDIR_a(i)=NaN;
        pOSI_a(i)=NaN;
        pDSI_a(i)=NaN;
+       pCa_a(i)=NaN;
       end
   end
   %% 
@@ -161,11 +196,13 @@ end
           dsi_pref_sftf(i)=dsi_sftf(i);
           ori_pref_sftf(i)=ori_sftf(i);
           dir_pref_sftf(i)=dir_sftf(i);
+          Ca_p_sftf(i)=Ca_sftf(i);
           
           osi_sc(i,:)=osi_s(i,:);
           dsi_sc(i,:)=dsi_s(i,:);
           ori_sc(i,:)=ori_s(i,:);
           dir_sc(i,:)=dir_s(i,:);
+          Ca_sc(i,:)= Ca_sftf_all(i,:);
       else 
        sf_com(i)=NaN;
        tf_com(i)=NaN;
@@ -174,39 +211,71 @@ end
           dsi_pref_sftf(i)=NaN;
           ori_pref_sftf(i)=NaN;
           dir_pref_sftf(i)=NaN;
+          Ca_p_sftf=NaN;
           
          osi_sc(i,:)=ones(1,9)*NaN;
           dsi_sc(i,:)=ones(1,9)*NaN;
           ori_sc(i,:)=ones(1,9)*NaN;
           dir_sc(i,:)=ones(1,9)*NaN;
+          Ca_sc(i,:)=ones(1,9)*NaN;
       end
   end
+  %% 
+ 
   %% 
   for i=1:length(osi_pref_sftf)
       if isnan(osi_pref_sftf(i))==1;
          ori_pref_sftf_f(i)=NaN;
-         dir_pref_sftf_f(i)=NaN;  
+         dir_pref_sftf_f(i)=NaN;
+         Ca_pref_sftft(i)=NaN;
       else 
      ori_pref_sftf_f(i)=ori_pref_sftf(i);
-           dir_pref_sftf_f(i)=dir_pref_sftf(i);  
+           dir_pref_sftf_f(i)=dir_pref_sftf(i);
+           Ca_pref_sftft(i)=Ca_p_sftf(i);
       end
+  end
+  %% 
+  for k=1:9;
+   for i=1:length(osi_s)
+       if res_sftf_all(i,k)==0;
+          osi_sc(i,k)=NaN; 
+          dsi_sc(i,k)=NaN; 
+          
+       else
+           osi_sc(i,k)=osi_sc(i,k); 
+          dsi_sc(i,k)=dsi_sc(i,k); 
+       end
+   end
   end
   %% 
   for k=1:9;
    for i=1:length(osi_s)
       if isnan(osi_sc(i,k))==1;
          ori_sftf_f(i,k)=NaN;
-         dir_sftf_f(i,k)=NaN;  
+         dir_sftf_f(i,k)=NaN;
+         Ca_sc(i,k)=NaN;
       else 
     ori_sftf_f(i,k)=ori_sc(i,k);
     dir_sftf_f(i,k)=dir_sc(i,k);
+    Ca_sc(i,k)=Ca_sc(i,k);
       end
    end
   end
   %% 
-  od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; con; ips; pial_all]';
+  for i=1:length(con)
+      if con(i)==0 & ips(i)==0; 
+          resp(i)=0;
+      else
+          resp(i)=1;
+      end
+  end
+  %% 
+  od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; pCa_a; resp; con; ips]';
   spon_out=[sad_a;pci_a']';
-  sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' 1-osi_sc 1-dsi_sc ori_sftf_f dir_sftf_f];
+  sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' sftfs_res_a']
+  sftf_sel=[1-osi_sc 1-dsi_sc]; 
+  sftf_pref=[ori_sftf_f dir_sftf_f Ca_sc];
+  pia_all=pial_all;
   
   
 end

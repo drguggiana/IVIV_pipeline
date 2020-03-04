@@ -184,6 +184,8 @@ for k=1:length(temp)
         DSI(k)=NaN;DSI1(k)=NaN;DSI2(k)=NaN;DSI3(k)=NaN;DSI4(k)=NaN;DSI5(k)=NaN;DSI6(k)=NaN;DSI7(k)=NaN;DSI8(k)=NaN;DSI9(k)=NaN;
         oripref(k)=NaN;oripref1(k)=NaN;oripref2(k)=NaN;oripref3(k)=NaN;oripref4(k)=NaN;oripref5(k)=NaN;oripref6(k)=NaN;oripref7(k)=NaN;oripref8(k)=NaN;oripref9(k)=NaN;
         dirpref(k)=NaN;dirpref1(k)=NaN;dirpref2(k)=NaN;dirpref3(k)=NaN;dirpref4(k)=NaN;dirpref5(k)=NaN;dirpref6(k)=NaN;dirpref7(k)=NaN;dirpref8(k)=NaN;dirpref9(k)=NaN;
+        peakresp1(k)=NaN;peakresp2(k)=NaN;peakresp3(k)=NaN;peakresp4(k)=NaN;peakresp5(k)=NaN;peakresp6(k)=NaN;peakresp7(k)=NaN;peakresp8(k)=NaN;peakresp9(k)=NaN;
+        peakresp(k)=NaN;
      end
      
 end
@@ -210,7 +212,7 @@ OSI=[];OSI1=[];OSI2=[];OSI3=[];OSI4=[];OSI5=[];OSI6=[];OSI7=[];OSI8=[];OSI9=[];
 DSI=[];DSI1=[];DSI2=[];DSI3=[];DSI4=[];DSI5=[];DSI6=[];DSI7=[];DSI8=[];DSI9=[];
 oripref=[];oripref1=[];oripref2=[];oripref3=[];oripref4=[];oripref5=[];oripref6=[];oripref7=[];oripref8=[];oripref9=[];
 dirpref=[];dirpref1=[];dirpref2=[];dirpref3=[];dirpref4=[];dirpref5=[];dirpref6=[];dirpref7=[];dirpref8=[];dirpref9=[];
-
+peakresp=[];peakresp1=[];peakresp2=[];peakresp3=[];peakresp4=[];peakresp5=[];peakresp6=[];peakresp7=[];peakresp8=[];peakresp9=[];
 %Load and extract spontaneous
 cd(spon_path);
 load('190606_1359_spontAct.mat');
@@ -281,6 +283,7 @@ load(char(filename));%load mat file
      TFp{i,:}=L23_PC(i).SFTF.tf(temp);
      Ori_sftf{i,:}=L23_PC(i).SFTF.oripref(temp);
      Dir_sftf{i,:}=L23_PC(i).SFTF.dirpref(temp);
+     Ca_peak{i,:}=L23_PC(i).SFTF.peakresp(temp);
      %for the different combination of SFTF
      Ori_sftf1{i,:}=L23_PC(i).SFTF.oripref1(temp);
      Dir_sftf1{i,:}=L23_PC(i).SFTF.dirpref1(temp);
@@ -322,8 +325,27 @@ load(char(filename));%load mat file
      DSI_sftf8{i,:}=L23_PC(i).SFTF.DSI8(temp);
       OSI_sftf9{i,:}=L23_PC(i).SFTF.OSI9(temp);
      DSI_sftf9{i,:}=L23_PC(i).SFTF.DSI9(temp);
-     %responive or not
+     %responsive or not
      sftf_resp{i,:}=L23_PC(i).SFTF.ov_resp(temp);
+     sftf_resp1{i,:}=L23_PC(i).SFTF.res(1,temp);
+     sftf_resp2{i,:}=L23_PC(i).SFTF.res(2,temp);
+     sftf_resp3{i,:}=L23_PC(i).SFTF.res(3,temp);
+     sftf_resp4{i,:}=L23_PC(i).SFTF.res(4,temp);
+     sftf_resp5{i,:}=L23_PC(i).SFTF.res(5,temp);
+     sftf_resp6{i,:}=L23_PC(i).SFTF.res(6,temp);
+     sftf_resp7{i,:}=L23_PC(i).SFTF.res(7,temp);
+     sftf_resp8{i,:}=L23_PC(i).SFTF.res(8,temp);
+     sftf_resp9{i,:}=L23_PC(i).SFTF.res(9,temp);
+     %Peak Ca
+     Ca_peak1{i,:}=L23_PC(i).SFTF.peakresp1(temp);
+     Ca_peak2{i,:}=L23_PC(i).SFTF.peakresp2(temp);
+     Ca_peak3{i,:}=L23_PC(i).SFTF.peakresp3(temp);
+     Ca_peak4{i,:}=L23_PC(i).SFTF.peakresp4(temp);
+     Ca_peak5{i,:}=L23_PC(i).SFTF.peakresp5(temp);
+     Ca_peak6{i,:}=L23_PC(i).SFTF.peakresp6(temp);
+     Ca_peak7{i,:}=L23_PC(i).SFTF.peakresp7(temp);
+     Ca_peak8{i,:}=L23_PC(i).SFTF.peakresp8(temp);
+     Ca_peak9{i,:}=L23_PC(i).SFTF.peakresp9(temp);
      
          for k=1:length(temp)
              if isempty(L23_PC(i).SFTF.Fit)==0
@@ -386,6 +408,7 @@ load(char(filename));%load mat file
  
  OSI_sftf=horzcat(OSI_sftf{:});
  DSI_sftf=horzcat(DSI_sftf{:});
+ Ca_peak_sf=horzcat(Ca_peak{:});
  
   OSI_sftf1=horzcat(OSI_sftf1{:});
  DSI_sftf1=horzcat(DSI_sftf1{:});
@@ -405,11 +428,57 @@ load(char(filename));%load mat file
  DSI_sftf8=horzcat(DSI_sftf8{:});
   OSI_sftf9=horzcat(OSI_sftf9{:});
  DSI_sftf9=horzcat(DSI_sftf9{:});
+ 
+ Ca_peak_sf1=horzcat(Ca_peak1{:});
+ Ca_peak_sf2=horzcat(Ca_peak2{:});
+ Ca_peak_sf3=horzcat(Ca_peak3{:});
+ Ca_peak_sf4=horzcat(Ca_peak4{:});
+ Ca_peak_sf5=horzcat(Ca_peak5{:});
+ Ca_peak_sf6=horzcat(Ca_peak6{:});
+ Ca_peak_sf7=horzcat(Ca_peak7{:});
+ Ca_peak_sf8=horzcat(Ca_peak8{:});
+ Ca_peak_sf9=horzcat(Ca_peak9{:});
+ 
+ sfre1=horzcat(sftf_resp1{:});
+ sfre2=horzcat(sftf_resp2{:});
+ sfre3=horzcat(sftf_resp3{:});
+ sfre4=horzcat(sftf_resp4{:});
+ sfre5=horzcat(sftf_resp5{:});
+ sfre6=horzcat(sftf_resp6{:});
+ sfre7=horzcat(sftf_resp7{:});
+ sfre8=horzcat(sftf_resp8{:});
+ sfre9=horzcat(sftf_resp9{:});
+
+ 
  %% Clear out nonsense from missing data: use OSI/DSI!
+ 
+ 
  idxn=find(isnan(OSI_sftf)==1);
  Ori_sftf(idxn)=NaN;
  Dir_sftf(idxn)=NaN;
  sigma_sftf(idxn)=NaN;
+ Ca_peak_sf(idxn)=NaN;
+ 
+ OSI_sftf1(find(sfre1==0))==NaN;
+ OSI_sftf2(find(sfre2==0))==NaN;
+ OSI_sftf3(find(sfre3==0))==NaN;
+ OSI_sftf4(find(sfre4==0))==NaN;
+ OSI_sftf5(find(sfre5==0))==NaN;
+ OSI_sftf6(find(sfre6==0))==NaN;
+ OSI_sftf7(find(sfre7==0))==NaN;
+ OSI_sftf8(find(sfre8==0))==NaN;
+ OSI_sftf9(find(sfre9==0))==NaN;
+ 
+  DSI_sftf1(find(sfre1==0))==NaN;
+ DSI_sftf2(find(sfre2==0))==NaN;
+ DSI_sftf3(find(sfre3==0))==NaN;
+DSI_sftf4(find(sfre4==0))==NaN;
+ DSI_sftf5(find(sfre5==0))==NaN;
+ DSI_sftf6(find(sfre6==0))==NaN;
+ DSI_sftf7(find(sfre7==0))==NaN;
+ DSI_sftf8(find(sfre8==0))==NaN;
+ DSI_sftf9(find(sfre9==0))==NaN;
+ 
  idxn1=find(isnan(OSI_sftf1)==1);
  idxn2=find(isnan(OSI_sftf2)==1);
  idxn3=find(isnan(OSI_sftf3)==1);
@@ -420,23 +489,34 @@ load(char(filename));%load mat file
  idxn8=find(isnan(OSI_sftf8)==1);
  idxn9=find(isnan(OSI_sftf9)==1);
   Ori_sftf1(idxn1)=NaN;
- Dir_sftf1(idxn1)=NaN;
+Dir_sftf1(idxn1)=NaN;
+  Ca_peak_sf1(idxn1)=NaN;
   Ori_sftf2(idxn2)=NaN;
  Dir_sftf2(idxn2)=NaN;
+ Ca_peak_sf2(idxn2)=NaN;
   Ori_sftf3(idxn3)=NaN;
  Dir_sftf3(idxn3)=NaN;
+ Ca_peak_sf3(idxn3)=NaN;
   Ori_sftf4(idxn4)=NaN;
  Dir_sftf4(idxn4)=NaN;
+ Ca_peak_sf4(idxn4)=NaN;
   Ori_sftf5(idxn5)=NaN;
  Dir_sftf5(idxn5)=NaN;
+ Ca_peak_sf5(idxn5)=NaN;
   Ori_sftf6(idxn6)=NaN;
  Dir_sftf6(idxn6)=NaN;
+  Ca_peak_sf6(idxn6)=NaN;
   Ori_sftf7(idxn7)=NaN;
  Dir_sftf7(idxn7)=NaN;
+ Ca_peak_sf7(idxn7)=NaN;
   Ori_sftf8(idxn8)=NaN;
  Dir_sftf8(idxn8)=NaN;
+  Ca_peak_sf8(idxn8)=NaN;
   Ori_sftf9(idxn9)=NaN;
  Dir_sftf9(idxn9)=NaN;
+ Ca_peak_sf9(idxn9)=NaN;
+
+
  %% 
   for i=1:length(L23_PC)
       temp=L23_PC(i).ivivROI;
@@ -487,8 +567,11 @@ for i=1:length(aiviv)
    str_m(aiviv(i)).TF=tf(i);
    str_m(aiviv(i)).Ori_sftf=Ori_sftf(i);
    str_m(aiviv(i)).Dir_sftf=Dir_sftf(i); 
+    str_m(aiviv(i)).Ca_peak_sftf=Ca_peak_sf(i); 
    str_m(aiviv(i)).Ori_sftf_all=[Ori_sftf1(i) Ori_sftf2(i) Ori_sftf3(i) Ori_sftf4(i) Ori_sftf5(i) Ori_sftf6(i) Ori_sftf7(i) Ori_sftf8(i) Ori_sftf9(i)];
    str_m(aiviv(i)).Dir_sftf_all=[Dir_sftf1(i) Dir_sftf2(i) Dir_sftf3(i) Dir_sftf4(i) Dir_sftf5(i) Dir_sftf6(i) Dir_sftf7(i) Dir_sftf8(i) Dir_sftf9(i)];
+   str_m(aiviv(i)).reso_sftf_all=[sfre1(i) sfre2(i) sfre3(i) sfre4(i) sfre5(i) sfre6(i) sfre7(i) sfre8(i) sfre9(i)];
+    str_m(aiviv(i)).Ca_sftf_all=[Ca_peak_sf1(i) Ca_peak_sf2(i) Ca_peak_sf3(i) Ca_peak_sf4(i) Ca_peak_sf5(i) Ca_peak_sf6(i) Ca_peak_sf7(i) Ca_peak_sf8(i) Ca_peak_sf9(i)];
    str_m(aiviv(i)).oppResp_sftf=oppResp_sftf(i); 
    str_m(aiviv(i)).sigma_sftf=sigma_sftf(i); 
    str_m(aiviv(i)).OSI_sftf=1-OSI_sftf(i); 
