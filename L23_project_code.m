@@ -127,8 +127,8 @@ clean_in = cell_cell(:,257:512)';
 clean_exraw = cell_cell_raw(:,1:256)';
 clean_inraw = cell_cell_raw(:,257:512)';
 pia_bins = discretize(cell_cell(:,513),edges);
-clean_ov=reshape(ov_map,256,148);
-clean_diff=reshape(diff_map,256,148);
+clean_ov=reshape(ov_map,256,cells);
+clean_diff=reshape(diff_map,256,cells);
 % get the number of actually populated bins
 bin_num = max(pia_bins);
 % allocate memory for the aligned maps
@@ -232,6 +232,7 @@ aligned_maps_diff = reshape(aligned_maps_diff,cell_num,[]);
 aligned_maps_basal = reshape(aligned_maps_basal,cell_num,[]);
 aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
 pia_input=pia_input(incl_idx:end);
+
 %% Histogram of pia distribution with color coded in vivo morpho by itself
 figure;set(gcf,'color','w');
 histogram(pia_input,'FaceColor','k','FaceAlpha',0.3,'Orientation','horizontal');axis square;ylabel('Pial depth (µm)');xlabel('Cell count');box off;
@@ -274,7 +275,7 @@ coeff_display(coeff_com(1:352,:),coeff_com(353:end,:),bin_num,hbin_num);
 %% Display coefficent of PCs ALIGNED diff
 coeff_display(coeff_diff,[],bin_num,hbin_num);
 %% Display correlation between all PCs and pial depth Multiple comparison 
-com=[score_ex(:,1:3) score_in(:,1:3) score_com(:,1:3) score_diff(:,1:3) pia_input]; 
+com=[score_ex(:,1:3) score_in(:,1:3) score_com(:,1:3)]; 
 correlation_matrix(com,1);
 %% %%Display desired correlations between PCs/pia
 corr_plot(score_ex(:,1),score_com(:,1),pia_input,{'PC1ex','PC1com','Pial depth'});
@@ -317,26 +318,119 @@ tmp=find(frac_inh(i,:)>0);
 in_spanh(i)=tmp(end)-tmp(1);
 tmp=[];
 end
-%% Display total sum absolute for ex and inh
+%% Calculate the maximum horizontal span overall per layer
 for i=1:length(nan_vector(incl_idx:end))
+tmp1=ex_map(3:5,:,i);
+for k=1:16
+tL23e(k)=sum(tmp1(:,k))/sum(tmp1(:));
+end
+tmp2=in_map(3:5,:,i);
+for k=1:16
+tL23i(k)=sum(tmp2(:,k))/sum(tmp2(:));
+end
+tmp=find(tL23e>0);
+ex_spanhL23(i)=tmp(end)-tmp(1);
+tmp=[];
+tmp=find(tL23i>0);
+in_spanhL23(i)=tmp(end)-tmp(1);
+tmp=[];
+tL23i=[];
+tL23e=[];
+tmp1=[];tmp2=[];
+end
+for i=1:length(nan_vector(incl_idx:end))
+tmp1=ex_map(6:7,:,i);
+for k=1:16
+tL23e(k)=sum(tmp1(:,k))/sum(tmp1(:));
+end
+tmp2=in_map(6:7,:,i);
+for k=1:16
+tL23i(k)=sum(tmp2(:,k))/sum(tmp2(:));
+end
+tmp=find(tL23e>0);
+if isempty(tmp)==0
+ex_spanhL4(i)=tmp(end)-tmp(1);
+else
+ex_spanhL4(i)=NaN;
+end
+tmp=[];
+tmp=find(tL23i>0);
+if isempty(tmp)==0
+in_spanhL4(i)=tmp(end)-tmp(1);
+else
+in_spanhL4(i)=NaN;
+end
+tmp=[];
+tL23i=[];
+tL23e=[];
+end
+%L5
+for i=1:length(nan_vector(incl_idx:end))
+tmp1=ex_map(8:10,:,i);
+for k=1:16
+tL23e(k)=sum(tmp1(:,k))/sum(tmp1(:));
+end
+tmp2=in_map(8:10,:,i);
+for k=1:16
+tL23i(k)=sum(tmp2(:,k))/sum(tmp2(:));
+end
+tmp=find(tL23e>0);
+if isempty(tmp)==0
+ex_spanhL5(i)=tmp(end)-tmp(1);
+else
+ex_spanhL5(i)=NaN;
+end
+tmp=[];
+tmp=find(tL23i>0);
+if isempty(tmp)==0
+in_spanhL5(i)=tmp(end)-tmp(1);
+else
+in_spanhL5(i)=NaN;
+end
+tmp=[];
+tL23i=[];
+tL23e=[];
+end
+%% total sum absolute for ex and inh in pA
+for i=1:length(nan_vector(incl_idx:end))
+%whole map
+tmp1=ex_map_raw(:,:,i);
+tmp2=in_map_raw(:,:,i);
+tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+tmp1=[];
+tmp2=[];
+%L23
 tmp1=ex_map_raw(3:5,:,i);
 tmp2=in_map_raw(3:5,:,i);
-tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+tot_inputL23(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+tmp1=[];
+tmp2=[];
+%L4
+tmp1=ex_map_raw(6:7,:,i);
+tmp2=in_map_raw(6:7,:,i);
+tot_inputL4(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 end
 %% Display both maximum horizontal span and diff betwen ex and in
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 200]);
 %Diff between ex and in shwon with histogram and CDF for L23 L4 and L5
-subplot(1,3,1);
-yyaxis left;ylabel('Counts');
+subplot(1,4,1);
+yyaxis left;
 h = histogram(diffL23fr,8);h.BinWidth = 0.01;box off;hold on;h2 = histogram(diffL4fr,8);h2.BinWidth =  0.01;hold on;h3 = histogram(nonzeros(diffL5fr),8);h3.BinWidth =  0.01;
-h.EdgeColor = 'k';h.FaceColor = 'm';h2.EdgeColor = 'k';h2.FaceColor = 'g';h3.FaceColor = [0.5 0.5 0.5];
+h.EdgeColor = 'k';h.FaceColor = 'm';h2.EdgeColor = 'k';h2.FaceColor = 'g';h3.FaceColor = [0.5 0.5 0.5];ylabel('Counts');
 yyaxis right;p1=cdfplot(diffL23fr);hold on;p2=cdfplot(diffL4fr);hold on;p3=cdfplot(nonzeros(diffL5fr));grid off; title('');
-ylabel('Cumulative');xlabel('Ex-In');p1.Color=[1 0 0];p2.Color=[0 1 0];p3.Color=[0 0 1];legend('L23', 'L4','L5');%legend box off;
+ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');%legend box off;
 left_color = [0 0 0];right_color = [0 0 0];set(fig1,'defaultAxesColorOrder',[left_color; right_color]);
-subplot(1,3,2);
+subplot(1,4,2);
 scatter(ex_spanh,in_spanh,'ko');set(gcf,'color','w');ref=refline(1,0);xlabel('Excitation');ylabel('Inhibition');title('Max. horizontal span');ref.Color=[0 0 0];
-subplot(1,3,3);
+subplot(1,4,3);
 h4 = histogram(ex_spanh-in_spanh,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = 'w';xlabel('\Delta Span');ylabel('counts')
+subplot(1,4,4);
+yyaxis left;
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';xlabel('\Delta Span');ylabel('counts');
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('counts');
+yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
+ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,[]);
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
@@ -347,7 +441,6 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 %call function
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
-
 %% %%Display desired correlations between PCs and actual data 
 %EX
 corr_plot(L23fr(:,1),score_ex(:,1),pia_input,{'PC1ex','L23ex','Pial depth'});
@@ -361,6 +454,8 @@ corr_plot(nonzeros(L5fr(:,2)),score_in(find(nonzeros(L5fr(:,2))),1),pia_input(fi
 %EX
 corr_plot(L23fr(:,1),pia_input,[],{'L23ex input','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(L4fr(:,1),pia_input,[],{'L4ex input','Pial depth',;});set(gca,'Ydir','reverse');
+corr_plot(tot_inputL4(:,1),pia_input,[],{'L4 total input ex','Pial depth',;});set(gca,'Ydir','reverse');
+corr_plot(tot_inputL23(:,2),pia_input,[],{'L23 total input in','Pial depth',;});set(gca,'Ydir','reverse');
 %IN
 corr_plot(L23fr(:,2),pia_input,[],{'L23in input','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(L4fr(:,2),pia_input,[],{'L4in input','Pial depth'});set(gca,'Ydir','reverse');
@@ -369,22 +464,72 @@ for i=1:length(nan_vector)
 somax(i)=str(nan_vector(i)).somaCenter(1);
 somay(i)=552-str(nan_vector(i)).somaCenter(2);
 end
+%fake map
+map_fake=zeros(16,16,cells)
+map_fake(4,9,:)=1;
 %IN ang centroid
-[out_ang_in] = centroid_map(in_map(:,:,:),somax,pia_input,[1:148],0);
-[out_ang_inL23] = centroid_map(in_map(3:5,:,:),somax,pia_input,[1:148],2);
-[out_ang_inL4] = centroid_map(in_map(6:7,:,:),somax,pia_input,[1:148],5);
+[out_ang_in] = centroid_map(in_map(:,:,:),somax,pia_input,[1:cells],0);
+[out_ang_inL23] = centroid_map(in_map(3:5,:,:),somax,pia_input,[1:cells],2);
+[out_ang_inL4] = centroid_map(in_map(6:7,:,:),somax,pia_input,[1:cells],5);
 %EX ang centroid
-[out_ang_ex] = centroid_map(ex_map(:,:,:),somax,pia_input,[1:148],0);
-[out_ang_exL23] = centroid_map(ex_map(3:5,:,:),somax,pia_input,[1:148],2);
-[out_ang_exL4] = centroid_map(ex_map(6:7,:,:),somax,pia_input,[1:148],5);
+[out_ang_ex] = centroid_map(ex_map(:,:,:),somax,pia_input,[1:cells],0);
+[out_ang_exL23] = centroid_map(ex_map(3:5,:,:),somax,pia_input,[1:cells],2);
+[out_ang_exL4] = centroid_map(ex_map(6:7,:,:),somax,pia_input,[1:cells],5);
 %difference map
-[out_ang_diff] = centroid_map(diff_map(:,:,:),somax,pia_input,[1:148],0);
+[out_ang_diff] = centroid_map(diff_map(3:5,:,:),somax,pia_input,[1:cells],0);
+%fake map
+[out_ang_fake] = centroid_map(map_fake(3:5,:,:),somax,pia_input,[1:cells],2);
 %% Plotting the centroid with vector pointing towrads it
-ang1=out_ang_ex;
-ang2=out_ang_in;
-idxtp=1:148;
+ang1=out_ang_exL23;
+ang2=out_ang_inL23;
+idxtp=1:147;
 %call function quiver
 quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,120);
+%% Display soma posiiton and how it was aligned for PCA
+idxtp=1:147;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
+subplot(1,3,1);
+for i=1:length(idxtp)
+ hold on;plot(ang1(i,1),ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',5);   
+end
+hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
+subplot(1,3,2);
+for i=1:length(idxtp)
+ hold on;plot(8,ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',5);   
+end
+hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
+subplot(1,3,3);
+for i=1:length(idxtp)
+ hold on;plot(ang1(i,1),4,'k^','MarkerFaceColor','w','MarkerSize',5);   
+end
+hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
+%% DIstributions of actual centroid
+ang2=out_ang_inL23;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
+subplot(1,4,1);
+h4 = histogram(ang2(:,4)*69-ang2(:,2)*69,4);h4.BinWidth = 0.5*69;box off;h4.EdgeColor = 'k';h4.FaceColor = 'w';xlabel('\Delta Centroid Y');ylabel('counts')
+subplot(1,4,2);
+scatter(ang2(:,4)*69,ang2(:,2)*69,'ko');set(gcf,'color','w');[R P]=corrcoef(ang2(:,4),ang2(:,2),'row','complete');xlabel('Vertical Centroid (\mum)');ylabel('Soma location y (\mum)')
+subplot(1,4,3);
+h4 = histogram(ang2(:,3)*69-ang2(:,1)*69,4);h4.BinWidth = 0.5*69;box off;h4.EdgeColor = 'k';h4.FaceColor = 'w';xlabel('\Delta Centroid X');ylabel('counts')
+subplot(1,4,4);
+scatter(ang2(:,3)*69,ang2(:,2)*69,'ko');set(gcf,'color','w');xlabel('Horizontal Centroid (\mum)');ylabel('Soma location x (\mum)');
+%% Relation betwen ex and in centroid
+ang1=out_ang_exL4;
+ang2=out_ang_inL4;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
+subplot(1,3,1);
+pointsize=20;
+[cmap]=buildcmap('kmgy');
+scatter(ang1(:,3)*69-ang2(:,3)*69,ang1(:,4)*69-ang2(:,4)*69,pointsize,pia_input,'filled');set(gcf,'color','w');xlabel('Ex-In X');ylabel('Ex-In Y');
+hold on;line([-200 200], [0 0],'Color','k','LineStyle','--');hold on;line([0 0], [-200 200],'Color','k','LineStyle','--'); c=colorbar;colormap(cmap);c.Label.String = 'Pial depth';
+subplot(1,3,2);
+scatter(ang1(:,5),ang2(:,5),pointsize,pia_input,'filled');set(gcf,'color','w');;xlabel('Excitation');ylabel('Inhibition');c=colorbar;colormap(cmap);c.Label.String = 'Pial depth';hold on; refline(1,0)
+subplot(1,3,3);
+scatter(ang1(:,8)*69,ang2(:,8)*69,pointsize,pia_input,'filled');set(gcf,'color','w');xlabel('Excitation');ylabel('Inhibition');c=colorbar;colormap(cmap);c.Label.String = 'Pial depth';hold on;refline(1,0)
 %% Display correlation between all PCs and pial depth Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov L5frov out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_diff(:,5)]; 
 correlation_matrix(com,1);title('Vertical');
@@ -393,12 +538,17 @@ correlation_matrix(com,1);title('Horizontal');
 %% Display correlations scores and angle towards centroid
 com=[score_ex(:,1:3) score_in(:,1:3) out_ang_inL23 pia_input]; 
 correlation_matrix(com,1);title('PC scores and angle to centroid');
-%% %%Display desired correlations PC2in and angle and 
-corr_plot(out_ang_inL23(:,5),score_in(:,2),diffL4',{'Angle centroid L23 in','PCin2','L4ex-in'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L23','PCin2','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_inL23(:,5),pia_input,pia_input,{'Angle centroid L23 ex','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_exL23(:,5),pia_input,pia_input,{'Angle centroid L23 ex','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
+%% %%Display desired correlations PC2in and angle and pia input
+corr_plot(out_ang_inL23(:,3),score_in(:,2),diffL4',{'Angle centroid L23 in','PCin2','L4ex-in'});set(gca,'Ydir','reverse');
+%% Desired correlation between angle and inhbition 
+corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L23in','PCin2','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(out_ang_inL23(:,4),score_in(:,2),pia_input,{'Y centroid in L23in','PCin2','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(out_ang_inL23(:,5),pia_input,pia_input,{'Angle centroid L23 in','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(out_ang_exL4(:,5),pia_input,pia_input,{'Angle centroid L23 ex','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(L23fr(:,2),pia_input,out_ang_inL23(:,5),{'L23in fraction','Pial depth','angle L23in'});set(gca,'Ydir','reverse');
+%fake maps
+corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
+corr_plot(out_ang_fake(:,5),pia_input,pia_input,{'Angle centroid L23 fake','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
 %% 
 %MORPHOLOGY AND INPUT
 %% Get 16x16 maps for basal and apical
@@ -488,25 +638,48 @@ corr_plot(com(:,1),abs(com(:,7)),com(:,10),{'L4ex input','Apical width/height','
  %% %%Display desired correlations between pial depth and L23/L4
 corr_plot(sftf_out(find(sftf_out(:,3)>0.01),5),od_out(find(sftf_out(:,3)>0.01),8),sftf_out(find(sftf_out(:,3)>0.01),2),{'L4ex input','Apical width/height','XSA'});
 %% Discretize based on pia
-discretize_plot(pia_all,[180:8:350],od_out(:,6),1);
-discretize_plot(pia_all,3,abs(od_out(:,5)),1);
-discretize_plot(pia_all,5,spon_out(:,1),1);
-%discretize_plot(pia_input,5,out_ang_inL23(:,5),1)
+discretize_plot(pia_all,3,od_out(:,3),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('all in vivo cells');ylim([0 180])
+%% 
+find(od_out(:,3)<90);
+discretize_plot(pia_all(find(od_out(:,3)>=90)),3,od_out(find(od_out(:,3)>=90),3),1);
+%% 
+discretize_plot(pia_all,3,abs(sftf_pref(:,21)),1);
+
+
 %%  IN VIVO IN VITRO
 %% Read out paramteres from iviv structure
-[od_out_iviv spon_out_iviv sftf_out_iviv] = concat_iviv(str,nan_vector);
+[od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,nan_vector);
 %% Correlations PCs input and OD out
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) od_out_iviv]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations PCs input and sftft out
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,[1:7])]; 
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,:)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations Input vertical vs ODout
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov od_out_iviv]; 
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov L4fr(:,1)-L4fr(:,2) od_out_iviv]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Correlations Input vertical vs ODout
-com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) od_out_iviv]; 
-correlation_matrix(com,1);title('Input vertical ODout iviv');
+com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+%% Correlations Input vertical vs ODout
+com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) sftf_out_iviv]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+
+
+ %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(tot_input(:,1),sftf_out_iviv(:,8),od_out_iviv(:,end),{'L4ex input','Apical width/height','XSA'});
+%%  %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(score_in(:,2),od_out_iviv(:,4),pia_input,{'PC2in','Orientation preference','Pial depth'});
+%%  %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(out_ang_inL23(:,5),od_out_iviv(:,4),pia_input,{'Angle centroid L23in','Orientation preference','Pial depth'});xlim([-60 120]) 
+%%  %% %%Display desired correlations between pial depth and L23/L4
+corr_plot(out_ang_exL4(:,5),od_out_iviv(:,4),L4fr(:,1),{'Angle centroid L4ex','Orientation preference','Pial depth'});;xlim([45 90]) 
+%% Display correlation with fake map
+corr_plot(out_ang_fake(:,5),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
+%% 
+corr_plot(out_ang_exL23(:,5)-out_ang_inL23(:,5),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
+%% 
+corr_plot(out_ang_inL23(:,4)-out_ang_exL4(:,4),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
 %% Correlations Input horizontal vs ODout
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
 correlation_matrix(com,0);title('Input horizontal ODout iviv');
@@ -541,15 +714,17 @@ g1=[];g2=[];g3=[];
 com=[];com=[od_out_iviv morph_parameters(:,1:21) sum_densap' sum_densba' max_densba' max_densap' MLba_diff' MLap_diff']
 correlation_matrix(com,0);title('PMorphology od out');
  %% %%Display desired correlations between input and iviv
-corr_plot(com(:,3),com(:,14),pia_input,{'L4ex input','Apical width/height','XSA'}); 
+corr_plot(com(:,4),com(:,19),com(:,12),{'L4ex input','Apical width/height','XSA'}); 
 corr_plot(com(:,1),pia_input,pia_input,{'L4ex input','Apical width/height','XSA'}); 
 %% 
-corr_plot(com(find(com(:,7)<50),7),com(find(com(:,7)<50),10),pia_input(find(com(:,7)<50)),{'L4ex input','Apical width/height','XSA'}); 
+corr_plot(com(find(com(:,7)<50),7),com(find(com(:,7)<50),13),pia_input(find(com(:,7)<50)),{'L4ex input','Apical width/height','XSA'}); 
 %% 
-find(com(:,11)>240)
-corr_plot(com(find(com(:,11)>240),4),com(find(com(:,11)>240),11),pia_input(find(com(:,11)>240)),{'L4ex input','Apical width/height','XSA'});  
+find(com(:,12)>240)
+corr_plot(com(find(com(:,12)>240),12),com(find(com(:,12)>240),4),pia_input(find(com(:,12)>240)),{'Maximal radial distance of apical tree from soma','Orientation preference','Pial depth'});  xlim([200 450]);ylim([0 200]);
 %% 
-discretize_plot(pia_input,3,od_out_iviv(:,4),1);
+discretize_plot(pia_input,3,od_out_iviv(:,4),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('in vivo in vitro cells');ylim([0 180])
+%% 
+corr_plot(com(:,23),com(:,1),pia_input,{'Number of branch points basal','Orientation selectivity index (gOSI)','Pial depth'}); xlim([0 22]);ylim([0 1])
 %% responsive vs non responsive
 g1=find(sftf_out_iviv(:,1)==0);
 g2=find(od_out(:,1)==1);
@@ -570,3 +745,54 @@ com=[];com=[sftf_out_iviv(:,[1:6]) tot_input]
 correlation_matrix(com,0);title('ang od out');
  %% %%Display desired correlations between input and iviv
 corr_plot(od_out_iviv(:,8),tot_input(:,2),od_out_iviv(:,8),{'L4ex input','Apical width/height','XSA'});
+%% Plot Morphologies of cells all or defined subgroups
+% g1=find(od_out_iviv(:,8)<75);g2=find(od_out_iviv(:,8)>75);g3=[];
+% gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
+% gv(g1)=1;gv(g2)=2;gv(g3)=3;
+% gv(find(gv==0))=NaN;
+%call function
+plot_morphologies(str,id_m,10,10);
+% g1=[];g2=[];g3=[];
+%% 
+
+%% Plot only in vivo morpho cells
+[ina inb]=intersect(id_m,find(iviv_cells==1));
+plot_morphologies(str,ina,6,6);
+ina=[];inb=[];
+%% 
+for i=1:156
+    if ~isempty(str(i).morph)==1 & str(i).resp==1 & ~isempty(str(i).OSI)==1
+        m_res(i)=1;
+     
+    else
+       m_res(i)=NaN;
+    end
+end
+morph_res=find(m_res==1);
+%% 
+
+for i=1:length(nan_vector)
+    if ~isempty(str(nan_vector(i)).morph)==1 
+    zz{:,i}=str(nan_vector(i)).morphtraces;
+    else
+        zz{:,i}=NaN;
+    end
+end
+%% 
+m_res=[];
+for i=1:length(nan_vector)
+    if ~isempty(str(nan_vector(i)).morph)==1 & str(nan_vector(i)).resp==1 & ~isempty(str(nan_vector(i)).OSI)==1
+        m_res(i)=1;
+     
+    else
+       m_res(i)=NaN;
+    end
+end
+morph_res_sub=find(m_res==1);
+%% Plot cells sorted based on OSI
+plot_morphologies_iviv(zz,morph_res_sub,6,6)
+%% 
+[isa isb]=sort(od_out_iviv(morph_res_sub,1));
+%% 
+plot_morphologies_iviv(zz,morph_res_sub(isb),6,6)
+

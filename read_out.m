@@ -257,6 +257,7 @@ load(char(filename));%load mat file
      oppResp{i,:}=L23_PC(i).OD.oppResp(temp,:);
      sigma{i,:}=L23_PC(i).OD.sigma(temp,:);
      fit_tuning{i,:}=L23_PC(i).OD.fit_tuning(temp,:)';
+     pia{i,:}=L23_PC(i).pial_depth(temp);
      temp=[];
  end
  %% 
@@ -272,6 +273,7 @@ load(char(filename));%load mat file
  DSI=vertcat(gDSI{:});
  ODI=horzcat(ODI{:});
  Ca_sum=vertcat(allCa{:});
+ pia_all=horzcat(pia{:});
  %% 
  %SFTF
    
@@ -606,4 +608,13 @@ aiviv=non_nan_idx;
 for i=1:length(aiviv)
    str_m(aiviv(i)).PC=data_w_input(i,:);
  
+end
+%% 
+iviv_cells = [str(:).iviv]==1;
+str_m=str;
+aiviv=find(iviv_cells==1);
+
+for i=1:length(aiviv)
+   str_m(aiviv(i)).pia_invivo=pia_all(i);
+
 end

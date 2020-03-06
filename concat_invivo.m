@@ -211,7 +211,7 @@ end
           dsi_pref_sftf(i)=NaN;
           ori_pref_sftf(i)=NaN;
           dir_pref_sftf(i)=NaN;
-          Ca_p_sftf=NaN;
+          Ca_p_sftf(i)=NaN;
           
          osi_sc(i,:)=ones(1,9)*NaN;
           dsi_sc(i,:)=ones(1,9)*NaN;
@@ -272,7 +272,7 @@ end
   %% 
   od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; pCa_a; resp; con; ips]';
   spon_out=[sad_a;pci_a']';
-  sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' sftfs_res_a']
+  sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' Ca_pref_sftft' sftfs_res_a']
   sftf_sel=[1-osi_sc 1-dsi_sc]; 
   sftf_pref=[ori_sftf_f dir_sftf_f Ca_sc];
   pia_all=pial_all;

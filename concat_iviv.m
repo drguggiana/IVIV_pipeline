@@ -1,4 +1,4 @@
-function [od_out_iviv spon_out_iviv sftf_out_iviv] = concat_iviv(str,nan_vector)
+function [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,nan_vector)
 %% Extract Oripref, Dirpref and sigmatuning for ipsi, contra and bino cell. For bino cell I use the orientation preference for the 
 %more dominant eye (based on ODI)
 non_nan_idx=nan_vector(1:end);
@@ -75,9 +75,11 @@ for i=1:length(non_nan_idx);
 if ~isempty(str(non_nan_idx(i)).pci)==1
 iv_spon(i)=str(non_nan_idx(i)).sad;
 iv_popcop(i)=str(non_nan_idx(i)).pci;
+iv_pia_input(i)=str(non_nan_idx(i)).pia_invivo;
 else
 iv_spon(i)=NaN;    
 iv_popcop(i)=NaN; 
+iv_pia_input(i)=NaN;
 end
 end
 %% %OD decompistion
@@ -103,12 +105,14 @@ for i=1:length(non_nan_idx)
         iv_TF(i)=str(non_nan_idx(i)).TF;
         oripref_sftf(i)=str(non_nan_idx(i)).Ori_sftf;
         dirpref_sftf(i)=str(non_nan_idx(i)).Dir_sftf;
+        Ca_peak_sftf(i)=str(non_nan_idx(i)).Ca_peak_sftf;
         oripref_sftf_all(i,:)=str(non_nan_idx(i)).Ori_sftf_all;
         dirpref_sftf_all(i,:)=str(non_nan_idx(i)).Dir_sftf_all;
         osi_sftf(i)=str(non_nan_idx(i)).OSI_sftf;
         dsi_sftf(i)=str(non_nan_idx(i)).DSI_sftf;
         osi_sftf_all(i,:)=str(non_nan_idx(i)).OSI_sftf_all;
         dsi_sftf_all(i,:)=str(non_nan_idx(i)).DSI_sftf_all;
+        Ca_peak_sftf_all(i,:)=str(non_nan_idx(i)).Ca_sftf_all;
         if sum(str(non_nan_idx(i)).sftf_resp)==0;
             iv_resp2(i)=0;
         else sum(str(non_nan_idx(i)).sftf_resp)>0;
@@ -122,15 +126,19 @@ for i=1:length(non_nan_idx)
         dirpref_sftf(i)=NaN;
         osi_sftf(i)=NaN;
         dsi_sftf(i)=NaN;
+        Ca_peak_sftf(i)=NaN;
         osi_sftf_all(i,:)=ones(1,9)*NaN;
         dsi_sftf_all(i,:)=ones(1,9)*NaN;
         oripref_sftf_all(i,:)=ones(1,9)*NaN;
         dirpref_sftf_all(i,:)=ones(1,9)*NaN;
+        Ca_peak_sftf_all(i,:)=ones(1,9)*NaN;
     end
 end
 %% Assemble out
-od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma' iv_Ca_peak'];
+od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma' iv_Ca_peak' iv_pia_input'];
 spon_out_iviv = [iv_spon' iv_popcop'];
-sftf_out_iviv = [iv_resp2' iv_SF' iv_TF' osi_sftf' dsi_sftf' oripref_sftf' dirpref_sftf' osi_sftf_all dsi_sftf_all oripref_sftf_all dirpref_sftf_all];
+sftf_out_iviv = [iv_resp2' iv_SF' iv_TF' osi_sftf' dsi_sftf' oripref_sftf' dirpref_sftf' Ca_peak_sftf']
+sftf_out_sel_iviv=[osi_sftf_all dsi_sftf_all];
+sftf_out_pref_iviv=[oripref_sftf_all dirpref_sftf_all Ca_peak_sftf_all];
 
 end
