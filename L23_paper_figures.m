@@ -1363,7 +1363,7 @@ end
 %IN
 [sx sy wx_in wy_in ang_ai ang_bi ang_ai_v hypo_i vec_slope_i qdi] = centroid_map(in_map(:,:,:),somax,pia_input,[1:148],0);
 [sx sy wx_inl4 wy_inl4 ang_ail4 ang_bil4 ang_ai_vl4 hypo_il4 vec_slope_il4 qdil4] = centroid_map(in_map(6:8,:,:),somax,pia_input,[1:148],5);
-[sx sy wx_inl3 wy_inl3 ang_ail3 ang_bil3 ang_ai_vl3 hypo_il3 vec_slope_il3 qdil3 valL3] = centroid_map(in_map_raw(3:5,:,:),somax,pia_input,[1:148],2);
+[sx sy wx_inl3 wy_inl3 ang_ail3 ang_bil3 ang_ai_vl3 hypo_il3 vec_slope_il3 qdil3] = centroid_map(in_map_raw(3:5,:,:),somax,pia_input,[1:148],2);
 %EX
 [sx sy wx_ex wy_ex ang_ae ang_be ang_ae_v hypo_e vec_slope_e qde] = centroid_map(ex_map,somax, pia_input,[1:148],0);
 [sx sy wx_exl4 wy_exl4 ang_ael4 ang_bel4 ang_ae_vl4 hypo_el4 vec_slope_el4 qdel4] = centroid_map(ex_map(6:8,:,:),somax,pia_input,[1:148],5);
