@@ -11,9 +11,11 @@ set(gcf,'color','w')
 for i = 1:3
     subplot(1,3,i)
     imagesc(reshape(coeff1(:,i),16+bin_num,16+hbin_num));
-    axis square;colorbar;colormap('hot');
+    axis square;colorbar;colormap(cmap);caxis([-0.4 0.4]);
+    set(gca,'xtick',[]);
+set(gca,'ytick',[]);
 end
-c=colorbar;colormap(cmap);axis off;
+c=colorbar;colormap(cmap);
 c.Label.String = 'Coefficient';
 
 
@@ -29,18 +31,22 @@ set(gcf,'color','w')
 for i = 1:3
     subplot(2,3,i)
     imagesc(reshape(coeff1(:,i),16+bin_num,16+hbin_num));
-    axis square;caxis([-0.2 0.4]);axis off
+    axis square;caxis([-0.4 0.4]);
+    set(gca,'xtick',[]);
+set(gca,'ytick',[]);
 end
-c=colorbar;colormap(cmap);axis off;
+c=colorbar;colormap(cmap);
 c.Label.String = 'Coefficient';
 hold on;
 
 for i = 1:3
     subplot(2,3,i+3)
     imagesc(reshape(coeff2(:,i),16+bin_num,16+hbin_num));
-    axis square;caxis([-0.2 0.4]);axis off
+    axis square;caxis([-0.4 0.4]);
+    set(gca,'xtick',[]);
+set(gca,'ytick',[]);
 end
-c=colorbar;colormap(cmap);axis off;
+c=colorbar;colormap(cmap);
 c.Label.String = 'Coefficient';
     
 end

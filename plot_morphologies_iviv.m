@@ -7,14 +7,14 @@ fig7= figure;set(fig7, 'Name', 'Morphology');set(fig7, 'Position', [200, 0, 800,
    
 if iscell(tmp)==1
        m=plot_tree(tmp{1,1},[1 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-        m.EdgeColor = 'r'
+        m.EdgeColor = 'k'
        m1=plot_tree(tmp{1,2},[0 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m1.EdgeColor = 'k'
+       m1.EdgeColor = 'm'
        m2=plot_tree(tmp{1,3},[0 0 1],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m2.EdgeColor = 'b'
+       m2.EdgeColor = 'g'
 
  set(gca,'Ydir','reverse');
-  xlim([-250 250]);
+  xlim([-300 300]);
  ylim([0 450]);
  axis off;
  set(gcf,'color','w');
@@ -24,7 +24,7 @@ if iscell(tmp)==1
      else
      end
 else
-    plot(1,1,'Marker','^','MarkerFaceColor','b','MarkerEdgeColor','k','MarkerSize',4);
+     plot(1,1,'Marker','^','MarkerFaceColor','b','MarkerEdgeColor','k','MarkerSize',4);
       tmp={};axis off
 end
  end
@@ -35,14 +35,14 @@ end
      tmp=str{1,ids(i)}
   if iscell(tmp)==1
        m=plot_tree(tmp{1,1},[1 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-        m.EdgeColor = 'r'
+        m.EdgeColor = 'k'
        m1=plot_tree(tmp{1,2},[0 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m1.EdgeColor = 'k'
+       m1.EdgeColor = 'm'
        m2=plot_tree(tmp{1,3},[0 0 1],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m2.EdgeColor = 'b'
+       m2.EdgeColor = 'g'
 
  set(gca,'Ydir','reverse');
-  xlim([-250 250]);
+  xlim([-300 300]);
  ylim([0 450]);
  axis off;
  set(gcf,'color','w');
