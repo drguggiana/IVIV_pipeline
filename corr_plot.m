@@ -1,7 +1,7 @@
 function corr_plot(par1,par2,par3,label_names)
 if isempty(par3)==1
 figure;set(gcf,'color','w');
- [R P]=corrcoef(par1,par2);scatter(par1,par2,25,'o','MarkerEdgeColor','k');box off;xlabel(label_names{1});ylabel(label_names{2});
+ [R P]=corrcoef(par1,par2);s=scatter(par1,par2,25,'o','MarkerEdgeColor','k','MarkerFaceColor','k');box off;xlabel(label_names{1});ylabel(label_names{2});
 %set(gca,'Ydir','reverse');
  if P(2)<0.05 & P(2)>0.01
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
@@ -26,12 +26,13 @@ pointsize=20;
 figure; set(gcf,'color','w');
 scatter(par1,par2,pointsize,par3,'filled');
 box off; hold on; c=colorbar;colormap(cmap);c.Label.String = label_names{3}; %c.Ticks=[min(par3):round(min(par3)/3,-1):max(par3)];  
-caxis([min(par3) max(par3)]);
+%caxis([min(par3) max(par3)]);
 
-if any(isnan(par2))==1
-idxn = find(~isnan(par2));
+if any(isnan(par1))==1
+idxn = find(~isnan(par1));
+caxis([min(par3(idxn)) max(par3(idxn))]);
 else
-idxn=1:length(par2);
+idxn=1:length(par1);
 end
 P = polyfit(par1(idxn),par2(idxn),1);
  yfit = P(1)*[min(par1):0.1:max(par1)]+P(2);
