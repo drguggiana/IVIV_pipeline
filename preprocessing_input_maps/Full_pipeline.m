@@ -3,21 +3,20 @@
 %% Clean up
 clearvars
 close all
-% addpath(genpath('C:\Users\drguggiana\Dropbox\Bonhoeffer_code'))
+
+% get the paths
+Paths
 %% Load paths
 
 %allocate memory to store the paths and the ori_setup from both setups
 path_info = cell(2,2);
 
 %for both setups
-for setups = 1:1
+for setups = 1:2
 
     %pick the folders to use
-    folder_list = uipickfiles('FilterSpec','I:\Simon Weiler\INPUT MAPS_final_joel\');
+    folder_list = uipickfiles('FilterSpec',input_maps_path);
 
-
-    %define the path to save the output files
-    out_path = 'R:\Share\Simon\Drago_Volker_Simon\Trace_cluster_out_joel';
     %get the number of folders
     folder_num = length(folder_list);
     %allocate memory to store the subfolders that qualify
@@ -81,17 +80,17 @@ for setups = 1:1
 end
 %% Run the interpolation software
 %for both setups
-for setups = 1:1
-    PIPE_Trace_interpolate_joel(path_info{setups,1},path_info{setups,2})
+for setups = 1:2
+    PIPE_Trace_interpolate(path_info{setups,1},path_info{setups,2},preprocessing_path,trace_interp_path)
 end
 %% Run the mapmaker software
 
 %define the vector of file tags
-file_tags = {{'_rawClassSetup2'}};
+file_tags = {{'_rawClassSetup1'},{'_rawClassSetup2'}};
 %for both setups
-for setups = 1:1
-    PIPE_Trace_mapmaker_Class_joel(file_tags{setups})
+for setups = 1:2
+    PIPE_Trace_mapmaker_Class(file_tags{setups},trace_interp_path,mapmaker_path)
 end
 %% Run the structure creator software
 
-PIPE_Map_structureCreator_joel
+PIPE_Map_structureCreator(mapmaker_path,preprocessing_path,layers_path,structure_path)

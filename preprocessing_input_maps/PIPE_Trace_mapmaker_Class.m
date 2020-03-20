@@ -1,8 +1,8 @@
-function PIPE_Trace_mapmaker_Class_joel(file_tags)
+function PIPE_Trace_mapmaker_Class(file_tags,input_path,out_path)
 %% Load the pre-processed traces
 
 %define the main file path
-model_path = 'R:\Share\Simon\Drago_Volker_Simon\Trace_cluster_out_joel';
+model_path = input_path;
 
 %load the file
 % %define the file tags
@@ -401,7 +401,7 @@ end
 %% Save the maps
 
 %define the output path
-save_path = 'R:\Share\Simon\Drago_Volker_Simon\Trace_mapmaker_out_joel';
+save_path = out_path;
 
 %assemble the file name
 save_name = strcat(datestr(now,'yymmdd_HHMM'),'_EImaps',ori_setup,'.mat');

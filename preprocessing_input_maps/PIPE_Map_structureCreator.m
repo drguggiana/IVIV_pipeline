@@ -1,12 +1,12 @@
-function PIPE_Map_structureCreator_joel
+function PIPE_Map_structureCreator(input_path,flip_path,layers_path,out_path)
 %% Load the gaussian models
 
 %define the main file path
-model_path = 'R:\Share\Simon\Drago_Volker_Simon\Trace_mapmaker_out_joel';
+model_path = input_path;
 
 %load the file
 %define the file tags
-file_tags = {'EImapsSetup2'};
+file_tags = {'_EImapsSetup1','EImapsSetup2'};
 %allocate memory to store the data
 all_data = cell(length(file_tags),1);
 
@@ -35,7 +35,7 @@ invitro_struct = cell2struct(all_data,{'cellName','excMap','inhMap','excCounts',
 %pial distance, cell ID (from Simon))
 
 %define the map path
-excinh_path = 'R:\Share\Simon\Drago_Volker_Simon\Joel_Project\';
+excinh_path = flip_path;
 
 %load the file
 load(fullfile(excinh_path,strcat('Flip_map','.mat')))
@@ -48,12 +48,9 @@ invitro_struct = invitro_struct(ia);
 Flip_map = Flip_map(ib,:);
 %% Load the layer info for each map
 
-%define the search path
-layers_path = 'R:\Share\Simon\Drago_Volker_Simon\layer_GUI_out_joel\';
-
 %generate the possible paths from this main folder
-
-layers_all = {layers_path};
+layers_all = strsplit(genpath(layers_path),';')';
+layers_all = layers_all(2:3);
 
 %allocate memory to store the matrices
 layers_persetup = cell(length(layers_all),1);
@@ -138,8 +135,8 @@ for cells = 1:cell_num
     %for each layer, calculate the charge normalized to whole cell
     for layers = 1:layer_num
         
-        excinh_perlayer(layers,1) = nansum(abs(exc(lyr==layer_list(layers))))/nansum(abs(exc(:)));
-        excinh_perlayer(layers,2) = nansum(abs(inh(lyr==layer_list(layers))))/nansum(abs(inh(:)));
+        excinh_perlayer(layers,1) = nansum(abs(exc(lyr==layer_list(layers))))/nansum(abs(exc(ismember(lyr,layer_list))));
+        excinh_perlayer(layers,2) = nansum(abs(inh(lyr==layer_list(layers))))/nansum(abs(inh(ismember(lyr,layer_list))));
         
         excinh_perlayer_total(layers,1) = nansum(abs(exc(lyr==layer_list(layers))));
         excinh_perlayer_total(layers,2) = nansum(abs(inh(lyr==layer_list(layers))));
@@ -243,7 +240,7 @@ end
 %% Save the structure
 
 %define the output path
-save_path = 'R:\Share\Simon\Drago_Volker_Simon\Full_data_structure_joel';
+save_path = out_path;
 
 %assemble the file name
 save_name = strcat(datestr(now,'yymmdd_HHMM'),'_dataStruct.mat');
