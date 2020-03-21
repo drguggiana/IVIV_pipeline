@@ -17,7 +17,7 @@ morpho_path = morphomaps_path;
 % define the path to the main data structure
 % main_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivivo_InVitro full data structure\190612_1400_dataStruct_ODI_etc_added.mat';
 % main_path = 'R:\Share\Simon\Drago_Volker_Simon\_Post_Simon\200219_str_final.mat';
-main_path = fullfile(structure_path,'200219_str_final.mat');
+main_path = fullfile(structure_path,'200306_str_final.mat');
 
 % define the path to save the pics
 % morpho_pics_path = 'R:\Share\Simon\Drago_Volker_Simon\Morpho_input_pics';
@@ -262,38 +262,38 @@ plot(cumsum(explained_in),'*')
 %% Cluster the maps
 pialD = [str(:).pialD];
 clu_num = 4;
-[idx_input, clustering_input, leafOrder] = hca(cell_cell(:,2:end),0,'ward',clu_num,pialD(non_nan_cells),0);%call function for clustering
+[idx_input, clustering_input, leafOrder] = hca([score_ex(:,1:3) score_in(:,1:3)],0,'ward',clu_num,pialD,0,0.6);
 %% OFF Plot the cluster average maps
 
-% figure
-% 
-% % for all the clusters
-% for clu = 1:clu_num
-%     subplot(2,clu_num,clu)
-%     imagesc(reshape(mean(original_maps(clu==idx_input,1:256),1),16,16))
-%     hold on
-%     plot(get(gca,'XLim'),[8.5 8.5],'k')
-%     plot([8.5 8.5],get(gca,'YLim'),'k')
-%     caxis([0 0.8])
-%     axis square
-%     subplot(2,clu_num,clu+clu_num)
-%     imagesc(reshape(mean(original_maps(clu==idx_input,257:512),1),16,16))
-%     hold on
-%     plot(get(gca,'XLim'),[8.5 8.5],'k')
-%     plot([8.5 8.5],get(gca,'YLim'),'k')
-%     caxis([0 0.8])
-%     axis square
-% end
-% 
-% figure
-% soma_depth = pialD(non_nan_cells);
-% 
-% % for all the clusters
-% for clu = 1:clu_num
-%     errorbar(clu,mean(soma_depth(clu==idx_input)),std(soma_depth(clu==idx_input))/sqrt(sum(clu==idx_input)),'o')
-%     hold on
-% end
-% set(gca,'XLim',[0, clu_num+1],'YDir','reverse')
+figure
+
+% for all the clusters
+for clu = 1:clu_num
+    subplot(2,clu_num,clu)
+    imagesc(reshape(mean(original_maps(clu==idx_input,1:256),1),16,16))
+    hold on
+    plot(get(gca,'XLim'),[8.5 8.5],'k')
+    plot([8.5 8.5],get(gca,'YLim'),'k')
+    caxis([0 0.8])
+    axis square
+    subplot(2,clu_num,clu+clu_num)
+    imagesc(reshape(mean(original_maps(clu==idx_input,257:512),1),16,16))
+    hold on
+    plot(get(gca,'XLim'),[8.5 8.5],'k')
+    plot([8.5 8.5],get(gca,'YLim'),'k')
+    caxis([0 0.8])
+    axis square
+end
+
+figure
+soma_depth = pialD(non_nan_cells);
+
+% for all the clusters
+for clu = 1:clu_num
+    errorbar(clu,mean(soma_depth(clu==idx_input)),std(soma_depth(clu==idx_input))/sqrt(sum(clu==idx_input)),'o')
+    hold on
+end
+set(gca,'XLim',[0, clu_num+1],'YDir','reverse')
 %% Read the TMD cluster indexes
 
 % read the file
@@ -319,7 +319,7 @@ for cells = 1:cell_num
 end
 %% Morpho density corr
 % calculate the correlation between morpho density and maps
-morphoMaps = {str(non_nan_cells).morphoMap_apical};
+morphoMaps = {str(non_nan_cells).morphoMap_basal};
 excMaps = {str(non_nan_cells).excMap};
 inhMaps = {str(non_nan_cells).inhMap};
 non_nan_names = {str(non_nan_cells).cellName};
@@ -800,6 +800,36 @@ for pc = 1:pc_num
     imagesc(reshape(coeff_in(:,pc),16+bin_num,16+hbin_num))
     axis square
 end
+
+figure
+
+% for all the clusters
+for clu = 1:clu_num
+    subplot(2,clu_num,clu)
+    imagesc(reshape(mean(original_maps(clu==idx_input,1:256),1),16,16))
+    hold on
+    plot(get(gca,'XLim'),[8.5 8.5],'k')
+    plot([8.5 8.5],get(gca,'YLim'),'k')
+    caxis([0 0.8])
+    axis square
+    subplot(2,clu_num,clu+clu_num)
+    imagesc(reshape(mean(original_maps(clu==idx_input,257:512),1),16,16))
+    hold on
+    plot(get(gca,'XLim'),[8.5 8.5],'k')
+    plot([8.5 8.5],get(gca,'YLim'),'k')
+    caxis([0 0.8])
+    axis square
+end
+
+figure
+soma_depth = pialD(non_nan_cells);
+
+% for all the clusters
+for clu = 1:clu_num
+    errorbar(clu,mean(soma_depth(clu==idx_input)),std(soma_depth(clu==idx_input))/sqrt(sum(clu==idx_input)),'o')
+    hold on
+end
+set(gca,'XLim',[0, clu_num+1],'YDir','reverse')
 autoArrangeFigures
 %% Arrow plots
 error('Stop here')

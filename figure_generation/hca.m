@@ -1,4 +1,4 @@
-function [idx, clustering, leafOrder] = hca(input,pc_ana,linkage_meth,cluster_number,pia,inputd)
+function [idx, clustering, leafOrder] = hca(input,pc_ana,linkage_meth,cluster_number,pia,inputd,threshold)
 if inputd==1;
 Z=normr_2(input,2);
 else
@@ -44,21 +44,49 @@ end
 % end
 % end
 
-
+color_idx={'m','g','b','r'};
 fig2 = figure;
 set(fig2, 'Name', 'HCA');
 set(fig2, 'Position', [200, 0, 1500, 1000]);
 set(gcf,'color','w');
 
 subplot(3,2,1);
-dendrogram(clustering,0,'reorder',leafOrder,'ColorThreshold','default');%plot entire dendrogram (0), with the reordered leafOrder
+H=dendrogram(clustering,0,'reorder',leafOrder,'Orientation','left','ColorThreshold',[threshold*max(clustering(:,3))]);%plot entire dendrogram (0), with the reordered leafOrder
 %dendrogram(clustering,0,'reorder',leafOrder)
 set(gcf,'color','w');
-ylabel('Euclidean distance');
-xlabel('Cells');
+set(H,'LineWidth',1.5);
+% ylabel('Euclidean distance');
+% xlabel('Cells');
+ xlabel('Euclidean distance');
+ %ylabel('Cells');
 set(gca,'box','off');
 %axis square;
-set(gca, 'XTick',[]);
+ lineColours = cell2mat(get(H,'Color'));
+%set(gca, 'XTick',[]);
+set(gca, 'YTick',[]);
+% H(1).Color = 'r';
+% H(8).Color = [0 0.5 0];
+for m=1:length(cluster_number)
+idx_c=find(lineColours(:,m)==1);
+for i=1:length(idx_c)
+    H(idx_c(i)).Color=color_idx{m};
+end
+idx_c=[];
+% idx2=find(lineColours(:,2)==1);
+% idx1=find(lineColours(:,3)==1);
+end
+
+% 
+% 
+% for i=1:length(idx2)
+%     H(idx2(i)).Color=[1 1 0.1];
+% end
+% 
+% for i=1:length(idx3)
+%     H(idx3(i)).Color=[0 1 0];
+% end
+
+
 
 
 %Siluohtte test for HCA, cluster number confirmation
