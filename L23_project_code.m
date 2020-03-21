@@ -302,6 +302,7 @@ corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
 [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
 abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
+layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
 %% Calculate the fraction from the overlap for verti and hori
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
 %% Calculate fraction using the overlap binary maps
@@ -325,6 +326,15 @@ L5fr=[nanmean(frac_exv_m(:,8:10),2) nanmean(frac_inv(:,9:11),2)];
 L23frov=[nanmean(frac_ovv(:,3:5),2)];
 L4frov=[nanmean(frac_ovv(:,6:7),2)];
 L5frov=[nanmean(frac_ovv(:,8:10),2)];
+%% Calculate fraction using the layer assignement
+for i=1:length(frac_exv_m)
+    L4fr_l(i,:)=[nanmean(frac_exv_m(i,find(layer_assign(i,:)==3))) nanmean(frac_inv(i,find(layer_assign(i,:)==3)))]
+    
+end
+%% 
+figure;set(gcf,'color','w');imagesc(layer_assign')
+hold on;line([47 47], [1 16],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+ylim([1 16]);yticks([1:1:16]);ylabel('Rows');xlabel('Cells');%c=colorbar;
 %% Calculate difference between ex and in (ex-in) medial and lateral
 frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
@@ -498,6 +508,50 @@ xlim([-10.5 10.5]);xlabel('EX - IN');hold on;set(gca,'FontSize',10);hold on; tit
 ylim([0 80]);
 text(-6,80,'EX','Color','r');
 text(6,80,'IN','Color','b');
+legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+
+%% Display both maximum horizontal span and diff betwen ex and in COLUMN APPROACH
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
+subplot(3,2,1);
+set(fig1,'defaultAxesColorOrder',[left_color; right_color]);hold on;
+h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
+xlim([-0.3 0.3]);text(-0.2,60,'IN','Color','b');text(0.2,60,'EX','Color','r');text(-0.2,50,'L2/3','Color','k');
+subplot(3,2,3);
+h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
+text(-0.2,50,'L4','Color','k');
+xlim([-0.3 0.3]);
+subplot(3,2,5);
+h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
+xlim([-0.3 0.3]);xlabel('Ex-In');hold on;set(gca,'FontSize',10);
+text(-0.2,50,'L5','Color','k');
+
+subplot(3,2,2);
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+xlim([-10 10]);hold on; title('Horizontal');box off;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7,60,'IN','Color','b');text(7,60,'EX','Color','r');
+text(-7,50,'L2/3','Color','k');
+subplot(3,2,4);
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7,50,'L4','Color','k');
+subplot(3,2,6);
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
+xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+xlabel('Ex-In');hold on;set(gca,'FontSize',10);
+text(-7,50,'L5','Color','k');
+%% 
+subplot(3,2,2);
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('Cell counts');
+%yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
+%ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+xlim([-10 10]);hold on; title('Horizontal');%p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
 legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
 %% binary overview
 fig1=figure;set(gcf,'color','w');hold on;

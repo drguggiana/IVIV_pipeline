@@ -26,16 +26,16 @@ hold on;
 for i=1:length(idxtp)
 q=quiver(ang2(i,1),ang2(i,2),(ang2(i,3)-ang2(i,1)),(ang2(i,4)-ang2(i,2)),0);
  q.Color='blue';q.MaxHeadSize=0.1;q.LineWidth=1;
-hold on;plot(ang2(i,1),ang2(i,2),'k^','MarkerFaceColor','w','MarkerSize',3);
+hold on;plot(ang2(i,1),ang2(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',3);
 %hold on;plot(c_cord(t,1),4,'k^');
 
 end
 for i=1:length(idxtp)
- hold on;plot(ang1(i,1),ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',3);   
+ hold on;plot(ang1(i,1),ang1(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',3);
 end
 box off;set(gca,'Ydir','reverse');
 %set(gca,'Xdir','reverse');
-xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+xlim([5 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;
 
 end

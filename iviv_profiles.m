@@ -45,7 +45,7 @@ abs_exv=[];
 for i=1:length(u);
 for k=1:14
 temp=exmap(3:16,:,i) ;
-layers_assign(:,1,i)=layers(3:16,1,i);
+layers_assign(:,i)=layers(3:16,1,i);
 frac_exv(i,k)=sum(temp(k,:))/sum(temp(:));
 abs_exv(i,k)=sum(temp(k,:));
 end
