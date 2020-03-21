@@ -9,8 +9,8 @@ for i=1:binnr
     idxgr=[];
 end
 figure;set(gcf,'color','w');
-errorbar(g_avg,g_sem,'-s','MarkerSize',10,...
-    'MarkerEdgeColor','red','MarkerFaceColor','red');box off;
+errorbar(g_avg,g_sem,'-o','MarkerSize',5,...
+    'MarkerEdgeColor','k','MarkerFaceColor','k');box off;
 else avgt==0
 
 end

@@ -46,15 +46,15 @@ qd(i)=1;
 elseif dpy(i)>0 & dpx(i)<0 %bottom left
 ang_b_v(i)=ang_b(i)*-1;  
 ang_a_v(i)=ang_a(i)*-1;
-qd(i)=2;
-elseif dpy(i)>0 & dpx(i)>0 %bottom right
-ang_b_v(i)=ang_b(i);
-ang_a_v(i)=ang_a(i);
 qd(i)=3;
+elseif dpy(i)>0 & dpx(i)>0 %bottom right
+ang_b_v(i)=ang_b(i)
+ang_a_v(i)=ang_a(i)
+qd(i)=4;
 else dpy(i)<0 & dpx(i)>0 %top right
 ang_b_v(i)=ang_b(i); 
 ang_a_v(i)=ang_a(i);
-qd(i)=4;
+qd(i)=2;
 end
 end
 %out

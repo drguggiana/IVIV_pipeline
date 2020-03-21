@@ -1,4 +1,4 @@
-function correlation_matrix(data,bon)
+function G=correlation_matrix(data,bon)
 
 [R,P]=corrcoef(data,'rows','complete');
 %[R,P]=corrcoef(data);
@@ -12,7 +12,7 @@ function correlation_matrix(data,bon)
 G(m==0)=m(m==0);
 G=tril(G);
 figure;imagesc(G);colorbar;
-[cmap]=buildcmap('bwr');
+[cmap]=buildcmap('bwg');
 colormap(cmap);
 caxis([-1 1]);
 xlabel('Feature number');

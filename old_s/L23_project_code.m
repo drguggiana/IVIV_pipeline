@@ -257,6 +257,9 @@ set(gca,'Ydir','reverse')
 %histogram(pia_input,'FaceColor','k','FaceAlpha',0.1)
 set(gca,'FontSize',14);
 %set(gca,'FontWeight','bold')
+%% Setup A and Setup B
+setups=[zeros(47,1);ones(100,1)]
+
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
@@ -293,25 +296,24 @@ correlation_matrix(com,1);
 xticks([1:1:9]);yticks([1:1:9]);
 xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','PC1_{com}','PC2_{com}','PC3_{com}'});xtickangle(45)
 yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','PC1_{com}','PC2_{com}','PC3_{com}'});ytickangle(45);xlabel('Feature');ylabel('Feature');
-
 %% %%Display desired correlations between PCs/pia
 corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
 %% Load fraction and absolute input of maps for ex and inh
 [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
 abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
+layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
 %% Calculate the fraction from the overlap for verti and hori
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
-%% 
+%% Calculate fraction using the overlap binary maps
 [frac_bh abs_bh frac_bv abs_bv] = iviv_profiles_ov(ov_map_bin);
-
-%% Calculate difference between ex and in (ex-in) for L23, L4,  L5
-for i=1:length(nan_vector(incl_idx:end))
-diffL23(i)=sum(sum(diff_map(3:5,:,i),2))/length(nonzeros(diff_map(3:5,:,i)));
-diffL4(i)=sum(sum(diff_map(6:7,:,i),2))/length(nonzeros(diff_map(6:7,:,i)));
-diffL5(i)=sum(sum(diff_map(8:11,:,i),2))/length(nonzeros(diff_map(8:11,:,i)));
-end
-%% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions
+%% Calculate difference between ex and in (ex-in) for L23, L4,  L5 ONE APPROACH
+% for i=1:length(nan_vector(incl_idx:end))
+% diffL23(i)=sum(sum(diff_map(3:5,:,i),2))/length(nonzeros(diff_map(3:5,:,i)));
+% diffL4(i)=sum(sum(diff_map(6:7,:,i),2))/length(nonzeros(diff_map(6:7,:,i)));
+% diffL5(i)=sum(sum(diff_map(8:11,:,i),2))/length(nonzeros(diff_map(8:11,:,i)));
+% end
+%% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions USING THIS FOR NOW
 frac_diffv=frac_exv_m-frac_inv;
 frac_diffh=frac_exh-frac_inh;
 diffL23fr=nanmean(frac_diffv(:,3:5),2);
@@ -324,6 +326,15 @@ L5fr=[nanmean(frac_exv_m(:,8:10),2) nanmean(frac_inv(:,9:11),2)];
 L23frov=[nanmean(frac_ovv(:,3:5),2)];
 L4frov=[nanmean(frac_ovv(:,6:7),2)];
 L5frov=[nanmean(frac_ovv(:,8:10),2)];
+%% Calculate fraction using the layer assignement
+for i=1:length(frac_exv_m)
+    L4fr_l(i,:)=[nanmean(frac_exv_m(i,find(layer_assign(i,:)==3))) nanmean(frac_inv(i,find(layer_assign(i,:)==3)))]
+    
+end
+%% 
+figure;set(gcf,'color','w');imagesc(layer_assign')
+hold on;line([47 47], [1 16],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+ylim([1 16]);yticks([1:1:16]);ylabel('Rows');xlabel('Cells');%c=colorbar;
 %% Calculate difference between ex and in (ex-in) medial and lateral
 frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
@@ -371,14 +382,14 @@ tmp=find(tL23e>0);
 if isempty(tmp)==0
 ex_spanhL4(i)=tmp(end)-tmp(1);
 else
-ex_spanhL4(i)=NaN;
+ex_spanhL4(i)=0;
 end
 tmp=[];
 tmp=find(tL23i>0);
 if isempty(tmp)==0
 in_spanhL4(i)=tmp(end)-tmp(1);
 else
-in_spanhL4(i)=NaN;
+in_spanhL4(i)=0;
 end
 tmp=[];
 tL23i=[];
@@ -398,14 +409,14 @@ tmp=find(tL23e>0);
 if isempty(tmp)==0
 ex_spanhL5(i)=tmp(end)-tmp(1);
 else
-ex_spanhL5(i)=NaN;
+ex_spanhL5(i)=0;
 end
 tmp=[];
 tmp=find(tL23i>0);
 if isempty(tmp)==0
 in_spanhL5(i)=tmp(end)-tmp(1);
 else
-in_spanhL5(i)=NaN;
+in_spanhL5(i)=0;
 end
 tmp=[];
 tL23i=[];
@@ -430,37 +441,119 @@ tmp1=ex_map_raw(6:7,:,i);
 tmp2=in_map_raw(6:7,:,i);
 tot_inputL4(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 end
-%% Display both maximum horizontal span and diff betwen ex and in
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 200]);
-%Diff between ex and in shwon with histogram and CDF for L23 L4 and L5
-subplot(1,2,1);
-set(fig1,'defaultAxesColorOrder',[left_color; right_color]);left_color =[0 0 0];right_color =[0 0 0];hold on;
-yyaxis left;
-h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
-hold on;h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
-yyaxis right;p1=cdfplot(diffL23fr);hold on;p2=cdfplot(diffL4fr);hold on;p3=cdfplot(nonzeros(diffL5fr));grid off; title('');
-ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
-xlim([-0.3 0.3]);
-left_color =[0 0 0];right_color =[0 0 0];hold on;set(gca,'FontSize',10);hold on; title('Vertical');
-subplot(1,2,2);
-yyaxis left;
-h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
-hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
-hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('Cell counts');
-yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
-ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
-xlim([-10 10]);hold on; title('Horizontal');p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
-% subplot(1,4,3);
-% scatter(ex_spanh,in_spanh,'ko');set(gcf,'color','w');ref=refline(1,0);xlabel('Excitation');ylabel('Inhibition');title('Max. horizontal span');ref.Color=[0 0 0];set(gca,'FontSize',10);
-% subplot(1,4,4);
-% h4 = histogram(ex_spanh-in_spanh,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = 'w';xlabel('\Delta Span');ylabel('counts');set(gca,'FontSize',10);
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,[]);
 %% Display fraction for ex and in as well as overlap for all 16 rows and columns 
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_ovv*-1,frac_ovh*-1,[]);
 %% Display fraction for ex and in as well as overlap bin for all 16 rows and columns 
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_bv*-1,frac_bh*-1,[]);
+%% Display both maximum horizontal span and diff betwen ex and in ONE APPROACH
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 200]);
+%Diff between ex and in shwon with histogram and CDF for L23 L4 and L5
+left_color =[0 0 0];right_color =[0 0 0]
+subplot(1,2,1);
+set(fig1,'defaultAxesColorOrder',[left_color; right_color]);hold on;
+h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
+hold on;h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
+%yyaxis right;p1=cdfplot(diffL23fr);hold on;p2=cdfplot(diffL4fr);hold on;p3=cdfplot(nonzeros(diffL5fr));grid off; title('');
+%ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
+xlim([-0.3 0.3]);xlabel('Ex-In');hold on;set(gca,'FontSize',10);hold on; title('Vertical');
+subplot(1,2,2);
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('Cell counts');
+%yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
+%ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+xlim([-10 10]);hold on; title('Horizontal');%p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
+legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+%% DISPLAY SPAN, SECOND APPROACH
+display_sortfr(L23fr,1,'L2/3')
+display_sortfr(L4fr,1,'L4')
+display_sortfr(L5fr,1,'L5')
 %% 
+spanhL23=[ex_spanhL23;in_spanhL23]'
+spanhL4=[ex_spanhL4;in_spanhL4]'
+spanhL5=[ex_spanhL5;in_spanhL5]'
+ 
+display_sortfr(spanhL23,2,'L2/3');
+display_sortfr(spanhL4,2,'L4');
+display_sortfr(spanhL5,2,'L5');
+
+%% Alternative displaying EX and IN 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 200]);
+subplot(1,2,1);
+binRange = -0.3:0.075:0.3;
+hcx = histcounts(diffL23fr*-1,[binRange Inf]);
+hcy = histcounts(diffL4fr*-1,[binRange Inf]);
+hcz = histcounts(diffL5fr*-1,[binRange Inf]);
+b1=bar(binRange,[hcx;hcy;hcz]');box off,
+b1(1).FaceColor=[0 1 0];
+b1(2).FaceColor='m'
+b1(3).FaceColor=[0.8 0.8 0.8];
+xlim([-0.35 0.35]);xlabel('EX - IN');hold on;set(gca,'FontSize',10);hold on; title('Vertical');ylabel('Cell counts');
+ylim([0 100])
+text(-0.15,100,'EX','Color','r');
+text(0.15,100,'IN','Color','b');
+
+subplot(1,2,2);
+binRange = -8:2:10;
+hcx = histcounts((ex_spanhL23-in_spanhL23)*-1,[binRange Inf]);
+hcy = histcounts((ex_spanhL4-in_spanhL4)*-1,[binRange Inf]);
+hcz = histcounts((ex_spanhL5-in_spanhL5)*-1,[binRange Inf]);
+b1=bar(binRange,[hcx;hcy;hcz]');box off
+b1(1).FaceColor=[0 1 0];
+b1(2).FaceColor='m'
+b1(3).FaceColor=[0.8 0.8 0.8];
+xlim([-10.5 10.5]);xlabel('EX - IN');hold on;set(gca,'FontSize',10);hold on; title('Horizontal');ylabel('Cell counts');
+ylim([0 80]);
+text(-6,80,'EX','Color','r');
+text(6,80,'IN','Color','b');
+legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+
+%% Display both maximum horizontal span and diff betwen ex and in COLUMN APPROACH
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
+subplot(3,2,1);
+set(fig1,'defaultAxesColorOrder',[left_color; right_color]);hold on;
+h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
+xlim([-0.3 0.3]);text(-0.2,60,'IN','Color','b');text(0.2,60,'EX','Color','r');text(-0.2,50,'L2/3','Color','k');
+subplot(3,2,3);
+h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
+text(-0.2,50,'L4','Color','k');
+xlim([-0.3 0.3]);
+subplot(3,2,5);
+h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
+xlim([-0.3 0.3]);xlabel('Ex-In');hold on;set(gca,'FontSize',10);
+text(-0.2,50,'L5','Color','k');
+
+subplot(3,2,2);
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+xlim([-10 10]);hold on; title('Horizontal');box off;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7,60,'IN','Color','b');text(7,60,'EX','Color','r');
+text(-7,50,'L2/3','Color','k');
+subplot(3,2,4);
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7,50,'L4','Color','k');
+subplot(3,2,6);
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
+xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+xlabel('Ex-In');hold on;set(gca,'FontSize',10);
+text(-7,50,'L5','Color','k');
+%% 
+subplot(3,2,2);
+h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('Cell counts');
+%yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
+%ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+xlim([-10 10]);hold on; title('Horizontal');%p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
+legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+%% binary overview
 fig1=figure;set(gcf,'color','w');hold on;
 for i=1:size(frac_bv,1)
 exp=plot(frac_bv(i,1:16)',1:16,'-m');set(gca,'Ydir','reverse');ylabel('Vertical input');xlabel('Fraction of overlap EX/IN');box off;
@@ -692,14 +785,12 @@ correlation_matrix(com,1);title('PC scores and angle to centroid');
 corr_plot(out_ang_inL23(:,3),score_in(:,2),diffL4',{'Angle centroid L23 in','PCin2','L4ex-in'});set(gca,'Ydir','reverse');
 %% Desired correlation between angle and inhbition 
 corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b')
-%% 
-
+%% Desired correlation between angle and pial depth 
 corr_plot(out_ang_inL23(:,4),score_in(:,2),pia_input,{'Y centroid in L23in','PCin2','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(out_ang_inL23(:,5),pia_input,pia_input,{'Angle centroid L23 in','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(out_ang_exL4(:,5),pia_input,pia_input,{'Angle centroid L23 ex','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(L23fr(:,2),pia_input,out_ang_inL23(:,5),{'L23in fraction','Pial depth','angle L23in'});set(gca,'Ydir','reverse');
-%% 
-%fake maps
+%% FAKE MAPS CENTROID
 corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(out_ang_fake(id_ori,5),score_in(id_ori,2),pia_input(id_ori),{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(out_ang_fake(:,5),pia_input,pia_input,{'Angle centroid L23 fake','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
@@ -811,17 +902,24 @@ corr_plot(sftf_out(find(sftf_out(:,3)>0.01),5),od_out(find(sftf_out(:,3)>0.01),8
 %% Discretize based on pia
 discretize_plot(pia_all,3,od_out(:,3),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('all in vivo cells');ylim([0 180])
 %% 
-find(od_out(:,3)<90);
+
 discretize_plot(pia_all(find(od_out(:,3)>=90)),3,od_out(find(od_out(:,3)>=90),3),1);
 %% 
 discretize_plot(pia_all,3,abs(sftf_pref(:,21)),1);
+
+%% 
+discretize_plot(pia_all,3,abs(od_out(:,3)),1);ylim([0 180]);xticklabels({''});
+hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
+%% 
+discretize_plot(pia_input,3,abs(od_out_iviv(:,4)),1);ylim([0 180]);xticklabels({''});
+hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
 
 
 %%  IN VIVO IN VITRO
 %% Read out paramteres from iviv structure
 [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,nan_vector);
-%% get specific non NANs id
 
+%% Get IDS for ORI
 id_ori=find(~isnan(od_out_iviv(:,4)));
 %% Correlations PCs input and OD out
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) od_out_iviv]; 
@@ -830,7 +928,7 @@ correlation_matrix(com,0);title('PC inputs ODout iviv');
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,:)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations Input vertical vs ODout
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov L4fr(:,1)-L4fr(:,2) tot_input tot_inputL23 tot_inputL4 sftf_out_iviv(:,1:6)]; 
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr L23frov L4frov L4fr(:,1)-L23fr(:,2) tot_input tot_inputL23 tot_inputL4 od_out_iviv(:,1:8)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
@@ -1070,13 +1168,13 @@ pcs     =[1 2 3];
 %Pial depth
 [statsout] = barplot_sw(pia_input,idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
 %% Orientation preference
-[statsout] = barplot_sw(od_out_iviv(:,4),idx_input,{'Clusters','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse')
+[statsout] = barplot_sw(od_out_iviv(:,4),idx_input,{'Clusters','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
 %% Orientation selectivity
 [statsout] = barplot_sw(od_out_iviv(:,8),idx_input,{'Clusters','Ca_{peak}'})
 %% Angle centroid
 [statsout] = barplot_sw(out_ang_inL23(:,3),idx_input,{'Clusters','Angle Centroid L23in'})
 %% L4 ex fraction
-[statsout] = barplot_sw(L4fr(:,1),idx_input,{'Clusters','L4 ex fraction'})
+[statsout] = barplot_sw(L4fr(:,1),idx_input,{'Clusters','L4 ex fraction'});set(gca,'FontSize',12)
 %% L4 total input sum
 [statsout] = barplot_sw(abs(tot_inputL4(:,1)),idx_input,{'Clusters','L4 total input'})
 %% L23 in fraction
@@ -1091,6 +1189,13 @@ pcs     =[1 2 3];
 [statsout] = barplot_sw(pia_input(id_ori),idx_input(id_ori),{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45);ylim([0 400])
 %% 
 [statsout] = barplot_sw(L4fr(id_ori,1),idx_input(id_ori),{'Clusters','L4 ex fraction'});
+%% 
+[fa]=discretize(pia_input(id_ori),3)
+[statsout] = barplot_sw(od_out_iviv(id_ori,4),fa,{'Pial depth bins','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
+%% 
+[fa]=discretize(pia_all,2)
+[statsout] = barplot_sw(od_out(:,3),fa',{'Pial depth bins','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
+%% 
 
 %%  morphology
 [statsout] = barplot_sw(MLba_diff',idx_input,{'Clusters','L23 total input'})
@@ -1100,6 +1205,11 @@ pcs     =[1 2 3];
 [statsout] = barplot_sw(morph_parameters(id_ori,3),idx_input(id_ori),{'Clusters','Correlation morpho input'})
 %% Plot clusters with values underneath it as heatmaps
 dendroplot(clustering_input,leafOrder,11,[score_ex(:,1:3) score_in(:,1:3)],{'PC1ex','PC2ex','PC3ex','PC1in','PC2in','PC3in'},pia_input)
+%% Looking at input fractions
+dendroplot(clustering_input,leafOrder,11,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'})
+%% Plot clusters with values underneath it as heatmaps
+dendroplot(clustering_input,leafOrder,11,[setups],{'Setups'})
+
 
 %% 
 com=[];com=[ap_correx' ap_corrin' sftf_out_iviv];
