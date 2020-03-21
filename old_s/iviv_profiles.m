@@ -1,4 +1,4 @@
-function [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layers_assign] = iviv_profiles(u,str) 
+function [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L23h L4h L5h pialD layers_assign] = iviv_profiles(u,str) 
 
 %Inputs 
 %u= idx of ipsi, contra, bino or unresponsive cells 
@@ -65,5 +65,35 @@ end
 layers_ass=layers_assign(:,:)';
 pialD=[str(u).pialD]';
 
-
+%% Horizontal fraction for L23 L4 and L5
+temp=[];
+for i=1:length(u)
+%L23ex
+temp=exmap(3:5,:,i);
+L23exh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+%L4ex
+temp=exmap(6:7,:,i);
+L4exh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+%L5ex
+temp=exmap(8:10,:,i);
+L5exh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+%L23in
+temp=inhmap(3:5,:,i);
+L23inh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+%L4in
+temp=inhmap(6:7,:,i);
+L4inh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+%L5in
+temp=inhmap(8:10,:,i);
+L5inh(i,:)=[sum(sum(temp(:,1:8)))/sum(temp(:)) sum(sum(temp(:,9:16)))/sum(temp(:))];
+temp=[];
+end
+L23h=[L23exh L23inh];
+L4h=[L4exh L4inh];
+L5h=[L5exh L5inh];
 end 

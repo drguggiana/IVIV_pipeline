@@ -259,7 +259,6 @@ set(gca,'FontSize',14);
 %set(gca,'FontWeight','bold')
 %% Setup A and Setup B
 setups=[zeros(47,1);ones(100,1)]
-
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
@@ -284,6 +283,7 @@ var_exp(explained_basal,explained_apical,{'Basal','Apical'});
 %% %% Display variance explained morph
 var_exp(explained_morph,[],[]); 
 
+%COEFFCIENTS
 %% Display coefficent of PCs ALIGNED in and ex
 coeff_display(coeff_ex,coeff_in,bin_num,hbin_num);
 %% Display coefficent of PCs ALIGNED combined
@@ -299,7 +299,7 @@ yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','
 %% %%Display desired correlations between PCs/pia
 corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
 %% Load fraction and absolute input of maps for ex and inh
-[frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
+[frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L23h L4h L5h pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
 abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
 layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
@@ -314,11 +314,12 @@ layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
 % diffL5(i)=sum(sum(diff_map(8:11,:,i),2))/length(nonzeros(diff_map(8:11,:,i)));
 % end
 %% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions USING THIS FOR NOW
-frac_diffv=frac_exv_m-frac_inv;
-frac_diffh=frac_exh-frac_inh;
-diffL23fr=nanmean(frac_diffv(:,3:5),2);
-diffL4fr=nanmean(frac_diffv(:,6:7),2);
-diffL5fr=nanmean(frac_diffv(:,8:10),2);
+% frac_diffv=frac_exv_m-frac_inv;
+% frac_diffh=frac_exh-frac_inh;
+% diffL23fr=nanmean(frac_diffv(:,3:5),2);
+% diffL4fr=nanmean(frac_diffv(:,6:7),2);
+% diffL5fr=nanmean(frac_diffv(:,8:10),2);
+
 %% Calculate VERTICAL ex and in fraction for L23, L4,  L5
 L23fr=[nanmean(frac_exv_m(:,3:5),2) nanmean(frac_inv(:,3:5),2)];
 L4fr=[nanmean(frac_exv_m(:,6:7),2) nanmean(frac_inv(:,6:7),2)];
@@ -326,20 +327,28 @@ L5fr=[nanmean(frac_exv_m(:,8:10),2) nanmean(frac_inv(:,9:11),2)];
 L23frov=[nanmean(frac_ovv(:,3:5),2)];
 L4frov=[nanmean(frac_ovv(:,6:7),2)];
 L5frov=[nanmean(frac_ovv(:,8:10),2)];
+%% 
+L5fr(find(L5fr(:,1)==0),1)=NaN ;
+L5fr(find(L5fr(:,2)==0),2)=NaN ;
+diffL23fr=L23fr(:,1)-L23fr(:,2);
+diffL4fr=L4fr(:,1)-L4fr(:,2);
+diffL5fr=L5fr(:,1)-L5fr(:,2);
+
 %% Calculate fraction using the layer assignement
 for i=1:length(frac_exv_m)
-    L4fr_l(i,:)=[nanmean(frac_exv_m(i,find(layer_assign(i,:)==3))) nanmean(frac_inv(i,find(layer_assign(i,:)==3)))]
-    
+    L4fr_l(i,:)=[nanmean(frac_exv_m(i,find(layer_assign(i,:)==3))) nanmean(frac_inv(i,find(layer_assign(i,:)==3)))];   
 end
-%% 
+%% Display alignement startegy for layers
 figure;set(gcf,'color','w');imagesc(layer_assign')
 hold on;line([47 47], [1 16],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 ylim([1 16]);yticks([1:1:16]);ylabel('Rows');xlabel('Cells');%c=colorbar;
-%% Calculate difference between ex and in (ex-in) medial and lateral
+%% Calculate difference between ex and in (ex-in) medial and lateral for whole map
 frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
 frh_diff_medial=nanmean(frac_diffh(:,1:8),2);
 frh_diff_lateral=nanmean(frac_diffh(:,9:end),2);
+%% Calculate difference between ex and in (ex-in) medial and lateral for per layer
+frh_medial_L23=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 %% Calculate the maximum horizontal span overall
 for i=1:length(nan_vector(incl_idx:end))
 tmp=find(frac_exh(i,:)>0);
@@ -382,14 +391,14 @@ tmp=find(tL23e>0);
 if isempty(tmp)==0
 ex_spanhL4(i)=tmp(end)-tmp(1);
 else
-ex_spanhL4(i)=0;
+ex_spanhL4(i)=NaN;
 end
 tmp=[];
 tmp=find(tL23i>0);
 if isempty(tmp)==0
 in_spanhL4(i)=tmp(end)-tmp(1);
 else
-in_spanhL4(i)=0;
+in_spanhL4(i)=NaN;
 end
 tmp=[];
 tL23i=[];
@@ -409,14 +418,14 @@ tmp=find(tL23e>0);
 if isempty(tmp)==0
 ex_spanhL5(i)=tmp(end)-tmp(1);
 else
-ex_spanhL5(i)=0;
+ex_spanhL5(i)=NaN;
 end
 tmp=[];
 tmp=find(tL23i>0);
 if isempty(tmp)==0
 in_spanhL5(i)=tmp(end)-tmp(1);
 else
-in_spanhL5(i)=0;
+in_spanhL5(i)=NaN;
 end
 tmp=[];
 tL23i=[];
@@ -466,19 +475,18 @@ hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeC
 %ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
 xlim([-10 10]);hold on; title('Horizontal');%p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
 legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
-%% DISPLAY SPAN, SECOND APPROACH
-display_sortfr(L23fr,1,'L2/3')
-display_sortfr(L4fr,1,'L4')
-display_sortfr(L5fr,1,'L5')
-%% 
+%% DISPLAY SPAN, SECOND APPROACH VERTICAL
+display_sortfr(L23fr,1,'L2/3');
+display_sortfr(L4fr,1,'L4');
+display_sortfr(L5fr,1,'L5');
+%% DISPLAY SPAN, SECOND APPROACH HORIZONTAL
 spanhL23=[ex_spanhL23;in_spanhL23]'
 spanhL4=[ex_spanhL4;in_spanhL4]'
 spanhL5=[ex_spanhL5;in_spanhL5]'
- 
+%display
 display_sortfr(spanhL23,2,'L2/3');
 display_sortfr(spanhL4,2,'L4');
 display_sortfr(spanhL5,2,'L5');
-
 %% Alternative displaying EX and IN 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 200]);
 subplot(1,2,1);
@@ -511,48 +519,47 @@ text(6,80,'IN','Color','b');
 legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
 
 %% Display both maximum horizontal span and diff betwen ex and in COLUMN APPROACH
+xf=69;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
 subplot(3,2,1);
 set(fig1,'defaultAxesColorOrder',[left_color; right_color]);hold on;
 h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;
-hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylim([0 50]);yticks([0:25:50])
 title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
-xlim([-0.3 0.3]);text(-0.2,60,'IN','Color','b');text(0.2,60,'EX','Color','r');text(-0.2,50,'L2/3','Color','k');
+xlim([-0.3 0.3]);text(-0.2,50,'IN','Color','b');text(0.2,50,'EX','Color','r');text(-0.2,40,'L2/3','Color','k');
+hold on;plot(nanmedian(diffL23fr),50,'v','MarkerFaceColor','m');
 subplot(3,2,3);
 h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
-hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
-text(-0.2,50,'L4','Color','k');
+hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
+text(-0.2,40,'L4');
+hold on;plot(nanmedian(diffL4fr),50,'v','MarkerFaceColor','g');ylim([0 50]);yticks([0:25:50])
 xlim([-0.3 0.3]);
 subplot(3,2,5);
 h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
-hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
-xlim([-0.3 0.3]);xlabel('Ex-In');hold on;set(gca,'FontSize',10);
-text(-0.2,50,'L5','Color','k');
-
+hold on;line([0 0], [1 50],'Color','k','LineStyle','--');
+xlim([-0.3 0.3]);xlabel('EX-IN vertical fraction');hold on;set(gca,'FontSize',10);
+text(-0.2,40,'L5','Color','k');
+hold on;plot(nanmedian(diffL5fr),50,'v','MarkerFaceColor',[0.5 0.5 0.5]);ylim([0 50]);yticks([0:25:50])
+%Horizontal span
 subplot(3,2,2);
-h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
-xlim([-10 10]);hold on; title('Horizontal');box off;
-hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
-text(-7,60,'IN','Color','b');text(7,60,'EX','Color','r');
-text(-7,50,'L2/3','Color','k');
+h4 = histogram((ex_spanhL23-in_spanhL23)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'm';
+xlim([-10*xf 10*xf]);hold on; title('Horizontal');box off;
+hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7*xf,50,'IN','Color','b');text(7*xf,50,'EX','Color','r');
+text(-7*xf,40,'L2/3','Color','k');
+hold on;plot(nanmedian((ex_spanhL23-in_spanhL23)*xf),50,'v','MarkerFaceColor','m');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,4);
-hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
-xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
-text(-7,50,'L4','Color','k');
+hold on;h4 = histogram((ex_spanhL4-in_spanhL4)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'g';
+xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+text(-7*xf,40,'L4','Color','k');
+hold on;plot(nanmedian((ex_spanhL4-in_spanhL4)*xf),50,'v','MarkerFaceColor','g');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,6);
-hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
-xlim([-10 10]);hold on;line([0 0], [1 60],'Color','k','LineStyle','--');set(gca,'FontSize',10);
-xlabel('Ex-In');hold on;set(gca,'FontSize',10);
-text(-7,50,'L5','Color','k');
-%% 
-subplot(3,2,2);
-h4 = histogram(ex_spanhL23-in_spanhL23,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'm';
-hold on;h4 = histogram(ex_spanhL4-in_spanhL4,8);h4.BinWidth = 1;h4.EdgeColor = 'k';h4.FaceColor = 'g';
-hold on;h4 = histogram(ex_spanhL5-in_spanhL5,8);h4.BinWidth = 1;box off;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];xlabel('\Delta Span');ylabel('Cell counts');
-%yyaxis right;p1=cdfplot(ex_spanhL23-in_spanhL23);hold on;p2=cdfplot(ex_spanhL4-in_spanhL4);hold on;p3=cdfplot(ex_spanhL5-in_spanhL5);grid off; title('');
-%ylabel('Cumulative');xlabel('Ex-In');p1.Color='m';p2.Color=[0 1 0];p3.Color=[0.5 0.5 0.5];legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
-xlim([-10 10]);hold on; title('Horizontal');%p1.LineStyle='--';p2.LineStyle='--';p3.LineStyle='--';
-legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
+hold on;h4 = histogram((ex_spanhL5-in_spanhL5)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
+xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+xlabel('EX-IN horizontal span (µm)');hold on;set(gca,'FontSize',10);
+text(-7*xf,40,'L5','Color','k');
+hold on;plot(nanmedian((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0.5 0.5]);ylim([0 50]);yticks([0:25:50])
+
 %% binary overview
 fig1=figure;set(gcf,'color','w');hold on;
 for i=1:size(frac_bv,1)
