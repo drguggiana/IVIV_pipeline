@@ -10,7 +10,7 @@ Paths
 input_path = input_maps_path;
 
 % define the path to save the output files
-out_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivo feature extraction';
+% out_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivo feature extraction';
 % define the path to the morphoMaps
 % morpho_path = 'R:\Share\Simon\Drago_Volker_Simon\morphoMaps\morphoMaps.mat';
 morpho_path = morphomaps_path;
