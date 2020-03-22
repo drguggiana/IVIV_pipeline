@@ -314,8 +314,8 @@ layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
 % diffL5(i)=sum(sum(diff_map(8:11,:,i),2))/length(nonzeros(diff_map(8:11,:,i)));
 % end
 %% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions USING THIS FOR NOW
-% frac_diffv=frac_exv_m-frac_inv;
-% frac_diffh=frac_exh-frac_inh;
+frac_diffv=frac_exv_m-frac_inv;
+ frac_diffh=frac_exh-frac_inh;
 % diffL23fr=nanmean(frac_diffv(:,3:5),2);
 % diffL4fr=nanmean(frac_diffv(:,6:7),2);
 % diffL5fr=nanmean(frac_diffv(:,8:10),2);
@@ -347,6 +347,8 @@ frh_medial=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 frh_lateral=[nanmean(frac_exh(:,9:end),2) nanmean(frac_inh(:,9:end),2)];
 frh_diff_medial=nanmean(frac_diffh(:,1:8),2);
 frh_diff_lateral=nanmean(frac_diffh(:,9:end),2);
+frh_medial_s=[sum(frac_exh(:,1:8),2) sum(frac_inh(:,1:8),2)];
+frh_lateral_s=[sum(frac_exh(:,9:end),2) sum(frac_inh(:,9:end),2)];
 %% Calculate difference between ex and in (ex-in) medial and lateral for per layer
 frh_medial_L23=[nanmean(frac_exh(:,1:8),2) nanmean(frac_inh(:,1:8),2)];
 %% Calculate the maximum horizontal span overall
@@ -522,7 +524,7 @@ legend('L23', 'L4','L5');legend boxoff; set(gca,'FontSize',10);
 xf=69;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
 subplot(3,2,1);
-set(fig1,'defaultAxesColorOrder',[left_color; right_color]);hold on;
+;hold on;
 h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor = 'm';hold on;
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylim([0 50]);yticks([0:25:50])
 title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
@@ -606,56 +608,32 @@ corr_plot(L23fr(:,2),pia_input,[],{'L23in input','Pial depth'});set(gca,'Ydir','
 corr_plot(L4fr(:,2),pia_input,[],{'L4in input','Pial depth'});set(gca,'Ydir','reverse');
 corr_plot(nonzeros(L5fr(:,1)),pia_input(find(nonzeros(L5fr(:,1)))),pia_input(find(nonzeros(L5fr(:,1)))),{'PC1in','L5in','Pial depth'});
 %% Pial depth correlation plot with fraction 
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 600, 200]);
-%Diff between ex and in shwon with histogram and CDF for L23 L4 and L5
-subplot(1,3,1);
-par1=L4fr(:,1);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;xlabel('L4 fraction');ylabel('Pial depth (µm)'); 
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
-     
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
-  P = polyfit(par1,par2,1);
-    yfit = P(1)*par1+P(2);
-    hold on;
-    plot(par1,yfit,'r-');set(gca,'box','off');set(gcf,'color','w');axis square;   set(gca,'Ydir','reverse');
-hold on;
-par1=L4fr(:,2);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;xlabel('L4 fraction');ylabel('Pial depth (µm)'); set(gca,'FontSize',10)
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
-     
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
-  P = polyfit(par1,par2,1);
-    yfit = P(1)*par1+P(2);
-    hold on;
-    plot(par1,yfit,'b-');set(gca,'box','off');set(gcf,'color','w');axis square;   set(gca,'Ydir','reverse');
-    %legend('Ex','In')
-  
-    
-subplot(1,3,2);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
+subplot(3,2,1);
 par1=L23fr(:,1);
 par2=pia_input((find(par1>0)));
 par1=par1((find(par1>0)))
-
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;xlabel('L23 fraction');ylabel('Pial depth (µm)'); set(gca,'FontSize',10)
+[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;%xlabel('Input fraction');
+ if P(2)<0.05 & P(2)>0.01
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
+ elseif P(2)<0.01 & P(2)>0.001
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
+ elseif P(2)<0.001
+    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+ else
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+ end
+  P = polyfit(par1,par2,1);
+    yfit = P(1)*par1+P(2);
+    hold on;
+    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;   set(gca,'Ydir','reverse');
+    ylabel('Pial depth (µm)'); set(gca,'FontSize',10);text(0.05,120,'L2/3');
+    
+subplot(3,2,3);
+par1=L4fr(:,1);
+par2=pia_input((find(par1>0)));
+par1=par1((find(par1>0)))
+[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;
  if P(2)<0.05 & P(2)>0.01
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
      
@@ -669,12 +647,14 @@ par1=par1((find(par1>0)))
   P = polyfit(par1,par2,1);
     yfit = P(1)*par1+P(2);
     hold on;
-    plot(par1,yfit,'r-');set(gca,'box','off');set(gcf,'color','w');axis square;   set(gca,'Ydir','reverse');
-hold on;
-par1=L23fr(:,2);
+    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');   set(gca,'Ydir','reverse');
+     ylabel('Pial depth (µm)');text(0.05,120,'L4');set(gca,'FontSize',10)
+ 
+ subplot(3,2,5);   
+ par1=L5fr(:,1);
 par2=pia_input((find(par1>0)));
 par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;xlabel('L23 fraction');ylabel('Pial depth (µm)'); 
+[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;
  if P(2)<0.05 & P(2)>0.01
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
      
@@ -686,20 +666,68 @@ par1=par1((find(par1>0)))
      title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end
  
-subplot(1,3,3);
-par1=L5fr(:,1);
+    hold on;
+    %plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;  
+    set(gca,'Ydir','reverse');
+     ylabel('Pial depth (µm)');text(0.05,110,'L5');set(gca,'FontSize',10);
+     xlim([0. 0.4]);xlabel('Fraction total input');set(gca,'FontSize',10);
+
+ subplot(3,2,2);
+par1=L23fr(:,2);
 par2=pia_input((find(par1>0)));
 par1=par1((find(par1>0)))
+[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
+ if P(2)<0.05 & P(2)>0.01
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
+ elseif P(2)<0.01 & P(2)>0.001
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
+ elseif P(2)<0.001
+    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+ else
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+ end  
+    set(gca,'Ydir','reverse');
+  set(gca,'FontSize',10);text(0.05,120,'L2/3');
+ 
+ subplot(3,2,4);
+par1=L4fr(:,2);
+par2=pia_input((find(par1>0)));
+par1=par1((find(par1>0)))
+[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
+ if P(2)<0.05 & P(2)>0.01
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
+ elseif P(2)<0.01 & P(2)>0.001
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
+ elseif P(2)<0.001
+    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+ else
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+ end  
+ P = polyfit(par1,par2,1);
+    yfit = P(1)*par1+P(2);
+    hold on;
+    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');  set(gca,'Ydir','reverse');
+     set(gca,'Ydir','reverse');
+set(gca,'FontSize',10);text(0.05,120,'L4');   xlim([0. 0.4]);
 
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;xlabel('L5 fraction');ylabel('Pial depth (µm)'); set(gca,'FontSize',10)
-set(gca,'Ydir','reverse');
-hold on;
+
+ subplot(3,2,6);
 par1=L5fr(:,2);
 par2=pia_input((find(par1>0)));
 par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;xlabel('L5 fraction');ylabel('Pial depth (µm)'); 
- set(gca,'Ydir','reverse');xlim([0 0.4]);axis square
- 
+[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
+ if P(2)<0.05 & P(2)>0.01
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
+ elseif P(2)<0.01 & P(2)>0.001
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
+ elseif P(2)<0.001
+    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+ else
+     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+ end  
+     set(gca,'Ydir','reverse');
+xlabel('Fraction total input');text(0.05,120,'L5'); set(gca,'FontSize',10);xlim([0. 0.4]);
+
 %% Calculate centroid of map and angle towards it 
 for i=1:length(nan_vector)
 somax(i)=str(nan_vector(i)).somaCenter(1);
@@ -725,7 +753,17 @@ for i=1:length(nan_vector)
 align_in(:,:,i)=reshape(aligned_maps_in(i,:),22,16);
 end
 %% 
+hg=[nanmean(L23h(:,1)) nanmean(L23h(:,2)); nanmean(L4h(:,1)) nanmean(L4h(:,2));nanmean(L5h(:,1)) nanmean(L5h(:,2))];
+hg_sem=[nanstd(L23h(:,1))/sqrt(length(L23h)) nanstd(L23h(:,2))/sqrt(length(L23h)); nanstd(L4h(:,1))/sqrt(length(L4h)) nanstd(L4h(:,2))/sqrt(length(L4h))...
+    ;nanstd(L5h(:,1))/sqrt(length(L5h))  nanstd(L5h(:,2))/sqrt(length(L5h))];
+figure;bar(hg);
+hold on;errorbar(hg,hg_sem,'LineStyle','none');
 
+
+
+%% 
+
+corr_plot(out_ang_exL4(:,3),L4h(:,2),[],{'Y centroid in L23in','PCin2','Pial depth'})
 %% Plotting the centroid with vector pointing towards it
 ang1=out_ang_exL4;
 ang2=out_ang_inL4;
@@ -942,6 +980,15 @@ com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+%% 
+%% 
+%% Correlations Input vertical vs ODout
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) tot_input(a) tot_inputL23(a) tot_inputL4(a) frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8)]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+
+%% Correlations Input vertical vs ODout
+com=[];com=[L23h L4h L5h od_out_iviv(:,:)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 
  %% %%Display desired correlations between pial depth and L23/L4
@@ -1203,9 +1250,14 @@ pcs     =[1 2 3];
 [fa]=discretize(pia_all,2)
 [statsout] = barplot_sw(od_out(:,3),fa',{'Pial depth bins','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
 %% 
+%% 
+[statsout] = barplot_sw(od_out_iviv(a,4),idx_input(a),{'Pial depth bins','Orientation preference'})
+%% 
+
+[statsout] = barplot_sw(L4fr(a,1),idx_input(a),{'Pial depth bins','Orientation preference'})
 
 %%  morphology
-[statsout] = barplot_sw(MLba_diff',idx_input,{'Clusters','L23 total input'})
+[statsout] = barplot_sw(morph_parameters(:,21),idx_input,{'Clusters','L23 total input'})
 %% 
 [statsout] = barplot_sw(ap_corrin',idx_input,{'Clusters','Correlation morpho input'})
 %% 
