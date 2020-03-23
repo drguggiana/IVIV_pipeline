@@ -15,7 +15,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
      iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
      iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
      iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
+     try
      iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(1);
+     catch
+          iv_Ca_peak(i)=iv_Ca(i);
+     end
     elseif str(non_nan_idx(i)).ipsi==1;
       oripref(i)=str(non_nan_idx(i)).Ori(2);
       dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -24,7 +28,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
       iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
       iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
       iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
+      try
       iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(2);
+      catch
+          iv_Ca_peak(i)=iv_Ca(i);
+      end
     elseif str(non_nan_idx(i)).bino==1;
          if str(non_nan_idx(i)).ODI>=0;
         oripref(i)=str(non_nan_idx(i)).Ori(1);
@@ -34,7 +42,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
+        try
         iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(1);
+        catch 
+            iv_Ca_peak(i)=iv_Ca(i);
+        end
          else str(non_nan_idx(i)).ODI<0;
             oripref(i)=str(non_nan_idx(i)).Ori(2);
         dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -43,7 +55,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
+        try
         iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(2);
+        catch
+            iv_Ca_peak(i)=iv_Ca(i);
+        end
     end
  else str(non_nan_idx(i)).unres==1;
         oripref(i)=NaN;

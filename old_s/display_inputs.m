@@ -6,9 +6,9 @@ fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200,
 %EX and IN Vertical
 subplot(2,3,1);hold on;
 for i=1:size(frac_v,1)
-exp=plot(frac_v(i,1:16)',1:16,'-r');set(gca,'Ydir','reverse');ylabel('Vertical input');xlabel('Fraction of total input');box off;
+exp=plot(frac_v(i,1:16)',1:16,'-r');set(gca,'Ydir','reverse');ylabel('Vertical input');box off;
 exp.Color(4) = 0.2;
-exp=plot(frac_v(i,17:end)'*-1,1:16,'-b');set(gca,'Ydir','reverse');ylabel('Vertical input');xlabel('Fraction of total input');box off;
+exp=plot(frac_v(i,17:end)'*-1,1:16,'-b');set(gca,'Ydir','reverse');ylabel('Vertical map position');box off;
 exp.Color(4) = 0.2;
 end
 hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
@@ -21,7 +21,7 @@ hold on;text(-0.5,0.2,'IN','Color','b');hold on;text(0.4,0.2,'EX','Color','r');
 %EX and IN Vertical DIFFERENCE
 subplot(2,3,2);hold on;
  for i=1:size(frac_diffv,1)
- exp=plot(frac_diffv(i,1:16)',1:16,'Color',[0.5 0.5 0.5]);set(gca,'Ydir','reverse');ylabel('Vertical input');xlabel('Fraction of total input');box off;
+ exp=plot(frac_diffv(i,1:16)',1:16,'Color',[0.5 0.5 0.5]);set(gca,'Ydir','reverse');xlabel('Fraction of total input');box off;
  exp.Color(4) = 0.2;
  end
 hold on;mexp=errorbar(nanmean(frac_diffv(:,1:16)),1:16,nanstd(frac_diffv(:,1:16))/sqrt(size(frac_diffv,1)),'horizontal','k');set(gca,'Ydir','reverse');
@@ -44,9 +44,9 @@ set(gca,'FontSize',10);text(-0.1,0.2,'Difference','Color','k');
 %EX and IN Horizontal
 subplot(2,3,4);hold on;
 for i=1:size(frac_v,1)
-exp=plot(frac_h(i,1:16)','-r');xlabel('Horizontal input');ylabel('Fraction of total input');box off;
+exp=plot(frac_h(i,1:16)','-r');ylabel('Fraction of total input');box off;
 exp.Color(4) = 0.2;
-exp=plot(frac_h(i,17:end)'*-1,'-b');xlabel('Horizontal input');ylabel('Fraction of total input');box off;
+exp=plot(frac_h(i,17:end)'*-1,'-b');ylabel('Fraction of total input');box off;
 exp.Color(4) = 0.2;
 end
 mexp=errorbar(nanmean(frac_h(:,1:16)),nanstd(frac_h(:,1:16))/sqrt(size(frac_h,1)),'k');
@@ -57,7 +57,7 @@ hold on;line([8 8], [-1 1],'Color','k','LineStyle','--');text(2.5,1,'Medial');te
 %EX and IN Horizontal DIFFERENCE
 subplot(2,3,5);hold on;
 for i=1:size(frac_diffh,1)
-exp=plot(frac_diffh(i,1:16),'Color',[0.5 0.5 0.5]);xlabel('Horizontal input');ylabel('Fraction of total input');box off;
+exp=plot(frac_diffh(i,1:16),'Color',[0.5 0.5 0.5]);xlabel('Horizontal map position');box off;
 exp.Color(4) = 0.2;
 end
 hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'horizontal','k');
