@@ -253,7 +253,7 @@ hold on;histogram(pia_input(iviv_celid),'FaceColor','g','Orientation','horizonta
 legend([' Input (n=' num2str(length(pia_input)),')'],[' Morph. (n=' num2str(length(pia_input(morph_cells_id))),')']...
     ,[' In vivo (n=' num2str(length(pia_input(iviv_celid))),')']);
 legend boxoff  
-set(gca,'Ydir','reverse')
+set(gca,'Ydir','reverse');yticks([100:100:400]);
 %histogram(pia_input,'FaceColor','k','FaceAlpha',0.1)
 set(gca,'FontSize',14);
 %set(gca,'FontWeight','bold')
@@ -1254,8 +1254,9 @@ pcs     =[1 2 3];
 [statsout] = barplot_sw(od_out_iviv(a,4),idx_input(a),{'Pial depth bins','Orientation preference'})
 %% 
 
-[statsout] = barplot_sw(L4fr(a,1),idx_input(a),{'Pial depth bins','Orientation preference'})
-
+[statsout] = barplot_sw(ex_spanhL5',idx_input,{'Pial depth bins','Orientation preference'})
+%% 
+[statsout] = barplot_sw(L23fr(id_ori,1),idx_input(id_ori),{'Clusters','L23 in fraction'})
 %%  morphology
 [statsout] = barplot_sw(morph_parameters(:,21),idx_input,{'Clusters','L23 total input'})
 %% 
@@ -1353,18 +1354,19 @@ corr_plot(max_s_ba(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_
 %% 
 corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});
 %% Plot individual cell with circles
-a=94;
+a=99;
 ml=15;
   tmp=zz{1,a}
   figure;set(gcf,'color','w')
   m=plot_tree(tmp{1,1},[1 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
          m.EdgeColor = [0 0 0]
        m1=plot_tree(tmp{1,2},[0 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m1.EdgeColor = 'm'
+       m1.EdgeColor = [0.5 0.5 0.5]
        m2=plot_tree(tmp{1,3},[0 0 1],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m2.EdgeColor = 'g'
+       m2.EdgeColor = [0.8 0.8 0.8]
 set(gca,'Ydir','reverse');
- 
+ axis off
+%% 
 
 for i=1:ml
 hold on;
