@@ -77,15 +77,12 @@ for cells = 1:length(nan_vector(incl_idx:end));
     bin_exc = str(nan_vector(cells)).excMap(3:16,:);
     bin_excm= [zeros(2,16); bin_exc];
     bin_inh = str(nan_vector(cells)).inhMap;
-    %get the layers
-   % lyr = invitro_struct(cells).layers;
     %get the overlap map
     ov_map(:,:,cells) = squeeze(sum(cat(3,bin_excm,bin_inh),3));  
     ov_map_n(:,:,cells)=ov_map(:,:,cells)./max(max(ov_map(:,:,cells)));
     %Get the ex and in total per map
     ex_tot(:,cells)=str(nan_vector(cells)).excinhTotal(1);
     in_tot(:,cells)=str(nan_vector(cells)).excinhTotal(2);
-    %layers(:,:,cells)=str(nan_vector(i)).layers;
 end
 %% Binary overlap map for EX and IN
 for cells = 1:length(nan_vector(incl_idx:end));
@@ -301,7 +298,7 @@ layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
 %% Calculate fraction using the overlap binary maps
 [frac_bh abs_bh frac_bv abs_bv] = iviv_profiles_ov(ov_map_bin);
-%% Calculate difference between ex and in (ex-in) for L23, L4,  L5 using fractions USING THIS FOR NOW
+%% Calculate difference between ex and in (ex-in) USING THIS FOR NOW
 frac_diffv=frac_exv_m-frac_inv;
 frac_diffh=frac_exh-frac_inh;
 %% Calculate VERTICAL ex and in fraction for L23, L4,  L5
@@ -379,19 +376,19 @@ h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor 
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylim([0 50]);yticks([0:25:50])
 title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
 xlim([-0.3 0.3]);text(-0.2,50,'IN','Color','b');text(0.2,50,'EX','Color','r');text(-0.2,40,'L2/3','Color','k');
-hold on;plot(nanmedian(diffL23fr),50,'v','MarkerFaceColor','m');
+hold on;plot(nanmedian(diffL23fr),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');
 subplot(3,2,3);
 h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
 text(-0.2,40,'L4');
-hold on;plot(nanmedian(diffL4fr),50,'v','MarkerFaceColor','g');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmedian(diffL4fr),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 xlim([-0.3 0.3]);
 subplot(3,2,5);
 h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');
 xlim([-0.3 0.3]);xlabel('\Delta EX-IN vertical fraction');hold on;set(gca,'FontSize',10);
 text(-0.2,40,'L5','Color','k');
-hold on;plot(nanmedian(diffL5fr),50,'v','MarkerFaceColor',[0.5 0.5 0.5]);ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmedian(diffL5fr),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 %Horizontal span
 subplot(3,2,2);
 h4 = histogram((ex_spanhL23-in_spanhL23)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'm';
@@ -399,18 +396,18 @@ xlim([-10*xf 10*xf]);hold on; title('Horizontal');box off;
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 text(-7*xf,50,'IN','Color','b');text(7*xf,50,'EX','Color','r');
 text(-7*xf,40,'L2/3','Color','k');
-hold on;plot(nanmedian((ex_spanhL23-in_spanhL23)*xf),50,'v','MarkerFaceColor','m');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmedian((ex_spanhL23-in_spanhL23)*xf),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,4);
 hold on;h4 = histogram((ex_spanhL4-in_spanhL4)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'g';
 xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 text(-7*xf,40,'L4','Color','k');
-hold on;plot(nanmedian((ex_spanhL4-in_spanhL4)*xf),50,'v','MarkerFaceColor','g');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmedian((ex_spanhL4-in_spanhL4)*xf),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,6);
 hold on;h4 = histogram((ex_spanhL5-in_spanhL5)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
 xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 xlabel('\Delta EX-IN horizontal span (µm)');hold on;set(gca,'FontSize',10);
 text(-7*xf,40,'L5','Color','k');
-hold on;plot(nanmedian((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0.5 0.5]);ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmedian((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
 %group based on pial depth
 g1=find(pia_input>=220);g2=find(pia_input<220);g3=[];
@@ -420,127 +417,7 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
 %% Pial depth correlation plot with fraction 
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
-subplot(3,2,1);
-par1=L23fr(:,1);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;%xlabel('Input fraction');
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['L23: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
-  P = polyfit(par1,par2,1);
-    yfit = P(1)*par1+P(2);
-    hold on;
-    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;   set(gca,'Ydir','reverse');
-    ylabel('Pial depth (µm)'); set(gca,'FontSize',10);%text(0.05,120,'L2/3');
-    
-subplot(3,2,3);
-par1=L4fr(:,1);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
-     
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['L4: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
-  P = polyfit(par1,par2,1);
-    yfit = P(1)*par1+P(2);
-    hold on;
-    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');   set(gca,'Ydir','reverse');
-     ylabel('Pial depth (µm)');%text(0.05,120,'L4');set(gca,'FontSize',10)
- set(gca,'FontSize',10)
- 
- subplot(3,2,5);   
- par1=L5fr(:,1);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);scatter(par1,par2,5,'o','MarkerEdgeColor','r','MarkerFaceColor','r');box off;
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
-     
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['L5: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
- 
-    hold on;
-    %plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;  
-    set(gca,'Ydir','reverse');
-     ylabel('Pial depth (µm)');%text(0.05,110,'L5');set(gca,'FontSize',10);
-     xlim([0. 0.4]);xlabel('Fraction total input');set(gca,'FontSize',10);
-
- subplot(3,2,2);
-par1=L23fr(:,2);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['L23: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end  
-    set(gca,'Ydir','reverse');
-  set(gca,'FontSize',10);%text(0.05,120,'L2/3');
- 
- subplot(3,2,4);
-par1=L4fr(:,2);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['L4: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end  
- P = polyfit(par1,par2,1);
-    yfit = P(1)*par1+P(2);
-    hold on;
-    plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');  set(gca,'Ydir','reverse');
-     set(gca,'Ydir','reverse');
-set(gca,'FontSize',10);  xlim([0. 0.4]);%text(0.05,120,'L4'); 
-
-
- subplot(3,2,6);
-par1=L5fr(:,2);
-par2=pia_input((find(par1>0)));
-par1=par1((find(par1>0)))
-[R P]=corrcoef(par1,par2);s=scatter(par1,par2,5,'o','MarkerEdgeColor','b','MarkerFaceColor','b');box off;%xlabel('Input fraction');
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])  
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['L5: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end  
-     set(gca,'Ydir','reverse');
-xlabel('Fraction total input'); set(gca,'FontSize',10);xlim([0. 0.4]);%text(0.05,120,'L5')
-
+plot_fraction(L23fr,L4fr,L5fr,pia_input);
 %% Calculate centroid of map and angle towards it 
 for i=1:length(nan_vector)
 somax(i)=str(nan_vector(i)).somaCenter(1);
@@ -563,7 +440,6 @@ map_fake(4,9,:)=1;
 [out_ang_diff] = centroid_map(diff_map(3:5,:,:),somax,pia_input,[1:cells],0);
 %fake map
 [out_ang_fake] = centroid_map(map_fake(3:5,:,:),somax,pia_input,[1:cells],2);
-
 %% Plotting the centroid with vector pointing towards it
 ang1=out_ang_exL4;
 ang2=out_ang_inL4;
@@ -593,10 +469,9 @@ for i=1:length(idxtp)
 end
 hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
-%% DIstributions of actual centroid
+%% Distributions of actual centroid
 a=1:147;
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,0,[],{});
-
 %% 
 
 
