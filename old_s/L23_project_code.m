@@ -347,18 +347,25 @@ for i=1:length(nan_vector(incl_idx:end))
 %whole map
 tmp1=ex_map_raw(:,:,i);
 tmp2=in_map_raw(:,:,i);
+% tmp1=ex_map(:,:,i);
+% tmp2=in_map(:,:,i);
 tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+%tot_input(i,:)=[sum(tmp1(:))/length(tmp1);sum(tmp2(:))/length(tmp2)];
 tmp1=[];
 tmp2=[];
 %L23
 tmp1=ex_map_raw(3:5,:,i);
 tmp2=in_map_raw(3:5,:,i);
+%  tmp1=ex_map(3:5,:,i);
+%  tmp2=in_map(3:5,:,i);
 tot_inputL23(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 tmp1=[];
 tmp2=[];
 %L4
 tmp1=ex_map_raw(6:7,:,i);
 tmp2=in_map_raw(6:7,:,i);
+%  tmp1=ex_map(6:7,:,i);
+%  tmp2=in_map(6:7,:,i);
 tot_inputL4(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 end
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
@@ -469,12 +476,9 @@ for i=1:length(idxtp)
 end
 hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
-%% Distributions of actual centroid
+%% Distributions of actual centroid all input cells for EX and IN
 a=1:147;
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,0,[],{});
-%% 
-
-
 %% % Relation betwen ex and in centroid
 ang1=out_ang_exL4;
 ang2=out_ang_inL4;
@@ -489,31 +493,12 @@ subplot(1,3,2);
 scatter(ang1(:,5),ang2(:,5),pointsize,pia_input,'filled');set(gcf,'color','w');;xlabel('Excitation (deg)');ylabel('Inhibition (deg)');c=colorbar;colormap(cmap);c.Label.String = 'Pial depth (µm)';hold on; refline(1,0);set(gca,'FontSize',10);axis square;
 subplot(1,3,3);
 scatter(ang1(:,8)*69,ang2(:,8)*69,pointsize,pia_input,'filled');set(gcf,'color','w');xlabel('Excitation');ylabel('Inhibition ');c=colorbar;colormap(cmap);c.Label.String = 'Pial depth (µm)';hold on;refline(1,0);set(gca,'FontSize',10);axis square;
-%% Display correlation between all PCs and pial depth Multiple comparison 
-com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov L5frov out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_diff(:,5)]; 
-correlation_matrix(com,1);title('Vertical');
-com=[score_ex(:,1:3) score_in(:,1:3) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)']; 
-correlation_matrix(com,1);title('Horizontal');
-%% Display correlations scores and angle towards centroid
-com=[score_ex(:,1:3) score_in(:,1:3) out_ang_inL23 pia_input]; 
-correlation_matrix(com,1);title('PC scores and angle to centroid');
-%% %%Display desired correlations PC2in and angle and pia input
-corr_plot(out_ang_inL23(:,3),score_in(:,2),diffL4',{'Angle centroid L23 in','PCin2','L4ex-in'});set(gca,'Ydir','reverse');
-%% Desired correlation between angle and inhbition 
-corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b')
-%% Desired correlation between angle and pial depth 
-corr_plot(out_ang_inL23(:,4),score_in(:,2),pia_input,{'Y centroid in L23in','PCin2','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_inL23(:,5),pia_input,pia_input,{'Angle centroid L23 in','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_exL4(:,5),pia_input,pia_input,{'Angle centroid L23 ex','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(L23fr(:,2),pia_input,out_ang_inL23(:,5),{'L23in fraction','Pial depth','angle L23in'});set(gca,'Ydir','reverse');
+%% Desired correlation between angle and inhbition PC2in
+corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b');
+%% Desired correlation between horizontal centroid and PC3in
+corr_plot((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,score_in(:,3),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});xlim([-150 150]);ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
 %% FAKE MAPS CENTROID
 corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_fake(id_ori,5),score_in(id_ori,2),pia_input(id_ori),{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
-corr_plot(out_ang_fake(:,5),pia_input,pia_input,{'Angle centroid L23 fake','Pial depth','Pial depth'});set(gca,'Ydir','reverse');
-%% 
-
-corr_plot(out_ang_inL23(id_ori,5),score_in(id_ori,2),pia_input(id_ori),{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});set(gca,'Ydir','reverse');
-
 %% Display correlation between all PCs Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) out_ang_exL23(:,5)  out_ang_exL4(:,5) out_ang_inL23(:,5)  out_ang_inL4(:,5) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2)]; 
 G=correlation_matrix(com,1);
@@ -556,42 +541,21 @@ MLap_diff(i)=(sum(nonzeros(ap_map(:,1:8,i)))/length(nonzeros(ap_map(:,1:8,i))))-
 end
 %% Morphology parameters vs PCs
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff' sum_densap' sum_densba']; 
-correlation_matrix(com,0);title('Morphology vs PC input scores');
+correlation_matrix(com,1);title('Morphology vs PC input scores');
 %% %% Morphology parameters vs real parameters vertical
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov tot_inputL23 tot_inputL4 morph_parameters(:,1:21) sum_densap' sum_densba']; 
-correlation_matrix(com,1);title('Morphology vs Vertical input');
-%% %% Morphology parameters vs real parameters angle
-com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_diff(:,5) morph_parameters(:,1:21) sum_densap' sum_densba']; 
-correlation_matrix(com,1);title('Morphology vs Vertical input');
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) tot_inputL23(:,1) tot_inputL4(:,1) tot_inputL23(:,2) tot_inputL4(:,2) out_ang_inL23(:,5) out_ang_inL23(:,3) morph_parameters(:,1:21) sum_densap' sum_densba']; 
+correlation_matrix(com,0);title('Morphology vs Vertical input');
+%% Total input apical dendrite branch points
+corr_plot(morph_parameters(:,4),abs(tot_input(:,1)),pia_input,{'Branch points','Total input EX','Pial depth (µm)'})
+%% Total input apical branch  density
+corr_plot(sum_densap',abs(tot_input(:,1)),pia_input,{'Branch points','Total input EX','Pial depth (µm)'})
 %% %% Morphology parameters vs real parameters horizontal
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' morph_parameters(:,1:21) max_densba' max_densap' MLba_diff' MLap_diff' sum_densap' sum_densba']; 
 correlation_matrix(com,0);title('Morphology vs Horizontal input');
-%% %%Display desired correlations between pial depth and L23/L4
-corr_plot(L4fr(:,1),morph_parameters(:,9),pia_input,{'L4ex input','Apical width/height','Pial depth'});
-%% %%Display desired correlations between pial depth and L23/L4
-corr_plot(diffL23,morph_parameters(:,13),pia_input,{'L4 ex/in ov','Max Apical','Pial depth'});
-%% Morphology and input map correlations
-corr_plot(out_ang_inL23(:,5),morph_parameters(:,1),pia_input,{'Angle centroid L23','Apical vertical span','Pial depth'});set(gca,'Ydir','reverse');
-%% Using the Morph PCs for correlation
-scores_m=ones(148,3)*NaN;
-scores_m(morph_cells_id,:)=score_morph(:,1:3);
-%% %% Morphology PCs vs PCs input
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) scores_m]; 
-correlation_matrix(com,1);title('PCscors input vs Morph scores');
-%% %% Morphology PCs vs PCs input
-com=[];com=[scores_m L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral]; 
-correlation_matrix(com,1);title('PCscors input vs Morph scores');
-%% 
-% %% Display fraction for ex and in as well as diff for all 16 rows and columns based on TMD groups
-% load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\com_189_withTMDclusteridx.mat');
-% [val idxt idxm] = intersect(cellID_str,com_TMDidx(:,28))
-% tmd_gr=com_TMDidx(idxm,27);
-% g1=find(tmd_gr==1);g2=find(tmd_gr==2);g3=[];
-% gv=NaN*ones(1,size(g1,1)+size(g2,1)+size(g3,1));
-% gv(g1)=1;gv(g2)=2;gv(g3)=3;
-% %call function
-% [stats_g] = display_inputs([frac_exv_m(idxt,:) frac_inv(idxt,:)],[frac_exh(idxt,:) frac_inh(idxt,:)],frac_diffv(idxt,:),frac_diffh(idxt,:),gv);
-% g1=[];g2=[];g3=[];
+
+
+
+%% %%%%%%%%%%%%%%%%
 
 %% In vivo features alone
 
@@ -618,11 +582,9 @@ corr_plot(sftf_out(find(sftf_out(:,3)>0.01),5),od_out(find(sftf_out(:,3)>0.01),8
 %% Discretize based on pia
 discretize_plot(pia_all,3,od_out(:,3),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('all in vivo cells');ylim([0 180])
 %% 
-
 discretize_plot(pia_all(find(od_out(:,3)>=90)),3,od_out(find(od_out(:,3)>=90),3),1);
 %% 
 discretize_plot(pia_all,3,abs(sftf_pref(:,21)),1);
-
 %% 
 discretize_plot(pia_all,3,abs(od_out(:,3)),1);ylim([0 180]);xticklabels({''});
 hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
@@ -631,29 +593,37 @@ discretize_plot(pia_input,3,abs(od_out_iviv(:,4)),1);ylim([0 180]);xticklabels({
 hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
 
 
+
+%%
+
 %%  IN VIVO IN VITRO
 %% Read out paramteres from iviv structure
 [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,nan_vector);
-
 %% Get IDS for ORI
 id_ori=find(~isnan(od_out_iviv(:,4)));
 %% Correlations PCs input and OD out
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) od_out_iviv]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations PCs input and sftft out
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,:)]; 
+com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,2:end)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations Input vertical vs ODout
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23fr diffL4fr L23frov L4frov L4fr(:,1)-L23fr(:,2) tot_input tot_inputL23 tot_inputL4 od_out_iviv(:,1:8)]; 
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) tot_input(:,1) tot_input(:,2) out_ang_inL23(:,3) od_out_iviv(:,1:8)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
-%% Correlations Input vertical vs ODout
+%% Correlations Input vertical vs SFTF pref
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% 
 %% 
+
+
+
+
+
+
 %% Correlations Input vertical vs ODout
 com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) tot_input(a) tot_inputL23(a) tot_inputL4(a) frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
@@ -662,20 +632,20 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 com=[];com=[L23h L4h L5h od_out_iviv(:,:)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 
- %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(tot_input(:,1),sftf_out_iviv(:,8),od_out_iviv(:,end),{'L4ex input','Apical width/height','XSA'});
-%%  %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(score_in(:,2),od_out_iviv(:,4),pia_input,{'PC2in','Orientation preference','Pial depth'});
-%%  %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(out_ang_inL23(:,10),od_out_iviv(:,4),pia_input,{'Angle centroid L23in','Orientation preference','Pial depth'});%xlim([-60 120]) 
-%%  %% %%Display desired correlations between pial depth and L23/L4
-corr_plot(out_ang_exL4(:,5),od_out_iviv(:,4),L4fr(:,1),{'Angle centroid L4ex','Orientation preference','Pial depth'});;xlim([45 90]) 
-%% Display correlation with fake map
-corr_plot(out_ang_fake(:,5),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
 %% 
-corr_plot(out_ang_exL23(:,4),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
-%% 
-corr_plot(out_ang_inL23(:,2)-out_ang_exL4(:,4),od_out_iviv(:,4),pia_input,{'Angle centroid L4ex','Orientation preference','Pial depth'});
+corr_plot(sftf_out_iviv(:,2),abs(out_ang_exL23(:,3)-out_ang_inL23(:,3)),[],{'SF','Centroid L23 EX-IN','XSA'});
+
+%% SF vs abs difference between L23 EX/IN span
+par=abs(ex_spanhL23-in_spanhL23)*69
+%par=score_ex(:,1)
+g1=find(sftf_out_iviv(:,2)==0.02)
+g2=find(sftf_out_iviv(:,2)==0.08)
+% g1=find(od_out_iviv(:,2)<0.3)
+% g2=find(od_out_iviv(:,2)>0.3)
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'0.02','0.08'})
+;xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
+ylim([0 200]);
 %% Correlations Input horizontal vs ODout
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
 correlation_matrix(com,0);title('Input horizontal ODout iviv');
@@ -687,28 +657,82 @@ com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov 
 correlation_matrix(com,1);title('Input vertical spon_out iviv');
 %% Correlations Horizontal input and spon out
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)'  spon_out_iviv]; 
-correlation_matrix(com,1);title('Input horizontal spon_out iviv');
-%% Correlations PCs input and sftf_out_iviv
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,:)]; 
-correlation_matrix(com,0);title('PC inputs sftf_out iviv');
 %% Correlations PCs input and sftf_out_iviv
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov sftf_out_iviv(:,[1:6])]; 
 correlation_matrix(com,0);title('PC inputs sftf_out iviv');
 %% Correlations PCs input and sftf_out_iviv
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' sftf_out_iviv]; 
 correlation_matrix(com,1);title('PC inputs sftf_out iviv');
-%% 
-a=find(od_out_iviv(:,2)>0.4)
-corr_plot(od_out_iviv(a,5),(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
-%% 
 
-a=find(od_out_iviv(:,2)>0.4)
+
+
+%% Check correlation between ORI Pref with OSI cutoff
+a=find(od_out_iviv(:,1)>0.3)
+corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
+%% %% Intersectional approach ORI
+a=find(L4fr(:,1)<0.3)  
+b=find(od_out_iviv(:,1)>0.3)
+c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+[ia ib]=intersect(a,b)
+[iaa ic]=intersect(ia,c);
+corr_plot(od_out_iviv(iaa,4),out_ang_inL23(iaa,5),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
+%% Correlation matrix with intersectional approach 
+com=[];com=[score_ex(iaa,1:3) score_in(iaa,1:3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
+com=[];com=[L23fr(iaa,1) L4fr(iaa,1)  L23fr(iaa,2) L4fr(iaa,2) out_ang_exL23(iaa,5)  out_ang_exL4(iaa,5) out_ang_inL23(iaa,5)  out_ang_inL4(iaa,5) out_ang_exL23(iaa,3)  out_ang_exL4(iaa,3) out_ang_inL23(iaa,3)  out_ang_inL4(iaa,3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
+
+%%  Check correlation between DIR Pref with DSI cutoff
+a=find(od_out_iviv(:,2)>0.3)
+corr_plot(od_out_iviv(a,5),(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
+%% Check correlation between DIR Pref with DSI cutoff
+a=find(od_out_iviv(:,2)>0.3)
 corr_plot(od_out_iviv(a,5),frh_lateral_s(a),[],{'DIR','Fraction Lateral'});set(gca,'FontSize',12);
+%% %% Intersectional approach ORI
+a=find(od_out_iviv(:,2)>0.3)  
+b=find((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69>20)
+%c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+[ia ib]=intersect(a,b)
+[iaa ic]=intersect(ia,c);
+corr_plot(od_out_iviv(ia,5),(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
 %% DIstributions of actual centroid
 %a=find(od_out_iviv(:,2)>0.3);
 a=find(od_out_iviv(:,2)>0.3)
 fe=od_out_iviv(a,5)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'DIR'})
+%% 
+a=find(od_out_iviv(:,2)>0.25)
+%par=frh_lateral_s(:,1)
+par=score_in(:,3)
+ g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<135) 
+ g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<300) 
+% g1=find((out_ang_exL23(a,3)-out_ang_inL23(a,3))*69>0);
+% g2=find((out_ang_exL23(a,3)-out_ang_inL23(a,3))*69<0);
+% g1=find(od_out_iviv(:,2)<0.3)
+% g2=find(od_out_iviv(:,2)>0.3)
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
+xticklabels({'0.02','0.08'})
+;xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
+%% 
+a=find(od_out_iviv(:,2)>0)  
+%b=find(od_out_iviv(:,4)>135)
+%[ia ib]=intersect(a,b)
+
+fe=od_out_iviv(a,2)
+centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,3,fe,{'DIR'})
+%% 
+corr_plot(od_out_iviv(:,2),od_out_iviv(:,5),(out_ang_exL23(:,3)-out_ang_exL23(:,1))*69,{'DIR','Horizontal centre of mass','h'});set(gca,'FontSize',12);
+%% 
+a=find(od_out_iviv(:,2)>0.2)  
+b=find(od_out_iviv(:,5)>60 & od_out_iviv(:,5)<170) 
+c=find(od_out_iviv(:,5)>225 & od_out_iviv(:,5)<300)
+d=[b;c]
+%c=find(pia_input<300)
+[iaa ib]=intersect(a,d)
+com=[];com=[L23fr(iaa,1) L4fr(iaa,1)  L23fr(iaa,2) L4fr(iaa,2) out_ang_exL23(iaa,5)  out_ang_exL4(iaa,5) out_ang_inL23(iaa,5)  out_ang_inL4(iaa,5) out_ang_exL23(iaa,3)  out_ang_exL4(iaa,3) out_ang_inL23(iaa,3)  out_ang_inL4(iaa,3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
 
 %% Display fraction for ex and in groups 
 %group based on oripref
@@ -896,18 +920,7 @@ xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}'
 yticklabels({'DIR'});ytickangle(45);set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
 
-%% Intersectional approach
 
-a=find(L4fr(:,1)<0.3)  
-b=find(od_out_iviv(:,1)>0.4)
-%c=find(od_out_iviv(:,4)<180)
-c=find(pia_input<300)
-[ia ib]=intersect(a,b)
-[iaa ic]=intersect(ia,c);
-
-%% 
-com=[];com=[score_ex(iaa,1:3) score_in(iaa,1:3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
 %% 
 
 
