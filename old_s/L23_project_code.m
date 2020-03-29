@@ -250,6 +250,8 @@ set(gca,'FontSize',14);
 %set(gca,'FontWeight','bold')
 %% Setup A and Setup B
 setups=[zeros(47,1);ones(100,1)];
+%% Slice orientation
+slice_ori=[str(nan_vector).sliceOri];
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
@@ -289,6 +291,8 @@ xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','
 yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','PC1_{com}','PC2_{com}','PC3_{com}'});ytickangle(45);xlabel('Feature');ylabel('Feature');
 %% %%Display desired correlations between PCs/pia
 corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
+
+
 %% Load fraction and absolute input of maps for ex and inh
 [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L23h L4h L5h pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
@@ -636,7 +640,7 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 corr_plot(sftf_out_iviv(:,2),abs(out_ang_exL23(:,3)-out_ang_inL23(:,3)),[],{'SF','Centroid L23 EX-IN','XSA'});
 
 %% SF vs abs difference between L23 EX/IN span
-par=abs(ex_spanhL23-in_spanhL23)*69
+par=abs(ex_spanhL4-in_spanhL4)*69
 %par=score_ex(:,1)
 g1=find(sftf_out_iviv(:,2)==0.02)
 g2=find(sftf_out_iviv(:,2)==0.08)
@@ -663,9 +667,6 @@ correlation_matrix(com,0);title('PC inputs sftf_out iviv');
 %% Correlations PCs input and sftf_out_iviv
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' sftf_out_iviv]; 
 correlation_matrix(com,1);title('PC inputs sftf_out iviv');
-
-
-
 %% Check correlation between ORI Pref with OSI cutoff
 a=find(od_out_iviv(:,1)>0.3)
 corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
@@ -685,7 +686,16 @@ G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
 
 %%  Check correlation between DIR Pref with DSI cutoff
 a=find(od_out_iviv(:,2)>0.3)
-corr_plot(od_out_iviv(a,5),(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
+corr_plot(od_out_iviv(a,5),(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,slice_ori(a),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
+%% 
+a=find(slice_ori>0)
+corr_plot(od_out_iviv(a,4),L4fr(a,1),pia_input(a),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
+%% 
+
+a=find(slice_ori>=0)  
+b=find(od_out_iviv(:,1)>0.25)
+[ia ib]=intersect(a,b)
+corr_plot(od_out_iviv(ia,4),slice_ori(ia),pia_input(ia),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
 %% Check correlation between DIR Pref with DSI cutoff
 a=find(od_out_iviv(:,2)>0.3)
 corr_plot(od_out_iviv(a,5),frh_lateral_s(a),[],{'DIR','Fraction Lateral'});set(gca,'FontSize',12);
@@ -699,22 +709,44 @@ b=find((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69>20)
 corr_plot(od_out_iviv(ia,5),(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
 %% DIstributions of actual centroid
 %a=find(od_out_iviv(:,2)>0.3);
-a=find(od_out_iviv(:,2)>0.3)
-fe=od_out_iviv(a,5)
+%a=find(od_out_iviv(:,2)>0.3)
+%a=1:147
+a=find(od_out_iviv(:,1)>0.3)
+%fe=od_out_iviv(a,4)
+fe=slice_ori(a)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'DIR'})
 %% 
-a=find(od_out_iviv(:,2)>0.25)
+
+corr_plot(od_out_iviv(a,4),abs((out_ang_inL23(a,3)-out_ang_inL23(a,1)))*69,slice_ori(a),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
+%% 
+a=find(od_out_iviv(:,1)>0.25)
 %par=frh_lateral_s(:,1)
-par=score_in(:,3)
- g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<135) 
- g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<300) 
+%par=abs((out_ang_inL4(a,3)-out_ang_inL4(a,1)))*69
+%par=slice_ori(a)
+%par=abs((out_ang_exL4(a,4)-out_ang_exL4(a,2)))*69;
+%par=pia_input(a)
+%par=score_in(:,3)
+par=in_spanhL23(a)*69
+%   g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<135) 
+%   g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<300) 
+%  g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<225) 
+%  g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
+
+  g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<75) 
+   g2=find(od_out_iviv(a,4)>110& od_out_iviv(a,4)<150) 
+
+%   g1=find(slice_ori(a)==0)
+%   g2=find(slice_ori(a)==1)
+
+
+
 % g1=find((out_ang_exL23(a,3)-out_ang_inL23(a,3))*69>0);
 % g2=find((out_ang_exL23(a,3)-out_ang_inL23(a,3))*69<0);
 % g1=find(od_out_iviv(:,2)<0.3)
 % g2=find(od_out_iviv(:,2)>0.3)
-[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
-xticklabels({'0.02','0.08'})
-;xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'45-135°','225-300'})
+;xlabel('DIR');ylabel('L23 centroid EX-IN');
 %% 
 a=find(od_out_iviv(:,2)>0)  
 %b=find(od_out_iviv(:,4)>135)
