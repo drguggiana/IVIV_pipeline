@@ -298,6 +298,11 @@ corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
 abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
 layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
+%% 
+[frac_exh_n abs_exh_n frac_inh_n abs_inh_n frac_exv_n abs_exv_n frac_inv_n abs_inv_n] = iviv_profiles_norm(nan_vector,ex_map,in_map);
+frac_exv_n=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv_n];
+abs_exv_n=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv_n];
+
 %% Calculate the fraction from the overlap for verti and hori
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
 %% Calculate fraction using the overlap binary maps
@@ -501,8 +506,14 @@ scatter(ang1(:,8)*69,ang2(:,8)*69,pointsize,pia_input,'filled');set(gcf,'color',
 corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b');
 %% Desired correlation between horizontal centroid and PC3in
 corr_plot((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,score_in(:,3),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});xlim([-150 150]);ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
+%% 
+corr_plot(sum(abs_exv_n(:,1:5),2),score_ex(:,1),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});;ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
+%% 
+corr_plot(sum(abs_inv_n(:,1:3),2),score_in(:,1),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});;ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
 %% FAKE MAPS CENTROID
 corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
+%% 
+
 %% Display correlation between all PCs Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) out_ang_exL23(:,5)  out_ang_exL4(:,5) out_ang_inL23(:,5)  out_ang_inL4(:,5) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2)]; 
 G=correlation_matrix(com,1);
@@ -617,6 +628,10 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
+%% 
+com=[];com=[ex_spanhL23' in_spanhL23' ex_spanhL4' in_spanhL4'  abs(ex_spanhL23'-in_spanhL23')*69 od_out_iviv]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+
 %% Correlations Input vertical vs SFTF pref
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
@@ -638,18 +653,23 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 
 %% 
 corr_plot(sftf_out_iviv(:,2),abs(out_ang_exL23(:,3)-out_ang_inL23(:,3)),[],{'SF','Centroid L23 EX-IN','XSA'});
+ 
+%% 
+a=find(od_out_iviv(:,2)>0.25)
+corr_plot(od_out_iviv(a,5),in_spanhL23(a)',[],{'SF','Centroid L23 EX-IN','XSA'});
 
 %% SF vs abs difference between L23 EX/IN span
-par=abs(ex_spanhL4-in_spanhL4)*69
+%par=abs(ex_spanhL23-in_spanhL23)*69
+par=max_densap
 %par=score_ex(:,1)
-g1=find(sftf_out_iviv(:,2)==0.02)
-g2=find(sftf_out_iviv(:,2)==0.08)
-% g1=find(od_out_iviv(:,2)<0.3)
-% g2=find(od_out_iviv(:,2)>0.3)
+% g1=find(sftf_out_iviv(:,2)==0.02)
+% g2=find(sftf_out_iviv(:,2)==0.08)
+ g1=find(od_out_iviv(:,1)<0.5)
+ g2=find(od_out_iviv(:,1)>0.5)
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
 xticklabels({'0.02','0.08'})
 ;xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
-ylim([0 200]);
+%ylim([0 200]);
 %% Correlations Input horizontal vs ODout
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
 correlation_matrix(com,0);title('Input horizontal ODout iviv');
@@ -718,22 +738,140 @@ centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_in
 %% 
 
 corr_plot(od_out_iviv(a,4),abs((out_ang_inL23(a,3)-out_ang_inL23(a,1)))*69,slice_ori(a),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
+
 %% 
+corr_plot(od_out_iviv(a,4),out_ang_inL23(a,5),pia_input(a),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
+%% Check if orthognal orientations have different input arrangement
+%Centroid in x and y
 a=find(od_out_iviv(:,1)>0.25)
+par=abs((out_ang_exL4(a,3)))*69;
+%par=out_ang_exL4(a,7)
+%par=abs(out_ang_inL23(a,8))*69;
+%par=score_ex(:,2);
+%par=pia_input(a)
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) 
+g2=find(od_out_iviv(a,4)>110 & od_out_iviv(a,4)<160) 
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'~45°','~135'})
+xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+%% 
+%% Check if orthognal orientations have different input arrangement
+%Centroid in x and y
+a=find(od_out_iviv(:,1)>0.25)
+%par=abs(out_ang_exL4(a,3)-out_ang_exL4(a,1));
+par=frh_lateral_s(a,1)
+%par=out_ang_exL4(a,7)
+%par=abs(out_ang_inL23(a,8))*69;
+%par=score_ex(:,2);
+%par=pia_input(a)
+g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<50) 
+g2=find(od_out_iviv(a,4)>60 & od_out_iviv(a,4)<135) 
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'~45°','~135'})
+xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+
+%% %% 
+%Centroid in x and y
+a=find(od_out_iviv(:,1)>0.25)
+%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
+%par=L4h(a,3);
+%par=abs(out_ang_inL23(a,8))*69;
+par=score_in(a,2);
+%par=pia_input(a)
+g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<90) 
+g2=find(od_out_iviv(a,4)>90 & od_out_iviv(a,4)<180) 
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'~45°','~135'})
+xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+%% 
+ia=find(od_out_iviv(:,1)>0.25)
+%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
+%par=L4h(a,3);
+%par=abs(out_ang_inL23(a,8))*69;
+%par=abs((out_ang_exL4(a,4)-out_ang_exL4(a,2)))*69;
+%par=abs(out_ang_exL4(a,3))
+%par=out_ang_exL23(a,3)
+%par=pia_input(a)
+%par=L4fr(a,1)
+
+%par=tot_input(a,2)
+%b=find(pia_input>180 & pia_input<280)
+%c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+%[ia ib]=intersect(a,b)
+
+%par=abs((out_ang_exL4(ia,3)-out_ang_exL4(ia,1)))*69;
+%par=L4fr(ia,1)
+par=sum(abs_exv_n(ia,6:7),2)
+%par=out_ang_exL23(ia,5)
+% g1=find(od_out_iviv(ia,4)>45 & od_out_iviv(ia,4)<90) 
+% g2=find(od_out_iviv(ia,4)>135 & od_out_iviv(ia,4)<180) 
+ g1=find(od_out_iviv(ia,4)>0 & od_out_iviv(ia,4)<90) 
+ g2=find(od_out_iviv(ia,4)>90 & od_out_iviv(ia,4)<180) 
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'~45°','~135'})
+xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+
+%% EX L4 fraction to orientation
+corr_plot(od_out_iviv(ia,4),sum(abs_inv_n(ia,1:5),2),pia_input(ia),{'Orientation','L4 EX fraction','ODI','Pia input'});set(gca,'FontSize',12);ylabel('L4 EX fraction','Color','r');xlabel('Orientation');xlim([0 180])
+%% 
+corr_plot(od_out_iviv(ia,4),abs(ex_spanhL4(ia)'-in_spanhL4(ia)'),pia_input(ia),{'Orientation','L4 EX fraction','ODI','Pia input'});set(gca,'FontSize',12);ylabel('L4 EX fraction','Color','r');xlabel('Orientation');xlim([0 180])
+
+%% EX L4 total input to orientation
+corr_plot(od_out_iviv(ia,4),abs(tot_inputL4(ia,1)),[],{'Orientation','L4 EX fraction','ODI'});set(gca,'FontSize',12);ylabel('L4 EX total input','Color','r');xlabel('Orientation');xlim([0 180]) 
+%% EX L4 total input to orientation
+corr_plot(od_out_iviv(ia,4),pia_input(ia),[],{'Orientation','L4 EX fraction','ODI'});set(gca,'FontSize',12);ylabel('L4 EX total input','Color','r');xlabel('Orientation');xlim([0 180])
+%% 
+ia=find(od_out_iviv(:,1)>0.25)  
+%b=find(pia_input<210)
+%c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+%[ia ib]=intersect(a,b)
+
+corr_plot(spon_out_iviv(ia,2),ex_spanhL4(ia)',pia_input(ia),{'Orientation','L4 EX fraction','ODI','Pia input'});set(gca,'FontSize',12);ylabel('L4 EX fraction','Color','r');xlabel('Orientation');
+%% Direction differences
+a=find(od_out_iviv(:,2)>0.25)
+%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
+%par=abs(out_ang_exL4(a,5)-out_ang_inL4(a,5));
+%par=score_in(a,2);
+%par=abs(out_ang_inL23(a,3))*69;
+%par=score_ex(:,2);
+%par=pia_input(a)
+par=abs(out_ang_inL23(a,4))*69;
+g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<225) 
+tmp=zeros(length(a),1)
+tmp(g1)=g1
+g2=find(tmp==0)
+%g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
+xticklabels({'45°','~135'})
+xlabel('Direction');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+
+
+%% 
+
+a=find(od_out_iviv(:,1)>0.25)
+b=find(od_out_iviv(:,4)>20 & od_out_iviv(:,4)<70) 
+c=find(od_out_iviv(:,4)>110 & od_out_iviv(:,4)<160) 
+[ia ib]=intersect(a,b);
+[ic id]=intersect(a,c);
+
+
+corr_plot(od_out_iviv([ia' ic'],4),out_ang_inL23([ia' ic'],5),pia_input([ia' ic']),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
+   %% 
+
 %par=frh_lateral_s(:,1)
 %par=abs((out_ang_inL4(a,3)-out_ang_inL4(a,1)))*69
 %par=slice_ori(a)
 %par=abs((out_ang_exL4(a,4)-out_ang_exL4(a,2)))*69;
 %par=pia_input(a)
 %par=score_in(:,3)
-par=in_spanhL23(a)*69
+%par=in_spanhL23(a)*69
 %   g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<135) 
 %   g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<300) 
 %  g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<225) 
 %  g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
 
-  g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<75) 
-   g2=find(od_out_iviv(a,4)>110& od_out_iviv(a,4)<150) 
 
 %   g1=find(slice_ori(a)==0)
 %   g2=find(slice_ori(a)==1)
@@ -821,6 +959,7 @@ for i=1:length(nan_vector)
         zz{:,i}=NaN;
     end
 end
+
 %% Plot morphologies of specific groups
 plot_morphologies_iviv(zz,find(idx_input==1),10,10,m_flip_a)
 %% Sort morpho by pial depth
@@ -926,9 +1065,10 @@ xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}'
 yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}'});ytickangle(45);set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
 %% Subsample data OSI
-a=find(od_out_iviv(:,1)>0.3)
-com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) out_ang_exL23(a,5)  out_ang_exL4(a,5) out_ang_inL23(a,5)  out_ang_inL4(a,5) out_ang_exL23(a,3)  out_ang_exL4(a,3) out_ang_inL23(a,3)  out_ang_inL4(a,3) od_out_iviv(a,[4])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
+a=find(od_out_iviv(:,1)>0.25)
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) out_ang_exL23(a,5)  out_ang_exL4(a,5) out_ang_inL23(a,5)  out_ang_inL4(a,5) out_ang_exL23(a,3)  out_ang_exL4(a,3) out_ang_inL23(a,3)  out_ang_inL4(a,3) od_out_iviv(a,[1 2 3 4 5 6 7])]; 
+
+correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 % xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});xtickangle(45)
 % yticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});ytickangle(45)
 %% ORI with cutoff
@@ -1050,10 +1190,11 @@ dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23
 dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,1) L4fr(:,1)  L5fr(:,1)],{'L2/3ex','L4ex','L5ex'})
 %% Looking at input fractions in
 dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3in','L4in','L5in'})
-%% Plot clusters with values underneath it as heatmaps
+%% Plot clusters with values underneath it as heatmaps: SETUPS
 dendroplot_SW(clustering_input,leafOrder,11,[setups],{'Setups'})
+%% Plot clusters with values underneath it as heatmaps: SLICE ORIENTATION
 
-
+dendroplot_SW(clustering_input,leafOrder,11,[slice_ori' score_in(:,3)],{'Slice Ori','PC2in'})
 %% 
 com=[];com=[ap_correx' ap_corrin' sftf_out_iviv];
 correlation_matrix(com,0);title('correlation input morpho od_out iviv');

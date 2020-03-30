@@ -52,7 +52,7 @@ end
 mexp=errorbar(nanmean(frac_h(:,1:16)),nanstd(frac_h(:,1:16))/sqrt(size(frac_h,1)),'k');
 mexp=errorbar(nanmean(frac_h(:,17:end))*-1,nanstd(frac_h(:,17:end))/sqrt(size(frac_h,1)),'k');
 mexp.CapSize=3;ylim([-1 1]);yticks([-1:0.5:1]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
-hold on;line([8 8], [-1 1],'Color','k','LineStyle','--');text(2.5,1,'Medial');text(10,1,'Lateral');set(gca,'FontSize',10);
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');text(2.5,1,'Medial');text(10,1,'Lateral');set(gca,'FontSize',10);
 
 %EX and IN Horizontal DIFFERENCE
 subplot(2,3,5);hold on;
@@ -65,7 +65,7 @@ mexp.CapSize=3;
 ylim([-0.4 0.4]);
 yticks([-0.4:0.2:0.4]);
 hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
-hold on;line([8 8], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 stats_g=[];
 hold on;text(5,0.42,'Difference','Color','k');
 
@@ -74,7 +74,7 @@ subplot(2,3,6);hold on;
 mexp.CapSize=3;
 ylim([-0.1 0.1]);
 yticks([-0.2:0.1:0.2]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
-hold on;line([8 8], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 hold on;text(5,0.105,'Difference','Color','k');
 
 
