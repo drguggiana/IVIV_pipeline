@@ -298,11 +298,15 @@ corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
 abs_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv];
 layer_assign=[zeros(length(nan_vector(incl_idx:end)),2) layer_assign'];
-%% 
+%% Normalizied maps to calculate abs
 [frac_exh_n abs_exh_n frac_inh_n abs_inh_n frac_exv_n abs_exv_n frac_inv_n abs_inv_n] = iviv_profiles_norm(nan_vector,ex_map,in_map);
 frac_exv_n=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv_n];
 abs_exv_n=[zeros(length(nan_vector(incl_idx:end)),2) abs_exv_n];
-
+%% Raw Max per map EX and IN
+for i=1:length(nan_vector)
+max_map_ex(i)=abs([min(min(ex_map_raw(:,:,i)))]);
+max_map_in(i)=abs([max(max(in_map_raw(:,:,i)))]);
+end
 %% Calculate the fraction from the overlap for verti and hori
 [frac_ovh abs_ovh frac_ovv abs_ovv] = iviv_profiles_ov(ov_map);
 %% Calculate fraction using the overlap binary maps
@@ -617,14 +621,63 @@ hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
 %% Get IDS for ORI
 id_ori=find(~isnan(od_out_iviv(:,4)));
 %% Correlations PCs input and OD out
-com=[];com=[score_ex(:,1:3) score_in(:,1:3) od_out_iviv]; 
+ia=find(od_out_iviv(:,1)>0.3)  
+%b=find(od_out_iviv(:,1)>0.3)  
+%[ia ib]=intersect(a,b)
+com=[];com=[score_ex(ia,1:3) score_in(ia,1:3) od_out_iviv(ia,:)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
+%% 
+%% Correlations PCs input and OD out
+a=find(od_out_iviv(:,2)>0.3)  
+b=find(od_out_iviv(:,1)>0.3)  
+[ia ib]=intersect(a,b)
+com=[];com=[score_com(ia,1:10) od_out_iviv(ia,:)]; 
+correlation_matrix(com,0);title('PC inputs ODout iviv');
+%% 
+a=find(od_out_iviv(:,1)>0.3)  
+ %b=find(L4fr(:,1)>0)  
+ %[ia ib]=intersect(a,b)
+corr_plot(od_out_iviv(a,4),sum(abs_exv_m(a,6),2),pia_input(a),{'Direction','PC3ex','pia'})
+%% 
+a=find(od_out_iviv(:,1)>0.3)  
+b=find(sum(abs_inv(:,1:16),2)<9000)
+%c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+[ia ib]=intersect(a,b)
+corr_plot(od_out_iviv(ia,1),sum(abs_inv(ia,1:16),2),pia_input(ia),{'Direction','PC3ex','pia'})
+%% 
+corr_plot(od_out_iviv(ia,5),score_ex(ia,3),pia_input(ia),{'Direction','PC3ex','pia'})
+%% 
+corr_plot(od_out_iviv(ia,5),frh_medial_s(ia,1),pia_input(ia),{'Direction','Medial Fraction EX','pia'})
+
 %% Correlations PCs input and sftft out
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,2:end)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations Input vertical vs ODout
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) tot_input(:,1) tot_input(:,2) out_ang_inL23(:,3) od_out_iviv(:,1:8)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
+%% 
+a=find(od_out_iviv(:,1)>0.3)  
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) tot_input(a,1) tot_input(a,2) out_ang_inL23(a,3)  sum(abs_exv_n(a,1:5),2) ex_spanhL23(a)' ex_spanhL4(a)' frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8)]; 
+correlation_matrix(com,0);title('Input vertical ODout iviv');
+%% Score in with Orientation
+a=find(od_out_iviv(:,1)>0.3)  
+b=find(pia_input<200)
+%c=find(od_out_iviv(:,4)<135)
+%c=find(pia_input<300)
+[ia ib]=intersect(a,b)
+corr_plot(od_out_iviv(ia,4),score_in(ia,2),pia_input(ia),{'11','2','pia'})
+corr_plot(od_out_iviv(ia,4),out_ang_inL23(ia,5),pia_input(ia),{'Orientation','Angle centre of mass L23 in','Pial depth'})
+;set(gca,'FontSize',12);
+%% OSI against total input
+a=find(od_out_iviv(:,1)>0.3)  
+b=find(tot_input(:,2)<200)
+[ia ib]=intersect(a,b)
+corr_plot(od_out_iviv(ia,1),tot_input(ia,2),[],{'OSI','IN INPUT','pia'});
+
+%% 
+a=find(od_out_iviv(:,1)>0.3)  
+corr_plot(od_out_iviv(a,5),out_ang_exL23(a,3)-out_ang_inL23(a,3),pia_input(a),{'OSI','IN INPUT','pia'});
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
@@ -636,10 +689,6 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% 
-%% 
-
-
-
 
 
 
@@ -757,18 +806,19 @@ xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize
 %% 
 %% Check if orthognal orientations have different input arrangement
 %Centroid in x and y
-a=find(od_out_iviv(:,1)>0.25)
-%par=abs(out_ang_exL4(a,3)-out_ang_exL4(a,1));
+a=find(od_out_iviv(:,1)>0.3)
+%par=abs(out_ang_exL23(a,3)-out_ang_exL23(a,1))*69;
+%par=abs(out_ang_exL23(a,5));
 par=frh_lateral_s(a,1)
 %par=out_ang_exL4(a,7)
 %par=abs(out_ang_inL23(a,8))*69;
 %par=score_ex(:,2);
 %par=pia_input(a)
-g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<50) 
-g2=find(od_out_iviv(a,4)>60 & od_out_iviv(a,4)<135) 
+g1=find(od_out_iviv(a,4)>=0 & od_out_iviv(a,4)<30) 
+g2=find(od_out_iviv(a,4)>80 & od_out_iviv(a,4)<110) 
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'~45°','~135'})
-xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
+xticklabels({'~0°','~90'})
+xlabel('Orientation');ylabel('L23 ex COM X');  set(gca,'FontSize',12);
 
 %% %% 
 %Centroid in x and y
@@ -830,13 +880,22 @@ ia=find(od_out_iviv(:,1)>0.25)
 
 corr_plot(spon_out_iviv(ia,2),ex_spanhL4(ia)',pia_input(ia),{'Orientation','L4 EX fraction','ODI','Pia input'});set(gca,'FontSize',12);ylabel('L4 EX fraction','Color','r');xlabel('Orientation');
 %% Direction differences
-a=find(od_out_iviv(:,2)>0.25)
-%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
+a=find(od_out_iviv(:,2)>0.3)
+%par=abs((out_ang_inL23(a,3)-out_ang_inL23(a,1)))*69;
 %par=abs(out_ang_exL4(a,5)-out_ang_inL4(a,5));
-%par=score_in(a,2);
-%par=abs(out_ang_inL23(a,3))*69;
+%par=score_ex(a,3);
+%par=abs(out_ang_inL23(a,5))
 %par=score_ex(:,2);
 %par=pia_input(a)
+par=frh_medial_s(a,2)
+ g1=find(od_out_iviv(a,5)>25 & od_out_iviv(a,5)<80) 
+ g2=find(od_out_iviv(a,5)>250 & od_out_iviv(a,5)<360) 
+ [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+ xticklabels({'~45°','~315'})
+xlabel('Direction');ylabel('Total in fraction medial');  set(gca,'FontSize',12);
+%xlabel('Direction');ylabel('Pial depth (µm)');  set(gca,'FontSize',12);
+%% 
+
 par=abs(out_ang_inL23(a,4))*69;
 g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<225) 
 tmp=zeros(length(a),1)
