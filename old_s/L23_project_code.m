@@ -252,11 +252,18 @@ set(gca,'FontSize',14);
 setups=[zeros(47,1);ones(100,1)];
 %% Slice orientation
 slice_ori=[str(nan_vector).sliceOri];
+%% 
+plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,0,[])
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
-[coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(incl_idx:end,:,:));
-[coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(incl_idx:end,:,:));
+% [coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(incl_idx:end,:,:));
+% [coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(incl_idx:end,:,:));
+
+ [coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(find(slice_ori==1),:,:));
+ [coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(find(slice_ori==1),:,:));
+
+
 [coeff_exraw,score_exraw,latent_exraw,~,explained_exraw,mu] = pca(aligned_maps_exraw(incl_idx:end,:,:));
 [coeff_inraw,score_inraw,latent_inraw,~,explained_inraw,mu] = pca(aligned_maps_inraw(incl_idx:end,:,:));
 [coeff_ov,score_ov,latent_ov,~,explained_ov,mu] = pca(aligned_maps_ov(incl_idx:end,:,:));
@@ -779,8 +786,8 @@ corr_plot(od_out_iviv(ia,5),(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69,[],{'DI
 %% DIstributions of actual centroid
 %a=find(od_out_iviv(:,2)>0.3);
 %a=find(od_out_iviv(:,2)>0.3)
-%a=1:147
-a=find(od_out_iviv(:,1)>0.3)
+a=1:147
+%a=find(od_out_iviv(:,1)>0.3)
 %fe=od_out_iviv(a,4)
 fe=slice_ori(a)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'DIR'})
@@ -962,6 +969,19 @@ d=[b;c]
 [iaa ib]=intersect(a,d)
 com=[];com=[L23fr(iaa,1) L4fr(iaa,1)  L23fr(iaa,2) L4fr(iaa,2) out_ang_exL23(iaa,5)  out_ang_exL4(iaa,5) out_ang_inL23(iaa,5)  out_ang_inL4(iaa,5) out_ang_exL23(iaa,3)  out_ang_exL4(iaa,3) out_ang_inL23(iaa,3)  out_ang_inL4(iaa,3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
+
+
+%% 
+%par=od_out_iviv(:,1);
+par=score_in(:,3);
+%par=score_ex(:,1)
+% g1=find(sftf_out_iviv(:,2)==0.02)
+% g2=find(sftf_out_iviv(:,2)==0.08)
+%  g1=find(slice_ori==0)
+%  g2=find(slice_ori==1)
+g1=find(setups==0)
+g2=find(setups==1)
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
 
 %% Display fraction for ex and in groups 
 %group based on oripref
@@ -1193,6 +1213,9 @@ pcs     =[1 2 3];
 %including the 6 PCs = pial depth 
 [idx_input, clustering_input, leafOrder] = hca([score_ex(:,pcs) score_in(:,pcs)],0,'ward',clu_num,pia_input,0,0.6);%call function for clustering
 %[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
+%% 
+plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,1,idx_input);
+
 %% kmeans clustering
 % idx_input=[];
 % idx_input = kmeans([score_ex(:,pcs) score_in(:,pcs)],4)
@@ -1253,7 +1276,7 @@ dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'
 dendroplot_SW(clustering_input,leafOrder,11,[setups],{'Setups'})
 %% Plot clusters with values underneath it as heatmaps: SLICE ORIENTATION
 
-dendroplot_SW(clustering_input,leafOrder,11,[slice_ori' score_in(:,3)],{'Slice Ori','PC2in'})
+dendroplot_SW(clustering_input,leafOrder,11,[slice_ori' score_in(:,3)],{'Slice Ori','PC3in'})
 %% 
 com=[];com=[ap_correx' ap_corrin' sftf_out_iviv];
 correlation_matrix(com,0);title('correlation input morpho od_out iviv');
