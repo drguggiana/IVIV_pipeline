@@ -24,11 +24,11 @@ for el = 1:length(plot_selector)
             data_title = 'Direction pref';
         case 5
             % spontaneous activity
-            iv_param = {str(non_nan_cells).iv_spon}';
+            iv_param = {str(non_nan_cells).sad}';
             data_title = 'Spont act';
         case 6
             % population coupling
-            iv_param = {str(non_nan_cells).iv_popcop}';
+            iv_param = {str(non_nan_cells).pci}';
             data_title = 'Pop coupling';
         case 7
             % morpho basal | ex_input correlation
@@ -125,7 +125,7 @@ for el = 1:length(plot_selector)
    
     color_number = max(parameter)-min(parameter)+1;
     color_indexer = parameter-min(parameter)+1;
-    cmap = parula(color_number);
+    cmap = hsv(color_number);
 
     figure
     set(gcf,'color','w');
