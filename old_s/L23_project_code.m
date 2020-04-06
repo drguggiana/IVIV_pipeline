@@ -3,7 +3,7 @@ str_invitro       = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\
 folder_list = uipickfiles('FilterSpec',str_invitro);
 load(char(folder_list));
 %% Define array names and get the arrays without NaNs etc.
-field_list = {'excMap','inhMap','pialD'};
+field_list = {'subpixel_excMap','subpixel_inhMap','pialD'};
 % get the number of fields
 field_number = length(field_list);
 % get a vector with the cells to use
@@ -26,9 +26,9 @@ for cells = 1:cell_num
     % for all the fields
     for fields = 1:field_number
         field_cell{fields} = str(cell_idx(cells)).(field_list{fields})(:);
-        if contains(field_list{fields}, 'excMap')
+        if contains(field_list{fields}, 'subpixel_excMap')
             field_cell{fields} = field_cell{fields}./min(field_cell{fields});
-        elseif contains(field_list{fields}, 'inhMap')
+        elseif contains(field_list{fields}, 'subpixel_inhMap')
             field_cell{fields} = field_cell{fields}./max(field_cell{fields});
         end       
     end
@@ -37,9 +37,9 @@ for cells = 1:cell_num
     
     for fields = 1:field_number
         field_cell_raw{fields} = str(cell_idx(cells)).(field_list{fields})(:);
-        if contains(field_list{fields}, 'excMap')
+        if contains(field_list{fields}, 'subpixel_excMap')
             field_cell_raw{fields} = field_cell_raw{fields};
-        elseif contains(field_list{fields}, 'inhMap')
+        elseif contains(field_list{fields}, 'subpixel_inhMap')
             field_cell_raw{fields} = field_cell_raw{fields};
         end       
     end
@@ -74,9 +74,9 @@ diff_map=ex_map-in_map;
 %for all the cells
 for cells = 1:length(nan_vector(incl_idx:end));
     %get the binarized maps
-    bin_exc = str(nan_vector(cells)).excMap(3:16,:);
+    bin_exc = str(nan_vector(cells)).subpixel_excMap(3:16,:);
     bin_excm= [zeros(2,16); bin_exc];
-    bin_inh = str(nan_vector(cells)).inhMap;
+    bin_inh = str(nan_vector(cells)).subpixel_inhMap;
     %get the overlap map
     ov_map(:,:,cells) = squeeze(sum(cat(3,bin_excm,bin_inh),3));  
     ov_map_n(:,:,cells)=ov_map(:,:,cells)./max(max(ov_map(:,:,cells)));
@@ -87,9 +87,9 @@ end
 %% Binary overlap map for EX and IN
 for cells = 1:length(nan_vector(incl_idx:end));
     %get the binarized maps
-    bin_exc = str(nan_vector(cells)).excMap(3:16,:);
+    bin_exc = str(nan_vector(cells)).subpixel_excMap(3:16,:);
     bin_excm= [zeros(2,16); bin_exc]<0;
-    bin_inh = str(nan_vector(cells)).inhMap>0;
+    bin_inh = str(nan_vector(cells)).subpixel_inhMap>0;
     %get the layers
    % lyr = invitro_struct(cells).layers;
     %get the overlap map
@@ -101,13 +101,13 @@ end
 %traced and used for analysis
 for i=1:length(nan_vector)
     cellID_str(i)=str(nan_vector(i)).cellID;
-    if ~isempty(str(nan_vector(i)).morph)==1;
+    if ~isnan(str(nan_vector(i)).morph)==1;
         morph_cells(i)=1;
-        m_flip_a(i)=str(nan_vector(i)).morph_flip_again;
+        %m_flip_a(i)=str(nan_vector(i)).morph_flip_again;
         morph_parameters(i,:)=str(nan_vector(i)).morph;
     else
         morph_cells(i)=0;
-        m_flip_a(i)=NaN;
+       % m_flip_a(i)=NaN;
          morph_parameters(i,:)=ones(1,24)*NaN;
     end
 end
@@ -178,11 +178,14 @@ aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
 %% Align the exc and inh maps horizontally
 clean_ex = aligned_maps_ex';
 clean_in = aligned_maps_in';
+clean_exraw = aligned_maps_exraw';
+clean_inraw = aligned_maps_inraw';
 clean_ov = aligned_maps_ov';
 clean_diff = aligned_maps_diff';
 clean_basal = aligned_maps_basal;
 clean_apical = aligned_maps_apical;
 % get the center of the soma
+
 soma_centers = cat(1,str(:).somaCenter);
 soma_centers = soma_centers(non_nan_cells,1)- min(soma_centers(non_nan_cells,1));
 % % define the cell number
@@ -192,11 +195,13 @@ soma_centers = soma_centers(non_nan_cells,1)- min(soma_centers(non_nan_cells,1))
 % center_bins = discretize(soma_centers, hbin_num);
 center_bins = discretize(soma_centers, edges);
 % if all the cells are in the same bin, don't center
-if length(unique(center_bins)) == 1
-    hbin_num = 0;
-else
+
+ if length(unique(center_bins)) == 1
+     hbin_num = 0;
+ else
     % get the number of actually populated bins
     hbin_num = max(center_bins);
+    %hbin_num=6;
     % allocate memory for the aligned maps
     aligned_maps_ex = zeros(cell_num,16+bin_num, 16+hbin_num);
     aligned_maps_in = zeros(cell_num,16+bin_num, 16+hbin_num);
@@ -213,28 +218,28 @@ else
         % place the map into the aligned matrix based on this displacement
         aligned_maps_ex(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_ex(:,cells),16+bin_num,16);
         aligned_maps_in(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_in(:,cells),16+bin_num,16);
-        aligned_maps_exraw(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_exraw(:,cells),16+bin_num,16);
-        aligned_maps_inraw(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_inraw(:,cells),16+bin_num,16);
-        aligned_maps_ov(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_ov(:,cells),16+bin_num,16);
+         aligned_maps_exraw(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_exraw(:,cells),16+bin_num,16);
+         aligned_maps_inraw(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_inraw(:,cells),16+bin_num,16);
+       aligned_maps_ov(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_ov(:,cells),16+bin_num,16);
         aligned_maps_diff(cells, :, (1:16)+(1+hbin_num-cell_soma)) = reshape(clean_diff(:,cells),16+bin_num,16);
         % if the morpho is missing, skip
-        if ~isempty(morpho_basal{cells}) && sum(morpho_basal{cells}(:) > 0)
-            aligned_maps_basal(cells, :, (1:16)+(1+hbin_num-cell_soma)) = clean_basal(cells,:,:);
-        end
-        % if the morpho is missing, skip
-        if ~isempty(morpho_apical{cells}) && sum(morpho_apical{cells}(:) > 0)
-            aligned_maps_apical(cells, :, (1:16)+(1+hbin_num-cell_soma)) = clean_apical(cells,:,:);
-        end
+%          if ~isempty(morpho_basal{cells}) && sum(morpho_basal{cells}(:) > 0)
+%             aligned_maps_basal(cells, :, (1:16)+(1+hbin_num-cell_soma)) = clean_basal(cells,:,:);
+%          end
+% %         % if the morpho is missing, skip
+%         if ~isempty(morpho_apical{cells}) && sum(morpho_apical{cells}(:) > 0)
+%             aligned_maps_apical(cells, :, (1:16)+(1+hbin_num-cell_soma)) = clean_apical(cells,:,:);
+%          end
     end
-end
+ end
 aligned_maps_ex = reshape(aligned_maps_ex,cell_num,[]);
 aligned_maps_in = reshape(aligned_maps_in,cell_num,[]);
 aligned_maps_exraw = reshape(aligned_maps_exraw,cell_num,[]);
 aligned_maps_inraw = reshape(aligned_maps_inraw,cell_num,[]);
 aligned_maps_ov = reshape(aligned_maps_ov,cell_num,[]);
 aligned_maps_diff = reshape(aligned_maps_diff,cell_num,[]);
-aligned_maps_basal = reshape(aligned_maps_basal,cell_num,[]);
-aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
+% aligned_maps_basal = reshape(aligned_maps_basal,cell_num,[]);
+% aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
 pia_input=pia_input(incl_idx:end);
 %% Histogram of pia distribution with color coded in vivo morpho by itself
 figure;set(gcf,'color','w');
@@ -253,24 +258,21 @@ setups=[zeros(47,1);ones(100,1)];
 %% Slice orientation
 slice_ori=[str(nan_vector).sliceOri];
 %% 
-plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,0,[])
+plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,10,0,[])
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
-% [coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(incl_idx:end,:,:));
-% [coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(incl_idx:end,:,:));
-
- [coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(find(slice_ori==1),:,:));
- [coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(find(slice_ori==1),:,:));
-
-
+[coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(incl_idx:end,:,:));
+[coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(incl_idx:end,:,:));
+%  [coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex(find(slice_ori==1),:,:));
+%  [coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in(find(slice_ori==1),:,:));
 [coeff_exraw,score_exraw,latent_exraw,~,explained_exraw,mu] = pca(aligned_maps_exraw(incl_idx:end,:,:));
 [coeff_inraw,score_inraw,latent_inraw,~,explained_inraw,mu] = pca(aligned_maps_inraw(incl_idx:end,:,:));
 [coeff_ov,score_ov,latent_ov,~,explained_ov,mu] = pca(aligned_maps_ov(incl_idx:end,:,:));
 [coeff_diff,score_diff,latent_diff,~,explained_diff,mu] = pca(aligned_maps_diff(incl_idx:end,:,:));
 [coeff_com,score_com,latent_com,~,explained_com,mu] = pca([cat(1,aligned_maps_ex) cat(1,aligned_maps_in)]);
-[coeff_basal,score_basal,latent_basal,~,explained_basal,mu] = pca(aligned_maps_basal(morph_cells_id,:,:));
-[coeff_apical,score_apical,latent_apical,~,explained_apical,mu] = pca(aligned_maps_apical(morph_cells_id,:,:));
+% [coeff_basal,score_basal,latent_basal,~,explained_basal,mu] = pca(aligned_maps_basal(morph_cells_id,:,:));
+% [coeff_apical,score_apical,latent_apical,~,explained_apical,mu] = pca(aligned_maps_apical(morph_cells_id,:,:));
 [coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(morph_parameters(morph_cells_id,1:21));
 %% Display variance explained for ex and in maps
 var_exp(explained_in,explained_ex,{'Inhibition','Excitation'});legend boxoff  
@@ -298,8 +300,6 @@ xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','
 yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','PC1_{com}','PC2_{com}','PC3_{com}'});ytickangle(45);xlabel('Feature');ylabel('Feature');
 %% %%Display desired correlations between PCs/pia
 corr_plot(score_ex(:,1),score_com(:,1),[],{'PC1ex','PC1com','Pial depth'});
-
-
 %% Load fraction and absolute input of maps for ex and inh
 [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L23h L4h L5h pialD layer_assign] = iviv_profiles(nan_vector(incl_idx:end),str);
 frac_exv_m=[zeros(length(nan_vector(incl_idx:end)),2) frac_exv];
@@ -329,11 +329,12 @@ L23frov=[nanmean(frac_ovv(:,3:5),2)];
 L4frov=[nanmean(frac_ovv(:,6:7),2)];
 L5frov=[nanmean(frac_ovv(:,8:10),2)];
 %% Calculae difference between fraction 
-L5fr(find(L5fr(:,1)==0),1)=NaN ;
-L5fr(find(L5fr(:,2)==0),2)=NaN ;
+L5frt=L5fr;
+L5frt(find(L5fr(:,1)==0),1)=NaN ;
+L5frt(find(L5fr(:,2)==0),2)=NaN ;
 diffL23fr=L23fr(:,1)-L23fr(:,2);
 diffL4fr=L4fr(:,1)-L4fr(:,2);
-diffL5fr=L5fr(:,1)-L5fr(:,2);
+diffL5fr=L5frt(:,1)-L5frt(:,2);
 %% Calculate fraction using the layer assignement
 for i=1:length(frac_exv_m)
     L4fr_l(i,:)=[nanmean(frac_exv_m(i,find(layer_assign(i,:)==3))) nanmean(frac_inv(i,find(layer_assign(i,:)==3)))];   
@@ -445,12 +446,25 @@ gv(g1)=1;gv(g2)=2;gv(g3)=3;
 g1=[];g2=[];g3=[];
 %% Pial depth correlation plot with fraction 
 plot_fraction(L23fr,L4fr,L5fr,pia_input);
-%% Calculate centroid of map and angle towards it 
+%% Get the somax and y coordinates using the grid pattern
 for i=1:length(nan_vector)
-somax(i)=str(nan_vector(i)).somaCenter(1);
-somay(i)=552-str(nan_vector(i)).somaCenter(2);
+    if slice_ori(i)==1
+somax1(i)=str(nan_vector(i)).somaCenter(1);
+    else slice_ori(i)==0
+    somax1(i)=-str(nan_vector(i)).somaCenter(1);    
+    end
+somay1(i)=552-str(nan_vector(i)).somaCenter(2);
 end
+
+for i=1:length(nan_vector)
+   
+somax(i)=str(nan_vector(i)).subpixel_soma(1);    
+  
+somay(i)=552-str(nan_vector(i)).subpixel_soma(2);
+end
+%% Calculate centroid of map and angle towards it 
 %fake map
+somax=somax1
 map_fake=zeros(16,16,cells)
 map_fake(4,9,:)=1;
 %IN ang centroid
@@ -468,40 +482,17 @@ map_fake(4,9,:)=1;
 %fake map
 [out_ang_fake] = centroid_map(map_fake(3:5,:,:),somax,pia_input,[1:cells],2);
 %% Plotting the centroid with vector pointing towards it
-ang1=out_ang_exL4;
-ang2=out_ang_inL4;
+ang1=out_ang_exL23;
+ang2=out_ang_inL23;
 idxtp=1:147;
 %call function quiver
 quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,119);
-%% Display soma posiiton and how it was aligned for PCA
-idxtp=1:147;
-ang1=out_ang_exL23;
-ang2=out_ang_inL23;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
-subplot(1,3,1);
-for i=1:length(idxtp)
- hold on;plot(ang1(i,1),ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',5);   
-end
-hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
-hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
-subplot(1,3,2);
-for i=1:length(idxtp)
- hold on;plot(8,ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',5);   
-end
-hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
-hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
-subplot(1,3,3);
-for i=1:length(idxtp)
- hold on;plot(ang1(i,1),4,'k^','MarkerFaceColor','w','MarkerSize',5);   
-end
-hold on;xlim([4 12]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
-hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;box off;set(gca,'Ydir','reverse');
 %% Distributions of actual centroid all input cells for EX and IN
 a=1:147;
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,0,[],{});
 %% % Relation betwen ex and in centroid
-ang1=out_ang_exL4;
-ang2=out_ang_inL4;
+ang1=out_ang_exL23;
+ang2=out_ang_inL23;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
 subplot(1,3,1);
 pointsize=20;
@@ -517,14 +508,12 @@ scatter(ang1(:,8)*69,ang2(:,8)*69,pointsize,pia_input,'filled');set(gcf,'color',
 corr_plot(out_ang_inL23(:,5),score_in(:,2),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b');
 %% Desired correlation between horizontal centroid and PC3in
 corr_plot((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,score_in(:,3),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});xlim([-150 150]);ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
-%% 
-corr_plot(sum(abs_exv_n(:,1:5),2),score_ex(:,1),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});;ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
-%% 
-corr_plot(sum(abs_inv_n(:,1:3),2),score_in(:,1),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});;ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
+%% Fraction medial/lateral with scores PCin3
+corr_plot(frh_medial_s(:,2),score_in(:,3),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
+%% Fraction medial/lateral with centroid X IN
+corr_plot(frh_medial_s(:,2),(out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
 %% FAKE MAPS CENTROID
 corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
-%% 
-
 %% Display correlation between all PCs Multiple comparison 
 com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) out_ang_exL23(:,5)  out_ang_exL4(:,5) out_ang_inL23(:,5)  out_ang_inL4(:,5) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2)]; 
 G=correlation_matrix(com,1);
@@ -537,7 +526,14 @@ xticks([1:1:18]);yticks([1:1:18]);
 xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}'});xlabel('Feature');xtickangle(45);set(gca,'FontSize',12)
 yticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});ylabel('Feature');ytickangle(45);set(gca,'FontSize',12)
 c.Label.String = 'r';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
+%% More to compare between PCs and actual data
+com=[score_ex(:,1:3) score_in(:,1:3) L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) out_ang_exL23(:,5)  out_ang_exL4(:,5) out_ang_inL23(:,5)  out_ang_inL4(:,5) frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) ex_spanhL23' in_spanhL23' ex_spanhL4' in_spanhL4' ex_spanhL5' in_spanhL5' ex_spanh' tot_inputL4 sum(abs_exv_n(:,6:7),2) ]; 
+G=correlation_matrix(com,1);
+
+%% PC2ex with abs exv_n
+corr_plot(sum(abs_exv_m(:,6:7),2),score_ex(:,2),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('PC2_{ex}','Color','r');xlabel('Sum normalized input L4');
 %% 
+
 
 %MORPHOLOGY AND INPUT
 %% Get 16x16 maps for basal and apical
@@ -572,7 +568,7 @@ correlation_matrix(com,1);title('Morphology vs PC input scores');
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) tot_inputL23(:,1) tot_inputL4(:,1) tot_inputL23(:,2) tot_inputL4(:,2) out_ang_inL23(:,5) out_ang_inL23(:,3) morph_parameters(:,1:21) sum_densap' sum_densba']; 
 correlation_matrix(com,0);title('Morphology vs Vertical input');
 %% Total input apical dendrite branch points
-corr_plot(morph_parameters(:,4),abs(tot_input(:,1)),pia_input,{'Branch points','Total input EX','Pial depth (µm)'})
+corr_plot(morph_parameters(:,4),sum(abs_exv_n(:,6:7),2),pia_input,{'Branch points','Total input EX','Pial depth (µm)'})
 %% Total input apical branch  density
 corr_plot(sum_densap',abs(tot_input(:,1)),pia_input,{'Branch points','Total input EX','Pial depth (µm)'})
 %% %% Morphology parameters vs real parameters horizontal
@@ -627,105 +623,136 @@ hold on;line([1 3], [90 90],'Color','k','LineStyle','--');
 [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,nan_vector);
 %% Get IDS for ORI
 id_ori=find(~isnan(od_out_iviv(:,4)));
+%% %read out noise correlations
+noise_corr=[str(:).noise];
 %% Correlations PCs input and OD out
-ia=find(od_out_iviv(:,1)>0.3)  
+ia=find(od_out_iviv(:,2)>0.3)  
 %b=find(od_out_iviv(:,1)>0.3)  
 %[ia ib]=intersect(a,b)
-com=[];com=[score_ex(ia,1:3) score_in(ia,1:3) od_out_iviv(ia,:)]; 
+com=[];com=[score_ex(ia,1:3) score_in(ia,1:3) od_out_iviv(ia,:) noise_corr(ia)']; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
-%% 
-%% Correlations PCs input and OD out
-a=find(od_out_iviv(:,2)>0.3)  
-b=find(od_out_iviv(:,1)>0.3)  
-[ia ib]=intersect(a,b)
-com=[];com=[score_com(ia,1:10) od_out_iviv(ia,:)]; 
+%% Correlations PCs input and OD out COM PCs
+ia=find(od_out_iviv(:,2)>0.3)  
+%b=find(od_out_iviv(:,1)>0.3)  
+%[ia ib]=intersect(a,b)
+com=[];com=[score_com(ia,1:3) od_out_iviv(ia,:)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
-%% 
-a=find(od_out_iviv(:,1)>0.3)  
- %b=find(L4fr(:,1)>0)  
- %[ia ib]=intersect(a,b)
-corr_plot(od_out_iviv(a,4),sum(abs_exv_m(a,6),2),pia_input(a),{'Direction','PC3ex','pia'})
-%% 
-a=find(od_out_iviv(:,1)>0.3)  
-b=find(sum(abs_inv(:,1:16),2)<9000)
-%c=find(od_out_iviv(:,4)<135)
-%c=find(pia_input<300)
-[ia ib]=intersect(a,b)
-corr_plot(od_out_iviv(ia,1),sum(abs_inv(ia,1:16),2),pia_input(ia),{'Direction','PC3ex','pia'})
-%% 
-corr_plot(od_out_iviv(ia,5),score_ex(ia,3),pia_input(ia),{'Direction','PC3ex','pia'})
-%% 
-corr_plot(od_out_iviv(ia,5),frh_medial_s(ia,1),pia_input(ia),{'Direction','Medial Fraction EX','pia'})
-
 %% Correlations PCs input and sftft out
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) sftf_out_iviv(:,2:end)]; 
 correlation_matrix(com,0);title('PC inputs ODout iviv');
 %% Correlations Input vertical vs ODout
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) tot_input(:,1) tot_input(:,2) out_ang_inL23(:,3) od_out_iviv(:,1:8)]; 
-correlation_matrix(com,0);title('Input vertical ODout iviv');
-%% 
-a=find(od_out_iviv(:,1)>0.3)  
-com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) tot_input(a,1) tot_input(a,2) out_ang_inL23(a,3)  sum(abs_exv_n(a,1:5),2) ex_spanhL23(a)' ex_spanhL4(a)' frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8)]; 
+%a=find(od_out_iviv(:,1)>0)  
+a=find(noise_corr<0.1)
+com=[];com=[L23fr(a,1) L4fr(a,1) L5fr(a,1) L23fr(a,2) L4fr(a,2) L5fr(a,1) tot_input(a,1) tot_input(a,2) out_ang_inL23(a,3)  sum(abs_exv_n(a,1:5),2) ex_spanhL23(a)' ex_spanhL4(a)' frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8) noise_corr(a)']; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% Score in with Orientation
 a=find(od_out_iviv(:,1)>0.3)  
-b=find(pia_input<200)
+b=find(pia_input<300)
 %c=find(od_out_iviv(:,4)<135)
 %c=find(pia_input<300)
 [ia ib]=intersect(a,b)
 corr_plot(od_out_iviv(ia,4),score_in(ia,2),pia_input(ia),{'11','2','pia'})
 corr_plot(od_out_iviv(ia,4),out_ang_inL23(ia,5),pia_input(ia),{'Orientation','Angle centre of mass L23 in','Pial depth'})
 ;set(gca,'FontSize',12);
-%% OSI against total input
-a=find(od_out_iviv(:,1)>0.3)  
-b=find(tot_input(:,2)<200)
-[ia ib]=intersect(a,b)
-corr_plot(od_out_iviv(ia,1),tot_input(ia,2),[],{'OSI','IN INPUT','pia'});
-
-%% 
-a=find(od_out_iviv(:,1)>0.3)  
-corr_plot(od_out_iviv(a,5),out_ang_exL23(a,3)-out_ang_inL23(a,3),pia_input(a),{'OSI','IN INPUT','pia'});
 %% Correlations Input vertical vs ODout
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) tot_input(:,1) od_out_iviv]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
-%% 
-com=[];com=[ex_spanhL23' in_spanhL23' ex_spanhL4' in_spanhL4'  abs(ex_spanhL23'-in_spanhL23')*69 od_out_iviv]; 
+%% Span vs od out
+a=find(od_out_iviv(:,2)>0.3)  
+com=[];com=[ex_spanhL23(a)' in_spanhL23(a)' ex_spanhL4(a)' in_spanhL4(a)'  abs(ex_spanhL23(a)'-in_spanhL23(a)')*69 od_out_iviv(a,:)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
-
 %% Correlations Input vertical vs SFTF pref
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% 
 
-
-
-%% Correlations Input vertical vs ODout
-com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) tot_input(a) tot_inputL23(a) tot_inputL4(a) frh_lateral_s(a,1) frh_lateral_s(a,2) od_out_iviv(a,1:8)]; 
-correlation_matrix(com,0);title('Input vertical ODout iviv');
-
-%% Correlations Input vertical vs ODout
-com=[];com=[L23h L4h L5h od_out_iviv(:,:)]; 
-correlation_matrix(com,0);title('Input vertical ODout iviv');
-
-%% 
-corr_plot(sftf_out_iviv(:,2),abs(out_ang_exL23(:,3)-out_ang_inL23(:,3)),[],{'SF','Centroid L23 EX-IN','XSA'});
- 
-%% 
-a=find(od_out_iviv(:,2)>0.25)
-corr_plot(od_out_iviv(a,5),in_spanhL23(a)',[],{'SF','Centroid L23 EX-IN','XSA'});
-
+%% IMPORTANT CALCULATIONS
+%% Direction difference Lateral vs medial
+g1=[];
+g2=[];
+a=find(od_out_iviv(:,2)>0.25)  
+b=find(pia_input<300)
+[ia ib]=intersect(a,b)
+%par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
+%par=out_ang_inL23(ia,3)
+%par=L4h(ia,4)-L4h(ia,3)
+par=abs(out_ang_in(ia,3)-out_ang_in(ia,1))*69
+g1=find(od_out_iviv(ia,5)>0 & od_out_iviv(ia,5)<200) 
+tmp=zeros(length(ia),1)
+tmp(g1)=g1;
+g2=find(tmp==0);
+%g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
+xticklabels({'135°','~315'})
+xlabel('Direction');ylabel('Difference IN Lateral-Medial');  set(gca,'FontSize',12);
+%% Correlaion of the above
+a=find(od_out_iviv(:,2)>0.3)  
+b=find(pia_input<300)
+%b=find(od_out_iviv(:,1)>0.3)  
+[ia ib]=intersect(a,b)  
+corr_plot(frh_lateral_s(ia,2)-frh_medial_s(ia,2),od_out_iviv(ia,5),od_out_iviv(ia,2),{'OSI','IN INPUT','pia'});
 %% SF vs abs difference between L23 EX/IN span
-%par=abs(ex_spanhL23-in_spanhL23)*69
-par=max_densap
-%par=score_ex(:,1)
-% g1=find(sftf_out_iviv(:,2)==0.02)
-% g2=find(sftf_out_iviv(:,2)==0.08)
- g1=find(od_out_iviv(:,1)<0.5)
- g2=find(od_out_iviv(:,1)>0.5)
+a=find(abs(ex_spanhL23(:)-in_spanhL23(:))*69<200)
+par=abs(ex_spanhL23(a)-in_spanhL23(a))*69;
+%par=(in_spanhL23(a))*69;
+%par=score_ex(a,2);
+%par=in_spanhL23(a)*69;
+ g1=find(sftf_out_iviv(a,2)==0.02)
+ g2=find(sftf_out_iviv(a,2)==0.08)
+%  g1=find(od_out_iviv(:,1)<0.5)
+%  g2=find(od_out_iviv(:,1)>0.5)
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
 xticklabels({'0.02','0.08'})
-;xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
+xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
 %ylim([0 200]);
+%% 
+par1=ex_spanhL4(a)
+par2=in_spanhL4(a)
+figure;scatter(par1(g1),par2(g1));
+hold on;scatter(par1(g2),par2(g2));
+ refline(1,0);
+ xlim([4 16]);
+ ylim([4 16]);
+%% L4 fraction with ORI pref
+a=find(od_out_iviv(:,1)>0.25)
+corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
+%% Ori pref with pial depth
+corr_plot(od_out_iviv(a,4),pia_input(a),[],{'ORI','Pial depth'});set(gca,'FontSize',12);
+%% L4 fraction with pial dpeth
+corr_plot(L4fr(a,1),pia_input(a),od_out_iviv(a,4),{'L4exfraction','Pial depth','ORI'});set(gca,'FontSize',12);
+%% categorize cells basen on orientations
+g1=[];
+g2=[];
+a=find(od_out_iviv(:,1)>0.25)  
+b=find(pia_input<300)
+[ia ib]=intersect(a,b)
+%par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
+%par=abs(out_ang_exL23(ia,5))
+%par=L4fr(ia,2)
+par=abs(out_ang_exL23(ia,3)-out_ang_exL23(ia,1))*69
+%par=abs(out_ang_exL23(ia,10))*69
+%par=abs(out_ang_inL23(ia,1))*69
+%par=in_spanhL23(ia)*69
+%par=score_in(ia,2)
+%par=pia_input(ia)
+g1=find(od_out_iviv(ia,4)>0 & od_out_iviv(ia,4)<85) 
+tmp=zeros(length(ia),1)
+tmp(g1)=g1;
+g2=find(tmp==0);
+%g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
+xticklabels({'0-90°','90-180'})
+xlabel('Orientation');ylabel('|\Delta Centroid L23 X - Soma X (µm)|','Color','r');  set(gca,'FontSize',12);
+%xlabel('Orientation');ylabel('|Angle Centroid L23|','Color','r');  set(gca,'FontSize',12);
+%% 
+a=find(od_out_iviv(:,1)>0.25)  
+fe=od_out_iviv(a,4)
+centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'ORI'});
+%% 
+
+figure;scatter(par(g2),ones(length(g2),1),'og','filled')
+hold on;scatter(par(g1),ones(length(g1),1),'om','filled')
+hold on;
 %% Correlations Input horizontal vs ODout
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
 correlation_matrix(com,0);title('Input horizontal ODout iviv');
@@ -733,7 +760,7 @@ correlation_matrix(com,0);title('Input horizontal ODout iviv');
 com=[];com=[score_ex(:,1:3) score_in(:,1:3) spon_out_iviv]; 
 correlation_matrix(com,1);title('PC inputs spon_out iviv');
 %% Correlations Vertical input and spon out
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov L4frov spon_out_iviv]; 
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) L23frov L4frov spon_out_iviv]; 
 correlation_matrix(com,1);title('Input vertical spon_out iviv');
 %% Correlations Horizontal input and spon out
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)'  spon_out_iviv]; 
@@ -742,18 +769,16 @@ com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) diffL23' diffL4' L23frov 
 correlation_matrix(com,0);title('PC inputs sftf_out iviv');
 %% Correlations PCs input and sftf_out_iviv
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' sftf_out_iviv]; 
-correlation_matrix(com,1);title('PC inputs sftf_out iviv');
-%% Check correlation between ORI Pref with OSI cutoff
-a=find(od_out_iviv(:,1)>0.3)
-corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
+correlation_matrix(com,0);title('PC inputs sftf_out iviv');
+
 %% %% Intersectional approach ORI
 a=find(L4fr(:,1)<0.3)  
 b=find(od_out_iviv(:,1)>0.3)
-c=find(od_out_iviv(:,4)<135)
-%c=find(pia_input<300)
+%c=find(od_out_iviv(:,4)<180)
+c=find(pia_input<260)
 [ia ib]=intersect(a,b)
 [iaa ic]=intersect(ia,c);
-corr_plot(od_out_iviv(iaa,4),out_ang_inL23(iaa,5),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
+corr_plot(od_out_iviv(iaa,4),out_ang_inL23(iaa,5),pia_input(iaa),{'ORI','L4ex fraction','pia'});set(gca,'FontSize',12);
 %% Correlation matrix with intersectional approach 
 com=[];com=[score_ex(iaa,1:3) score_in(iaa,1:3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
@@ -832,8 +857,8 @@ xlabel('Orientation');ylabel('L23 ex COM X');  set(gca,'FontSize',12);
 a=find(od_out_iviv(:,1)>0.25)
 %par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
 %par=L4h(a,3);
-%par=abs(out_ang_inL23(a,8))*69;
-par=score_in(a,2);
+par=abs(out_ang_inL23(a,2));
+%par=score_in(a,2);
 %par=pia_input(a)
 g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<90) 
 g2=find(od_out_iviv(a,4)>90 & od_out_iviv(a,4)<180) 
@@ -886,32 +911,9 @@ ia=find(od_out_iviv(:,1)>0.25)
 %[ia ib]=intersect(a,b)
 
 corr_plot(spon_out_iviv(ia,2),ex_spanhL4(ia)',pia_input(ia),{'Orientation','L4 EX fraction','ODI','Pia input'});set(gca,'FontSize',12);ylabel('L4 EX fraction','Color','r');xlabel('Orientation');
-%% Direction differences
-a=find(od_out_iviv(:,2)>0.3)
-%par=abs((out_ang_inL23(a,3)-out_ang_inL23(a,1)))*69;
-%par=abs(out_ang_exL4(a,5)-out_ang_inL4(a,5));
-%par=score_ex(a,3);
-%par=abs(out_ang_inL23(a,5))
-%par=score_ex(:,2);
-%par=pia_input(a)
-par=frh_medial_s(a,2)
- g1=find(od_out_iviv(a,5)>25 & od_out_iviv(a,5)<80) 
- g2=find(od_out_iviv(a,5)>250 & od_out_iviv(a,5)<360) 
- [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
- xticklabels({'~45°','~315'})
-xlabel('Direction');ylabel('Total in fraction medial');  set(gca,'FontSize',12);
-%xlabel('Direction');ylabel('Pial depth (µm)');  set(gca,'FontSize',12);
+
 %% 
 
-par=abs(out_ang_inL23(a,4))*69;
-g1=find(od_out_iviv(a,5)>45 & od_out_iviv(a,5)<225) 
-tmp=zeros(length(a),1)
-tmp(g1)=g1
-g2=find(tmp==0)
-%g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'45°','~135'})
-xlabel('Direction');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
 
 
 %% 
@@ -973,14 +975,14 @@ G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
 
 %% 
 %par=od_out_iviv(:,1);
-par=score_in(:,3);
-%par=score_ex(:,1)
+%par=out_ang_inL23(:,3);
+par=score_ex(:,3)
 % g1=find(sftf_out_iviv(:,2)==0.02)
 % g2=find(sftf_out_iviv(:,2)==0.08)
 %  g1=find(slice_ori==0)
 %  g2=find(slice_ori==1)
-g1=find(setups==0)
-g2=find(setups==1)
+g1=find(slice_ori==0)
+g2=find(slice_ori==1)
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
 
 %% Display fraction for ex and in groups 
@@ -1211,10 +1213,21 @@ clu_num =4;
 pcs     =[1 2 3];
 %pcs     =[5];
 %including the 6 PCs = pial depth 
-[idx_input, clustering_input, leafOrder] = hca([score_ex(:,pcs) score_in(:,pcs)],0,'ward',clu_num,pia_input,0,0.6);%call function for clustering
+[idx_input, clustering_input, leafOrder] = hca([score_ex(:,pcs) score_in(:,pcs)],0,'ward',clu_num,pia_input,2,0.6);%call function for clustering
 %[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
 %% 
-plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,1,idx_input);
+clu_num =5;
+%pcs =[];
+%pcs     =[5];
+%including the 6 PCs = pial depth 
+[idx_input, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'ward',clu_num,pia_input,0,0.6);%call function for clustering
+%[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
+%% 
+
+
+
+%% Plot average maps of clusters
+plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,10,1,idx_input);
 
 %% kmeans clustering
 % idx_input=[];
@@ -1223,21 +1236,33 @@ plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,1,idx_input);
 %Pial depth
 [statsout] = barplot_sw(pia_input,idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
 %% Orientation preference
-[statsout] = barplot_sw(od_out_iviv(:,4),idx_input,{'Clusters','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
+a=find(od_out_iviv(:,1)>0.25)  
+[statsout] = barplot_sw(od_out_iviv(a,4),idx_input(a),{'Clusters','Orientation preference'});xtickangle(45);set(gca,'Ydir','reverse');set(gca,'FontSize',12)
 %% Orientation selectivity
-[statsout] = barplot_sw(od_out_iviv(:,8),idx_input,{'Clusters','Ca_{peak}'})
+[statsout] = barplot_sw(od_out_iviv(:,6),idx_input,{'Clusters','Ca_{peak}'})
+%% 
+[statsout] = barplot_sw(noise_corr',idx_input,{'Clusters','Ca_{peak}'})
 %% Angle centroid
-[statsout] = barplot_sw(out_ang_inL23(:,3),idx_input,{'Clusters','Angle Centroid L23in'})
+[statsout] = barplot_sw(abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)),idx_input,{'Clusters','Angle Centroid L23in'})
 %% L4 ex fraction
-[statsout] = barplot_sw(L4fr(:,1),idx_input,{'Clusters','L4 ex fraction'});set(gca,'FontSize',12)
+[statsout] = barplot_sw(L5fr(:,1),idx_input,{'Clusters','L4 ex fraction'});set(gca,'FontSize',12)
+%% 
+%% 
+
+[statsout] = barplot_sw(in_spanhL23',idx_input,{'Clusters','L4 ex fraction'});set(gca,'FontSize',12)
 %% L4 total input sum
 [statsout] = barplot_sw(abs(tot_inputL4(:,1)),idx_input,{'Clusters','L4 total input'})
-%% L23 in fraction
-[statsout] = barplot_sw(L23fr(:,2),idx_input,{'Clusters','L23 in fraction'})
-%% L23 in fraction
-[statsout] = barplot_sw(tot_inputL23(:,2),idx_input,{'Clusters','L23 total input'})
 %% 
-[statsout] = barplot_sw(out_ang_inL23(:,5),idx_input,{'Clusters','Angle IN L23'})
+[statsout] = barplot_sw(sum(abs_exv_n(:,6:7),2),idx_input,{'Clusters','L4 total input'})
+
+%% L23 in fraction
+[statsout] = barplot_sw(L4fr(:,1),idx_input,{'Clusters','L23 in fraction'})
+%% L23 in fraction
+[statsout] = barplot_sw(tot_inputL23(:,1),idx_input,{'Clusters','L23 total input'})
+%% 
+[statsout] = barplot_sw(tot_input,idx_input,{'Clusters','Angle IN L23'})
+%% 
+[statsout] = barplot_sw(ex_spanh',idx_input,{'Clusters','Angle IN L23'})
 %% 
 [statsout] = barplot_sw(out_ang_exL4(id_ori,5),idx_input(id_ori),{'Clusters','L23 total input'})
 %% 
@@ -1265,15 +1290,19 @@ plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,1,idx_input);
 %% 
 [statsout] = barplot_sw(morph_parameters(id_ori,3),idx_input(id_ori),{'Clusters','Correlation morpho input'})
 %% Plot clusters with values underneath it as heatmaps
-dendroplot_SW(clustering_input,leafOrder,11,[score_ex(:,1:3) score_in(:,1:3)],{'PC1ex','PC2ex','PC3ex','PC1in','PC2in','PC3in'},pia_input)
+dendroplot_SW(clustering_input,leafOrder,0.8,[score_ex(:,1:3) score_in(:,1:3)],{'PC1ex','PC2ex','PC3ex','PC1in','PC2in','PC3in','Slice Ori','setups'},pia_input)
 %% Looking at input fractions
-dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'})
+dendroplot_SW(clustering_input,leafOrder,0.8,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'},pia_input)
 %% Looking at input fractions ex
 dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,1) L4fr(:,1)  L5fr(:,1)],{'L2/3ex','L4ex','L5ex'})
 %% Looking at input fractions in
-dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3in','L4in','L5in'})
+dendroplot_SW(clustering_input,leafOrder,11,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3in','L4in','L5in', 'slice_ori','setups'})
 %% Plot clusters with values underneath it as heatmaps: SETUPS
-dendroplot_SW(clustering_input,leafOrder,11,[setups],{'Setups'})
+dendroplot_SW(clustering_input,leafOrder,0.8,[od_out_iviv(:,4)],{'ORI'})
+%% 
+%% Plot clusters with values underneath it as heatmaps: SETUPS
+dendroplot_SW(clustering_input,leafOrder,0.8,[setups],{'Oripref'})
+
 %% Plot clusters with values underneath it as heatmaps: SLICE ORIENTATION
 
 dendroplot_SW(clustering_input,leafOrder,11,[slice_ori' score_in(:,3)],{'Slice Ori','PC3in'})

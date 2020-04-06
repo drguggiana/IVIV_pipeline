@@ -28,7 +28,7 @@ end
 box off;set(gca,'Ydir','reverse');
 %set(gca,'Xdir','reverse');
 xlim([5 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
-hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;
+hold on;line([1 16], [8.5 8.5],'Color','k','LineStyle','--');hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
 
 subplot(1,4,4);
 for i=1:length(idxtp)
@@ -44,6 +44,6 @@ end
 box off;set(gca,'Ydir','reverse');
 %set(gca,'Xdir','reverse');
 xlim([5 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
-hold on;line([1 16], [8 8],'Color','k','LineStyle','--');hold on;line([8 8], [1 16],'Color','k','LineStyle','--');axis off;
+hold on;line([1 16], [8.5 8.5],'Color','k','LineStyle','--');hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
 
 end

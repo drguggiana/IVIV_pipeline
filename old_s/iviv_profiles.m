@@ -10,8 +10,8 @@ function [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L2
 
 %Read out 16 x 16 input maps per cell 
 for i=1:length(u);
-exmap(:,:,i)=str(u(i)).excMap;
-inhmap(:,:,i)=str(u(i)).inhMap;
+exmap(:,:,i)=str(u(i)).subpixel_excMap;
+inhmap(:,:,i)=str(u(i)).subpixel_inhMap;
 layers(:,:,i)=str(u(i)).layers;
 end
 %HORIZONTAL Fraction excitation

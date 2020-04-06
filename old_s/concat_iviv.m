@@ -4,7 +4,7 @@ function [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pre
 non_nan_idx=nan_vector(1:end);
 for i=1:length(non_nan_idx);
 %    idx_amp_inf(i,:)=str(non_nan_idx(i)).hori_peak_pl;
-if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
+if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
     %ori_both(:,i)=str(non_nan_idx(i)).ori_a;
     iv_ODI(i)=str(non_nan_idx(i)).ODI;
     if str(non_nan_idx(i)).contra==1
@@ -88,7 +88,7 @@ end
 end
 %% Extract other in vivo paramters: PCI and spontenaeous events 
 for i=1:length(non_nan_idx);   
-if ~isempty(str(non_nan_idx(i)).pci)==1
+if ~isnan(str(non_nan_idx(i)).pci)==1
 iv_spon(i)=str(non_nan_idx(i)).sad;
 iv_popcop(i)=str(non_nan_idx(i)).pci;
 iv_pia_input(i)=str(non_nan_idx(i)).pia_invivo;
@@ -116,7 +116,7 @@ end
 % end
 %% SFTF both eyes
 for i=1:length(non_nan_idx)
-    if ~isempty(str(non_nan_idx(i)).sftf_resp)==1
+    if str(non_nan_idx(i)).sftf_resp==1
         iv_SF(i)=str(non_nan_idx(i)).SF;
         iv_TF(i)=str(non_nan_idx(i)).TF;
         oripref_sftf(i)=str(non_nan_idx(i)).Ori_sftf;
