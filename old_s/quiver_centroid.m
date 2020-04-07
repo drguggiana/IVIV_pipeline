@@ -8,42 +8,45 @@ exc_map=ex_map(:,:,t);
 inplot_type = 2;sf=1;map_plot3(exc_map,'',inplot_type,fig1,sf,0,1);
 hold on;plot(ang1(t,1),ang1(t,2),'k^','MarkerFaceColor','w','MarkerSize',5);
 hold on;q=quiver(ang1(t,1),ang1(t,2),(ang1(t,3)-ang1(t,1)),(ang1(t,4)-ang1(t,2)),0);
-q.Color='black';q.MaxHeadSize=0.8;q.LineWidth=1;
+q.Color='black';q.MaxHeadSize=0.9;q.LineWidth=1;
 subplot(1,4,2);
 inh_map=in_map(:,:,t);
 inplot_type = 3;sf=1;map_plot3(inh_map,'',inplot_type,fig1,sf,0,1);
 hold on;plot(ang2(t,1),ang2(t,2),'k^','MarkerFaceColor','w','MarkerSize',5);
 hold on;q=quiver(ang2(t,1),ang2(t,2),(ang2(t,3)-ang2(t,1)),(ang2(t,4)-ang2(t,2)),0);
-q.Color='black';q.MaxHeadSize=0.8;q.LineWidth=1;
+q.Color='black';q.MaxHeadSize=0.9;q.LineWidth=1;
+
 subplot(1,4,3);
 for i=1:length(idxtp)
-q=quiver(ang1(i,1),ang1(i,2),(ang1(i,3)-ang1(i,1)),(ang1(i,4)-ang1(i,2)),0);
- q.Color='red';q.MaxHeadSize=0.1;q.LineWidth=1;
-hold on;plot(ang1(i,1),ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',3);xlim([1 8]);ylim([1 8]);
+%q=quiver(ang1(i,1),ang1(i,2),(ang1(i,3)-ang1(i,1)),(ang1(i,4)-ang1(i,2)),0);
+q=quiver(8.5,ang1(i,2),(ang1(i,3)-ang1(i,1)),(ang1(i,4)-ang1(i,2)),0);
+ q.Color='red';q.MaxHeadSize=0.5;q.LineWidth=1;
+hold on;plot(8.5,ang1(i,2),'k^','MarkerFaceColor','w','MarkerSize',4);xlim([1 8]);ylim([1 8]);
 %hold on;plot(c_cord(t,1),4,'k^');
 end
 for i=1:length(idxtp)
- hold on;plot(ang1(i,1),ang1(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',3);
+ hold on;plot(8.5,ang1(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',4);
 end
 box off;set(gca,'Ydir','reverse');
 %set(gca,'Xdir','reverse');
-xlim([5 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+xlim([6 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8.5 8.5],'Color','k','LineStyle','--');hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
 
 subplot(1,4,4);
 for i=1:length(idxtp)
-q=quiver(ang2(i,1),ang2(i,2),(ang2(i,3)-ang2(i,1)),(ang2(i,4)-ang2(i,2)),0);
- q.Color='blue';q.MaxHeadSize=0.1;q.LineWidth=1;
-hold on;plot(ang2(i,1),ang2(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',3);
+%q=quiver(ang2(i,1),ang2(i,2),(ang2(i,3)-ang2(i,1)),(ang2(i,4)-ang2(i,2)),0);
+q=quiver(8.5,ang2(i,2),(ang2(i,3)-ang2(i,1)),(ang2(i,4)-ang2(i,2)),0);
+ q.Color='blue';q.MaxHeadSize=0.5;q.LineWidth=1;
+hold on;plot(8.5,ang2(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',4);
 %hold on;plot(c_cord(t,1),4,'k^');
 
 end
 for i=1:length(idxtp)
- hold on;plot(ang1(i,1),ang1(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',3);
+ hold on;plot(8.5,ang2(i,2),'^','MarkerFaceColor','w','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',4);
 end
 box off;set(gca,'Ydir','reverse');
 %set(gca,'Xdir','reverse');
-xlim([5 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
+xlim([6 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8.5 8.5],'Color','k','LineStyle','--');hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
 
 end

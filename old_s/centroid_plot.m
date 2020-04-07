@@ -8,16 +8,16 @@ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
 subplot(1,2,1);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor='m';h4.MarkerEdgeColor='k';grid on;%h4.MarkerFaceAlpha=0.5
 hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
-set(gca,'FontSize',10);
+set(gca,'FontSize',12);
 ang2=out_ang_exL4
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor='g';h4.MarkerEdgeColor='k';grid on;
-set(gca,'Ydir','reverse');set(gca,'FontSize',10);
+set(gca,'Ydir','reverse');set(gca,'FontSize',12);
 hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
 ang2=out_ang_exL5
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor='k';grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^w');
 hold on;title('EX Centre of mass','Color','r');ylabel('Vertical distance (µm)');xlabel('Horizontal distance (µm)');hold on;%text(-250,350,'L5');%legend('L5');legend boxoff
-yticks([-200:200:600]);set(gca,'FontSize',10);
+yticks([-200:200:600]);set(gca,'FontSize',12);
 
 ang2=out_ang_inL23;
 subplot(1,2,2);
@@ -26,19 +26,19 @@ hold on;set(gca,'FontSize',10);%legend('L2/3');legend boxoff
 ang2=out_ang_inL4;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor='g';h4.MarkerEdgeColor='k';grid on;
 set(gca,'Ydir','reverse');%legend('L4');legend boxoff
-hold on;set(gca,'FontSize',10);
+hold on;set(gca,'FontSize',12);
 ang2=out_ang_inL5
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor='k';grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^w');
 hold on;title('IN Centre of mass','Color','b');xlabel('Horizontal distance (µm)');%legend('L5');legend boxoff
-yticks([-200:200:600]);set(gca,'FontSize',10);
+yticks([-200:200:600]);set(gca,'FontSize',12);
 hold on;
 plot(200,-200,'o','MarkerFaceColor','m','MarkerEdgeColor','k');text(220,-200,'L2/3');
 hold on;
 plot(200,-150,'o','MarkerFaceColor','g','MarkerEdgeColor','k');text(220,-150,'L4');
 hold on;
 plot(200,-100,'o','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');text(220,-100,'L5');
-set(gca,'FontSize',10);
+set(gca,'FontSize',12);
 
 elseif gr==1
 ang2=out_ang_exL23;    

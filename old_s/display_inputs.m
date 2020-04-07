@@ -30,7 +30,7 @@ xticks([-0.6:0.3:0.6]);
 hold on;ylim([1 16]);yticks([1:5:16]);yticklabels({'1','6','11','16'});
 hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
 hold on;line([-1 1], [8 8],'Color','k','LineStyle','--');hold on;line([-1 1], [11 11],'Color','k','LineStyle','--');
-set(gca,'FontSize',10);text(-0.3,0.2,'Difference','Color','k');
+set(gca,'FontSize',10);text(-0.3,0.2,'\Delta EX - IN','Color','k');
 
 subplot(2,3,3);hold on;
 mexp=errorbar(nanmean(frac_diffv(:,1:16))',1:16,nanstd(frac_diffv(:,1:16))/sqrt(size(frac_diffv,1)),'horizontal','k');set(gca,'Ydir','reverse');
@@ -38,7 +38,7 @@ mexp.CapSize=3;xlim([-0.2 0.2]);
 xticks([-0.2:0.1:0.2]);hold on;ylim([1 16]);yticks([1:5:16]);yticklabels({'1','6','11','16'});
 hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
 hold on;line([-1 1], [8 8],'Color','k','LineStyle','--');hold on;line([-1 1], [11 11],'Color','k','LineStyle','--');
-set(gca,'FontSize',10);text(-0.1,0.2,'Difference','Color','k');
+set(gca,'FontSize',10);text(-0.1,0.2,'\Delta EX - IN','Color','k');
 
 
 %EX and IN Horizontal
@@ -67,7 +67,7 @@ yticks([-0.4:0.2:0.4]);
 hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 stats_g=[];
-hold on;text(5,0.42,'Difference','Color','k');
+hold on;text(5,0.42,'\Delta EX - IN','Color','k');
 
 subplot(2,3,6);hold on;
 ;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'horizontal','k');
@@ -75,7 +75,7 @@ mexp.CapSize=3;
 ylim([-0.1 0.1]);
 yticks([-0.2:0.1:0.2]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
-hold on;text(5,0.105,'Difference','Color','k');
+hold on;text(5,0.105,'\Delta EX - IN','Color','k');
 
 
 

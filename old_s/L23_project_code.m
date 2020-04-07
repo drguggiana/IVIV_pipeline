@@ -257,8 +257,12 @@ set(gca,'FontSize',14);
 setups=[zeros(47,1);ones(100,1)];
 %% Slice orientation
 slice_ori=[str(nan_vector).sliceOri];
+%% Plot average maps all
+plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,10,0,[]);
 %% 
-plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,10,0,[])
+ % plot_maps(str,ex_map_raw,in_map_raw,nan_vector,80,pia_input);
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,99,pia_input);
+
 %% Run 2 separate PCAs on ex and in and basal and apical morpho
 %which maps to include: 
 %incl_idx=65;
@@ -486,7 +490,7 @@ ang1=out_ang_exL23;
 ang2=out_ang_inL23;
 idxtp=1:147;
 %call function quiver
-quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,119);
+quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,128);
 %% Distributions of actual centroid all input cells for EX and IN
 a=1:147;
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,0,[],{});
@@ -703,16 +707,20 @@ par=abs(ex_spanhL23(a)-in_spanhL23(a))*69;
 %  g2=find(od_out_iviv(:,1)>0.5)
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
 xticklabels({'0.02','0.08'})
-xlabel('SF');ylabel('\Delta EX-IN horizontal span (µm)');
+xlabel('SF');ylabel('| \Delta EX-IN horizontal span (µm) |');
 %ylim([0 200]);
 %% 
-par1=ex_spanhL4(a)
-par2=in_spanhL4(a)
-figure;scatter(par1(g1),par2(g1));
-hold on;scatter(par1(g2),par2(g2));
+par1=ex_spanhL23(a)*69;
+par2=in_spanhL23(a)*69;
+figure;scatter(par1(g1),par2(g1),'mo','filled');set(gcf,'color','w')
+hold on;scatter(par1(g2),par2(g2),'go','filled');
  refline(1,0);
- xlim([4 16]);
- ylim([4 16]);
+ xlim([4*9 16*69]);
+ ylim([4*69 16*69]);
+ ylabel('IN span horizontal (µm)');
+ xlabel('EX span horizontal (µm)');
+  set(gca,'FontSize',12);
+  legend('0.02','0.08')
 %% L4 fraction with ORI pref
 a=find(od_out_iviv(:,1)>0.25)
 corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'ORI','L4ex fraction'});set(gca,'FontSize',12);
@@ -729,7 +737,7 @@ b=find(pia_input<300)
 %par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
 %par=abs(out_ang_exL23(ia,5))
 %par=L4fr(ia,2)
-par=abs(out_ang_exL23(ia,3)-out_ang_exL23(ia,1))*69
+par=abs(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69
 %par=abs(out_ang_exL23(ia,10))*69
 %par=abs(out_ang_inL23(ia,1))*69
 %par=in_spanhL23(ia)*69
@@ -750,9 +758,11 @@ fe=od_out_iviv(a,4)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'ORI'});
 %% 
 
-figure;scatter(par(g2),ones(length(g2),1),'og','filled')
-hold on;scatter(par(g1),ones(length(g1),1),'om','filled')
+figure;scatter(par(g2)*-1,ones(length(g2),1),'og','filled')
+hold on;scatter(zeros(length(g1),1),par(g1)*-1,'om','filled')
 hold on;
+xlim([-80 50]);
+ylim([-80 50]);
 %% Correlations Input horizontal vs ODout
 com=[];com=[frh_medial(:,1)  frh_medial(:,2) frh_lateral(:,1) frh_lateral(:,2) frh_diff_medial frh_diff_lateral (ex_spanh-in_spanh)' od_out_iviv]; 
 correlation_matrix(com,0);title('Input horizontal ODout iviv');
