@@ -1,6 +1,6 @@
 function [statsout]=dual_barplot(par,g1,g2,t)
 gr_nr=2;
-color_id={'m','g'};
+color_id={'w',[0.5 0.5 0.5]};
 fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [200, 0, 300, 300]);set(gcf,'color','w');
 for i=1:gr_nr
 gr_m=[nanmean(par(g1)) nanmean(par(g2))];  

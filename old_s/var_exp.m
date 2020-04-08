@@ -26,7 +26,7 @@ y3=cumsum(y1);y4=cumsum(y2);yyaxis right
 p1=plot(y3,'--');hold on;p2=plot(y4,'--')
 xlim([0 10.5]);ylim([0 100]);ylabel('Cumulative');xlabel('Principal Component');box off;grid off;
 title(''); set(gcf,'color','w');
-p1.Color=[1 0 0];p2.Color=[0 0 1];legend(des{1}, des{2},des{2}, des{1});
+p1.Color=[1 0 0];p2.Color=[0 0 1];legend(des{1}, des{2});
 set(gca,'FontSize',14);
 yticks([0:25:100]);
 xticks([1:1:10]);

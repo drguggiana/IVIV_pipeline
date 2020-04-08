@@ -16,7 +16,7 @@ hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
 ang2=out_ang_exL5
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor='k';grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^w');
-hold on;title('EX Centre of mass','Color','r');ylabel('Vertical distance (µm)');xlabel('Horizontal distance (µm)');hold on;%text(-250,350,'L5');%legend('L5');legend boxoff
+hold on;title('EX','Color','r');ylabel('Vertical distance (µm)');xlabel('Horizontal distance (µm)');hold on;%text(-250,350,'L5');%legend('L5');legend boxoff
 yticks([-200:200:600]);set(gca,'FontSize',12);
 
 ang2=out_ang_inL23;
@@ -30,7 +30,7 @@ hold on;set(gca,'FontSize',12);
 ang2=out_ang_inL5
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69);xlim([-4*69 4*69]);ylim([-4*69 8*69]);h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor='k';grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^w');
-hold on;title('IN Centre of mass','Color','b');xlabel('Horizontal distance (µm)');%legend('L5');legend boxoff
+hold on;title('IN','Color','b');xlabel('Horizontal distance (µm)');%legend('L5');legend boxoff
 yticks([-200:200:600]);set(gca,'FontSize',12);
 hold on;
 plot(200,-200,'o','MarkerFaceColor','m','MarkerEdgeColor','k');text(220,-200,'L2/3');
@@ -47,19 +47,20 @@ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
 subplot(1,2,1);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
 [cmap]=buildcmap('ybk');
-colormap(cmap);text(-250,50,'L2/3');
+colormap(cmap);%text(-250,50,'L2/3');
 ang2=out_ang_exL4;
+yticks([-200:200:600])
 hold on;
-h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','s');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;text(-250,150,'L4');
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','s');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;%text(-250,150,'L4');
 [cmap]=buildcmap('ybk');
 colormap(cmap);
 ang2=out_ang_exL5
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','<');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^r');
-hold on;text(-250,350,'L5');title('EX Centre of mass');
+hold on;;title('EX Centre of mass');
 c=colorbar;c.Label.String=label_name{1};
-
+%text(-250,350,'L5')
 ang2=out_ang_inL23;
 subplot(1,2,2);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
@@ -75,7 +76,7 @@ hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','<');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^r');
 hold on;title('IN Centre of mass');c=colorbar;c.Label.String=label_name{1};    
-
+yticks([-200:200:600])
 elseif gr==2
  
    pointsize=30;
