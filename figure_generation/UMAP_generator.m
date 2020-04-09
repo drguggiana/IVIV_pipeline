@@ -24,22 +24,25 @@ str = str(pc_vector);
 pcs = cat(1,str.PCs);
 % cell_cell = cat(2,pcs(:,1:3),pcs(:,4:6));
 cell_cell = pcs;
+% get the soma positions
+soma = cat(1,str.subpixel_soma);
+
+% calculate the fractions
 frac = cat(1,str.frac_vert);
 frac4ex = mean(frac(:,6:7),2);
 frac4in = mean(frac(:,22:23),2);
 frac23ex = mean(frac(:,3:5),2);
 frac23in = mean(frac(:,19:21),2);
-
+% calculate the centroids
 ang23ex = cat(1,str.ang_exL23);
 alph23ex = ang23ex(:,5);
 bet23ex = ang23ex(:,6);
-centroidX23ex = ang23ex(:,3);
+centroidX23ex = ang23ex(:,3) - ang23ex(:,1);
 
 ang23in = cat(1,str.ang_inL23);
 alph23in = ang23in(:,5);
-centroidX23in = ang23in(:,3);
+centroidX23in = ang23in(:,3) - ang23in(:,1);
 
-soma = cat(1,str.subpixel_soma);
 pialD = cat(1,str.pialD);
 % cell_cell = cat(2,pialD,frac4ex,bet23ex,alph23ex);
 cell_cell = cat(2,pialD,frac23ex,frac23in,frac4ex,frac4in,alph23ex,alph23in,...
