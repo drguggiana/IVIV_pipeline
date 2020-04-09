@@ -39,38 +39,34 @@ for plots = 1:plot_number
     % if it's the PCs, split and plot all
     switch plot_list{plots}
         case 'PCs'
-            % set the loop counter
-            loop = size(data_in,2);
             title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
         case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}
-            loop = 2;
-            data_in = data_in(:,5:6);
-    %         title_list = plot_list(plots);
-            title_list = {'angL23','angL23'};
+            data_in = data_in(:,[3 5]);
+            title_list = {'_centroidX','_alpha'};
+            title_list = cellfun(@strcat,title_list,...
+                num2cell(repmat(plot_list(plots),1,size(title_list,2))),...
+                'UniformOutput',false);
         case {'somaCenter','subpixel_soma'}
-            loop = 2;
             title_list = {'soma x','soma y'};
         case 'cellID'
-            loop = 1;
             title_list = {'setup'};
             data_in = cat(1,ones(47,1),zeros(100,1));
         case 'frac_vert'
-            loop = 1;
             title_list = {'L4 frac'};
             data_in = cat(1,str.frac_vert);
             data_in = mean(data_in(:,6:7),2);
         case 'noise'
-            loop = 1;
             data_in = log(abs(data_in));
             title_list = {'noise'};
         case 'pci'
-            loop = 1;
             data_in = log(abs(data_in));
             title_list = plot_list(plots);
         otherwise
-            loop = 1;
             title_list = plot_list(plots);
     end
+    
+    % define loop based on the dimensionality of data_in
+    loop = size(data_in,2);
     
     % for all the loop values
     for count = 1:loop
