@@ -37,17 +37,39 @@ for plots = 1:plot_number
     data_in = cat(1,str.(plot_list{plots}));
     
     % if it's the PCs, split and plot all
-    if strcmp(plot_list{plots},'PCs') == 1
-        % set the loop counter
-        loop = size(data_in,2);
-        title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
-    elseif contains(plot_list{plots},'ang_')
-        loop = 1;
-        data_in = data_in(:,5);
-        title_list = plot_list(plots);
-    else
-        loop = 1;
-        title_list = plot_list(plots);
+    switch plot_list{plots}
+        case 'PCs'
+            % set the loop counter
+            loop = size(data_in,2);
+            title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
+        case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}
+            loop = 2;
+            data_in = data_in(:,5:6);
+    %         title_list = plot_list(plots);
+            title_list = {'angL23','angL23'};
+        case {'somaCenter','subpixel_soma'}
+            loop = 2;
+            title_list = {'soma x','soma y'};
+        case 'cellID'
+            loop = 1;
+            title_list = {'setup'};
+            data_in = cat(1,ones(47,1),zeros(100,1));
+        case 'frac_vert'
+            loop = 1;
+            title_list = {'L4 frac'};
+            data_in = cat(1,str.frac_vert);
+            data_in = mean(data_in(:,6:7),2);
+        case 'noise'
+            loop = 1;
+            data_in = log(abs(data_in));
+            title_list = {'noise'};
+        case 'pci'
+            loop = 1;
+            data_in = log(abs(data_in));
+            title_list = plot_list(plots);
+        otherwise
+            loop = 1;
+            title_list = plot_list(plots);
     end
     
     % for all the loop values
