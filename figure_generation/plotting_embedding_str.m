@@ -52,9 +52,9 @@ for plots = 1:plot_number
             title_list = {'setup'};
             data_in = cat(1,ones(47,1),zeros(100,1));
         case 'frac_vert'
-            title_list = {'L4 frac'};
+            title_list = {'L4 exfrac','L4 infrac'};
             data_in = cat(1,str.frac_vert);
-            data_in = mean(data_in(:,6:7),2);
+            data_in = [mean(data_in(:,6:7),2), mean(data_in(:,22:23),2)];
         case 'noise'
             data_in = log(abs(data_in));
             title_list = {'noise'};
