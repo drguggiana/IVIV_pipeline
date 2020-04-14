@@ -12,11 +12,25 @@ str = str.str;
 %% Calculate the rolling average for orientation
 
 % define the window width (in degrees)
-window = 21;
+window = 45;
 % get the orientation and the parameter of interest
 orientation_vector = cat(1,str.ORIpref);
 parameter_vector = cat(1,str.frac_vert);
 parameter_vector = sum(parameter_vector(:,3:5),2);
+% parameter_vector = cat(1,str.ang_exL23);
+% parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
+% parameter_vector = 90-abs(parameter_vector(:,5));
+
+% add osi cutoff
+cutoff_osi = 0.3;
+% get the osi
+osi = cat(1,str.OSIpref);
+% get the vector
+osi_selection = osi > cutoff_osi;
+% get the selected traces
+orientation_vector = orientation_vector(osi_selection);
+parameter_vector = parameter_vector(osi_selection);
+
 % run the function
 [rolling_orientation,rolling_ori_error] = ...
     rolling_circular_average(orientation_vector,parameter_vector,window,'ori');
@@ -38,7 +52,7 @@ for shuffles = 1:shuffle_number
     [shuffle_ori(shuffles,:),~] = rolling_circular_average(nonnan_ori,rand_param,window,'ori');
 end
 % get the mean and bounds
-mean_shuffle = mean(shuffle_ori,1);
+mean_shuffle = nanmean(shuffle_ori,1);
 CI_shuffle = cat(1,abs(prctile(shuffle_ori,5,1)-mean_shuffle),prctile(shuffle_ori,95,1)-mean_shuffle);
 %% Plot the results
 close all
@@ -57,11 +71,24 @@ axis tight
 % direction = cat(1,round(cat(1,str.DIRpref)),round(cat(1,str.ORIpref))+360);
 direction = cat(1,str.DIRpref);
 % get the exc fraction in layer 4 
-parameter = cat(1,str.frac_vert);
-parameter = sum(parameter(:,6:7),2);
+% parameter = cat(1,str.frac_vert);
+% parameter = sum(parameter(:,6:7),2);
+parameter = cat(1,str.ang_inL23);
+parameter = abs(parameter(:,3) - parameter(:,1));
+% parameter_vector = 90-abs(parameter_vector(:,5));
 
 % define the window width (in degrees)
-window = 21;
+window = 45;
+
+% add osi cutoff
+cutoff_dsi = 0.3;
+% get the osi
+dsi = cat(1,str.DSIpref);
+% get the vector
+dsi_selection = dsi > cutoff_dsi;
+% get the selected traces
+direction = direction(dsi_selection);
+parameter = parameter(dsi_selection);
 
 % run the function
 [rolling_direction,rolling_dir_error] = ...
@@ -95,6 +122,6 @@ hold on
 shadedErrorBar(1:360,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 xlabel('Direction')
 ylabel('Parameter')
-title(strjoin({'Rolling orientation average','window',...
+title(strjoin({'Rolling direction average','window',...
     num2str(window)},'_'),'Interpreter','None')
 axis tight

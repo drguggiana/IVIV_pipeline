@@ -471,21 +471,33 @@ somax = cat(1,str.subpixel_soma);
 somax = somax(:,1);
 % define the index
 idx_centroid = 1:cell_num;
-% define the row shift
-row_shift = 0;
+
 % for ex and in
 for exin = 1:2
     % select the corresponding field
     switch exin
         case 1
-            map_type = 'excMap';
+            map_type = 'subpixel_excMap';
             field1 = 'ex';
         case 2
-            map_type = 'inhMap';
+            map_type = 'subpixel_inhMap';
             field1 = 'in';
     end
     % get the corresponding maps
     maps = cat(3,str.(map_type));
+    % normalize the maps
+    for cell = 1:cell_num
+        % load the current 
+        curr_map = maps(:,:,cell);
+        switch exin
+            case 1
+                factor = min(curr_map(:));
+            case 2
+                factor = max(curr_map(:));
+        end
+        maps(:,:,cell) = curr_map./factor;
+    end
+    
     % for both layer groups
     for layer = 1:2
         % select the rows for layer 2/3 and layer 4 respectively
@@ -493,17 +505,45 @@ for exin = 1:2
             case 1
                 layers = 3:5;
                 field2 = 'L23';
+                row_shift = 2;
             case 2
                 layers = 6:7;
                 field2 = 'L4';
+                row_shift = 5;
         end
         % get the layer
         map_layers = maps(layers,:,:);
-        out_ang = centroid_map(map_layers,pialD,somax,idx_centroid,row_shift);
+        out_ang = centroid_map(map_layers,somax,pialD,idx_centroid,row_shift);
         % for all the cells
         for cells = 1:cell_num
             str(cells).(strcat('ang_',field1,field2)) = out_ang(cells,:);
         end
+    end
+end
+%% Add normalized maps to the structure
+
+% for all the cells
+for cells = 1:cell_num
+    % for the excitation and inhibition
+    for exin = 1:2
+        switch exin
+            case 1
+                maptype = 'excMap';
+            case 2
+                maptype = 'inhMap';
+        end
+        
+        % get the map
+        curr_map = str(cells).(maptype);
+        % define the normalization
+        switch exin
+            case 1
+                factor = min(curr_map(:));
+            case 2
+                factor = max(curr_map(:));
+        end
+        % normalize and save
+        str(cells).(strjoin({maptype,'norm'},'_')) = curr_map./factor;
     end
 end
 %% OFF Plotting
