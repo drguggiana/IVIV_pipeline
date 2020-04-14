@@ -11,78 +11,90 @@ str = load(main_path);
 str = str.str;
 %% Calculate the rolling average for orientation
 
-% get the orientations 
-orientation = cat(1,round(cat(1,str.ORIpref)),round(cat(1,str.ORIpref))+180);
-% get the exc fraction in layer 4 
-parameter = cat(1,str.frac_vert);
-parameter = repmat(sum(parameter(:,23:24),2),2,1);
-
 % define the window width (in degrees)
 window = 21;
+% get the orientation and the parameter of interest
+orientation_vector = cat(1,str.ORIpref);
+parameter_vector = cat(1,str.frac_vert);
+parameter_vector = sum(parameter_vector(:,3:5),2);
+% run the function
+[rolling_orientation,rolling_ori_error] = ...
+    rolling_circular_average(orientation_vector,parameter_vector,window,'ori');
+%% Generate a surrogate computation for a CI
 
-% allocate memory for the average
-rolling_mean_ori = zeros(360,1);
-rolling_std_ori = zeros(360,1);
-% for all degrees, starting at the window width and stopping 1 window width
-% before the end
-for degrees = (window-1)/2:360-(window-1)/2
-    % get the indexes of the involved cells
-    indexes = orientation > degrees-(window-1)/2 &...
-        orientation < degrees+(window-1)/2;
-    % get the average of the involved numbers
-    rolling_mean_ori(degrees) = mean(parameter(indexes));
-    rolling_std_ori(degrees) = std(parameter(indexes))./sqrt(sum(indexes));
+% define the number of shuffles
+shuffle_number = 500;
+% allocate memory to store the results
+shuffle_ori = zeros(shuffle_number,180);
+% take only the non-nan orientation and their values
+nonnan_ori = orientation_vector(~isnan(orientation_vector));
+nonnan_param = parameter_vector(~isnan(orientation_vector));
+
+% for all the shuffles
+for shuffles = 1:shuffle_number
+    % randomize the parameter_vector
+    rand_param = nonnan_param(randperm(length(nonnan_param)));
+    % run the function
+    [shuffle_ori(shuffles,:),~] = rolling_circular_average(nonnan_ori,rand_param,window,'ori');
 end
-
-% assemble the orientation only vector based on the window width
-rolling_orientation = cat(1,rolling_mean_ori(181:180-1+(window-1)/2),...
-    rolling_mean_ori((window-1)/2:180));
-rolling_ori_error = cat(1,rolling_std_ori(181:180-1+(window-1)/2),...
-    rolling_std_ori((window-1)/2:180));
+% get the mean and bounds
+mean_shuffle = mean(shuffle_ori,1);
+CI_shuffle = cat(1,abs(prctile(shuffle_ori,5,1)-mean_shuffle),prctile(shuffle_ori,95,1)-mean_shuffle);
 %% Plot the results
 close all
 figure
 
-shadedErrorBar(1:180,rolling_orientation,rolling_ori_error)
+shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
+hold on
+shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 xlabel('Orientation')
 ylabel('Parameter')
 title(strjoin({'Rolling orientation average','window',...
     num2str(window)},'_'),'Interpreter','None')
+axis tight
 %% Calculate the rolling average for direction
 % get the orientations 
-direction = cat(1,round(cat(1,str.DIRpref)),round(cat(1,str.ORIpref))+360);
+% direction = cat(1,round(cat(1,str.DIRpref)),round(cat(1,str.ORIpref))+360);
+direction = cat(1,str.DIRpref);
 % get the exc fraction in layer 4 
 parameter = cat(1,str.frac_vert);
-parameter = repmat(sum(parameter(:,23:24),2),2,1);
+parameter = sum(parameter(:,6:7),2);
 
 % define the window width (in degrees)
 window = 21;
 
-% allocate memory for the average
-rolling_mean_dir = zeros(720,1);
-rolling_std_dir = zeros(720,1);
-% for all degrees, starting at the window width and stopping 1 window width
-% before the end
-for degrees = (window-1)/2:720-(window-1)/2
-    % get the indexes of the involved cells
-    indexes = orientation > degrees-(window-1)/2 &...
-        orientation < degrees+(window-1)/2;
-    % get the average of the involved numbers
-    rolling_mean_dir(degrees) = mean(parameter(indexes));
-    rolling_std_dir(degrees) = std(parameter(indexes))./sqrt(sum(indexes));
-end
+% run the function
+[rolling_direction,rolling_dir_error] = ...
+    rolling_circular_average(direction,parameter,window,'dir');
+%% Generate a surrogate computation for a CI
 
-% assemble the orientation only vector based on the window width
-rolling_direction = cat(1,rolling_mean_dir(361:360-1+(window-1)/2),...
-    rolling_mean_dir((window-1)/2:360));
-rolling_dir_error = cat(1,rolling_std_dir(361:360-1+(window-1)/2),...
-    rolling_std_dir((window-1)/2:360));
+% define the number of shuffles
+shuffle_number = 500;
+% allocate memory to store the results
+shuffle_dir = zeros(shuffle_number,360);
+% take only the non-nan orientation and their values
+nonnan_dir = direction(~isnan(direction));
+nonnan_param = parameter(~isnan(direction));
+
+% for all the shuffles
+for shuffles = 1:shuffle_number
+    % randomize the parameter_vector
+    rand_param = nonnan_param(randperm(length(nonnan_param)));
+    % run the function
+    [shuffle_dir(shuffles,:),~] = rolling_circular_average(nonnan_dir,rand_param,window,'dir');
+end
+% get the mean and bounds
+mean_shuffle = mean(shuffle_dir,1);
+CI_shuffle = cat(1,abs(prctile(shuffle_dir,5,1)-mean_shuffle),prctile(shuffle_dir,95,1)-mean_shuffle);
 %% Plot the results
 close all
 figure
 
-shadedErrorBar(1:360,rolling_direction,rolling_dir_error)
-xlabel('Orientation')
+shadedErrorBar(1:360,rolling_direction,rolling_dir_error,'transparent',1,'lineprops','b')
+hold on
+shadedErrorBar(1:360,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
+xlabel('Direction')
 ylabel('Parameter')
 title(strjoin({'Rolling orientation average','window',...
     num2str(window)},'_'),'Interpreter','None')
+axis tight
