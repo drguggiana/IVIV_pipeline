@@ -72,11 +72,11 @@ hold on;text(5,0.42,'\Delta EX - IN','Color','k');
 subplot(2,3,6);hold on;
 ;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'horizontal','k');
 mexp.CapSize=3;
-ylim([-0.1 0.1]);
-yticks([-0.2:0.1:0.2]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
+ylim([-0.05 0.05]);
+yticks([-0.05:0.05:0.05]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 hold on;text(5,0.105,'\Delta EX - IN','Color','k');
-
+hold on;line([1 16], [0 0],'Color','k','LineStyle','--')
 
 
 %for grouping

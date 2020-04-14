@@ -6,11 +6,11 @@ function plot_morphologies(str,ids,x,y)
      
      if ~isempty(str(ids(i)).morphtraces)==1
        m=plot_tree(str(ids(i)).morphtraces{1,1},[1 0 0],[0 str(ids(i)).morphtraces{1,5} 0],[],1,'-b');hold on;
-        m.EdgeColor = 'r'
+        m.EdgeColor = 'b'
        m1=plot_tree(str(ids(i)).morphtraces{1,2},[0 0 0],[0 str(ids(i)).morphtraces{1,5} 0],[],1,'-b');hold on;
-       m1.EdgeColor = 'k'
+       m1.EdgeColor = [0.5 0.5 0.5];
        m2=plot_tree(str(ids(i)).morphtraces{1,3},[0 0 1],[0 str(ids(i)).morphtraces{1,5} 0],[],1,'-b');hold on;
-       m2.EdgeColor = 'b'
+       m2.EdgeColor = [0.5 0.5 0.5];
 else
     m=plot(str(ids(i)).pialD,'Marker','^','MarkerFaceColor','b','MarkerEdgeColor','k','MarkerSize',4);
 end

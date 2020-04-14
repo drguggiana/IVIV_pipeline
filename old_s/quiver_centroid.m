@@ -1,6 +1,6 @@
-function quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,t)
+function quiver_centroid(ang1,ang2,ang3,idxtp,ex_map,in_map,t,j)
 %t is the cell to plot as example
-
+if j==1
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 1000, 200]);
 %single example with vector
 subplot(1,4,1);
@@ -49,4 +49,29 @@ box off;set(gca,'Ydir','reverse');
 xlim([6 11]);ylim([1 8]);hold on;line([1 16], [2 2],'Color','k','LineStyle','--');hold on;line([1 16], [6 6],'Color','k','LineStyle','--');
 hold on;line([1 16], [8.5 8.5],'Color','k','LineStyle','--');hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
 
+else
+ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]); 
+ ran=[30 40 50 60 70 80 90 100 110 120 125 132];
+ for i=1:12
+     subplot(3,4,i)
+hold on;line([8.5 8.5], [1 16],'Color','k','LineStyle','--');axis off;
+ plot([8.5 ang1(ran(i),3)],[3.5 ang1(ran(i),4)],'r')
+ hold on;plot(ang1(ran(i),3),ang1(ran(i),4),'ro');
+ hold on;plot(8.5,3.5,'^','MarkerFaceColor','[0.5 0.5 0.5]','MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',7);
+ 
+ hold on;
+ plot([8.5 ang2(ran(i),3)],[3.5 ang2(ran(i),4)],'b')
+ hold on;plot(ang2(ran(i),3),ang2(ran(i),4),'bo');
+  
+ hold on;
+ plot([8.5 ang3(ran(i),3)],[3.5 ang3(ran(i),4)],'r')
+ hold on;scatter(ang3(ran(i),3),ang3(ran(i),4),'ro','filled');
+
+box off;set(gca,'Ydir','reverse');
+
+xlim([6 11]);ylim([1 8]);
+hold on;
+title(['#' num2str(ran(i))]);
+ end
+end
 end

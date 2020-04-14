@@ -10,14 +10,14 @@ Paths
 input_path = input_maps_path;
 
 % define the path to save the output files
-out_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivo feature extraction';
+% out_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivo feature extraction';
 % define the path to the morphoMaps
 % morpho_path = 'R:\Share\Simon\Drago_Volker_Simon\morphoMaps\morphoMaps.mat';
 morpho_path = morphomaps_path;
 % define the path to the main data structure
 % main_path = 'R:\Share\Simon\Drago_Volker_Simon\InVivivo_InVitro full data structure\190612_1400_dataStruct_ODI_etc_added.mat';
 % main_path = 'R:\Share\Simon\Drago_Volker_Simon\_Post_Simon\200219_str_final.mat';
-main_path = fullfile(structure_path,'200306_str_final.mat');
+main_path = fullfile(structure_path,'str_iviv_200323.mat');
 
 % define the path to save the pics
 % morpho_pics_path = 'R:\Share\Simon\Drago_Volker_Simon\Morpho_input_pics';
@@ -90,10 +90,10 @@ original_maps = cell_cell;
 cell_num = size(cell_cell,1);
 %% Get the morphology density maps
 
-morpho_basal = {str.morphoMap_basal}';
+morpho_basal = {str.morphoMap_basal_aligned}';
 morpho_basal = morpho_basal(non_nan_cells);
 
-morpho_apical = {str.morphoMap_apical}';
+morpho_apical = {str.morphoMap_apical_aligned}';
 morpho_apical = morpho_apical(non_nan_cells);
 %% Align the exc and inh maps vertically
 
@@ -229,12 +229,15 @@ end
 autoArrangeFigures
 % error('stop')
 %% Run 2 separate PCAs on ex and in
-[coeff_ex,score_ex,latent_ex,~,explained_ex,mu] = pca(aligned_maps_ex);
-[coeff_in,score_in,latent_in,~,explained_in,mu] = pca(aligned_maps_in);
+[coeff_ex,~,~,~,explained_ex,~] = pca(aligned_maps_ex);
+[coeff_in,~,~,~,explained_in,~] = pca(aligned_maps_in);
 %% Save the aligned maps and PCs
 
 % save(aligned_path,'aligned_maps_ex','aligned_maps_in','coeff_ex','coeff_in','score_ex','score_in',...
 %     'aligned_maps_basal','aligned_maps_apical')
+%% Get the PCs
+
+pcs = cat(1,str.PCs);
 %% Plot the pca components
 
 % define the number of PCs to plot
@@ -258,11 +261,14 @@ plot(cumsum(explained_in),'*')
 
 % cell_cell = cat(2,cell_cell(:,513:end),score_ex(:,1:pc_num),score_in(:,1:pc_num));
 % cell_cell = cat(2,cell_cell(:,513:end),score_ex(:,1:3),score_in(:,1:3));
- cell_cell = cat(2,score_ex(:,1:3),score_in(:,1:3));
-%% Cluster the maps
+ cell_cell = cat(2,pcs(:,1:3),pcs(:,4:6));
+%% Get the map cluster indexes
+
+idx_input = cat(1,str.Cluster_id);
+clu_num = length(unique(idx_input));
 pialD = [str(:).pialD];
-clu_num = 4;
-[idx_input, clustering_input, leafOrder] = hca([score_ex(:,1:3) score_in(:,1:3)],0,'ward',clu_num,pialD,0,0.6);
+% clu_num = 4;
+% [idx_input, clustering_input, leafOrder] = hca([score_ex(:,1:3) score_in(:,1:3)],0,'ward',clu_num,pialD,0,0.6);
 %% OFF Plot the cluster average maps
 
 figure
@@ -319,7 +325,7 @@ for cells = 1:cell_num
 end
 %% Morpho density corr
 % calculate the correlation between morpho density and maps
-morphoMaps = {str(non_nan_cells).morphoMap_basal};
+morphoMaps = {str(non_nan_cells).morphoMap_apical_aligned};
 excMaps = {str(non_nan_cells).excMap};
 inhMaps = {str(non_nan_cells).inhMap};
 non_nan_names = {str(non_nan_cells).cellName};
@@ -343,28 +349,32 @@ for cells = 1:cell_num
             case 2
                 map = inhMaps{cells};
         end
+        % get rid of layer 1
+        map = map(3:end,:);
+        morpho = morphoMaps{cells};
+        morpho = morpho(3:end,:);
         % calculate the correlation and store
-        correlation_values{cells,maps} = corr(map(:), morphoMaps{cells}(:));
+        correlation_values{cells,maps} = corr(map(:), morpho(:));
         
     end
     
     
 
 end
-%% Save the input features to an output file 
+%% OFF Save the input features to an output file 
 
-% allocate memory to store the data
-input_parameters = struct();
-
-% find the indexes of the non_nan_cells
-non_nan_idx = find(non_nan_cells);
-
-% for all the cells
-for cells = 1:cell_num
-    input_parameters(cells).cellName = str(non_nan_idx(cells)).cellName;
-    input_parameters(cells).inputPCs = cell_cell(cells,1:6);
-    input_parameters(cells).clusterIdx = idx_input(cells);
-end
+% % allocate memory to store the data
+% input_parameters = struct();
+% 
+% % find the indexes of the non_nan_cells
+% non_nan_idx = find(non_nan_cells);
+% 
+% % for all the cells
+% for cells = 1:cell_num
+%     input_parameters(cells).cellName = str(non_nan_idx(cells)).cellName;
+%     input_parameters(cells).inputPCs = cell_cell(cells,1:6);
+%     input_parameters(cells).clusterIdx = idx_input(cells);
+% end
 
 % save the file
 % save(fullfile(out_path,'input_parameters.mat'),'input_parameters')
@@ -696,70 +706,44 @@ end
 %% Fraction L4
 
 % get the fractions
-frac = cat(1,str.frac_exv);
+frac = cat(1,str.frac_vert);
 
 % select and average layer 4 only
-frac = mean(frac(:,6:7),2);
+frac = mean(frac(:,3:5),2);
+% frac = mean(frac(:,22:23),2);
+frac(frac == 0) = nan;
 
-frac = frac(non_nan_cells);
-
-frac = -1*log(frac);
-
-frac(isinf(frac)) = nan;
+% frac(isinf(frac)) = nan;
 %% Centroid angle
 
-cent_angle = cat(1,str.ang_wmapil3);
+cent_angle = cat(1,str.ang_exL23);
+cent_angle = cent_angle(:,5);
 %% Dir pref
 
-dir_pref = {str.Dir};
-dir_vector = zeros(length(dir_pref),1);
-for el = 1:length(dir_pref)
-    if isempty(dir_pref{el})
-        dir_vector(el) = nan;
-    else
-        dir_vector(el) = dir_pref{el}(1);
-    end
-    
-end
-dir_vector = dir_vector(non_nan_cells);
+dir_pref = cat(1,str.DIRpref);
 
-dir_cutoff = {str.DSI};
-dir_cut = zeros(length(dir_cutoff),1);
-for el = 1:length(dir_cutoff)
-    if isempty(dir_cutoff{el})
-        dir_cut(el) = nan;
-    else
-        dir_cut(el) = dir_cutoff{el}(1);
-    end
-    
-end
-dir_cut = dir_cut(non_nan_cells);
+
+dir_cutoff = cat(1,str.DSIpref);
+
 
 cutoff_dsi = 0.3;
 
-dir_vector(dir_cut<cutoff_dsi) = nan;
+dir_pref(dir_cutoff<cutoff_dsi) = nan;
 %% Ori cutoff
 
-ori_vector = cat(1,str.Oripref);
+ori_pref = cat(1,str.ORIpref);
 
-ori_cutoff = {str.OSI};
-ori_cut = zeros(length(ori_cutoff),1);
-for el = 1:length(ori_cutoff)
-    if isempty(ori_cutoff{el})
-        ori_cut(el) = nan;
-    else
-        ori_cut(el) = ori_cutoff{el}(1);
-    end
-    
-end
-ori_cut = ori_cut(non_nan_cells);
+ori_cutoff = cat(1,str.OSIpref);
 
 cutoff_dsi = 0.3;
 
-ori_vector(ori_cut<cutoff_dsi) = nan;
-%% Selection vector
-sel_vec = non_nan_cells;
-sel_vec = ~isnan(ori_vector);
+ori_pref(ori_cutoff<cutoff_dsi) = nan;
+
+ori_pref(ori_pref<135|ori_pref>180) = nan;
+ori_pref(frac<0.2) = nan;
+%% OFF Selection vector
+% sel_vec = non_nan_cells;
+% sel_vec = ~isnan(ori_vector);
 %% Plot UMAP/Isomap
 
 close all
@@ -776,14 +760,14 @@ plot_selector = [1:2,5:9, 13:15,17:18, 30:41];
 %     'Difference Apical density R/L'};
 
 
-var_matrix = cat(2, clusters, idx_input, round(100*score_ex(:,1))...
-    , round(100*score_in(:,1)),round(100*score_ex(:,2)),round(100*score_in(:,2)),round(100*score_ex(:,3))...
-    , round(100*score_in(:,3)),round(normr_2(frac)*100),round(normr_2(cent_angle)*100),...
-    round(normr_2(dir_vector)*100),round(normr_2(ori_vector)*100));
+var_matrix = cat(2, clusters, idx_input, round(100*pcs(:,1))...
+    , round(100*pcs(:,4)),round(100*pcs(:,2)),round(100*pcs(:,5)),round(100*pcs(:,3))...
+    , round(100*pcs(:,6)),round(normr_2(frac)*100),round(normr_2(cent_angle)*100),...
+    round(normr_2(dir_pref)*100),round(normr_2(ori_pref)*100));
 
 var_titles = {'TMD clusters', 'Input map clusters','First Exc input map PC','First Inh input map PC'...
     ,'second Exc input map PC','second Inh input map PC','third Exc input map PC','third Inh input map PC',...
-    'Layer 4 ex fraction','ang_wampil3','dir pref','ori_pref'};
+    'Layer 4 ex fraction','ang_wampil3','dir pref','ori_pref','23 frac'};
 
 
 plotting_embedding2(reduced_data, str, plot_selector, non_nan_cells, correlation_values,2, var_matrix, var_titles)
@@ -791,18 +775,24 @@ plotting_embedding2(reduced_data, str, plot_selector, non_nan_cells, correlation
 % define the number of PCs to plot
 pc_num = 3;
 figure
+set(gcf,'color','w');
+pc_names = {'PC1ex','PC2ex','PC3ex';'PC1in','PC2in','PC3in'};
 % for the first n PCs
 for pc = 1:pc_num
     subplot(2,pc_num,pc)
     imagesc(reshape(coeff_ex(:,pc),16+bin_num,16+hbin_num))
+    title(pc_names{1,pc});
     axis square
+    set(gca,'XTick',[],'YTick',[])
     subplot(2,pc_num,pc+pc_num)
     imagesc(reshape(coeff_in(:,pc),16+bin_num,16+hbin_num))
+    title(pc_names{2,pc});
     axis square
+    set(gca,'XTick',[],'YTick',[])
 end
 
 figure
-
+set(gcf,'color','w');
 % for all the clusters
 for clu = 1:clu_num
     subplot(2,clu_num,clu)
@@ -811,26 +801,55 @@ for clu = 1:clu_num
     plot(get(gca,'XLim'),[8.5 8.5],'k')
     plot([8.5 8.5],get(gca,'YLim'),'k')
     caxis([0 0.8])
+    set(gca,'XTick',[],'YTick',[])
     axis square
+    title(strjoin({'Cluster',num2str(clu),'exc'},'_'),'Interpreter','None')
+    
     subplot(2,clu_num,clu+clu_num)
     imagesc(reshape(mean(original_maps(clu==idx_input,257:512),1),16,16))
     hold on
     plot(get(gca,'XLim'),[8.5 8.5],'k')
     plot([8.5 8.5],get(gca,'YLim'),'k')
     caxis([0 0.8])
+    set(gca,'XTick',[],'YTick',[])
     axis square
+    title(strjoin({'Cluster',num2str(clu),'inh'},'_'),'Interpreter','None')
 end
 
 figure
+set(gcf,'color','w');
 soma_depth = pialD(non_nan_cells);
-
 % for all the clusters
 for clu = 1:clu_num
     errorbar(clu,mean(soma_depth(clu==idx_input)),std(soma_depth(clu==idx_input))/sqrt(sum(clu==idx_input)),'o')
     hold on
 end
-set(gca,'XLim',[0, clu_num+1],'YDir','reverse')
+set(gca,'XLim',[0, clu_num+1],'YDir','reverse','XTick',[1:4],'XTickLabel',[1:4])
+xlabel('Cluster')
+ylabel('Pial depth')
 autoArrangeFigures
+%% Correlation between exinput-morpho correlation
+close all
+figure
+
+target_var = frac;
+% allocate memory for the output vector
+exinput = zeros(cell_num,1);
+for cells = 1:cell_num
+    % get the current value
+    curr = correlation_values{cells,1};
+    if isempty(curr)
+        exinput(cells) = nan;
+    else
+        exinput(cells) = curr;
+    end
+end
+% exinput = correlation_values(:,1);
+scatter(exinput,target_var,'o')
+non_nan = ~isnan(exinput) & ~isnan(target_var);
+[rho,p] = corr(exinput(non_nan),target_var(non_nan));
+title(strjoin({'Var:',getVarName(frac),'Correlation:',num2str(rho),...
+    'pvalue',num2str(p)},'_'),'Interpreter','None')
 %% Arrow plots
 error('Stop here')
 close all

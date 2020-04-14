@@ -370,8 +370,8 @@ end
 %% total sum absolute for ex and inh in pA
 for i=1:length(nan_vector(incl_idx:end))
 %whole map
-tmp1=ex_map_raw(:,:,i);
-tmp2=in_map_raw(:,:,i);
+tmp1=ex_map(3:end,:,i);
+tmp2=in_map(:,:,i);
 % tmp1=ex_map(:,:,i);
 % tmp2=in_map(:,:,i);
 tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
@@ -379,16 +379,16 @@ tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros
 tmp1=[];
 tmp2=[];
 %L23
-tmp1=ex_map_raw(3:5,:,i);
-tmp2=in_map_raw(3:5,:,i);
+tmp1=ex_map(3:5,:,i);
+tmp2=in_map(3:5,:,i);
 %  tmp1=ex_map(3:5,:,i);
 %  tmp2=in_map(3:5,:,i);
 tot_inputL23(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 tmp1=[];
 tmp2=[];
 %L4
-tmp1=ex_map_raw(6:7,:,i);
-tmp2=in_map_raw(6:7,:,i);
+tmp1=ex_map(6:7,:,i);
+tmp2=in_map(6:7,:,i);
 %  tmp1=ex_map(6:7,:,i);
 %  tmp2=in_map(6:7,:,i);
 tot_inputL4(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
@@ -408,19 +408,19 @@ h4 = histogram(diffL23fr,8);h4.BinWidth = 0.025;h4.EdgeColor = 'k';h4.FaceColor 
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylim([0 50]);yticks([0:25:50])
 title('Vertical');ylabel('Cell counts');hold on;set(gca,'FontSize',10);
 xlim([-0.3 0.3]);text(-0.2,50,'IN','Color','b');text(0.2,50,'EX','Color','r');text(-0.2,40,'L2/3','Color','k');
-hold on;plot(nanmedian(diffL23fr),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');
+hold on;plot(nanmean(diffL23fr),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');
 subplot(3,2,3);
 h4 = histogram(diffL4fr,8);h4.BinWidth =  0.025;h4.EdgeColor = 'k';h4.FaceColor = 'g'
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);ylabel('Cell counts');hold on;set(gca,'FontSize',10);box off;
 text(-0.2,40,'L4');
-hold on;plot(nanmedian(diffL4fr),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmean(diffL4fr),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 xlim([-0.3 0.3]);
 subplot(3,2,5);
 h4 = histogram(nonzeros(diffL5fr),8);h4.BinWidth =  0.025;h4.FaceColor = [0.5 0.5 0.5];ylabel('Cell counts');box off;
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');
 xlim([-0.3 0.3]);xlabel('\Delta EX-IN vertical fraction');hold on;set(gca,'FontSize',10);
 text(-0.2,40,'L5','Color','k');
-hold on;plot(nanmedian(diffL5fr),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmean(diffL5fr),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 %Horizontal span
 subplot(3,2,2);
 h4 = histogram((ex_spanhL23-in_spanhL23)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'm';
@@ -428,18 +428,18 @@ xlim([-10*xf 10*xf]);hold on; title('Horizontal');box off;
 hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 text(-7*xf,50,'IN','Color','b');text(7*xf,50,'EX','Color','r');
 text(-7*xf,40,'L2/3','Color','k');
-hold on;plot(nanmedian((ex_spanhL23-in_spanhL23)*xf),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmean((ex_spanhL23-in_spanhL23)*xf),50,'v','MarkerFaceColor','m','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,4);
 hold on;h4 = histogram((ex_spanhL4-in_spanhL4)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = 'g';
 xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 text(-7*xf,40,'L4','Color','k');
-hold on;plot(nanmedian((ex_spanhL4-in_spanhL4)*xf),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmean((ex_spanhL4-in_spanhL4)*xf),50,'v','MarkerFaceColor','g','MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 subplot(3,2,6);
 hold on;h4 = histogram((ex_spanhL5-in_spanhL5)*xf,8);h4.BinWidth = 1*xf;h4.EdgeColor = 'k';h4.FaceColor = [0.5 0.5 0.5];;
 xlim([-10*xf 10*xf]);hold on;line([0 0], [1 50],'Color','k','LineStyle','--');set(gca,'FontSize',10);
 xlabel('\Delta EX-IN horizontal span (µm)');hold on;set(gca,'FontSize',10);
 text(-7*xf,40,'L5','Color','k');
-hold on;plot(nanmedian((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
+hold on;plot(nanmean((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor','k');ylim([0 50]);yticks([0:25:50])
 %% Display fraction for ex and in as well as diff for all 16 rows and columns 
 %group based on pial depth
 g1=find(pia_input>=220);g2=find(pia_input<220);g3=[];
@@ -486,14 +486,40 @@ map_fake(4,9,:)=1;
 %fake map
 [out_ang_fake] = centroid_map(map_fake(3:5,:,:),somax,pia_input,[1:cells],2);
 %% Plotting the centroid with vector pointing towards it
-ang1=out_ang_exL5;
-ang2=out_ang_inL5;
+ang1=out_ang_exL23;
+ang2=out_ang_inL23;
+ang3=out_ang_exL4;
 idxtp=1:147;
 %call function quiver
-quiver_centroid(ang1,ang2,idxtp,ex_map,in_map,128);
+quiver_centroid(ang1,ang2,ang3,idxtp,ex_map,in_map,128,2);
 %% Distributions of actual centroid all input cells for EX and IN
 a=1:147;
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,0,[],{});
+%% Histogram centroid X
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 600, 250]);
+subplot(1,3,1);
+h1=histogram(out_ang_exL23(:,3)*69-out_ang_inL23(:,3)*69)
+h1.EdgeColor = 'k';h1.FaceColor = 'm';hold on;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
+box off;
+xlim([-200 200]);yticks([0:20:60])
+ylabel('Counts');
+hold on;title('L23');set(gca,'FontSize',10);
+subplot(1,3,2);
+h1=histogram(out_ang_exL4(:,3)*69-out_ang_inL4(:,3)*69)
+hold on;title('L4');set(gca,'FontSize',10);
+h1.EdgeColor = 'k';h1.FaceColor = 'g';hold on;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
+xlim([-200 200]);;xlabel('\Delta EX-IN Horizontal')
+box off;yticks([0:20:60])
+subplot(1,3,3);
+h1=histogram(out_ang_exL5(:,3)*69-out_ang_inL5(:,3)*69)
+hold on;title('L5');set(gca,'FontSize',10);
+box off;
+h1.EdgeColor = 'k';h1.FaceColor = [0.5 0.5 0.5];hold on;
+hold on;line([0 0], [1 60],'Color','k','LineStyle','--');
+xlim([-400 400])
+box off;yticks([0:20:60])
 %% % Relation betwen ex and in centroid
 ang1=out_ang_exL23;
 ang2=out_ang_inL23;
@@ -526,6 +552,29 @@ hold on;line([-400 400], [0 0],'Color','k','LineStyle','--');hold on;line([0 0],
 xlabel('\Delta EX-IN Horizontal');ylabel('\Delta EX-IN Vertical');xlim([-400 400])
 hold on;title('L5');
 set(gca,'FontSize',10);
+%% Ex vs IN with refline
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
+subplot(1,3,1);
+plot(out_ang_exL23(:,3)*69-out_ang_exL23(:,1)*69,out_ang_inL23(:,3)*69-out_ang_inL23(:,1)*69,'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);
+ref.Color='k';box off;xlim([-200 200]);ylim([-200 200]);hold on;title('L23');xticks([-200:100:200]);yticks([-200:100:200]);
+subplot(1,3,2);
+plot(out_ang_exL4(:,3)*69-out_ang_exL4(:,1)*69,out_ang_inL4(:,3)*69-out_ang_inL4(:,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);
+ref.Color='k';box off;xlim([-200 200]);ylim([-200 200]);hold on;title('L4');xticks([-200:100:200]);yticks([-200:100:200]);
+subplot(1,3,3);
+plot(out_ang_exL5(:,3)*69-out_ang_exL5(:,1)*69,out_ang_inL5(:,3)*69-out_ang_inL5(:,1)*69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);;
+ref.Color='k';box off;xlim([-400 400]);ylim([-400 400]);hold on;title('L5');xticks([-400:200:400]);yticks([-400:200:400]);
+%% Test
+par1=out_ang_exL23(:,3)*69-out_ang_exL23(:,1)*69;
+par2=out_ang_inL23(:,3)*69-out_ang_inL23(:,1)*69;
+find(~isnan(par2))
+P = polyfit(par1(find(~isnan(par2))),par2(find(~isnan(par2))),1);
+    yfit = P(1)*par1(find(~isnan(par2)))+P(2);
+ yfit2=1*par1(find(~isnan(par2)));
+ 
+ [r t]=ttest2(yfit,yfit2)
 %% Desired correlation between angle and inhbition PC2in
 corr_plot(abs(out_ang_inL23(:,5)),score_ex(:,3),pia_input,{'Angle centroid L2/3 IN','PC2_{in}','Pial depth (µm)'});ylabel('PC2_{in}','Color','b');xlabel('Angle centroid L2/3 IN','Color','b');
 %% Desired correlation between horizontal centroid and PC3in
@@ -536,10 +585,15 @@ corr_plot(frh_medial_s(:,2),score_in(:,3),pia_input,{'Horzontal centroid L2/3 IN
 corr_plot(frh_medial_s(:,2),(out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('PC3_{in}','Color','b');xlabel('Horzontal centroid L2/3 IN','Color','b');
 %% 
 corr_plot((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69,score_in(:,3),[],{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('PC3_{in}','Color','b');xlabel('Horizontal centre of mass L2/3','Color','b');set(gca,'FontSize',12)
+
+
 %% 
 corr_plot(in_spanhL4',score_in(:,2),pia_input,{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'})
 %% Pial depth PC3ex
 corr_plot(score_ex(:,1),pia_input,[],{'Horzontal centroid L2/3 IN','PC3_{in}','Pial depth'});xlabel('PC1_{ex}','Color','r');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',12);set(gca,'Ydir','reverse');
+%% 
+corr_plot(90-abs((out_ang_inL23(:,5))),pia_input,[],{'Horizontal centroid L2/3 IN','PC3_{in}','Pial depth'});ylabel('Pial depth (µm)','Color','k');xlabel('Angle Centre of mass L23','Color','b');set(gca,'FontSize',12);set(gca,'Ydir','reverse');
+
 %% FAKE MAPS CENTROID
 corr_plot(out_ang_fake(:,5),score_in(:,2),pia_input,{'Angle centroid L23 fake','PCin2','Pial depth'});set(gca,'Ydir','reverse');
 %% Display correlation between all PCs Multiple comparison 
@@ -698,48 +752,48 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 com=[];com=[out_ang_ex(:,5) out_ang_in(:,5) out_ang_inL23(:,5) out_ang_exL23(:,5) out_ang_inL4(:,5) out_ang_exL4(:,5) out_ang_exL4(:,5)-out_ang_inL23(:,5) out_ang_diff(:,5) sftf_out_pref_iviv(:,1:3)]; 
 correlation_matrix(com,0);title('Input vertical ODout iviv');
 %% 
-
-
+%corr_plot(od_out_iviv(a,[4]),abs(out_ang_inL23(a,5)),pia_input(a),{'L4ex input','Apical width/height','XSA'});
+corr_plot(od_out_iviv(a,[4]),abs(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,pia_input(a),{'L4ex input','Apical width/height','XSA'});
 
 %% Display correlation between all input maps and in vivo
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) od_out_iviv(:,[1 2 3 4 5 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 %% Subsample OSI DSI ODI TW Ca peak
-com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) od_out_iviv(:,[1 2 3 7 8])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:13]);yticks([1:1:13]);
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) pia_input od_out_iviv(:,[1 2 3 7 8])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:14]);yticks([1:1:14]);
 %% Display correlation between all input maps and in vivo
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 300]);imagesc(G(9:end,1:8));c=colorbar;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 300]);imagesc(G(10:end,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:13]);yticks([1:1:5]);
-xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}'});xtickangle(45);set(gca,'FontSize',12)
-yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}'});ytickangle(45);set(gca,'FontSize',12)
+xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}'});set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
 %% Subsample data OSI
 a=find(od_out_iviv(:,1)>0.25)
-com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(out_ang_exL23(a,5)) abs(out_ang_inL23(a,5)) abs(out_ang_exL23(a,3)-out_ang_exL23(a,1)) abs(out_ang_inL23(a,3)-out_ang_inL23(a,1)) od_out_iviv(a,[1 2 3 4 5 6 7])];
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(out_ang_exL23(a,5)) abs(out_ang_inL23(a,5)) abs(out_ang_exL23(a,3)-out_ang_exL23(a,1)) abs(out_ang_inL23(a,3)-out_ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
 G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 % xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});xtickangle(45)
 % yticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});ytickangle(45)
 %% ORI with cutoff
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(12,1:8));c=colorbar;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(13,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:12]);yticks([1:1:1]);
-xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}'});xtickangle(45);set(gca,'FontSize',12)
-yticklabels({'ORI'});ytickangle(45);set(gca,'FontSize',12)
+xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'ORI'});set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
 %% Subsample data DSI
-a=find(od_out_iviv(:,2)>0.3)
-com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) out_ang_exL23(a,5)  out_ang_exL4(a,5) out_ang_inL23(a,5)  out_ang_inL4(a,5) out_ang_exL23(a,3)  out_ang_exL4(a,3) out_ang_inL23(a,3)  out_ang_inL4(a,3) od_out_iviv(a,[5])]; 
+a=find(od_out_iviv(:,2)>0.25)
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(out_ang_exL23(a,5)) abs(out_ang_inL23(a,5)) abs(out_ang_exL23(a,3)-out_ang_exL23(a,1)) abs(out_ang_inL23(a,3)-out_ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
 G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 %% DIR with cutoff
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(13:end,1:12));c=colorbar;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(14,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:12]);yticks([1:1:1]);
-xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','COM L2/3_{ex}','COM L4_{ex}','COM L2/3_{in}','COM L4_{in}'});xtickangle(45);set(gca,'FontSize',12)
-yticklabels({'DIR'});ytickangle(45);set(gca,'FontSize',12)
+xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'DIR'});set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
 
 %% IMPORTANT CALCULATIONS
@@ -752,15 +806,23 @@ b=find(pia_input<300)
 %par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
 %par=out_ang_inL23(ia,3)
 %par=L4h(ia,4)-L4h(ia,3)
-par=abs(out_ang_in(ia,3)-out_ang_in(ia,1))*69
-g1=find(od_out_iviv(ia,5)>0 & od_out_iviv(ia,5)<200) 
-tmp=zeros(length(ia),1)
-tmp(g1)=g1;
-g2=find(tmp==0);
+par=(out_ang_in(ia,3)-out_ang_in(ia,1))*69
+g1=find(od_out_iviv(ia,5)>0 & od_out_iviv(ia,5)<225) 
+g2=find(od_out_iviv(ia,5)>240 & od_out_iviv(ia,5)<360) 
+% tmp=zeros(length(ia),1)
+% tmp(g1)=g1;
+% g2=find(tmp==0);
 %g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
-xticklabels({'135°','~315'})
+xticklabels({'~135°','~315'})
 xlabel('Direction');ylabel('Difference IN Lateral-Medial');  set(gca,'FontSize',12);
+%xlabel('Direction');ylabel('\Delta IN Horizontal Centroid');  set(gca,'FontSize',12);
+%% 
+figure;set(gcf,'color','w');
+histogram(od_out_iviv(ia,5),12);box off
+ylabel('Counts')
+xlabel('Direction preference')
+
 %% Correlaion of the above
 a=find(od_out_iviv(:,2)>0.3)  
 b=find(pia_input<300)
@@ -795,11 +857,17 @@ hold on;scatter(par1(g2),par2(g2),'go','filled');
   legend('0.02','0.08')
 %% L4 fraction with ORI pref
 a=find(od_out_iviv(:,1)>0.25)
-corr_plot(od_out_iviv(a,4),L4fr(a,2),[],{'Orientation preference','L4ex fraction'});ylabel('EX L4 fraction','Color','r');set(gca,'FontSize',12);
+corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'Orientation preference','L4ex fraction'});ylabel('EX L4 fraction','Color','r');set(gca,'FontSize',12);
 %% Ori pref with pial depth
 corr_plot(od_out_iviv(a,4),pia_input(a),[],{'ORI','Pial depth'});set(gca,'FontSize',12);
 %% L4 fraction with pial dpeth
 corr_plot(L4fr(a,1),pia_input(a),od_out_iviv(a,4),{'L4exfraction','Pial depth','ORI'});set(gca,'FontSize',12);
+%% 
+corr_plot(L4fr(a,1),abs(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,pia_input(a),{'L4exfraction','Pial depth','ORI'});set(gca,'FontSize',12);
+%% Plot x with L4 fraction
+%corr_plot(abs(out_ang_inL23(ia),3)-out_ang_inL23(ia,1))*69,L4fr(ia,1),[],{'|\Delta Centroid L23 X|','L4exfraction','ORI'});set(gca,'FontSize',12);
+%% 
+corr_plot(90-abs(out_ang_inL23(:,5)),pia_input,[],{'|Angle Centroid L23|','Pial depth','ORI'});set(gca,'FontSize',12);
 %% categorize cells basen on orientations
 g1=[];
 g2=[];
@@ -824,7 +892,7 @@ g2=find(od_out_iviv(ia,4)>90 & od_out_iviv(ia,4)<180)
 xticklabels({'0-90°','90-180°'})
 xlabel('Orientation');
 %ylabel('|Angle Centroid L23|','Color','r');  set(gca,'FontSize',12);
-%ylabel('|\Delta Centroid L23 X - Soma X (µm)|','Color','r');  set(gca,'FontSize',12);
+%ylabel('|\Delta Centroid L23 X|','Color','r');  set(gca,'FontSize',12);
 %ylabel('EX L4 fraction','Color','r');
 %ylabel('IN L4 fraction','Color','b');
 ylabel('EX L2/3 fraction','Color','r');
@@ -832,8 +900,8 @@ ylabel('EX L2/3 fraction','Color','r');
 set(gca,'FontSize',12);
 %% 
 a=find(od_out_iviv(:,1)>0.25)  
-fe=od_out_iviv(a,4)
-%fe=pia_input(a)
+%fe=od_out_iviv(a,4)
+fe=pia_input(a)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'ORI'});
 %% 
 pointsize=40;
@@ -880,185 +948,6 @@ c=find(pia_input<260)
 [ia ib]=intersect(a,b)
 [iaa ic]=intersect(ia,c);
 corr_plot(od_out_iviv(iaa,4),out_ang_inL23(iaa,5),pia_input(iaa),{'ORI','L4ex fraction','pia'});set(gca,'FontSize',12);
-%% Correlation matrix with intersectional approach 
-com=[];com=[score_ex(iaa,1:3) score_in(iaa,1:3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
-com=[];com=[L23fr(iaa,1) L4fr(iaa,1)  L23fr(iaa,2) L4fr(iaa,2) out_ang_exL23(iaa,5)  out_ang_exL4(iaa,5) out_ang_inL23(iaa,5)  out_ang_inL4(iaa,5) out_ang_exL23(iaa,3)  out_ang_exL4(iaa,3) out_ang_inL23(iaa,3)  out_ang_inL4(iaa,3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
-
-%%  Check correlation between DIR Pref with DSI cutoff
-a=find(od_out_iviv(:,2)>0.3)
-corr_plot(od_out_iviv(a,5),(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,slice_ori(a),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
-%% 
-a=find(slice_ori>0)
-corr_plot(od_out_iviv(a,4),L4fr(a,1),pia_input(a),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
-%% 
-
-a=find(slice_ori>=0)  
-b=find(od_out_iviv(:,1)>0.25)
-[ia ib]=intersect(a,b)
-corr_plot(od_out_iviv(ia,4),slice_ori(ia),pia_input(ia),{'DIR','Horizontal centre of mass','Slice Ori'});set(gca,'FontSize',12);
-%% Check correlation between DIR Pref with DSI cutoff
-a=find(od_out_iviv(:,2)>0.3)
-corr_plot(od_out_iviv(a,5),frh_lateral_s(a),[],{'DIR','Fraction Lateral'});set(gca,'FontSize',12);
-%% %% Intersectional approach ORI
-a=find(od_out_iviv(:,2)>0.3)  
-b=find((out_ang_inL23(:,3)-out_ang_inL23(:,1))*69>20)
-%c=find(od_out_iviv(:,4)<135)
-%c=find(pia_input<300)
-[ia ib]=intersect(a,b)
-[iaa ic]=intersect(ia,c);
-corr_plot(od_out_iviv(ia,5),(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69,[],{'DIR','Horizontal centre of mass'});set(gca,'FontSize',12);
-%% DIstributions of actual centroid
-%a=find(od_out_iviv(:,2)>0.3);
-%a=find(od_out_iviv(:,2)>0.3)
-a=1:147
-%a=find(od_out_iviv(:,1)>0.3)
-%fe=od_out_iviv(a,4)
-fe=slice_ori(a)
-centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'DIR'})
-%% 
-
-corr_plot(od_out_iviv(a,4),abs((out_ang_inL23(a,3)-out_ang_inL23(a,1)))*69,slice_ori(a),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
-
-%% 
-corr_plot(od_out_iviv(a,4),out_ang_inL23(a,5),pia_input(a),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
-%% Check if orthognal orientations have different input arrangement
-%Centroid in x and y
-a=find(od_out_iviv(:,1)>0.25)
-par=abs((out_ang_exL4(a,3)))*69;
-%par=out_ang_exL4(a,7)
-%par=abs(out_ang_inL23(a,8))*69;
-%par=score_ex(:,2);
-%par=pia_input(a)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) 
-g2=find(od_out_iviv(a,4)>110 & od_out_iviv(a,4)<160) 
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'~45°','~135'})
-xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
-%% 
-%% Check if orthognal orientations have different input arrangement
-%Centroid in x and y
-a=find(od_out_iviv(:,1)>0.3)
-%par=abs(out_ang_exL23(a,3)-out_ang_exL23(a,1))*69;
-%par=abs(out_ang_exL23(a,5));
-par=frh_lateral_s(a,1)
-%par=out_ang_exL4(a,7)
-%par=abs(out_ang_inL23(a,8))*69;
-%par=score_ex(:,2);
-%par=pia_input(a)
-g1=find(od_out_iviv(a,4)>=0 & od_out_iviv(a,4)<30) 
-g2=find(od_out_iviv(a,4)>80 & od_out_iviv(a,4)<110) 
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'~0°','~90'})
-xlabel('Orientation');ylabel('L23 ex COM X');  set(gca,'FontSize',12);
-
-%% %% 
-%Centroid in x and y
-a=find(od_out_iviv(:,1)>0.25)
-%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
-%par=L4h(a,3);
-par=abs(out_ang_inL23(a,2));
-%par=score_in(a,2);
-%par=pia_input(a)
-g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<90) 
-g2=find(od_out_iviv(a,4)>90 & od_out_iviv(a,4)<180) 
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'~45°','~135'})
-xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
-%% 
-ia=find(od_out_iviv(:,1)>0.25)
-%par=abs((out_ang_exL23(a,4)-out_ang_exL23(a,2)))*69;
-%par=L4h(a,3);
-%par=abs(out_ang_inL23(a,8))*69;
-%par=abs((out_ang_exL4(a,4)-out_ang_exL4(a,2)))*69;
-%par=abs(out_ang_exL4(a,3))
-%par=out_ang_exL23(a,3)
-%par=pia_input(a)
-%par=L4fr(a,1)
-
-%par=tot_input(a,2)
-%b=find(pia_input>180 & pia_input<280)
-%c=find(od_out_iviv(:,4)<135)
-%c=find(pia_input<300)
-%[ia ib]=intersect(a,b)
-
-%par=abs((out_ang_exL4(ia,3)-out_ang_exL4(ia,1)))*69;
-%par=L4fr(ia,1)
-par=sum(abs_exv_n(ia,6:7),2)
-%par=out_ang_exL23(ia,5)
-% g1=find(od_out_iviv(ia,4)>45 & od_out_iviv(ia,4)<90) 
-% g2=find(od_out_iviv(ia,4)>135 & od_out_iviv(ia,4)<180) 
- g1=find(od_out_iviv(ia,4)>0 & od_out_iviv(ia,4)<90) 
- g2=find(od_out_iviv(ia,4)>90 & od_out_iviv(ia,4)<180) 
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-xticklabels({'~45°','~135'})
-xlabel('Orientation');ylabel('L23 ex Centre of mass X (µm)');  set(gca,'FontSize',12);
-
-%% 
-
-
-
-%% 
-a=find(od_out_iviv(:,1)>0.25)
-b=find(od_out_iviv(:,4)>20 & od_out_iviv(:,4)<70) 
-c=find(od_out_iviv(:,4)>110 & od_out_iviv(:,4)<160) 
-[ia ib]=intersect(a,b);
-[ic id]=intersect(a,c);
-
-
-corr_plot(od_out_iviv([ia' ic'],4),out_ang_inL23([ia' ic'],5),pia_input([ia' ic']),{'DIR','Horizontal centre of mass','slice_ori'});set(gca,'FontSize',12);
-
-%% 
-a=find(od_out_iviv(:,2)>0)  
-%b=find(od_out_iviv(:,4)>135)
-%[ia ib]=intersect(a,b)
-
-fe=od_out_iviv(a,2)
-centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,3,fe,{'DIR'})
-%% 
-corr_plot(od_out_iviv(:,2),od_out_iviv(:,5),(out_ang_exL23(:,3)-out_ang_exL23(:,1))*69,{'DIR','Horizontal centre of mass','h'});set(gca,'FontSize',12);
-%% 
-a=find(od_out_iviv(:,2)>0.2)  
-b=find(od_out_iviv(:,5)>60 & od_out_iviv(:,5)<170) 
-c=find(od_out_iviv(:,5)>225 & od_out_iviv(:,5)<300)
-d=[b;c]
-%c=find(pia_input<300)
-[iaa ib]=intersect(a,d)
-com=[];com=[L23fr(iaa,1) L4fr(iaa,1)  L23fr(iaa,2) L4fr(iaa,2) out_ang_exL23(iaa,5)  out_ang_exL4(iaa,5) out_ang_inL23(iaa,5)  out_ang_inL4(iaa,5) out_ang_exL23(iaa,3)  out_ang_exL4(iaa,3) out_ang_inL23(iaa,3)  out_ang_inL4(iaa,3) od_out_iviv(iaa,[1 2 3 4 5 6 7 8])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:20]);yticks([1:1:20]);
-
-
-%% 
-%par=od_out_iviv(:,1);
-%par=out_ang_inL23(:,3);
-par=score_ex(:,3)
-% g1=find(sftf_out_iviv(:,2)==0.02)
-% g2=find(sftf_out_iviv(:,2)==0.08)
-%  g1=find(slice_ori==0)
-%  g2=find(slice_ori==1)
-g1=find(slice_ori==0)
-g2=find(slice_ori==1)
-[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2])
-
-
-
-
-%% Correlations Morphology and in vivo
-com=[];com=[od_out_iviv morph_parameters(:,1:21) sum_densap' sum_densba' max_densba' max_densap' MLba_diff' MLap_diff']
-correlation_matrix(com,0);title('PMorphology od out');
- %% %%Display desired correlations between input and iviv
-corr_plot(com(:,4),com(:,19),com(:,12),{'L4ex input','Apical width/height','XSA'}); 
-corr_plot(com(:,1),pia_input,pia_input,{'L4ex input','Apical width/height','XSA'}); 
-%% 
-corr_plot(com(find(com(:,7)<50),7),com(find(com(:,7)<50),13),pia_input(find(com(:,7)<50)),{'L4ex input','Apical width/height','XSA'}); 
-%% 
-find(com(:,12)>240)
-corr_plot(com(find(com(:,12)>240),12),com(find(com(:,12)>240),4),pia_input(find(com(:,12)>240)),{'Maximal radial distance of apical tree from soma','Orientation preference','Pial depth'});  xlim([200 450]);ylim([0 200]);
-%% 
-discretize_plot(pia_input,3,od_out_iviv(:,4),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('in vivo in vitro cells');ylim([0 180])
-%% 
-corr_plot(com(:,23),com(:,1),pia_input,{'Number of branch points basal','Orientation selectivity index (gOSI)','Pial depth'}); xlim([0 22]);ylim([0 1])
 %% responsive vs non responsive
 g1=find(sftf_out_iviv(:,1)==0);
 g2=find(od_out(:,1)==1);
@@ -1069,19 +958,88 @@ gv(find(gv==0))=NaN;
 %call function
 [stats_g] = display_inputs([frac_exv_m frac_inv],[frac_exh frac_inh],frac_diffv,frac_diffh,gv);
 g1=[];g2=[];g3=[];
+
 %% 
-com=[];com=[spon_out_iviv(:,:) out_ang_inL23]
-correlation_matrix(com,0);title('ang od out');
- %% %%Display desired correlations between input and iviv
-corr_plot(tot_inputL23(:,2),od_out_iviv(:,9),pia_input,{'L4ex input','Apical width/height','XSA'});
+
+%% Ex vs IN with refline subsampled
+a=find(od_out_iviv(:,1)>0.25) 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 900, 200]);
+subplot(1,3,1);
+plot(abs(out_ang_exL23(a,3)*69-out_ang_exL23(a,1)*69),abs(out_ang_inL23(a,3)*69-out_ang_inL23(a,1)*69),'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);
+ref.Color='k';box off;xlim([-200 200]);ylim([-200 200]);hold on;title('L23');xticks([-200:100:200]);yticks([-200:100:200]);
+subplot(1,3,2);
+plot(out_ang_exL4(a,3)*69-out_ang_exL4(a,1)*69,out_ang_inL4(a,3)*69-out_ang_inL4(a,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);
+ref.Color='k';box off;xlim([-200 200]);ylim([-200 200]);hold on;title('L4');xticks([-200:100:200]);yticks([-200:100:200]);
+subplot(1,3,3);
+plot(out_ang_exL5(a,3)*69-out_ang_exL5(a,1)*69,out_ang_inL5(a,3)*69-out_ang_inL5(a,1)*69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',12);;
+ref.Color='k';box off;xlim([-400 400]);ylim([-400 400]);hold on;title('L5');xticks([-400:200:400]);yticks([-400:200:400]);
+%% Test
+par1=abs(out_ang_exL23(a,3)*69-out_ang_exL23(a,1)*69);
+par2=abs(out_ang_inL23(a,3)*69-out_ang_inL23(a,1)*69);
+find(~isnan(par2))
+P = polyfit(par1(find(~isnan(par2))),par2(find(~isnan(par2))),1);
+    yfit = P(1)*par1(find(~isnan(par2)))+P(2);
+ yfit2=1*par1(find(~isnan(par2)));
+ 
+ [r t]=ttest2(yfit,yfit2)
+
+
+
+
+%% Correlations Morphology and in vivo
+com=[];com=[od_out_iviv(:,[1 2 3 4 5 7 8]) noise_corr' morph_parameters(:,1:21) sum_densap' sum_densba' max_densba' max_densap' MLba_diff' MLap_diff']
+correlation_matrix(com,0);title('PMorphology od out');
 %% 
-com=[];com=[sftf_out_iviv(:,[1:6]) tot_input]
-correlation_matrix(com,0);title('ang od out');
- %% %%Display desired correlations between input and iviv
-corr_plot(od_out_iviv(:,8),tot_input(:,2),od_out_iviv(:,8),{'L4ex input','Apical width/height','XSA'});
-%% Plot Morphologies of cells all or defined subgroups directly from structure
-id_m=nan_vector(morph_cells_id)
-plot_morphologies(str,id_m,10,10);
+m_res=[];
+for i=1:length(nan_vector)
+    if ~isnan(str(nan_vector(i)).morph(1))==1 & str(nan_vector(i)).resp==1 & ~isnan(str(nan_vector(i)).OSIpref)==1
+        m_res(i)=1;
+     
+    else
+       m_res(i)=NaN;
+    end
+end
+morph_res_sub=find(m_res==1);
+%% 
+%Ori and apical 
+corr_plot(morph_parameters(morph_res_sub,3),od_out_iviv(morph_res_sub,4),pia_input,{'a','Apical width/height','Pial depth (µm)'});%xlim([-55 95]);ylim([0 180]);ylabel('Orientation preference','Color','k');xlabel('Angle centroid L2/3 IN','Color','b')
+%corr_plot(L4fr(:,1),od_out_iviv(:,8),pia_input,{'L4ex input','Apical width/height','XSA'});
+%% Plot tuning curve for cell with low and high OSI where morphology is present
+%pssible examples: 77,94 112,143
+%Cell 143 %ipsi
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp15006\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex1=Fit(1).ipsi.FittedDataOri
+ind_tr1=peaks(1).ipsi;
+%% 
+% load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14373\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+% fit_ex1=Fit(1).contra.FittedDataOri
+%% 
+%Cell 122 contra
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14757\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex2=Fit(2).contra.FittedDataOri;
+ind_tr2=peaks(2).contra;
+%% 
+shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,od_out_iviv(143,1),od_out_iviv(122,1),od_out_iviv(143,7),od_out_iviv(122,7));
+%% 
+id_m=143;
+plot_morphologies(str,id_m,1,1);
+%% 
+%122
+id_m=122;
+plot_morphologies(str,id_m,1,1);
+%% OSI and morph apical
+corr_plot(morph_parameters(morph_res_sub,4),od_out_iviv(morph_res_sub,1),[],{'a','Apical width/height','Pial depth (µm)'});xlim([0 25]);ylim([0 1]);yticks([0:0.2:1]);ylabel('OSI','Color','k');xlabel('Number of branch points apical','Color','k');set(gca,'FontSize',12)
+%% OSI and morph basal
+corr_plot(morph_parameters(morph_res_sub,14),od_out_iviv(morph_res_sub,1),[],{'a','Apical width/height','Pial depth (µm)'});xlim([0 40]);ylim([0 1]);yticks([0:0.2:1]);ylabel('OSI','Color','k');xlabel('Number of branch points basal','Color','k');set(gca,'FontSize',12)
+%% 
+%% ODI and max branch order
+morph_res_sub2=morph_res_sub;
+find(od_out_iviv(morph_res_sub2,7)>50)
+morph_res_sub2(10)=[]
+corr_plot(morph_parameters(morph_res_sub2,2),od_out_iviv(morph_res_sub2,7),[],{'a','Apical width/height','Pial depth (µm)'});%xlim([0 25]);ylim([0 1]);yticks([0:0.2:1]);ylabel('OSI','Color','k');xlabel('Number of branch points apical','Color','k');set(gca,'FontSize',12)
 %% Get all 147 morphtraces
 for i=1:length(nan_vector)
     if ~isempty(str(nan_vector(i)).morph)==1 
@@ -1090,6 +1048,88 @@ for i=1:length(nan_vector)
         zz{:,i}=NaN;
     end
 end
+%% %% Morphology sholl analysis
+close all;
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147);
+%% Tuning width vs peak number of sholl crossings for apical
+morph_res_sub2=morph_res_sub;
+find(od_out_iviv(morph_res_sub2,7)>50)
+morph_res_sub2(10)=[]
+corr_plot(max_s(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'a','Apical width/height','Pial depth (µm)'});xlim([0 15]);;ylabel('Tuning Width','Color','k');xlabel('Peak number of sholl crossings','Color','k');set(gca,'FontSize',12)
+ylim([5 40]);yticks([0:10:40])
+%% 
+morph_res_sub2=morph_res_sub;
+find(od_out_iviv(morph_res_sub2,7)>50)
+morph_res_sub2(10)=[]
+corr_plot(max_s_ba(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'a','Apical width/height','Pial depth (µm)'});xlim([0 30]);;ylabel('Tuning Width','Color','k');xlabel('Peak number of sholl crossings','Color','k');set(gca,'FontSize',12)
+ylim([5 40]);yticks([0:10:40])
+
+%% Sholl analysis for example cells 
+temp=zz{143}
+[s, dd, sd, XP, YP, ZP, iD] = sholl_tree(temp{1,1}, 20, '-s');
+[sb, ddb, sdb, XP, YP, ZP, iD] = sholl_tree(temp{1,2}, 20, '-s');
+temp=zz{122}
+[s1, dd1, sd1, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,1}, 20, '-s');
+[s1b, dd1b, sd1b, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,2}, 20, '-s');
+figure;plot(dd,s,'-k');box off;
+hold on;plot(ddb,sb,'--k')
+hold on;plot(dd1,s1,'-b');
+hold on;plot(dd1b,s1b,'--b');
+legend('Apical','Basal');legend boxoff;
+ylabel('Number of dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',12)
+%% 
+discretize_plot(pia_input,3,od_out_iviv(:,4),1);xlabel('Pial depth bins');ylabel('Orientation preference');xticks([1:1:3]);title('in vivo in vitro cells');ylim([0 180])
+%% 
+corr_plot(max_s(morph_cells_id)',L23fr(morph_cells_id,1),[],{'Number of branch points basal','Orientation selectivity index (gOSI)','Pial depth'});% xlim([0 22]);ylim([0 1])
+%corr_plot(max_s(morph_cells_id)',sum(abs_inh_n(morph_cells_id,1:5),2),[],{'Number of branch points basal','Orientation selectivity index (gOSI)','Pial depth'});% xlim([0 22]);ylim([0 1])
+%corr_plot(corr_exc_apical(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'Number of branch points basal','Orientation selectivity index (gOSI)','Pial depth'});% xlim([0 22]);ylim([0 1])
+%% 
+com=[morph_parameters(:,2) nanmax(df,[],2) dis_s'  morph_parameters(:,4)  max_s'  sum_densap' ...
+    morph_parameters(:,12) nanmax(db,[],2) dis_s_ba'  morph_parameters(:,14) max_s_ba'  sum_densba' L23fr L4fr tot_input tot_inputL23 tot_inputL4]
+   correlation_matrix(com,0)
+   %% 
+    corr_plot(nanmax(df(morph_cells_id,:),[],2),sum(frac_exv_n(morph_cells_id,1:5),2),[],{'Number of branch points basal','Orientation selectivity index (gOSI)',''}) 
+   %% 
+   corr_plot(nanmax(df(morph_cells_id,:),[],2),tot_input(morph_cells_id,1),[],{'Number of branch points basal','Orientation selectivity index (gOSI)',''}) 
+   %% 
+    corr_plot(morph_parameters(morph_cells_id,4),tot_input(morph_cells_id,1),[],{'Number of branch points apical','Mean EX input',''});ylabel('Mean EX input','Color','r')
+    ylim([0 0.8]);yticks([0:0.2:0.8]);set(gca,'FontSize',12)
+    %% 
+corr_plot(morph_parameters(morph_cells_id,4),sum(frac_exv_n(morph_cells_id,1:10),2),[],{'Number of branch points basal','Orientation selectivity index (gOSI)',''}) 
+    %% 
+
+   a=find(od_out_iviv(:,1)<1)
+
+com=[od_out_iviv(a,7) L23fr(a,:) L4fr(a,:) ex_spanhL23(a)' in_spanhL23(a)' ex_spanhL4(a)' in_spanhL4(a)' corr_exc_apical(a)']
+correlation_matrix(com,0)
+%% 
+g1=[];
+g2=[];
+ia=morph_res_sub;  
+%par=corr_inh_apical(ia)
+
+g1=find(od_out_iviv(ia,1)<0.5)
+% tmp=zeros(length(ia),1)
+% tmp(g1)=g1;
+g2=find(od_out_iviv(ia,1)>0.5)
+%g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
+xticklabels({'0-90°','90-180°'})
+xlabel('Orientation');
+%ylabel('|Angle Centroid L23|','Color','r');  set(gca,'FontSize',12);
+%ylabel('|\Delta Centroid L23 X|','Color','r');  set(gca,'FontSize',12);
+%ylabel('EX L4 fraction','Color','r');
+%ylabel('IN L4 fraction','Color','b');
+ylabel('EX L2/3 fraction','Color','r');
+%ylabel('Pial depth (µm)')
+set(gca,'FontSize',12);
+
+%% 
+
+%% Plot Morphologies of cells all or defined subgroups directly from structure
+id_m=nan_vector(morph_cells_id)
+plot_morphologies(str,id_m,10,10);
+
 
 %% Plot morphologies of specific groups
 plot_morphologies_iviv(zz,find(idx_input==1),10,10,m_flip_a)
@@ -1114,16 +1154,7 @@ morph_res=find(m_res==1);
 
 
 %% 
-m_res=[];
-for i=1:length(nan_vector)
-    if ~isempty(str(nan_vector(i)).morph)==1 & str(nan_vector(i)).resp==1 & ~isempty(str(nan_vector(i)).OSI)==1
-        m_res(i)=1;
-     
-    else
-       m_res(i)=NaN;
-    end
-end
-morph_res_sub=find(m_res==1);
+
 %% Plot cells sorted based on OSI
 plot_morphologies_iviv(zz,morph_res_sub,6,6)
 %% 
@@ -1134,48 +1165,72 @@ plot_morphologies_iviv(zz,morph_res_sub(isb),6,6,m_flip_a)
 plot_morphologies_iviv(zz,[123 135],6,6,m_flip_a)
 
 
-%% Morphlogy to input correlations
-%% Morpho density corr apical
-% calculate the correlation between morpho density and maps
-morphoMaps = morpho_apical;
-excMaps = {str(non_nan_cells).excMap};
-inhMaps = {str(non_nan_cells).inhMap};
-non_nan_names = {str(non_nan_cells).cellName};
-correlation_values_ap = cell(cell_num,3);
-% for all the cells
-for cells = 1:cell_num
-    if isempty(morphoMaps{cells})
-        correlation_values_ap{cells,3} = 'nanCell';
-        continue
-    end
-    % save the name of the cell
-    correlation_values_ap{cells,3} = non_nan_names{cells};
-    % for the 2 types of map
-    for maps = 1:2
-        % get the map
-        switch maps
-            case 1
-                map = excMaps{cells}*-1;
-            case 2
-                map = inhMaps{cells};
-        end
-        % calculate the correlation and store
-        %correlation_values{cells,maps} = corr(map(:), morphoMaps{cells}(:));
-        correlation_values_ap{cells,maps} = corr(map(:), morphoMaps{cells}(:));
-    end  
-end
-%% Exication and Inhbition correlation of apical tree with map
-figure;histogram([correlation_values_ap{morph_cells_id,1}],10);hold on;histogram([correlation_values_ap{morph_cells_id,2}],10);
 %% 
-for i=1:length(correlation_values_ap)
-    if isempty(correlation_values_ap{i})==0
-ap_correx(i)=[correlation_values_ap{i,1}];
-ap_corrin(i)=[correlation_values_ap{i,2}];
-    else
-        ap_correx(i)=NaN;
-        ap_corrin(i)=NaN;
-    end
+ylabel('Number of dendritic crossing');xlabel('Distance from Soma (µm)');set(gca,'FontSize',12);
+%% Correlations Morphology and in vivo
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[morph_parameters(:,2) nanmax(df,[],2) dis_s'  morph_parameters(:,4)  max_s'  sum_densap' ...
+    morph_parameters(:,12) nanmax(db,[],2) dis_s_ba'  morph_parameters(:,14) max_s_ba'  sum_densba'  od_out_iviv(:,[1 2 3 4 5 7 8]) pia_input]
+G=correlation_matrix(com,0);
+Gf=G(13:end,1:12)
+Gf(6,1)=0;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 325]);imagesc(Gf);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:8]);
+ 
+xticklabels({'Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Density','Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Density'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}','Pial depth'});ytickangle(45);set(gca,'FontSize',12)
+c.Label.String = 'r';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
+%% 
+
+
+
+%% 
+
+%% 
+plot_morphologies_iviv(zz,[123 135],6,6,m_flip_a);
+%% 
+corr_plot(morph_parameters(id_ori,3),out_ang_inL23(id_ori,5),pia_input(id_ori),{'a','Apical width/height','Pial depth (µm)'})
+
+%% Max sholl crossings apical
+corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('gOSI','Color','k');xlabel('Peak number of sholl crossings apical','Color','k');set(gca,'FontSize',12);yticks(0:0.25:1)
+%% Max sholl crossings basal
+corr_plot(max_s_ba(morph_res_sub)',od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('gOSI','Color','k');xlabel('Peak number of sholl crossings basal','Color','k');set(gca,'FontSize',12);yticks(0:0.25:1)
+%% Tuning width sholl corssings apical
+corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('Tuning width (°)','Color','k');xlabel('Peak number of sholl crossings apical','Color','k');set(gca,'FontSize',12);
+%% Tuning width sholl corssings
+corr_plot(max_s_ba(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('Tuning width (°)','Color','k');xlabel('Peak number of sholl crossings basal','Color','k');set(gca,'FontSize',12);
+%% 
+corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});
+%% Plot individual cell with circles
+a=122;
+ml=13;
+  tmp=zz{1,a}
+  figure;set(gcf,'color','w')
+  m=plot_tree(tmp{1,1},[1 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
+         m.EdgeColor = [0 0 1]
+        m1=plot_tree(tmp{1,2},[0 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
+        m1.EdgeColor = [0.5 0.5 0.5]
+m2=plot_tree(tmp{1,3},[0 0 1],[0 tmp{1,5} 0],[],1,'-b');hold on;
+        m2.EdgeColor = [0.8 0.8 0.8]
+set(gca,'Ydir','reverse');
+ axis off
+%% 
+
+for i=1:ml
+hold on;
+  viscircles([0 pia_input(a)],20*i,'Color',[0.5 0.5 0.5],'LineWidth',1);
 end
+ axis off
+ %% Histogram 
+ figure;set(gcf,'color','w')
+ h4 = histogram(morph_parameters(:,4),10);box off;h4.EdgeColor = 'k';h4.FaceColor = 'k';xlabel('');ylabel('Counts')
+hold on;h4 = histogram(morph_parameters(:,14),10);box off;h4.EdgeColor = 'k';h4.FaceColor = 'm';xlabel('Number of branch points');ylabel('Counts')
+ legend('Apical','Basal');set(gca,'FontSize',12);legend boxoff;set(gca,'FontSize',12);
+
+
 %% 
 
 
@@ -1347,77 +1402,7 @@ set(gca,'FontSize',10)
   
 
 %% Morphology and in vivo
-%% %% Morphology sholl analysis
-close all;
-[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147);
-%% 
-ylabel('Number of dendritic crossing');xlabel('Distance from Soma (µm)');set(gca,'FontSize',12);
-%% Correlations Morphology and in vivo
-df=[morph_parameters(:,9) morph_parameters(:,10)];
-db=[morph_parameters(:,19) morph_parameters(:,20)];
-com=[];com=[morph_parameters(:,2) nanmax(df,[],2) dis_s'  morph_parameters(:,4)  morph_parameters(:,5) max_s'  sum_densap' ...
-    morph_parameters(:,12) nanmax(db,[],2) dis_s_ba'  morph_parameters(:,14)  morph_parameters(:,15) max_s_ba'  sum_densba'  od_out_iviv(:,[1 2 3 4 5 7 8])]
-G=correlation_matrix(com,0);
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 325]);imagesc(G(15:end,1:14));c=colorbar;
-[cmap]=buildcmap('bwg');
-colormap(cmap);caxis([-1 1]);
-xticks([1:1:14]);yticks([1:1:7]);
-xticklabels({'Total Length','Max extent','Dis peak branch','Nr. branch points','Max branch order','Peak number crossing','Total Density','Total Length','Max extent','Dis peak branch','Nr. branch points','Max branch order','Peak number crossing','Total Density'});xlabel('Feature');xtickangle(45);set(gca,'FontSize',12)
-yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});ylabel('Feature');ytickangle(45);set(gca,'FontSize',12)
-c.Label.String = 'r';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
-%% 
 
-
-
-%% 
-%Ori and apical 
-corr_plot(morph_parameters(:,3),od_out_iviv(:,4),pia_input,{'a','Apical width/height','Pial depth (µm)'});%xlim([-55 95]);ylim([0 180]);ylabel('Orientation preference','Color','k');xlabel('Angle centroid L2/3 IN','Color','b')
-%corr_plot(L4fr(:,1),od_out_iviv(:,8),pia_input,{'L4ex input','Apical width/height','XSA'});
-%% 
-plot_morphologies_iviv(zz,[123 135],6,6,m_flip_a);
-%% 
-corr_plot(morph_parameters(id_ori,3),out_ang_inL23(id_ori,5),pia_input(id_ori),{'a','Apical width/height','Pial depth (µm)'})
-%% OSI and morph apical
-corr_plot(morph_parameters(morph_res_sub,4),od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});xlim([0 25]);ylim([0 1]);ylabel('gOSI','Color','k');xlabel('Number of branch points apical','Color','k');set(gca,'FontSize',12)
-yticks(0:0.25:1)
-%% OSI and morph basal
-corr_plot(morph_parameters(morph_res_sub,14),od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});xlim([0 30]);ylim([0 1]);ylabel('gOSI','Color','k');xlabel('Number of branch points basal','Color','k');set(gca,'FontSize',12)
-yticks(0:0.25:1)
-%% Max sholl crossings apical
-corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('gOSI','Color','k');xlabel('Peak number of sholl crossings apical','Color','k');set(gca,'FontSize',12);yticks(0:0.25:1)
-%% Max sholl crossings basal
-corr_plot(max_s_ba(morph_res_sub)',od_out_iviv(morph_res_sub,1),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('gOSI','Color','k');xlabel('Peak number of sholl crossings basal','Color','k');set(gca,'FontSize',12);yticks(0:0.25:1)
-%% Tuning width sholl corssings apical
-corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('Tuning width (°)','Color','k');xlabel('Peak number of sholl crossings apical','Color','k');set(gca,'FontSize',12);
-%% Tuning width sholl corssings
-corr_plot(max_s_ba(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});ylabel('Tuning width (°)','Color','k');xlabel('Peak number of sholl crossings basal','Color','k');set(gca,'FontSize',12);
-%% 
-corr_plot(max_s(morph_res_sub)',od_out_iviv(morph_res_sub,7),pia_input(morph_res_sub),{'a','Apical width/height','Pial depth (µm)'});
-%% Plot individual cell with circles
-a=99;
-ml=15;
-  tmp=zz{1,a}
-  figure;set(gcf,'color','w')
-  m=plot_tree(tmp{1,1},[1 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-         m.EdgeColor = [0 0 0]
-       m1=plot_tree(tmp{1,2},[0 0 0],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m1.EdgeColor = [0.5 0.5 0.5]
-       m2=plot_tree(tmp{1,3},[0 0 1],[0 tmp{1,5} 0],[],1,'-b');hold on;
-       m2.EdgeColor = [0.8 0.8 0.8]
-set(gca,'Ydir','reverse');
- axis off
-%% 
-
-for i=1:ml
-hold on;
-  viscircles([0 pia_input(a)],20*i,'Color',[0.5 0.5 0.5],'LineWidth',1);
-end
- axis off
- %% Histogram 
- figure;set(gcf,'color','w')
- h4 = histogram(morph_parameters(:,4),10);box off;h4.EdgeColor = 'k';h4.FaceColor = 'k';xlabel('');ylabel('Counts')
-hold on;h4 = histogram(morph_parameters(:,14),10);box off;h4.EdgeColor = 'k';h4.FaceColor = 'm';xlabel('Number of branch points');ylabel('Counts')
- legend('Apical','Basal');set(gca,'FontSize',12);legend boxoff;set(gca,'FontSize',12);
  %% 
  
  
