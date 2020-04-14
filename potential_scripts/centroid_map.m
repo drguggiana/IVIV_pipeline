@@ -16,7 +16,7 @@ tot_mass = sum(A(:));
 %    R=NaN;
 % end
 out(i,:) = [tot_mass,R,C];
-cell_cord(i,:)=[(8+somax(idx(i))/69) pia_input(idx(i))/69];
+cell_cord(i,:)=[(8.5+somax(idx(i))/69) pia_input(idx(i))/69];
 %val_hot(i)=A(round(R),round(C));
 end
 %ALTERNATIVE for centroid

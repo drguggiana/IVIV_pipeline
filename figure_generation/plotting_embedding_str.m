@@ -37,18 +37,36 @@ for plots = 1:plot_number
     data_in = cat(1,str.(plot_list{plots}));
     
     % if it's the PCs, split and plot all
-    if strcmp(plot_list{plots},'PCs') == 1
-        % set the loop counter
-        loop = size(data_in,2);
-        title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
-    elseif contains(plot_list{plots},'ang_')
-        loop = 1;
-        data_in = data_in(:,5);
-        title_list = plot_list(plots);
-    else
-        loop = 1;
-        title_list = plot_list(plots);
+    switch plot_list{plots}
+        case 'PCs'
+            title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
+        case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}
+            data_in = cat(2,data_in(:,3)-data_in(:,1),data_in(:,5));
+            title_list = {'centroidX_','alpha_'};
+            title_list = cellfun(@strcat,title_list,...
+                num2cell(repmat(plot_list(plots),1,size(title_list,2))),...
+                'UniformOutput',false);
+        case {'somaCenter','subpixel_soma'}
+            title_list = {'soma x','soma y'};
+        case 'cellID'
+            title_list = {'setup'};
+            data_in = cat(1,ones(47,1),zeros(100,1));
+        case 'frac_vert'
+            title_list = {'L4 exfrac','L4 infrac'};
+            data_in = cat(1,str.frac_vert);
+            data_in = [mean(data_in(:,6:7),2), mean(data_in(:,22:23),2)];
+        case 'noise'
+            data_in = log(abs(data_in));
+            title_list = {'noise'};
+        case 'pci'
+            data_in = log(abs(data_in));
+            title_list = plot_list(plots);
+        otherwise
+            title_list = plot_list(plots);
     end
+    
+    % define loop based on the dimensionality of data_in
+    loop = size(data_in,2);
     
     % for all the loop values
     for count = 1:loop
