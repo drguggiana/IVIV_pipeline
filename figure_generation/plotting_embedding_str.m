@@ -50,10 +50,13 @@ for plots = 1:plot_number
             data_in(a)=NaN;
             title_list = {'DIR'};
        case 'Sigmapref'
-            a=find(cat(1,str.Sigmapref)>100);
             data_in = cat(1,str.Sigmapref); 
-            data_in(a)=NaN;
+            data_in=log(data_in);
             title_list = {'Tuning width'};
+       case 'Sigmapref'
+            data_in = cat(1,str.Capeakpref); 
+            data_in=log(data_in);
+            title_list = {'Capeakpref'};   
         case 'PCs'
             title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
         case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}

@@ -713,7 +713,7 @@ id_ori=find(~isnan(od_out_iviv(:,4)));
 %% %read out noise correlations
 noise_corr=[str(:).noise];
 %% Correlations PCs input and OD out
-ia=find(od_out_iviv(:,2)>0.3)  
+ia=find(od_out_iviv(:,2)>0.25)  
 %b=find(od_out_iviv(:,1)>0.3)  
 %[ia ib]=intersect(a,b)
 com=[];com=[score_ex(ia,1:3) score_in(ia,1:3) od_out_iviv(ia,:) noise_corr(ia)']; 
@@ -755,6 +755,13 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 %corr_plot(od_out_iviv(a,[4]),abs(out_ang_inL23(a,5)),pia_input(a),{'L4ex input','Apical width/height','XSA'});
 corr_plot(od_out_iviv(a,[4]),abs(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,pia_input(a),{'L4ex input','Apical width/height','XSA'});
 
+%% EXAMPLE tuning curves
+%bino
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,71,pia_input);
+%ipsi
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,111,pia_input);
+%contra
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,134,pia_input);
 %% Display correlation between all input maps and in vivo
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) od_out_iviv(:,[1 2 3 4 5 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
@@ -876,17 +883,17 @@ b=find(pia_input<300)
 [ia ib]=intersect(a,b)
 %par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
 %par=abs(out_ang_exL23(ia,5))
-par=L23fr(ia,1)
-%par=abs(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69
+%par=L23fr(ia,1)
+par=abs(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69
 %par=abs(out_ang_exL23(ia,10))*69
 %par=abs(out_ang_inL23(ia,1))*69
 %par=in_spanhL23(ia)*69
 %par=score_in(ia,2)
 %par=pia_input(ia)
-g1=find(od_out_iviv(ia,4)>0 & od_out_iviv(ia,4)<90) 
+g1=find(od_out_iviv(ia,4)>10 & od_out_iviv(ia,4)<70) 
 % tmp=zeros(length(ia),1)
 % tmp(g1)=g1;
-g2=find(od_out_iviv(ia,4)>90 & od_out_iviv(ia,4)<180) 
+g2=find(od_out_iviv(ia,4)>100 & od_out_iviv(ia,4)<160) 
 %g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
 xticklabels({'0-90°','90-180°'})
@@ -900,14 +907,17 @@ ylabel('EX L2/3 fraction','Color','r');
 set(gca,'FontSize',12);
 %% 
 a=find(od_out_iviv(:,1)>0.25)  
-%fe=od_out_iviv(a,4)
-fe=pia_input(a)
+fe=od_out_iviv(a,4)
+%fe=pia_input(a)
 centroid_plot(a,out_ang_exL23,out_ang_exL4,out_ang_exL5,out_ang_inL23,out_ang_inL4,out_ang_inL5,1,fe,{'ORI'});
-%% 
+%% Zoom into L23 IN
+a=find(od_out_iviv(:,1)>0.25)  
+%fe=pia_input(a)
+fe=od_out_iviv(a,4)
 pointsize=40;
 figure;
-h4 = scatter(out_ang_inL23(a,3)*69-ang2(a,1)*69,out_ang_inL23(a,4)*69-out_ang_inL23(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);
-[cmap]=buildcmap('ybk');
+h4 = scatter(abs(out_ang_exL23(a,3)*69-out_ang_exL23(a,1)*69),abs(out_ang_exL23(a,4)*69-out_ang_exL23(a,2)*69),pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);
+[cmap]=inferno;
 colormap(cmap);%text(-250,50,'L2/3');
 ang2=out_ang_exL4;
 yticks([-200:200:600])

@@ -45,18 +45,19 @@ grid on;
 set(gca,'FontSize',12);
 
 elseif gr==1
+    [cmap]=inferno;
 ang2=out_ang_exL23;    
 pointsize=40;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
 subplot(1,2,1);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
-[cmap]=buildcmap('ybk');
+
 colormap(cmap);%text(-250,50,'L2/3');
 ang2=out_ang_exL4;
 yticks([-200:200:600])
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','s');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;%text(-250,150,'L4');
-[cmap]=buildcmap('ybk');
+
 colormap(cmap);
 ang2=out_ang_exL5
 hold on;
@@ -68,12 +69,12 @@ c=colorbar;c.Label.String=label_name{1};
 ang2=out_ang_inL23;
 subplot(1,2,2);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
-[cmap]=buildcmap('ybk');
+
 colormap(cmap);
 ang2=out_ang_inL4;
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','s');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
-[cmap]=buildcmap('ybk');
+
 colormap(cmap);
 ang2=out_ang_inL5
 hold on;

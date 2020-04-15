@@ -39,7 +39,7 @@ soma = cat(1,str.subpixel_soma);
 % bet23ex = ang23ex(:,6);
 % centroidX23ex = ang23ex(:,3) - ang23ex(:,1);
 pialD=pia_input;
-frac23ex = L23fr(:,1);
+%frac23ex = L23fr(:,1);
 %frac23in = L23fr(:,2);
 frac4ex = L4fr(:,1)
 %frac4in = L4fr(:,2);
@@ -56,7 +56,7 @@ centroidX23in=abs(out_ang_inL23(:,3)-out_ang_inL23(:,1));
 % cell_cell = cat(2,pialD,frac4ex,bet23ex,alph23ex);
 %cell_cell = cat(2,pialD,frac23ex,frac23in,frac4ex,frac4in,alph23in,...
    % centroidX23in);
-cell_cell = cat(2,pialD,frac23ex,frac4ex,alph23in,...
+cell_cell = cat(2,pialD,frac4ex,alph23in,...
     centroidX23in);
 
 % cell_cell = cat(2,pcs(:,2),ang);
