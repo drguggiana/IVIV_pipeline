@@ -81,6 +81,11 @@ for plots = 1:plot_number
         case 'pci'
             data_in = log(abs(data_in));
             title_list = plot_list(plots);
+        case 'morph'
+            title_list = {'RDAmax','LAtotal','PLAmax','BPA','BOAmax','BLA',...
+                'PLA','WHA','XSA','YSA','RDBmax','LBtotal','PLBmax','BPB',...
+                'BOBmax','BLB','PLB','WHB','XSB','YSB','NB','pialD',...
+                'cellID','Cluster'};
         otherwise
             title_list = plot_list(plots);
     end

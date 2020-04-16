@@ -345,12 +345,45 @@ field_list = fields(str);
 num_fields = length(field_list);
 % for all the fields
 for f = 1:num_fields
+    % find a prototype field
+    for cells = 1:cell_num
+        if ~isempty(str(cells).(field_list{f}))
+            template_size = size(str(cells).(field_list{f}));
+            break
+        end
+    end
     % for all the cells
     for cells = 1:cell_num
         if isempty(str(cells).(field_list{f}))
-            str(cells).(field_list{f}) = NaN;
+            str(cells).(field_list{f}) = NaN(template_size);
         end
     end
+end
+%% Add the fraction fields
+[frac_exh,~,frac_inh,frac_exv,abs_exv,frac_inv] = iviv_profiles(1:cell_num,str);
+frac_exv_m=[zeros(cell_num,2),frac_exv];
+abs_exv_m=[zeros(cell_num,2),abs_exv];
+layer_assign=[zeros(cell_num,2),(1:cell_num)'];
+frac_v=[frac_exv_m,frac_inv];
+frac_h=[frac_exh,frac_inh];
+
+% add the fields to the structure
+% for all the cells
+for cells = 1:cell_num
+    str(cells).frac_vert = frac_v(cells,:);
+    str(cells).frac_horz = frac_h(cells,:);
+end
+%% Add the span fields
+
+% calculate the span
+[ex_spanhL23,ex_spanhL4,ex_spanhL5,in_spanhL23,in_spanhL4,in_spanhL5] = ...
+    span_perLayer(cat(3,str.subpixel_excMap),cat(3,str.subpixel_inhMap),1:cell_num);
+
+% add the span fields
+% for all the cells
+for cells = 1:cell_num
+    str(cells).span = [ex_spanhL23(cells),ex_spanhL4(cells),ex_spanhL5(cells),...
+        in_spanhL23(cells),in_spanhL4(cells),in_spanhL5(cells)];
 end
 %% Re-PCA and re-cluster
 close all
@@ -481,7 +514,6 @@ for exin = 1:2
             field1 = 'ex';
         case 2
             map_type = 'subpixel_inhMap';
-
             field1 = 'in';
     end
     % get the corresponding maps
@@ -501,7 +533,7 @@ for exin = 1:2
     
 
     % for both layer groups
-    for layer = 1:2
+    for layer = 1:3
         % select the rows for layer 2/3 and layer 4 respectively
         switch layer
             case 1
@@ -512,6 +544,10 @@ for exin = 1:2
                 layers = 6:7;
                 field2 = 'L4';
                 row_shift = 5;
+            case 3
+                layers = 8:10;
+                field2 = 'L5';
+                row_shift = 7;
         end
         % get the layer
         map_layers = maps(layers,:,:);
@@ -531,9 +567,9 @@ for cells = 1:cell_num
     for exin = 1:2
         switch exin
             case 1
-                maptype = 'excMap';
+                maptype = 'subpixel_excMap';
             case 2
-                maptype = 'inhMap';
+                maptype = 'subpixel_inhMap';
         end
         
         % get the map
@@ -549,7 +585,6 @@ for cells = 1:cell_num
         str(cells).(strjoin({maptype,'norm'},'_')) = curr_map./factor;
     end
 end
-
 %% OFF Plotting
 % figure
 % 
