@@ -62,9 +62,11 @@ close all
 % respectively (vector)
 % plot_list = {'hemisphere','sliceOri','pialD','Cluster_id','somaCenter','cellID'};
 
-plot_list = {'OSIpref','DSIpref','ODIpref','ORIpref','DIRpref','noise','PCs',...
-    'Cluster_id','ang_exL23','sliceOri','pialD','pci',...
-    'frac_vert','corr_exc_apical','corr_exc_basal','corr_inh_apical','corr_inh_basal','subpixel_soma'};
+% plot_list = {'OSIpref','DSIpref','ODIpref','ORIpref','DIRpref','noise','PCs',...
+%     'Cluster_id','ang_exL23','sliceOri','pialD','pci',...
+%     'frac_vert','corr_exc_apical','corr_exc_basal','corr_inh_apical','corr_inh_basal','subpixel_soma'};
+
+plot_list = {'morph','pialD','frac_vert'};
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula')
 
 autoArrangeFigures

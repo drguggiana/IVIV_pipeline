@@ -15,10 +15,10 @@ str = str.str;
 window = 45;
 % get the orientation and the parameter of interest
 orientation_vector = cat(1,str.ORIpref);
-parameter_vector = cat(1,str.frac_vert);
-parameter_vector = sum(parameter_vector(:,3:5),2);
-% parameter_vector = cat(1,str.ang_exL23);
-% parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
+% parameter_vector = cat(1,str.frac_vert);
+% parameter_vector = sum(parameter_vector(:,3:5),2);
+parameter_vector = cat(1,str.ang_exL4);
+parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
 % parameter_vector = 90-abs(parameter_vector(:,5));
 
 % add osi cutoff
