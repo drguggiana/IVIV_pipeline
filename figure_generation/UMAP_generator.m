@@ -21,18 +21,16 @@ pc_vector = ~cellfun(@isempty,pc_vector);
 str = str(pc_vector);
 %% Get the PCs and assemble the feature vector
 
-pcs = cat(1,str.PCs);
 % cell_cell = cat(2,pcs(:,1:3),pcs(:,4:6));
-cell_cell = pcs;
+% cell_cell = pcs;
 % get the soma positions
-soma = cat(1,str.subpixel_soma);
 
 % calculate the fractions
 
 
-pialD=pia_input;
+pialD=cat(1,str.pialD);
 
-frac4ex = L4fr(:,1)
+frac4ex = L4fr(:,1);
 
 alph23in=90-abs(out_ang_inL23(:,5));
 centroidX23in=abs(out_ang_inL23(:,3)-out_ang_inL23(:,1));
