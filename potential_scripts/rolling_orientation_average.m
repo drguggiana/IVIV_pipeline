@@ -15,14 +15,18 @@ str = str.str;
 window = 45;
 % get the orientation and the parameter of interest
 orientation_vector = cat(1,str.ORIpref);
+
+
 % parameter_vector = cat(1,str.frac_vert);
 % parameter_vector = sum(parameter_vector(:,3:5),2);
-parameter_vector = cat(1,str.ang_exL4);
-parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
-% parameter_vector = 90-abs(parameter_vector(:,5));
+% parameter_vector = cat(1,str.ang_exL23);
+% parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
+%parameter_vector = 90-abs(parameter_vector(:,5));
+%parameter_vector = (abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)))*69;
+parameter_vector = 90-abs(out_ang_inL23(:,5));
 
 % add osi cutoff
-cutoff_osi = 0.3;
+cutoff_osi = 0.25;
 % get the osi
 osi = cat(1,str.OSIpref);
 % get the vector
@@ -55,17 +59,22 @@ end
 mean_shuffle = nanmean(shuffle_ori,1);
 CI_shuffle = cat(1,abs(prctile(shuffle_ori,5,1)-mean_shuffle),prctile(shuffle_ori,95,1)-mean_shuffle);
 %% Plot the results
-close all
-figure
 
+%close all
+figure;set(gcf, 'Position', [800, 200, 400, 300])
+set(gcf,'color','w');
 shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
 hold on
 shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
-xlabel('Orientation')
-ylabel('Parameter')
+xlabel('Orientation (deg)')
+%ylabel('Parameter')
 title(strjoin({'Rolling orientation average','window',...
     num2str(window)},'_'),'Interpreter','None')
 axis tight
+%% 
+ylabel('L23 CoM (µm)','Color','b');
+ylim([10 70]);
+set(gca,'FontSize',10);
 %% Calculate the rolling average for direction
 % get the orientations 
 % direction = cat(1,round(cat(1,str.DIRpref)),round(cat(1,str.ORIpref))+360);
@@ -125,3 +134,4 @@ ylabel('Parameter')
 title(strjoin({'Rolling direction average','window',...
     num2str(window)},'_'),'Interpreter','None')
 axis tight
+

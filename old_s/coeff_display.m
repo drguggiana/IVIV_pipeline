@@ -11,7 +11,7 @@ set(gcf,'color','w')
 for i = 1:3
     subplot(1,3,i)
     imagesc(reshape(coeff1(:,i),16+bin_num,16+hbin_num));
-    axis square;colorbar;colormap(cmap);caxis([-0.4 0.4]);
+    axis square;colorbar;colormap(cmap);caxis([-0.3 0.3]);
     set(gca,'xtick',[]);
 set(gca,'ytick',[]);
 end
@@ -31,7 +31,7 @@ set(gcf,'color','w')
 for i = 1:3
     subplot(2,3,i)
     imagesc(reshape(coeff1(:,i),16+bin_num,16+hbin_num));
-    axis square;caxis([-0.4 0.4]);
+    axis square;caxis([-0.3 0.3]);
     set(gca,'xtick',[]);
 set(gca,'ytick',[]);
 end
@@ -42,7 +42,7 @@ hold on;
 for i = 1:3
     subplot(2,3,i+3)
     imagesc(reshape(coeff2(:,i),16+bin_num,16+hbin_num));
-    axis square;caxis([-0.4 0.4]);
+    axis square;caxis([-0.3 0.3]);
     set(gca,'xtick',[]);
 set(gca,'ytick',[]);
 end

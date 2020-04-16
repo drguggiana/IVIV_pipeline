@@ -3023,7 +3023,7 @@ end
 ccr=find(nan_vector==105);
 flipo=slice_ori(ccr);
 
-pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Cellsfor_iviv_paper\Cellsfor_iviv_paper\170309\SW0004\map02'
+pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Cellsfor_iviv_paper\Cellsfor_iviv_paper\170613\SW0002\map02'
 list=dir([char(pathName) filesep '*.xsg']);
 j=1;
 load([char(pathName) filesep list(j).name],'-mat');

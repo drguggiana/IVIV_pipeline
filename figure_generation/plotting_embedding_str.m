@@ -38,10 +38,28 @@ for plots = 1:plot_number
     
     % if it's the PCs, split and plot all
     switch plot_list{plots}
+        case 'ORIpref'
+            a=find(cat(1,str.OSIpref)<0.25);
+            data_in = cat(1,str.ORIpref);
+            data_in(a)=NaN;
+           title_list = {'ORI'};
+        case 'DIRpref'
+            a=find(cat(1,str.DSIpref)<0.25);
+            data_in = cat(1,str.DIRpref); 
+            data_in(a)=NaN;
+            title_list = {'DIR'};
+       case 'Sigmapref'
+            data_in = cat(1,str.Sigmapref); 
+            data_in=log(data_in);
+            title_list = {'Tuning width'};
+       case 'Capeakpref'
+            data_in = cat(1,str.Capeakpref); 
+            data_in=log(data_in);
+            title_list = {'Capeakpref'};   
         case 'PCs'
             title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
         case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}
-            data_in = cat(2,data_in(:,3)-data_in(:,1),data_in(:,5));
+            data_in = cat(2,abs(data_in(:,3)-data_in(:,1)),90-abs(data_in(:,5)));
             title_list = {'centroidX_','alpha_'};
             title_list = cellfun(@strcat,title_list,...
                 num2cell(repmat(plot_list(plots),1,size(title_list,2))),...
@@ -52,9 +70,11 @@ for plots = 1:plot_number
             title_list = {'setup'};
             data_in = cat(1,ones(47,1),zeros(100,1));
         case 'frac_vert'
-            title_list = {'L4 exfrac','L4 infrac'};
             data_in = cat(1,str.frac_vert);
-            data_in = [mean(data_in(:,6:7),2), mean(data_in(:,22:23),2)];
+            data_in = cat(2,nanmean(data_in(:,3:5),2),nanmean(data_in(:,6:7),2),nanmean(data_in(:,19:21),2),nanmean(data_in(:,22:23),2));
+            title_list = {'L23fr EX','L4fr EX','L23fr IN','L4fr IN'};
+%             data_in = cat(1,str.frac_vert);
+%             data_in = mean(data_in(:,6:7),2);
         case 'noise'
             data_in = log(abs(data_in));
             title_list = {'noise'};
@@ -72,7 +92,7 @@ for plots = 1:plot_number
     
     % define loop based on the dimensionality of data_in
     loop = size(data_in,2);
-    
+
     % for all the loop values
     for count = 1:loop
         % if there's only one iteration, just concatenate
@@ -97,12 +117,19 @@ for plots = 1:plot_number
 
         figure
         set(gcf,'color','w');
+
         scatter(nan_data(:,1),nan_data(:,2),30,[0.8, 0.8 0.8])
         hold on
         scatter(value_data(:,1),value_data(:,2),30,data(~isnan(data)),'filled')
         colormap(cmap)
 
+        hold on;
         title(title_list{count}, 'interpreter', 'none')
-        axis square
+        axis square;
+        xlabel('dm1');
+        ylabel('dm2');
+        hold on;
+%          ylim([-4 6]);yticks([-6:2:6]);
+%         xlim([-4 4]);xticks([-6:2:4]);
     end
 end

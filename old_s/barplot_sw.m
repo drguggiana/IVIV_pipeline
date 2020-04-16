@@ -1,6 +1,6 @@
 function [statsout] = barplot_sw(data,groups_idx,labelxy)
 gr_nr=max(groups_idx);
-color_id={'m','c','g','r'};
+color_id={'m','c','g','r','b'};
 clus_id={'C1','C2','C3','C4','C5'};
 
 fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [200, 0, 300, 300]);set(gcf,'color','w');
