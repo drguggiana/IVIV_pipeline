@@ -28,7 +28,7 @@ ylabel('Cells');
 xlabel('Fraction input');ylim([1 length(y)]);
 yticks([0:20:147])
 xlim([-0.4 0.4])
-text(-0.2,-3,'EX','Color','r');)
+text(-0.2,-3,'EX','Color','r');
 text(0.2,-3,'IN','Color','b');
 title(des)
 else

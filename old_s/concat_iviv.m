@@ -3,8 +3,8 @@ function [od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pre
 %more dominant eye (based on ODI)
 non_nan_idx=nan_vector(1:end);
 for i=1:length(non_nan_idx);
-    idx_amp_inf(i,:)=str(non_nan_idx(i)).hori_peak_pl;
-if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
+%    idx_amp_inf(i,:)=str(non_nan_idx(i)).hori_peak_pl;
+if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
     %ori_both(:,i)=str(non_nan_idx(i)).ori_a;
     iv_ODI(i)=str(non_nan_idx(i)).ODI;
     if str(non_nan_idx(i)).contra==1
@@ -15,7 +15,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
      iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
      iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
      iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
-     iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_c);
+     try
+     iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(1);
+     catch
+          iv_Ca_peak(i)=iv_Ca(i);
+     end
     elseif str(non_nan_idx(i)).ipsi==1;
       oripref(i)=str(non_nan_idx(i)).Ori(2);
       dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -24,7 +28,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
       iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
       iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
       iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
-      iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_i);
+      try
+      iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(2);
+      catch
+          iv_Ca_peak(i)=iv_Ca(i);
+      end
     elseif str(non_nan_idx(i)).bino==1;
          if str(non_nan_idx(i)).ODI>=0;
         oripref(i)=str(non_nan_idx(i)).Ori(1);
@@ -34,7 +42,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
-        iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_c);
+        try
+        iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(1);
+        catch 
+            iv_Ca_peak(i)=iv_Ca(i);
+        end
          else str(non_nan_idx(i)).ODI<0;
             oripref(i)=str(non_nan_idx(i)).Ori(2);
         dirpref(i)=str(non_nan_idx(i)).Dir(2);
@@ -43,7 +55,11 @@ if ~isempty(str(non_nan_idx(i)).Ori)==1 & isempty(str(non_nan_idx(i)).unres)==1
         iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
         iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(2);
-         iv_Ca_peak(i)=max(str(non_nan_idx(i)).OD_PSTH_i);
+        try
+        iv_Ca_peak(i)=str(non_nan_idx(i)).Ca_peak(2);
+        catch
+            iv_Ca_peak(i)=iv_Ca(i);
+        end
     end
  else str(non_nan_idx(i)).unres==1;
         oripref(i)=NaN;
@@ -72,7 +88,7 @@ end
 end
 %% Extract other in vivo paramters: PCI and spontenaeous events 
 for i=1:length(non_nan_idx);   
-if ~isempty(str(non_nan_idx(i)).pci)==1
+if ~isnan(str(non_nan_idx(i)).pci)==1
 iv_spon(i)=str(non_nan_idx(i)).sad;
 iv_popcop(i)=str(non_nan_idx(i)).pci;
 iv_pia_input(i)=str(non_nan_idx(i)).pia_invivo;
@@ -82,25 +98,25 @@ iv_popcop(i)=NaN;
 iv_pia_input(i)=NaN;
 end
 end
-%% %OD decompistion
-for i=1:length(non_nan_idx)
-    if ~isempty(str(non_nan_idx(i)).iv_OD_decom)==1
-        od_decomp(i,:)=str(non_nan_idx(i)).iv_OD_decom;
-    else
-        od_decomp(i,:)=ones(1,24)*NaN;
-    end
-end
-% SF decomposition
-for i=1:length(non_nan_idx)
-    if ~isempty(str(non_nan_idx(i)).iv_SFTF_decom)==1
-        sftf_decomp(i,:)=str(non_nan_idx(i)).iv_SFTF_decom;
-    else
-        sftf_decomp(i,:)=ones(1,24)*NaN;
-    end
-end
+% %% %OD decompistion
+% for i=1:length(non_nan_idx)
+%     if ~isempty(str(non_nan_idx(i)).iv_OD_decom)==1
+%         od_decomp(i,:)=str(non_nan_idx(i)).iv_OD_decom;
+%     else
+%         od_decomp(i,:)=ones(1,24)*NaN;
+%     end
+% end
+% % SF decomposition
+% for i=1:length(non_nan_idx)
+%     if ~isempty(str(non_nan_idx(i)).iv_SFTF_decom)==1
+%         sftf_decomp(i,:)=str(non_nan_idx(i)).iv_SFTF_decom;
+%     else
+%         sftf_decomp(i,:)=ones(1,24)*NaN;
+%     end
+% end
 %% SFTF both eyes
 for i=1:length(non_nan_idx)
-    if ~isempty(str(non_nan_idx(i)).sftf_resp)==1
+    if str(non_nan_idx(i)).sftf_resp==1
         iv_SF(i)=str(non_nan_idx(i)).SF;
         iv_TF(i)=str(non_nan_idx(i)).TF;
         oripref_sftf(i)=str(non_nan_idx(i)).Ori_sftf;

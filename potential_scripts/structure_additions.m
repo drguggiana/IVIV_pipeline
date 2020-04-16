@@ -481,6 +481,7 @@ for exin = 1:2
             field1 = 'ex';
         case 2
             map_type = 'subpixel_inhMap';
+
             field1 = 'in';
     end
     % get the corresponding maps
@@ -498,6 +499,7 @@ for exin = 1:2
         maps(:,:,cell) = curr_map./factor;
     end
     
+
     % for both layer groups
     for layer = 1:2
         % select the rows for layer 2/3 and layer 4 respectively
@@ -514,6 +516,7 @@ for exin = 1:2
         % get the layer
         map_layers = maps(layers,:,:);
         out_ang = centroid_map(map_layers,somax,pialD,idx_centroid,row_shift);
+
         % for all the cells
         for cells = 1:cell_num
             str(cells).(strcat('ang_',field1,field2)) = out_ang(cells,:);
@@ -546,6 +549,7 @@ for cells = 1:cell_num
         str(cells).(strjoin({maptype,'norm'},'_')) = curr_map./factor;
     end
 end
+
 %% OFF Plotting
 % figure
 % 
