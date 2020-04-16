@@ -86,6 +86,9 @@ for plots = 1:plot_number
                 'PLA','WHA','XSA','YSA','RDBmax','LBtotal','PLBmax','BPB',...
                 'BOBmax','BLB','PLB','WHB','XSB','YSB','NB','pialD',...
                 'cellID','Cluster'};
+        case 'span'
+            title_list = {'ex_spanhL23','ex_spanhL4','ex_spanhL5',...
+                'in_spanhL23','in_spanhL4','in_spanhL5'};
         otherwise
             title_list = plot_list(plots);
     end
