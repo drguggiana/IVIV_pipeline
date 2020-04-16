@@ -345,10 +345,17 @@ field_list = fields(str);
 num_fields = length(field_list);
 % for all the fields
 for f = 1:num_fields
+    % find a prototype field
+    for cells = 1:cell_num
+        if ~isempty(str(cells).(field_list{f}))
+            template_size = size(str(cells).(field_list{f}));
+            break
+        end
+    end
     % for all the cells
     for cells = 1:cell_num
         if isempty(str(cells).(field_list{f}))
-            str(cells).(field_list{f}) = NaN;
+            str(cells).(field_list{f}) = NaN(template_size);
         end
     end
 end
