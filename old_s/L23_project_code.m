@@ -756,18 +756,28 @@ correlation_matrix(com,0);title('Input vertical ODout iviv');
 corr_plot(od_out_iviv(a,[4]),abs(out_ang_inL23(a,3)-out_ang_inL23(a,1))*69,pia_input(a),{'L4ex input','Apical width/height','XSA'});
 
 %% EXAMPLE tuning curves
-%bino
-plot_maps(str,ex_map_raw,in_map_raw,nan_vector,71,pia_input);
-%ipsi
-plot_maps(str,ex_map_raw,in_map_raw,nan_vector,111,pia_input);
-%contra
-plot_maps(str,ex_map_raw,in_map_raw,nan_vector,134,pia_input);
+%contra: 126 roi 2 14783
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14783\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex1=Fit(2).contra.FittedDataOri
+ind_tr1=peaks(2).contra;
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,126,pia_input);
+%% 
+%ipsi 139 roi3 14875
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14875\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex2=Fit(3).ipsi.FittedDataOri;
+ind_tr2=peaks(3).ipsi;
+plot_maps(str,ex_map_raw,in_map_raw,nan_vector,139,pia_input);
+%% 
+shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,od_out_iviv(126,1),od_out_iviv(139,1),od_out_iviv(126,7),od_out_iviv(139,7));
+
 %% Display correlation between all input maps and in vivo
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) od_out_iviv(:,[1 2 3 4 5 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 %% Subsample OSI DSI ODI TW Ca peak
 com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(out_ang_exL23(:,5)) abs(out_ang_inL23(:,5)) abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)) abs(out_ang_inL23(:,3)-out_ang_inL23(:,1)) pia_input od_out_iviv(:,[1 2 3 7 8])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:14]);yticks([1:1:14]);
+
+
 %% Display correlation between all input maps and in vivo
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 300]);imagesc(G(10:end,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
@@ -779,11 +789,11 @@ c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 %% Subsample data OSI
 a=find(od_out_iviv(:,1)>0.25)
 com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(out_ang_exL23(a,5)) abs(out_ang_inL23(a,5)) abs(out_ang_exL23(a,3)-out_ang_exL23(a,1)) abs(out_ang_inL23(a,3)-out_ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
-G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
+M=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 % xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});xtickangle(45)
 % yticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','lat_{ex}','med_{in}','OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});ytickangle(45)
 %% ORI with cutoff
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(13,1:9));c=colorbar;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(M(13,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:12]);yticks([1:1:1]);
@@ -793,16 +803,25 @@ c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 %% Subsample data DSI
 a=find(od_out_iviv(:,2)>0.25)
 com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(out_ang_exL23(a,5)) abs(out_ang_inL23(a,5)) abs(out_ang_exL23(a,3)-out_ang_exL23(a,1)) abs(out_ang_inL23(a,3)-out_ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
-G=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
+O=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 %% DIR with cutoff
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(G(14,1:9));c=colorbar;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 500, 200]);imagesc(O(14,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:12]);yticks([1:1:1]);
 xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
 yticklabels({'DIR'});set(gca,'FontSize',12)
 c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
-
+%% 
+hh=G
+fG=[hh([10 11 12],1:9) ; M([13],1:9) ; O([14],1:9) ; hh([13 14],1:9)];
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:7]);
+xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});set(gca,'FontSize',12)
+c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
 %% IMPORTANT CALCULATIONS
 %% Direction difference Lateral vs medial
 g1=[];
@@ -882,9 +901,9 @@ a=find(od_out_iviv(:,1)>0.25)
 b=find(pia_input<300)
 [ia ib]=intersect(a,b)
 %par=frh_lateral_s(ia,2)-frh_medial_s(ia,2)
-%par=abs(out_ang_exL23(ia,5))
-%par=L23fr(ia,1)
-par=abs(out_ang_inL23(ia,3)-out_ang_inL23(ia,1))*69
+%par=90-abs(out_ang_inL23(ia,5))
+par=L4fr(ia,2)
+%par=abs(out_ang_exL23(ia,3)-out_ang_exL23(ia,1))*69
 %par=abs(out_ang_exL23(ia,10))*69
 %par=abs(out_ang_inL23(ia,1))*69
 %par=in_spanhL23(ia)*69
@@ -896,13 +915,13 @@ g1=find(od_out_iviv(ia,4)>10 & od_out_iviv(ia,4)<70)
 g2=find(od_out_iviv(ia,4)>100 & od_out_iviv(ia,4)<160) 
 %g2=find(od_out_iviv(a,5)>225 & od_out_iviv(a,5)<360) 
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
-xticklabels({'0-90°','90-180°'})
+xticklabels({'~45°','~135°'})
 xlabel('Orientation');
 %ylabel('|Angle Centroid L23|','Color','r');  set(gca,'FontSize',12);
-%ylabel('|\Delta Centroid L23 X|','Color','r');  set(gca,'FontSize',12);
+ylabel('CoM L23 (µm)','Color','b');  set(gca,'FontSize',12);
 %ylabel('EX L4 fraction','Color','r');
 %ylabel('IN L4 fraction','Color','b');
-ylabel('EX L2/3 fraction','Color','r');
+%ylabel('EX L2/3 fraction','Color','r');
 %ylabel('Pial depth (µm)')
 set(gca,'FontSize',12);
 %% 

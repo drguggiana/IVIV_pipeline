@@ -30,6 +30,13 @@ load(char(filename));%load mat file
      pia{i,:}=L23_PC(i).pial_depth(temp);
      temp=[];
  end
+ %% read out PSTH
+ for i=1:length(L23_PC)
+     temp=L23_PC(i).ivivROI;
+     PSTH{i,:}=L23_PC(i).OD.deltapeaks_averagetrace(temp,1:16);
+ end
+ PSTH_all=vertcat(PSTH{:});
+ 
  %% concatenate cells OD protocol
  Dir=vertcat(prefDir{:});
  Ori=vertcat(prefOri{:});
@@ -329,6 +336,7 @@ for i=1:length(aiviv)
    str_m(aiviv(i)).DSI=DSI(i,:);
    str_m(aiviv(i)).Ca_sum=Ca_sum(i,:);
    str_m(aiviv(i)).Ca_peak=Ca_peakOD(i,:);
+   str_m(aiviv(i)).TuningCurve=PSTH_all(i,:);
    %SFTF protocol
    str_m(aiviv(i)).sftf_resp=sftf_resp(i);
    str_m(aiviv(i)).SF=sf(i);
@@ -431,6 +439,126 @@ for i=1:length(nan_vector)
     str(nan_vector(i)).Capeakpref=od_out_iviv(i,8);
 end
 %% 
+%% ADD preferred Tuning Curve
+non_nan_idx=nan_vector(1:end);
+for i=1:length(non_nan_idx);
+%    idx_amp_inf(i,:)=str(non_nan_idx(i)).hori_peak_pl;
+if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
+    
+    if str(non_nan_idx(i)).contra==1
+     tc(i,:)=str(non_nan_idx(i)).TuningCurve(1:8); 
+     
+    elseif str(non_nan_idx(i)).ipsi==1;
+      tc(i,:)=str(non_nan_idx(i)).TuningCurve(9:end); 
+    
+      
+    elseif str(non_nan_idx(i)).bino==1;
+         if str(non_nan_idx(i)).ODI>=0;
+        tc(i,:)=str(non_nan_idx(i)).TuningCurve(1:8); 
+      
+       
+         else str(non_nan_idx(i)).ODI<0;
+            tc(i,:)=str(non_nan_idx(i)).TuningCurve(9:end); 
+      
+       
+    end
+ else str(non_nan_idx(i)).unres==1;
+        tc(i,:)=NaN*ones(1,8);
+      
+     
+ end
+
+else
+tc(i,:)=NaN*ones(1,8);
+
+end
+end
+%% 
+for i=1:length(nan_vector)
+    str(nan_vector(i)).TCpref=tc(i,:);
+ 
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Define array names and get the arrays without NaNs etc.
+field_list = {'subpixel_excMap','subpixel_inhMap','pialD'};
+% get the number of fields
+field_number = length(field_list);
+% get a vector with the cells to use
+iviv_cells = [str(:).iviv]==1;
+morpho_cells = ~cellfun(@isempty, {str.morph});
+% cell_idx = find(iviv_cells&morpho_cells);
+% cell_idx = find(iviv_cells);
+% cell_idx = find(morpho_cells);
+cell_idx = 1:length(str);
+% get the number of cells to include
+cell_num = length(cell_idx);
+% allocate memory for the individual cells
+cell_cell = cell(cell_num,1);
+% for all the cells
+for cells = 1:cell_num
+    % allocate a small cell to hold each field
+    field_cell = cell(field_number,1);
+    field_cell_raw = cell(field_number,1);
+    
+    % for all the fields
+    for fields = 1:field_number
+        field_cell{fields} = str(cell_idx(cells)).(field_list{fields})(:);
+        if contains(field_list{fields}, 'subpixel_excMap')
+            field_cell{fields} = field_cell{fields}./min(field_cell{fields});
+        elseif contains(field_list{fields}, 'subpixel_inhMap')
+            field_cell{fields} = field_cell{fields}./max(field_cell{fields});
+        end       
+    end
+    % save the fields in the target cell
+    cell_cell{cells} = vertcat(field_cell{:});    
+    
+    for fields = 1:field_number
+        field_cell_raw{fields} = str(cell_idx(cells)).(field_list{fields})(:);
+        if contains(field_list{fields}, 'subpixel_excMap')
+            field_cell_raw{fields} = field_cell_raw{fields};
+        elseif contains(field_list{fields}, 'subpixel_inhMap')
+            field_cell_raw{fields} = field_cell_raw{fields};
+        end       
+    end
+    
+    cell_cell_raw{cells} = vertcat(field_cell_raw{:});
+end
+% concatenate the results
+cell_cell = cat(2,cell_cell{:})';
+cell_cell_raw = cat(2,cell_cell_raw{:})';
+% remove cells with NaNs
+non_nan_cells = sum(isnan(cell_cell),2)==0;
+nan_vector = find(non_nan_cells>0);
+cell_cell = cell_cell(non_nan_cells,:);
+cell_cell_raw = cell_cell_raw(non_nan_cells,:);
+% copy the cell to have the original maps later
+original_maps = cell_cell;
+original_maps_raw = cell_cell_raw;
+% redefine cell number based on the rows that didn't contain NaN
+cell_num = size(cell_cell,1);
+%Pia vector for ex and inh maps 
+pia_input=original_maps(:,end);
+incl_idx=1;
+
+
+
+
 %% %% Get 16x16 maps for ex and in 
 ex_map = reshape(original_maps(:,1:256)',16,16,length(nan_vector));
 in_map = reshape(original_maps(:,257:512)',16,16,length(nan_vector));
@@ -448,8 +576,8 @@ frac_v=[frac_exv_m frac_inv];
 frac_h=[frac_exh frac_inh];
 %% Add fraction to structure 
 for i=1:length(nan_vector)
-    str(nan_vector(i)).frac_vert=frac_v(i,:);
-    str(nan_vector(i)).frac_hori=frac_h(i,:);
+    str_m(nan_vector(i)).frac_vert=frac_v(i,:);
+    str_m(nan_vector(i)).frac_hori=frac_h(i,:);
 end
 %% Add centroid measurements
 for i=1:length(nan_vector)

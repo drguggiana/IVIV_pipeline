@@ -47,7 +47,7 @@ set(gca,'FontSize',12);
 elseif gr==1
     [cmap]=inferno;
 ang2=out_ang_exL23;    
-pointsize=40;
+pointsize=10;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
 subplot(1,2,1);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
@@ -62,9 +62,10 @@ colormap(cmap);
 ang2=out_ang_exL5
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','<');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
-set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^r');
+set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
 hold on;;title('EX Centre of mass');
-c=colorbar;c.Label.String=label_name{1};
+c=colorbar;c.Label.String=label_name{1};c.Location='southoutside';  
+ylabel('Vertical distance CoM (µm)');xlabel('Horizontal distance CoM (µm)')
 %text(-250,350,'L5')
 ang2=out_ang_inL23;
 subplot(1,2,2);
@@ -79,9 +80,10 @@ colormap(cmap);
 ang2=out_ang_inL5
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','<');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
-set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^r');
-hold on;title('IN Centre of mass');c=colorbar;c.Label.String=label_name{1};    
-yticks([-200:200:600])
+set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
+hold on;title('IN Centre of mass');c=colorbar;c.Label.String=label_name{1};c.Location='southoutside';    
+yticks([-200:200:600]);
+ylabel('Vertical distance CoM (µm)');xlabel('Horizontal distance CoM (µm)')
 elseif gr==2
  
    pointsize=30;
