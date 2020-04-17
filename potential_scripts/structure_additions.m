@@ -313,7 +313,10 @@ for cells = 1:cell_num
             else
                 factor = max(new_map(:));
             end
+            % save the normalized map
             str(cells).(strcat('subpixel_',map_type)) = new_map./factor;
+            % save the raw map also for examples
+            str(cells).(strcat('subpixel_raw_',map_type)) = new_map;
         end
     end
 end
