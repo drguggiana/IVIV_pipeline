@@ -424,6 +424,9 @@ end
 [coeff_ex,score_ex] = pca(reshape(aligned_maps_ex,cell_num,[]));
 [coeff_in,score_in] = pca(reshape(aligned_maps_in,cell_num,[]));
 
+% save the PCs and coeffs in a file
+save(pca_path,'coeff_ex','coeff_in','score_ex','score_in')
+
 % % assemble a single matrix for the hosvd
 % hosvd_input = cat(4,aligned_maps_ex,aligned_maps_in);
 % [S,U] = hosvd(hosvd_input,[0 1 1 1]);
