@@ -306,7 +306,14 @@ for cells = 1:cell_num
             % interpolate the map
             interpolant = griddedInterpolant(Y,X,map);
             % replace the map
-            str(cells).(strcat('subpixel_',map_type)) = interpolant(Y,center_X);
+            new_map = interpolant(Y,center_X);
+            % also normalize it
+            if maps == 1
+                factor = min(new_map(:));
+            else
+                factor = max(new_map(:));
+            end
+            str(cells).(strcat('subpixel_',map_type)) = new_map./factor;
         end
     end
 end
@@ -337,34 +344,13 @@ for cells = 1:cell_num
     plot_count = plot_count + 1;
 end
 autoArrangeFigures
-%% Turn all the empty fields into NaN
-
-% get the fields
-field_list = fields(str);
-% get the number of fields
-num_fields = length(field_list);
-% for all the fields
-for f = 1:num_fields
-    % find a prototype field
-    for cells = 1:cell_num
-        if ~isempty(str(cells).(field_list{f}))
-            template_size = size(str(cells).(field_list{f}));
-            break
-        end
-    end
-    % for all the cells
-    for cells = 1:cell_num
-        if isempty(str(cells).(field_list{f}))
-            str(cells).(field_list{f}) = NaN(template_size);
-        end
-    end
-end
 %% Add the fraction fields
-[frac_exh,~,frac_inh,frac_exv,abs_exv,frac_inv] = iviv_profiles(1:cell_num,str);
+[frac_exh,~,frac_inh,~,frac_exv,~,frac_inv] = iviv_profiles(1:cell_num,str);
 frac_exv_m=[zeros(cell_num,2),frac_exv];
-abs_exv_m=[zeros(cell_num,2),abs_exv];
-layer_assign=[zeros(cell_num,2),(1:cell_num)'];
+% abs_exv_m=[zeros(cell_num,2),abs_exv];
+% layer_assign=[zeros(cell_num,2),(1:cell_num)'];
 frac_v=[frac_exv_m,frac_inv];
+% frac_v = [frac_exv,frac_inv];
 frac_h=[frac_exh,frac_inh];
 
 % add the fields to the structure
@@ -391,9 +377,6 @@ close all
 % get the maps
 exc_maps = reshape(cat(3,str.subpixel_excMap),256,cell_num);
 inh_maps = reshape(cat(3,str.subpixel_inhMap),256,cell_num);
-% normalize the maps
-exc_maps = exc_maps./min(exc_maps,[],1);
-inh_maps = inh_maps./max(inh_maps,[],1);
 
 % align them vertically
 % distance between squares
@@ -518,20 +501,7 @@ for exin = 1:2
     end
     % get the corresponding maps
     maps = cat(3,str.(map_type));
-    % normalize the maps
-    for cell = 1:cell_num
-        % load the current 
-        curr_map = maps(:,:,cell);
-        switch exin
-            case 1
-                factor = min(curr_map(:));
-            case 2
-                factor = max(curr_map(:));
-        end
-        maps(:,:,cell) = curr_map./factor;
-    end
     
-
     % for both layer groups
     for layer = 1:3
         % select the rows for layer 2/3 and layer 4 respectively
@@ -559,30 +529,26 @@ for exin = 1:2
         end
     end
 end
-%% Add normalized maps to the structure
+%% Turn all the empty fields into NaN
 
-% for all the cells
-for cells = 1:cell_num
-    % for the excitation and inhibition
-    for exin = 1:2
-        switch exin
-            case 1
-                maptype = 'subpixel_excMap';
-            case 2
-                maptype = 'subpixel_inhMap';
+% get the fields
+field_list = fields(str);
+% get the number of fields
+num_fields = length(field_list);
+% for all the fields
+for f = 1:num_fields
+    % find a prototype field
+    for cells = 1:cell_num
+        if ~isempty(str(cells).(field_list{f}))
+            template_size = size(str(cells).(field_list{f}));
+            break
         end
-        
-        % get the map
-        curr_map = str(cells).(maptype);
-        % define the normalization
-        switch exin
-            case 1
-                factor = min(curr_map(:));
-            case 2
-                factor = max(curr_map(:));
+    end
+    % for all the cells
+    for cells = 1:cell_num
+        if isempty(str(cells).(field_list{f}))
+            str(cells).(field_list{f}) = NaN(template_size);
         end
-        % normalize and save
-        str(cells).(strjoin({maptype,'norm'},'_')) = curr_map./factor;
     end
 end
 %% OFF Plotting

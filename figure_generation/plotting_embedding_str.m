@@ -71,7 +71,8 @@ for plots = 1:plot_number
             data_in = cat(1,ones(47,1),zeros(100,1));
         case 'frac_vert'
             data_in = cat(1,str.frac_vert);
-            data_in = cat(2,nanmean(data_in(:,3:5),2),nanmean(data_in(:,6:7),2),nanmean(data_in(:,19:21),2),nanmean(data_in(:,22:23),2));
+            data_in = cat(2,sum(data_in(:,3:5),2),sum(data_in(:,6:7),2),...
+                sum(data_in(:,19:21),2),sum(data_in(:,22:23),2));
             title_list = {'L23fr EX','L4fr EX','L23fr IN','L4fr IN'};
 %             data_in = cat(1,str.frac_vert);
 %             data_in = mean(data_in(:,6:7),2);

@@ -1,4 +1,4 @@
-function [frac_exh abs_exh frac_inh abs_inh frac_exv abs_exv frac_inv abs_inv L23h L4h L5h pialD layers_assign] = iviv_profiles(u,str) 
+function [frac_exh,abs_exh,frac_inh,abs_inh,frac_exv,abs_exv,frac_inv,abs_inv,L23h,L4h,L5h,pialD,layers_assign] = iviv_profiles(u,str) 
 
 %Inputs 
 %u= idx of ipsi, contra, bino or unresponsive cells 

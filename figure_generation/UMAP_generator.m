@@ -21,20 +21,20 @@ pc_vector = ~cellfun(@isempty,pc_vector);
 str = str(pc_vector);
 %% Get the PCs and assemble the feature vector
 
-% cell_cell = cat(2,pcs(:,1:3),pcs(:,4:6));
-% cell_cell = pcs;
-% get the soma positions
-
-% calculate the fractions
-
-
+% get the pial depth
 pialD=cat(1,str.pialD);
 
-frac4ex = L4fr(:,1);
+% get the layer 4 excitation
+frac4ex = cat(1,str.frac_vert);
+frac4ex = sum(frac4ex(:,6:7),2);
 
+% get the inhibitory L23 angle
+out_ang_inL23 = cat(1,str.ang_exL23);
 alph23in=90-abs(out_ang_inL23(:,5));
+% get the inhibitory L23 x centroid
 centroidX23in=abs(out_ang_inL23(:,3)-out_ang_inL23(:,1));
 
+% assemble the feature vector
 cell_cell = cat(2,pialD,frac4ex,alph23in,...
     centroidX23in);
 
@@ -52,9 +52,7 @@ close all
 % respectively (vector)
 % plot_list = {'hemisphere','sliceOri','pialD','Cluster_id','somaCenter','cellID'};
 
-
-
-plot_list = {'morph','pialD','frac_vert'};
+plot_list = {'pialD','frac_vert','span'};
 
 % plot_list = {'OSIpref','DSIpref','ODIpref','Capeakpref','ORIpref','DIRpref','noise','PCs',...
 %     'ang_exL23','ang_inL23','pialD','pci',...
