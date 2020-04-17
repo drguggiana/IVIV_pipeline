@@ -19,7 +19,7 @@ hold on;
       x_lim = get(gca,'XLim');
     y_lim = get(gca,'YLim');   
   for i=1:length(nan_vector)
-      xco=str(nan_vector(i)).somaCenter(1)
+      xco=str(nan_vector(i)).subpixel_soma(1)
       p_i=[xco pia_input(i)]; 
     adj_x = ((16*69/2)-p_i(1))*(x_lim(2)-x_lim(1))/(16*69);
     adj_y = ((16*69/2)-p_i(2))*(y_lim(2)-y_lim(1))/(16*69);
@@ -34,7 +34,7 @@ hold on;
   x_lim = get(gca,'XLim');
     y_lim = get(gca,'YLim');   
   for i=1:length(nan_vector)
-      xco=str(nan_vector(i)).somaCenter(1)
+      xco=str(nan_vector(i)).subpixel_soma(1)
       p_i=[xco pia_input(i)]; 
     adj_x = ((16*69/2)-p_i(1))*(x_lim(2)-x_lim(1))/(16*69);
     adj_y = ((16*69/2)-p_i(2))*(y_lim(2)-y_lim(1))/(16*69);
@@ -48,7 +48,7 @@ map_plot3(ove_map,'',bplot_type,F,sf,0,1)
   x_lim = get(gca,'XLim');
     y_lim = get(gca,'YLim');   
   for i=1:length(nan_vector)
-      xco=str(nan_vector(i)).somaCenter(1)
+      xco=str(nan_vector(i)).subpixel_soma(1)
       p_i=[xco pia_input(i)]; 
     adj_x = ((16*69/2)-p_i(1))*(x_lim(2)-x_lim(1))/(16*69);
     adj_y = ((16*69/2)-p_i(2))*(y_lim(2)-y_lim(1))/(16*69);

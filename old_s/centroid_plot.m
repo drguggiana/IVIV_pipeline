@@ -4,7 +4,7 @@ set(0,'DefaultLegendAutoUpdate','off')
 if gr==0
     
 ang2=out_ang_exL23;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 800, 300]);
 subplot(1,2,1);
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'m.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
 hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
@@ -26,7 +26,7 @@ subplot(1,2,2);
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'m.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';grid on;%h4.MarkerFaceAlpha=0.5
 hold on;set(gca,'FontSize',10);%legend('L2/3');legend boxoff
 ang2=out_ang_inL4;
-h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'g.','MarkerSize',9);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';grid on;
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'g.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';grid on;
 set(gca,'Ydir','reverse');%legend('L4');legend boxoff
 hold on;set(gca,'FontSize',12);
 ang2=out_ang_inL5
@@ -48,7 +48,7 @@ elseif gr==1
     [cmap]=inferno;
 ang2=out_ang_exL23;    
 pointsize=10;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 300]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 800, 300]);
 subplot(1,2,1);
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
 

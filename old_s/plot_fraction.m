@@ -1,6 +1,6 @@
 function plot_fraction(L23fr,L4fr,L5fr,pia_input)
 
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 450, 500]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [1000, 500, 450, 400]);
 subplot(3,2,1);
 par1=L23fr(:,1);
 par2=pia_input((find(par1>0)));
@@ -20,7 +20,7 @@ par1=par1((find(par1>0)))
     hold on;
     plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;   set(gca,'Ydir','reverse');
     ylabel('Pial depth (µm)'); set(gca,'FontSize',10);%text(0.05,120,'L2/3');
-    xlim([-0.01 0.4]);
+    xlim([-0.05 1]);
     
 subplot(3,2,3);
 par1=L4fr(:,1);
@@ -43,7 +43,7 @@ par1=par1((find(par1>0)))
     plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');   set(gca,'Ydir','reverse');
      ylabel('Pial depth (µm)');%text(0.05,120,'L4');set(gca,'FontSize',10)
  set(gca,'FontSize',10)
-  xlim([-0.01 0.4]);
+  xlim([-0.05 1]);
   
  subplot(3,2,5);   
  par1=L5fr(:,1);
@@ -65,7 +65,7 @@ par1=par1((find(par1>0)))
     %plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');;  
     set(gca,'Ydir','reverse');
      ylabel('Pial depth (µm)');%text(0.05,110,'L5');set(gca,'FontSize',10);
-     xlim([-0.01 0.4]);;xlabel('Fraction total input');set(gca,'FontSize',10);
+     xlim([-0.05 1]);;xlabel('Fraction total input');set(gca,'FontSize',10);
 
  subplot(3,2,2);
 par1=L23fr(:,2);
@@ -83,7 +83,7 @@ par1=par1((find(par1>0)))
  end  
     set(gca,'Ydir','reverse');
   set(gca,'FontSize',10);%text(0.05,120,'L2/3');
-  xlim([-0.01 0.4]);
+  xlim([-0.05 1]);
   
  subplot(3,2,4);
 par1=L4fr(:,2);
@@ -105,7 +105,7 @@ par1=par1((find(par1>0)))
     plot(par1,yfit,'k-');set(gca,'box','off');set(gcf,'color','w');  set(gca,'Ydir','reverse');
      set(gca,'Ydir','reverse');
 set(gca,'FontSize',10);  xlim([0. 0.4]);%text(0.05,120,'L4'); 
- xlim([-0.01 0.4]);
+ xlim([-0.05 1]);
 
  subplot(3,2,6);
 par1=L5fr(:,2);
@@ -123,5 +123,5 @@ par1=par1((find(par1>0)))
  end  
      set(gca,'Ydir','reverse');
 xlabel('Fraction total input'); set(gca,'FontSize',10);%text(0.05,120,'L5')
- xlim([-0.01 0.4]);
+ xlim([-0.05 1]);
 end
