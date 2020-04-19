@@ -31,6 +31,25 @@ for i=1:length(str)
     end
 end
 morph_cells_id=find(morph_cells==1);
+%Get the morphology density maps
+for i=1:length(str)   
+        morpho_basal{i,:}=str(i).morphoMap_basal_aligned;
+        morpho_apical{i,:}=str(i).morphoMap_apical_aligned;     
+end
+for i=1:length(str)
+     if isempty(morpho_basal{i,:,:})==0
+     ba_map(:,:,i)=morpho_basal{i,:,:};
+     ap_map(:,:,i)=morpho_apical{i,:,:};
+     else
+     ba_map(:,:,i)=ones(16,16)*NaN;
+     ap_map(:,:,i)=ones(16,16)*NaN;
+     end
+end
+%Sum for each morpho density map
+for i=1:length(str)
+    sum_densap(i)=sum(sum(ap_map(:,:,i)));
+    sum_densba(i)=sum(sum(ba_map(:,:,i)));
+end
 % Setup A and Setup B
 setups=[zeros(47,1);ones(100,1)];
 % Slice orientation
@@ -70,7 +89,8 @@ oris=[0:45:315];
 %TF,10:SAD,11:Noise,12:PCI
 od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
              ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci]]';
-         
+%ipsi, contra, bino
+
 %% Figure 1 panels
 close all;
 % Histogram of pia distribution with color coded in vivo morpho by itself
@@ -203,20 +223,240 @@ close all;
 a=find(od_out_iviv(:,1)>0.25);
 fe=od_out_iviv(a,4);
 centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,1,fe,{'ORI'});
-%Rolling average plots
+%Rolling average plots L23alpha
 parameter_vector = 90-abs(ang_inL23(:,5));
 rolling_avg_display(str,parameter_vector)
-ylabel('L23 CoM\alpha (µm)','Color','b');
-ylim([10 70]);
-set(gca,'FontSize',10);
-%% 
-%dual barplots
-a=find(od_out_iviv(:,1)>0.25)  
+ylabel('L23 CoM\alpha (deg)','Color','b');
+ylim([5 70]);set(gca,'FontSize',10);
+%dual barplots L23alpha
+a=find(od_out_iviv(:,1)>0.25);  
 par=90-abs(ang_inL23(a,5));
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) 
-g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150) 
-[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
-xticklabels({'20-90°','100-150°'})
-xlabel('Orientation');
-ylabel('CoM L23 (µm)','Color','b');  set(gca,'FontSize',12);
-set(gca,'FontSize',12);
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'})
+xlabel('Orientation');ylabel('L23 CoM\alpha (deg)','Color','b');  set(gca,'FontSize',12);set(gca,'FontSize',10);
+%Rolling average plots
+parameter_vector = abs(ang_inL23(:,3)-ang_inL23(:,1))*69;
+rolling_avg_display(str,parameter_vector);
+ylabel('L23 CoMx (µm)','Color','b');
+ylim([5 60]);set(gca,'FontSize',10);
+%dual barplots
+a=find(od_out_iviv(:,1)>0.25);  
+par=abs(ang_inL23(a,3)-ang_inL23(a,1));
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+xlabel('Orientation');ylabel('L23 CoMx (µm)','Color','b');set(gca,'FontSize',10); 
+%L4 angle alpha 
+parameter_vector = 90-abs(ang_inL4(:,5));
+rolling_avg_display(str,parameter_vector);
+ylabel('L4 CoM\alpha (deg)','Color','b');
+%ylim([5 60]);set(gca,'FontSize',10);
+%dual barplots
+a=find(od_out_iviv(:,1)>0.25);  
+par=90-abs(ang_inL4(a,5));
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+xlabel('Orientation');ylabel('L4 CoM\alpha (deg)','Color','b');set(gca,'FontSize',10);
+%dual barplots for L4 fraction in
+a=find(od_out_iviv(:,1)>0.25);  
+par=L4fr(a,1);
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+xlabel('Orientation');ylabel('L4fr','Color','r');set(gca,'FontSize',10);
+%dual barplots for L4 fraction EX
+a=find(od_out_iviv(:,1)>0.25);  
+par=L4fr(a,2);
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+xlabel('Orientation');ylabel('L4fr','Color','b');set(gca,'FontSize',10);
+%pia depth
+a=find(od_out_iviv(:,1)>0.25);  
+par=pia_input(a);
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+xlabel('Orientation');ylabel('Pial depth (µm)','Color','b');set(gca,'FontSize',10);
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure5\Final_panels\'
+savepdf_SW(fn,1);
+%% Perform sholl anaylsis, this should be incoorporated into the structure
+%Get all morphtraces
+for i=1:length(str)
+    if ~isempty(str(i).morph)==1 
+    zz{:,i}=str(i).morphtraces;
+    else
+        zz{:,i}=NaN;
+    end
+end
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,0);
+%% Figure 6 panels
+close all;
+%Plot representative examples, cell 143 and 122 for panel A, 
+%NOTE tuning curve: individual traces not in the str only the average atm
+id_m=143;
+plot_morphologies(str,id_m,1,1,1);
+id_m2=122;
+plot_morphologies(str,id_m2,2,1,1);
+%Plot the tuning curves and width from the folders
+%cell 143
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp15006\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex1=Fit(1).ipsi.FittedDataOri
+ind_tr1=peaks(1).ipsi;
+%cell 122
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14757\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex2=Fit(2).contra.FittedDataOri;
+ind_tr2=peaks(2).contra;
+%call function shift_ori for plotting PANEL A,B
+shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,od_out_iviv(id_m,1),od_out_iviv(id_m2,1),od_out_iviv(id_m,7),od_out_iviv(id_m2,7));
+%Plot the example sholl analyis for cell 143 and 122, PANEL C
+temp=zz{143};
+figure;
+[s, dd, sd, XP, YP, ZP, iD] = sholl_tree(temp{1,1}, 20, '-s');
+[sb, ddb, sdb, XP, YP, ZP, iD] = sholl_tree(temp{1,2}, 20, '-s');
+temp=zz{122}
+[s1, dd1, sd1, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,1}, 20, '-s');
+[s1b, dd1b, sd1b, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,2}, 20, '-s');
+close(gcf);
+
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 500, 250, 225]);
+;plot(dd,s,'-k');box off;
+hold on;plot(ddb,sb,'--k')
+hold on;plot(dd1,s1,'-b');
+hold on;plot(dd1b,s1b,'--b');
+legend('Apical','Basal');legend boxoff;
+ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);
+%Plot correlations
+%subsample cells with morph and fct. in vivo
+for i=1:length(str)
+    if ~isnan(str(i).morph(1))==1 & str(i).resp==1 & ~isnan(str(i).OSIpref)==1
+        m_res(i)=1;     
+    else
+       m_res(i)=NaN;
+    end
+end
+morph_res_sub=find(m_res==1);
+%plot apical nr of brainch points vs OSI, PANEL D
+corr_plot(morph_parameters(morph_res_sub,4),od_out_iviv(morph_res_sub,1),[],{'','',''});xlim([0 25]);ylim([0 1]);yticks([0:0.2:1]);
+ylabel('OSI','Color','k');xlabel('Nr of branch points','Color','k');set(gca,'FontSize',10);
+%plot peak nr of sholl crossings APICAL vs TW, PANEL D
+%remove obvious TW outlier
+morph_res_sub2=morph_res_sub;
+morph_res_sub2(find(od_out_iviv(morph_res_sub2,7)>50))=[];
+%Plot
+corr_plot(max_s(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 15]);
+ylabel('Tuning Width','Color','k');xlabel('Peak number of sholl crossings','Color','k');set(gca,'FontSize',10)
+ylim([5 40]);yticks([0:10:40]);
+%plot peak nr of sholl crossings BASAL vs TW, PANEL E
+corr_plot(max_s_ba(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 30]);
+ylabel('Tuning Width','Color','k');xlabel('Peak Nr. sholl crossings','Color','k');set(gca,'FontSize',10)
+ylim([5 40]);yticks([0:10:40]);
+%Plot correlation matrix, PANEL F
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[morph_parameters(:,2) nanmax(df,[],2) dis_s'  morph_parameters(:,4)  max_s'  sum_densap' ...
+    morph_parameters(:,12) nanmax(db,[],2) dis_s_ba'  morph_parameters(:,14) max_s_ba'  sum_densba'  od_out_iviv(:,[1 2 3 4 5 7 8]) pia_input]
+G=correlation_matrix(com,0);close(gcf)
+Gf=G(13:end,1:12)
+Gf(6,1)=0;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 500, 325]);imagesc(Gf);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:8]);
+ 
+xticklabels({'Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Density','Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Density'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}','Pial depth'});ytickangle(45);set(gca,'FontSize',12)
+c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10);
+% Plot the input vs morphology density,panel G
+for i=1:length(str)
+%whole map
+tmp1=ex_map(3:end,:,i);
+tmp2=in_map(:,:,i);
+tot_input(i,:)=[sum(tmp1(:));sum(tmp2(:))];
+end
+corr_plot(max_s(morph_cells_id)',tot_input(morph_cells_id,1),[],{'','',''});xlabel('Peak Nr. sholl crossings','Color','k');
+ylabel('Total input','Color','r');
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure6\Final_panels\'
+savepdf_SW(fn,1);
+%% 
+
+
+
+
+
+
+
+
+
+%% Supplementary Figures
+%in vivo in vitro comparison
+% LOAD data structure, you need uipickfiles function
+out_dir='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str_out'
+directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitymoph atm:191804
+filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
+load(char(filename));%load mat file
+%% %% Read out ori pref of all 
+ [od_out sftf_out sftf_sel sftf_pref spon_out pia_all] = concat_invivo(L23_PC);
+%% Supplementary Fig 3 Panel A
+close all
+%OSI and ORI
+fig21 = figure;
+set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [200, 200, 600, 200]);set(gcf,'color','w');
+subplot(1,2,1);
+binRange = 0:0.2:1;
+hcx = histcounts(od_out(find(~isnan(od_out(:,1))),1),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,1))),1),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('OSI','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+a=od_out_iviv(:,1)>0.25;
+b=od_out(:,1)>0.25;
+subplot(1,2,2);
+binRange = 0:45:179;
+hcx = histcounts(od_out(b,4),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(a,4),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Orientation (deg)','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+%DSI and DIR
+fig21 = figure;
+set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [800, 200, 600, 200]);set(gcf,'color','w');
+subplot(1,2,1);
+binRange = 0:0.2:1;
+hcx = histcounts(od_out(find(~isnan(od_out(:,2))),2),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,2))),2),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('DSI','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+a=od_out_iviv(:,2)>0.25;
+b=od_out(:,2)>0.25;
+subplot(1,2,2);
+binRange = 0:45:315;
+hcx = histcounts(od_out(b,5),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(a,5),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Direction (deg)','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+%ipsi contra bino
+figure;set(gcf,'color','w');
+resp_all=contra_cells+ipsi_cells+bino_cells;
+b=bar([1 2],[contra_cells/resp_all ipsi_cells/resp_all bino_cells/resp_all;  nansum(iv_contra)/sum(~isnan(iv_ODI)) ...
+    nansum(iv_ipsi)/sum(~isnan(iv_ODI)) nansum(iv_bino)/sum(~isnan(iv_ODI))],'stacked');
+box off;
+ b(1, 1).FaceColor='b';b(1, 2).FaceColor='r';b(1, 3).FaceColor='w';
+ xticklabels({'all','iviv'});
+ legend('contra','ipsi','bino');legend boxoff

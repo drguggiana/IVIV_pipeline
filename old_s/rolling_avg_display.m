@@ -41,12 +41,14 @@ CI_shuffle = cat(1,abs(prctile(shuffle_ori,5,1)-mean_shuffle),prctile(shuffle_or
 %% Plot the results
 
 %close all
-figure;set(gcf, 'Position', [800, 200, 400, 300])
+figure;set(gcf, 'Position', [800, 500, 375, 300])
 set(gcf,'color','w');
 shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
 hold on
 shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
-xlabel('Orientation (deg)')
+xlabel('Orientation (deg)');
+xlim([0 180]);xticks([0:45:180]);
+legend('shuffle','data');legend boxoff;
 %ylabel('Parameter')
 %title(strjoin({'Rolling orientation average','window',...
    % num2str(window)},'_'),'Interpreter','None')

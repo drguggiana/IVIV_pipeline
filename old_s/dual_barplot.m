@@ -1,7 +1,7 @@
 function [statsout]=dual_barplot(par,g1,g2,t)
 gr_nr=2;
 color_id={'m',[0.5 0.5 0.5]};
-fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [200, 0, 300, 300]);set(gcf,'color','w');
+fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [400, 300, 300, 300]);set(gcf,'color','w');
 for i=1:gr_nr
 gr_m=[nanmean(par(g1)) nanmean(par(g2))];  
 gr_sem=[nanstd(par(g1))/sqrt(length(par(g1))) nanstd(par(g2))/sqrt(length(par(g2)))];
@@ -23,5 +23,5 @@ else
 end
 
 hold on;
-title(['p=' num2str(p)])
+title(['p=' num2str(p)],'FontWeight','normal');
 end
