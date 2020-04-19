@@ -11,7 +11,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.01 & P(2)>0.001
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
  elseif P(2)<0.001
-    title(['L23: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+    title(['{\color{magenta}L23}: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
      title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end
@@ -33,7 +33,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.01 & P(2)>0.001
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
  elseif P(2)<0.001
-    title(['L4: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+    title(['{\color{green}L4}: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
      title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end
@@ -58,7 +58,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.001
     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
-     title(['L5: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+     title(['{\color[rgb]{0.5 .5 .5}L5}: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end
  
     hold on;
@@ -79,7 +79,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.001
     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
-     title(['L23: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+     title(['{\color{magenta}L23}: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end  
     set(gca,'Ydir','reverse');
   set(gca,'FontSize',10);%text(0.05,120,'L2/3');
@@ -95,7 +95,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.01 & P(2)>0.001
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
  elseif P(2)<0.001
-    title(['L4: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+    title(['{\color{green}L4}: r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
      title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end  
@@ -119,7 +119,7 @@ par1=par1((find(par1>0)))
  elseif P(2)<0.001
     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
  else
-     title(['L5: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+     title(['{\color[rgb]{0.5 .5 .5}L5}: r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
  end  
      set(gca,'Ydir','reverse');
 xlabel('Fraction total input'); set(gca,'FontSize',10);%text(0.05,120,'L5')

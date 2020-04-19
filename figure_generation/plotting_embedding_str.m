@@ -119,7 +119,7 @@ for plots = 1:plot_number
         nan_data = reduced_data(isnan(data),:);
         value_data = reduced_data(~isnan(data),:);
 
-        figure
+        figure;
         set(gcf,'color','w');
 
         scatter(nan_data(:,1),nan_data(:,2),30,[0.8, 0.8 0.8])
@@ -128,7 +128,7 @@ for plots = 1:plot_number
         colormap(cmap)
 
         hold on;
-        title(title_list{count}, 'interpreter', 'none')
+        title(title_list{count}, 'interpreter', 'none','FontWeight','normal');
         axis square;
         xlabel('dm1');
         ylabel('dm2');

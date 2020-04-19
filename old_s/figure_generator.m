@@ -1,5 +1,7 @@
 %% This script plots the figures, for Weiler et al. 2020; USE EVALUATE SECTIONS to go stepy by step through the script
-%You will need: data structure str, uipickfiles, display_inputs
+%You will need: data structure str, embedding for UMAP, uipickfiles,
+%display_inputs,extent_diff, centroid_plot, corr_plot, correlation_matrix, autoArrangeFigures;
+%plotting_embedding_str,
 %% START
 %Load structure with 147 cells used for the paper
 str_invitro       = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str\';
@@ -62,7 +64,13 @@ ang_inL5=reshape([str(:).ang_inL5],10,length(str))';
 %Pial depth
 pia_input=[str(:).pialD]';
 %Orientations
-oris=[0:45:315]
+oris=[0:45:315];
+%visual responses properties
+%1:OSI,2:DSI,3:ODI,4:ORI,5:DIR,6:Capeak,7:Tuning Width, 8:SF,9
+%TF,10:SAD,11:Noise,12:PCI
+od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
+             ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci]]';
+         
 %% Figure 1 panels
 close all;
 % Histogram of pia distribution with color coded in vivo morpho by itself
@@ -106,5 +114,109 @@ fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure2
 savepdf_SW(fn,1);
 %% Figure 3 panels
 close all;
-a=1:147
-centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[])
+%Overview of centroid x any with respect to soma for EX and IN, Panel B
+a=1:147;
+centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[]);
+%EX vs IN horizontal centroid CoMx for L2/3, L4, L5, Panel C
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 500, 675, 200]);
+subplot(1,3,1);
+plot(ang_exL23(:,3)*69-ang_exL23(:,1)*69,ang_inL23(:,3)*69-ang_inL23(:,1)*69,'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
+ref.YData=[-150 150];
+ref.Color='k';box off;xlim([-150 150]);ylim([-150 150]);hold on;title('L23','FontWeight','normal');xticks([-150:75:150]);yticks([-150:75:150]);
+subplot(1,3,2);
+plot(ang_exL4(:,3)*69-ang_exL4(:,1)*69,ang_inL4(:,3)*69-ang_inL4(:,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
+ref.YData=[-150 150];
+ref.Color='k';box off;xlim([-150 150]);ylim([-150 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
+subplot(1,3,3);
+plot(ang_exL5(:,3)*69-ang_exL5(:,1)*69,ang_inL5(:,3)*69-ang_inL5(:,1)*69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
+set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
+ref.Color='k';box off;xlim([-300 300]);ylim([-300 300]);hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
+%Pial depth vs CoMalpha L23 IN, Panel D
+corr_plot(90-abs((ang_inL23(:,5))),pia_input,[],{'','',''});
+ylabel('Pial depth (µm)','Color','k');xlabel('CoM\alpha (deg)','Color','b');set(gca,'FontSize',10);set(gca,'Ydir','reverse');
+ylim([100 400]);yticks([100:150:400]);
+%Pial depth vs PC1ex, Panel F
+corr_plot(scores(:,1),pia_input,[],{'','',''});xlabel('PC1_{ex}','Color','r');
+ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','reverse');ylim([100 400]);yticks([100:150:400]);
+%CoMX vs PC13in, Panel G
+corr_plot((ang_inL23(:,3)-ang_inL23(:,1))*69,scores(:,6),[],{'','',''});ylabel('PC3_{in}','Color','b');
+xlabel('CoMx (µm)','Color','b');set(gca,'FontSize',10);
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure3\Final_panels\'
+savepdf_SW(fn,1);
+%% Figure 4 panels
+close all;
+%UMAP projections Panel C and D
+%load embedding
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\embedding\reduced_data.mat');
+%in vitro values
+plot_list = {'frac_vert','ang_inL23','pialD'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%in vivo values
+plot_list = {'OSIpref','DSIpref','ODIpref','ORIpref','DIRpref','Sigmapref','Capeakpref'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+autoArrangeFigures;
+
+%Correlation Matrix Panel B
+com=[];com=[L23fr(:,1) L4fr(:,1)  L23fr(:,2) L4fr(:,2) abs(ang_exL23(:,5)) abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) pia_input od_out_iviv(:,[1 2 3 4 5 6 7])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+close(gcf);
+%Subsample data OSI
+a=find(od_out_iviv(:,1)>0.25)
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(ang_exL23(a,5)) abs(ang_inL23(a,5)) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
+M=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+close(gcf);
+%Subsample data DSI
+a=find(od_out_iviv(:,2)>0.25)
+com=[];com=[L23fr(a,1) L4fr(a,1)  L23fr(a,2) L4fr(a,2) abs(ang_exL23(a,5)) abs(ang_inL23(a,5)) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
+O=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
+close(gcf);
+%Assemble matrix
+fG=[G([10 11 12],1:9) ; M([13],1:9) ; O([14],1:9) ; G([15 16],1:9)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 300])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:7]);
+xticklabels({'L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}'});set(gca,'FontSize',10);
+c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10);
+%Selection of correlation from Panel B shown in Panel E
+a=find(od_out_iviv(:,1)>0.25);
+corr_plot(od_out_iviv(a,4),90-abs(ang_inL23(a,5)),[],{'','',''});ylabel('CoMx (µm)','Color','b');
+xlabel('Orientation (deg)');set(gca,'FontSize',10);
+%Selection of correlation from Panel B shown in Panel E
+a=find(od_out_iviv(:,1)>0.25);
+corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'','',''});ylabel('L4fr','Color','r');
+xlabel('Orientation (deg)');set(gca,'FontSize',10);
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\Final_panels\'
+savepdf_SW(fn,1);
+%% Figure 5 panels
+close all;
+%Overview of centroid x and y with respect to soma for EX and IN and OSI colurcoded, Panel B
+a=find(od_out_iviv(:,1)>0.25);
+fe=od_out_iviv(a,4);
+centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,1,fe,{'ORI'});
+%Rolling average plots
+parameter_vector = 90-abs(ang_inL23(:,5));
+rolling_avg_display(str,parameter_vector)
+ylabel('L23 CoM\alpha (µm)','Color','b');
+ylim([10 70]);
+set(gca,'FontSize',10);
+%% 
+%dual barplots
+a=find(od_out_iviv(:,1)>0.25)  
+par=90-abs(ang_inL23(a,5));
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) 
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150) 
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2])
+xticklabels({'20-90°','100-150°'})
+xlabel('Orientation');
+ylabel('CoM L23 (µm)','Color','b');  set(gca,'FontSize',12);
+set(gca,'FontSize',12);

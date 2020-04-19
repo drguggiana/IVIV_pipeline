@@ -43,7 +43,7 @@ cell_cell = normr_2(cell_cell,2);
 %% Run UMAP on the data
 
 % run the embedding from scratch
-[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
+[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 25, 'min_dist', 0.5);
 
 % % load the umap file from path
 % reduced_data = load(umap_path);
