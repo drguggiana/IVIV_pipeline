@@ -45,7 +45,8 @@ grid on;
 set(gca,'FontSize',10);
 
 elseif gr==1
-    [cmap]=inferno;
+    %inferno_wrap = vertcat(inferno,flipud(inferno));
+    [cmap]=phasemap;
 ang2=out_ang_exL23;    
 pointsize=10;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);

@@ -89,8 +89,11 @@ oris=[0:45:315];
 %TF,10:SAD,11:Noise,12:PCI
 od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
              ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci]]';
-%ipsi, contra, bino
-
+%ipsi, contra, bino, unres
+ipsi_id=find([str(:).ipsi]==1);
+contra_id=find([str(:).contra]==1);
+bino_id=find([str(:).bino]==1);
+unres_id=find([str(:).unres]==1);
 %% Figure 1 panels
 close all;
 % Histogram of pia distribution with color coded in vivo morpho by itself
@@ -141,28 +144,28 @@ centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[])
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 500, 675, 200]);
 subplot(1,3,1);
 plot(ang_exL23(:,3)*69-ang_exL23(:,1)*69,ang_inL23(:,3)*69-ang_inL23(:,1)*69,'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
-set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
-ref.YData=[-150 150];
-ref.Color='k';box off;xlim([-150 150]);ylim([-150 150]);hold on;title('L23','FontWeight','normal');xticks([-150:75:150]);yticks([-150:75:150]);
+set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-100 100];
+ref.YData=[-100 100];ylabel('IN C_{x} (µm)','Color','b')
+ref.Color='k';box off;xlim([-100 100]);ylim([-100 100]);hold on;title('L23','FontWeight','normal');xticks([-100:50:100]);yticks([-100:50:100]);
 subplot(1,3,2);
 plot(ang_exL4(:,3)*69-ang_exL4(:,1)*69,ang_inL4(:,3)*69-ang_inL4(:,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
-set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
+set(gcf,'color','w');xlabel('EX C_{x} (µm)','Color','r');;ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
 ref.YData=[-150 150];
 ref.Color='k';box off;xlim([-150 150]);ylim([-150 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
 subplot(1,3,3);
 plot(ang_exL5(:,3)*69-ang_exL5(:,1)*69,ang_inL5(:,3)*69-ang_inL5(:,1)*69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
-set(gcf,'color','w');xlabel('EX','Color','r');ylabel('IN','Color','b');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
+set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
 ref.Color='k';box off;xlim([-300 300]);ylim([-300 300]);hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
 %Pial depth vs CoMalpha L23 IN, Panel D
 corr_plot(90-abs((ang_inL23(:,5))),pia_input,[],{'','',''});
-ylabel('Pial depth (µm)','Color','k');xlabel('CoM\alpha (deg)','Color','b');set(gca,'FontSize',10);set(gca,'Ydir','reverse');
-ylim([100 400]);yticks([100:150:400]);
+ylabel('Pial depth (µm)','Color','k');xlabel('IN C_{\alpha} L2/3 (deg)','Color','b');set(gca,'FontSize',10);set(gca,'Ydir','reverse');
+ylim([100 400]);yticks([100:150:400]);xlim([-5 100]);%xticks([-5:50:100])
 %Pial depth vs PC1ex, Panel F
 corr_plot(scores(:,1),pia_input,[],{'','',''});xlabel('PC1_{ex}','Color','r');
-ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','reverse');ylim([100 400]);yticks([100:150:400]);
+ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','reverse');ylim([100 400]);yticks([100:150:400]);xticks([-2:1:2]);
 %CoMX vs PC13in, Panel G
 corr_plot((ang_inL23(:,3)-ang_inL23(:,1))*69,scores(:,6),[],{'','',''});ylabel('PC3_{in}','Color','b');
-xlabel('CoMx (µm)','Color','b');set(gca,'FontSize',10);
+xlabel('IN C_{x} L2/3 (µm)','Color','b');set(gca,'FontSize',10);ylim([-1.2 1.2]);yticks([-1.2:0.6:1.2]);xlim([-120 120]);xticks([-120:60:120])
 %% Save figures as PDF in a folder specified by fn IF DESIRED
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure3\Final_panels\'
 savepdf_SW(fn,1);
@@ -214,6 +217,24 @@ xlabel('Orientation (deg)');set(gca,'FontSize',10);
 a=find(od_out_iviv(:,1)>0.25);
 corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'','',''});ylabel('L4fr','Color','r');
 xlabel('Orientation (deg)');set(gca,'FontSize',10);
+%% 
+%cell 126
+id_m=126;
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14783\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex1=Fit(2).contra.FittedDataOri
+ind_tr1=peaks(2).contra;
+fit_ex1oe=Fit(2).ipsi.FittedDataOri
+ind_tr1oe=peaks(2).ipsi;
+%cell 139
+id_m2=139;
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14875\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex2=Fit(3).ipsi.FittedDataOri;
+ind_tr2=peaks(3).ipsi;
+fit_ex2oe=Fit(3).contra.FittedDataOri
+ind_tr2oe=peaks(3).contra;
+
+shift_ori_oe(fit_ex1,fit_ex1oe,fit_ex2,fit_ex2oe,ind_tr1,ind_tr1oe,ind_tr2,ind_tr2oe,od_out_iviv(id_m,1),od_out_iviv(id_m2,1),od_out_iviv(id_m,7),od_out_iviv(id_m2,7));
+plot_maps(str,ex_map_raw,in_map_raw,[1:147],139,pia_input);
 %% Save figures as PDF in a folder specified by fn IF DESIRED
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\Final_panels\'
 savepdf_SW(fn,1);
@@ -243,7 +264,7 @@ ylabel('L23 CoMx (µm)','Color','b');
 ylim([5 60]);set(gca,'FontSize',10);
 %dual barplots
 a=find(od_out_iviv(:,1)>0.25);  
-par=abs(ang_inL23(a,3)-ang_inL23(a,1));
+par=abs(ang_inL23(a,3)-ang_inL23(a,1))*69;
 g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
 g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
@@ -286,6 +307,10 @@ g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'20-70°','100-150°'});
 xlabel('Orientation');ylabel('Pial depth (µm)','Color','b');set(gca,'FontSize',10);
+%Correlation L4fr and CoMx/CoMalpha
+a=find(od_out_iviv(:,1)>0.25); 
+corr_plot(90-abs(ang_inL23(a,5)),L4fr(a,1),[],{'','',''});xlabel('L23 CoM\alpha (deg)','Color','b');
+ylabel('L4fr','Color','r');set(gca,'FontSize',10);
 %% Save figures as PDF in a folder specified by fn IF DESIRED
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure5\Final_panels\'
 savepdf_SW(fn,1);
@@ -450,13 +475,55 @@ hcy = histcounts(od_out_iviv(a,5),[binRange Inf],'Normalization','probability');
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('Direction (deg)','FontSize',10);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.4]);yticks([0:0.2:0.4]);
+ylim([0 0.4]);yticks([0:0.2:0.4]); 
 %ipsi contra bino
-figure;set(gcf,'color','w');
-resp_all=contra_cells+ipsi_cells+bino_cells;
-b=bar([1 2],[contra_cells/resp_all ipsi_cells/resp_all bino_cells/resp_all;  nansum(iv_contra)/sum(~isnan(iv_ODI)) ...
-    nansum(iv_ipsi)/sum(~isnan(iv_ODI)) nansum(iv_bino)/sum(~isnan(iv_ODI))],'stacked');
-box off;
+for i=1:length(od_out)
+if od_out(i,9)==1 & od_out(i,10)==0;
+    o_all(i)=1;
+elseif od_out(i,9)==0 & od_out(i,10)==1;
+    o_all(i)=2;
+elseif od_out(i,9)==1 & od_out(i,10)==1;
+    o_all(i)=3;
+else od_out(i,9)==0 & od_out(i,10)==0;
+    o_all(i)=0;
+end
+end
+fig22=figure;set(gcf,'color','w');set(fig22, 'Position', [300, 700, 250, 200]);set(gcf,'color','w');
+resp_all=length(find(o_all==1))+length(find(o_all==2))+length(find(o_all==3));
+resp_iviv=length(contra_id)+length(ipsi_id)+length(bino_id);
+b=bar([1 2],[length(find(o_all==1))/resp_all length(find(o_all==2))/resp_all length(find(o_all==3))/resp_all; length(contra_id)/resp_iviv ...
+    length(ipsi_id)/resp_iviv length(bino_id)/resp_iviv],'stacked');box off;ylabel('Fraction cells');
  b(1, 1).FaceColor='b';b(1, 2).FaceColor='r';b(1, 3).FaceColor='w';
- xticklabels({'all','iviv'});
- legend('contra','ipsi','bino');legend boxoff
+ xticklabels({'all','iviv'});legend('contra','ipsi','bino');legend boxoff;set(gca,'FontSize',10);
+%TW distribution 
+fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');
+binRange = 0:20:90;
+hcx = histcounts(od_out(find(~isnan(od_out(:,7))),7),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,7))),7),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Tuning width (deg)','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.6]);yticks([0:0.2:0.6]);
+%Spon activity
+fig23 = figure;
+set(fig23, 'Name', 'Binocular protocol');set(fig23, 'Position', [1000, 800, 600, 200]);set(gcf,'color','w');
+subplot(1,2,1);
+binRange = 0.0013:0.025:0.2;
+hcx = histcounts(spon_out(find(~isnan(spon_out(:,1))),1),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,10))),10),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('SAD (Hz)','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+
+ylim([0 0.8]);yticks([0:0.4:0.8]);
+subplot(1,2,2);
+binRange = -7:1:2;
+hcx = histcounts(log(abs(od_out_iviv(:,12))),[binRange Inf],'Normalization','probability');
+hcy = histcounts(log(abs(spon_out(:,2))),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('PCI','FontSize',7);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.8]);yticks([0:0.4:0.8]);
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp3\Final_panels\'
+savepdf_SW(fn,1);
