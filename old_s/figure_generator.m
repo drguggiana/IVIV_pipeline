@@ -251,19 +251,24 @@ centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,1,fe,{'O
 parameter_vector = 90-abs(ang_inL23(:,5));
 rolling_avg_display(str,parameter_vector)
 ylabel('C_{\alpha} L23 (deg)','Color','b');
-ylim([5 70]);set(gca,'FontSize',10);
+ylim([5 70]);yticks([10:30:70]);
+xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
 
 %Rolling average plots
 parameter_vector = abs(ang_inL23(:,3)-ang_inL23(:,1))*69;
 rolling_avg_display(str,parameter_vector);
-ylabel('C_{\x} L23 (µm)','Color','b');
-ylim([5 60]);set(gca,'FontSize',10);
-
+ylabel('C_{x} L23 (µm)','Color','b');
+ylim([5 60]);yticks([10:25:60]);
+xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
 %L4 angle alpha 
 parameter_vector = 90-abs(ang_inL4(:,5));
 rolling_avg_display(str,parameter_vector);
-ylabel('L4 CoM\alpha (deg)','Color','b');
-
+ylabel('C_{\alpha} L4 (deg)','Color','b');
+xlim([0 180]);xticks([0:45:180]);
+ylim([2 20])
+set(gca,'FontSize',10);
 
 %dual barplots L23alpha
 %EX
