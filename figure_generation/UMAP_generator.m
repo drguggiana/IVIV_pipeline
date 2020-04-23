@@ -40,9 +40,12 @@ cell_cell = cat(2,pialD,frac4ex,alph23in,...
 
 % cell_cell = cat(2,pcs(:,2),ang);
 cell_cell = normr_2(cell_cell,2);
-%% Run UMAP on the data
+%% Run UMAP on the data (or load the embedding)
 
-[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
+% load the embedding
+reduced_data = load(umap_path);
+reduced_data = reduced_data.reduced_data;
+% [reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
 %% Plot the umaps
 
 close all

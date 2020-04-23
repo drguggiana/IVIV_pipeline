@@ -111,6 +111,8 @@ end
 % concatenate the data
 svd_OD = cat(1,svd_OD{:});
 noise_OD = cat(1,noise_OD{:});
+% save the noise correlations to file
+save(noise_path,'noise_OD')
 %% Match the iviv cells with the all invivo cells
 
 % load the excel spreadsheet with the matching
