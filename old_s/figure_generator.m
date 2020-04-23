@@ -175,15 +175,32 @@ close all;
 %load embedding
 load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\embedding\reduced_data.mat');
 %in vitro values
-plot_list = {'frac_vert','ang_inL23','pialD'};
-plotting_embedding_str(reduced_data, str, plot_list, 0,1, 'parula');
-%in vivo values non cyclic
+plot_list = {'frac_vert','ang_inL23','pialD','span'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%in vivo values non cyclic 
 plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref'};
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 %cyclic values
 plot_list ={'ORIpref','DIRpref'}
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'phasemap');
 autoArrangeFigures;
+
+%figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
+figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];
+figure(3);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
+figure(5);c=colorbar;caxis([0 110]);c.Ticks=[0:55:110];
+figure(6);c=colorbar;caxis([0 90]);c.Ticks=[0:45:90];
+figure(7);c=colorbar;caxis([120 350]);c.Ticks=[0:45:90];
+figure(8);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];
+
+figure(14);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
+figure(15);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
+figure(16);c=colorbar;caxis([-1 1]);c.Ticks=[-1:0:1];
+figure(17);c=colorbar;caxis([2 4]);c.Ticks=[2:5];
+figure(19);c=colorbar;caxis([0 180]);c.Ticks=[0:45:180];
+figure(20);c=colorbar;caxis([0 360]);c.Ticks=[0:90:360];
+
+%% 
 
 %Correlation Matrix Panel B
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,5)) abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
@@ -499,7 +516,7 @@ b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);
 xlim([-0.1 1]);xticks([0:0.2:0.8])
 a=od_out_iviv(:,1)>0.25;
-b=od_out(:,1)>0.25;
+b=od_out(:,1)>0.25;set(gca,'FontSize',10);
 subplot(1,2,2);
 binRange = 0:45:179;
 hcx = histcounts(od_out(b,4),[binRange Inf],'Normalization','probability');
@@ -507,7 +524,7 @@ hcy = histcounts(od_out_iviv(a,4),[binRange Inf],'Normalization','probability');
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('Orientation (deg)','FontSize',12);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.4]);yticks([0:0.2:0.4]);
+ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10);
 %DSI and DIR
 fig21 = figure;
 set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [800, 200, 600, 200]);set(gcf,'color','w');
@@ -520,7 +537,7 @@ b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);xlim([-0.1 1]);xticks([0:0.2:0.8])
 a=od_out_iviv(:,2)>0.25;
-b=od_out(:,2)>0.25;
+b=od_out(:,2)>0.25;set(gca,'FontSize',10);
 subplot(1,2,2);
 binRange = 0:45:315;
 hcx = histcounts(od_out(b,5),[binRange Inf],'Normalization','probability');
@@ -528,7 +545,8 @@ hcy = histcounts(od_out_iviv(a,5),[binRange Inf],'Normalization','probability');
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('Direction (deg)','FontSize',10);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.4]);yticks([0:0.2:0.4]); 
+xtickangle(45)
+ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10); 
 %ipsi contra bino
 for i=1:length(od_out)
 if od_out(i,9)==1 & od_out(i,10)==0;
@@ -545,9 +563,25 @@ fig22=figure;set(gcf,'color','w');set(fig22, 'Position', [300, 700, 250, 200]);s
 resp_all=length(find(o_all==1))+length(find(o_all==2))+length(find(o_all==3));
 resp_iviv=length(contra_id)+length(ipsi_id)+length(bino_id);
 b=bar([1 2],[length(find(o_all==1))/resp_all length(find(o_all==2))/resp_all length(find(o_all==3))/resp_all; length(contra_id)/resp_iviv ...
-    length(ipsi_id)/resp_iviv length(bino_id)/resp_iviv],'stacked');box off;ylabel('Fraction cells');
+    length(ipsi_id)/resp_iviv length(bino_id)/resp_iviv],'stacked');box off;ylabel('Fraction of cells');
  b(1, 1).FaceColor='b';b(1, 2).FaceColor='r';b(1, 3).FaceColor='w';
- xticklabels({'all','iviv'});legend('contra','ipsi','bino');legend boxoff;set(gca,'FontSize',12);
+ xticklabels({'all','iviv'});legend('contra','ipsi','bino');legend boxoff;set(gca,'FontSize',10);
+ %ODI distribution
+% fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 600, 200]);set(gcf,'color','w');
+% binRange =-1:0.2857:1;
+% hcx = histcounts(od_out(find(~isnan(od_out(:,3))),3),[binRange Inf],'Normalization','probability');
+% hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,3))),3),[binRange Inf],'Normalization','probability');
+% b1=bar(binRange,[hcx;hcy]');box off;xlabel('ODI','FontSize',10);ylabel('Fraction of cells');
+% b1(1).FaceColor=[0 0 0];
+% b1(2).FaceColor=[0 0.7 0.6];
+% ylim([0 0.4]);yticks([0:0.2:0.6]);set(gca,'FontSize',10);
+ %ODI distribution
+fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 300, 200]);set(gcf,'color','w');
+h=histogram(od_out(find(~isnan(od_out(:,3))),3),7,'Normalization','probability');h.FaceColor=[0 0 0];
+hold on;h=histogram(od_out_iviv(find(~isnan(od_out_iviv(:,3))),3),7,'Normalization','probability');
+h.FaceColor=[0 0.7 0.6];box off;
+ylim([0 0.3]);yticks([0:0.15:0.3]);xlabel('ODI');ylabel('Fraction of cells');set(gca,'FontSize',10);
+
 %TW distribution 
 fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');
 binRange = 0:20:90;
@@ -556,7 +590,23 @@ hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,7))),7),[binRange Inf],'N
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('Tuning width (deg)','FontSize',10);ylabel('Fraction of cells');
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.6]);yticks([0:0.2:0.6]);
+ylim([0 0.6]);yticks([0:0.2:0.6]);set(gca,'FontSize',10);
+
+%Ca peak
+fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');
+binRange = 0:50:400;
+hcx = histcounts(od_out(find(~isnan(od_out(:,6))),6),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,6))),6),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Ca_{peak} (?R/R0)','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.7]);yticks([0:0.35:0.7]);set(gca,'FontSize',10);xtickangle(45);
+
+
+%% Save figures as PDF in a folder specified by fn IF DESIRED
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp3\Final_panels\'
+savepdf_SW(fn,1);
+%%
 %Spon activity
 fig23 = figure;
 set(fig23, 'Name', 'Binocular protocol');set(fig23, 'Position', [1000, 800, 600, 200]);set(gcf,'color','w');
@@ -564,19 +614,94 @@ subplot(1,2,1);
 binRange = 0.0013:0.025:0.2;
 hcx = histcounts(spon_out(find(~isnan(spon_out(:,1))),1),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,10))),10),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('SAD (Hz)','FontSize',12);
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('SAD (Hz)','FontSize',10);ylabel('Fraction of cells');
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
+xticks([0:0.025:0.15]);xtickangle(45);set(gca,'FontSize',10);
 
 ylim([0 0.8]);yticks([0:0.4:0.8]);
 subplot(1,2,2);
 binRange = -7:1:2;
 hcx = histcounts(log(abs(od_out_iviv(:,12))),[binRange Inf],'Normalization','probability');
 hcy = histcounts(log(abs(spon_out(:,2))),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('PCI','FontSize',12);
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('PCI','FontSize',10);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.8]);yticks([0:0.4:0.8]);
-%% Save figures as PDF in a folder specified by fn IF DESIRED
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp3\Final_panels\'
-savepdf_SW(fn,1);
+ylim([0 0.8]);yticks([0:0.4:0.8]);set(gca,'FontSize',10);
+
+%Correlation matirx PCI, SAD, noise with input
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,5)) abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) pia_input od_out_iviv(:,[10 11 12])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+
+%Assemble matrix
+fG=[G([10 11 12],1:9)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:7]);
+xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}','Pial depth'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'SAD','noise','PCI'});set(gca,'FontSize',10);
+c.Label.String = 'R'; c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10)
+
+%corr_plot(abs(ang_exL23(:,3)-ang_exL23(:,1)),od_out_iviv(:,10),[],{'','',''});
+%% Morphology and input maps
+close all;
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,5)) abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) pia_input morph_parameters(:,1:21)]% morph_parameters(:,1) morph_parameters(:,8) dis_s'  morph_parameters(:,4) max_s'   nanmax(df,[],2)...
+    %morph_parameters(:,12) morph_parameters(:,11) morph_parameters(:,18) dis_s_ba'  morph_parameters(:,14) max_s_ba'  nanmax(db,[],2)]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%Assemble matrix
+fG=[G(10:end,1:9)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 800, 600])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:16]);yticks([1:1:25]);
+xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'RDAmax','LAtotal','PLAmax','BPA','BOAmax','BLA',...
+                'PLA','WHA','XSA','YSA','RDBmax','LBtotal','PLBmax','BPB',...
+                'BOBmax','BLB','PLB','WHB','XSB','YSB','NB'});set(gca,'FontSize',10);
+c.Label.String = 'R'; c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10)
+%% 
+corr_plot(span(:,5)',morph_parameters(:,19) ,[],{'','',''});
+%% 
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) 90-abs(ang_exL23(:,5)) 90-abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) pia_input morph_parameters(:,2) nanmax(df,[],2) dis_s'  morph_parameters(:,4)  max_s'  sum_densap' ...
+    morph_parameters(:,12) nanmax(db,[],2) dis_s_ba'  morph_parameters(:,14) max_s_ba'  sum_densba']
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+fG=[G(10:end,1:9)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 800, 600])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:16]);yticks([1:1:25]);
+xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}'});xtickangle(45);set(gca,'FontSize',12)
+
+corr_plot(L4fr(:,1),nanmax(db,[],2),[],{'','',''});
+
+%% 
+morph_sel=[morph_parameters(:,[1 2]) max_s' dis_s' morph_parameters(:,[8]) morph_parameters(:,[11 12]) max_s_ba' dis_s_ba' morph_parameters(:,[18])]
+figure();
+ stri={'RDA_{max}(µm)','Total Length (µm)','Peak number crossing','Dis peak branch','WHA',...
+     'RDB_{max}(µm)','Total Length (µm)','Peak number crossing','Dis peak branch','WHA'}
+for i=1:10
+hold on;
+subplot(2,5,i)
+h=histogram(morph_sel(:,i),8,'FaceColor',[1 1 1],'EdgeColor',[0 0 0],'LineWidth',1.5)
+h.EdgeColor = 'k';
+h.FaceColor = [0.5 0.5 0.5];
+xlabel(stri(i));
+%ylim([0 150]);
+%xlim([0 max(com(:,i))+max(com(:,i))*0.25]);
+hAxis = gca;
+hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
+hAxis.XAxisLocation = 'bottom'
+box off
+end
+
