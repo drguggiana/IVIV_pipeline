@@ -684,24 +684,85 @@ xticks([1:1:16]);yticks([1:1:25]);
 xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','\alpha L2/3_{ex}','\alpha L2/3_{in}','COM L2/3_{ex}','COM L2/3_{in}'});xtickangle(45);set(gca,'FontSize',12)
 
 corr_plot(L4fr(:,1),nanmax(db,[],2),[],{'','',''});
-
 %% 
+temp=zz{3}
+[s1, dd1, sd1, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,1}, 20, '-s');
+[s1b, dd1b, sd1b, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,2}, 20, '-s');
+close(gcf);
+
+%% Plot sholl crossings
+close all;
+figure(30);set(gcf,'color','w');set(figure(30), 'Position', [200, 200, 300, 200])
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,1)
+%% 
+figure(30);
+hold on;plot(dd1,s1,'-k');
+hold on;plot(dd1b,s1b,'-m');
+legend('Apical','Basal');legend boxoff;
+ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);
+ylabel('Nr. of crossings');xlabel('Distance from Soma (µm)');
+%% Example cell with sholl rings
+id_m=3;
+plot_morphologies(str,id_m,1,1,1);
+ml=13
+  xlim([-400 400]);
+ ylim([-200 600]);
+for i=1:ml
+hold on;
+  viscircles([0 pia_input(id_m)],20*i,'Color',[0.5 0.5 0.5],'LineWidth',1);
+end
+ axis off
+%% Histograms of parameters for morpho
 morph_sel=[morph_parameters(:,[1 2]) max_s' dis_s' morph_parameters(:,[8]) morph_parameters(:,[11 12]) max_s_ba' dis_s_ba' morph_parameters(:,[18])]
-figure();
- stri={'RDA_{max}(µm)','Total Length (µm)','Peak number crossing','Dis peak branch','WHA',...
-     'RDB_{max}(µm)','Total Length (µm)','Peak number crossing','Dis peak branch','WHA'}
-for i=1:10
+
+ stri={'RDA_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch (µm)','WHA',...
+     'RDB_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch(µm)','WHA'}
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200])
+ for i=1:10
 hold on;
 subplot(2,5,i)
 h=histogram(morph_sel(:,i),8,'FaceColor',[1 1 1],'EdgeColor',[0 0 0],'LineWidth',1.5)
 h.EdgeColor = 'k';
 h.FaceColor = [0.5 0.5 0.5];
 xlabel(stri(i));
-%ylim([0 150]);
-%xlim([0 max(com(:,i))+max(com(:,i))*0.25]);
+ylim([0 50]);
+xlim([0 max(morph_sel(:,i))+max(morph_sel(:,i))*0.25]);
 hAxis = gca;
 hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
 hAxis.XAxisLocation = 'bottom'
 box off
-end
+%ylabel('Counts');
+ end
+ %% Example morphologies
+ %mid=3, L3:7; L2:18
+id_m=18;
+plot_morphologies(str,id_m,1,1,1);
+id_m=3;
+plot_morphologies(str,id_m,1,1,1);
+id_m=7;
+plot_morphologies(str,id_m,1,1,1);
+%% 
+
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2)  max(span(:,1:3),[],2) max(span(:,4:6),[],2) pia_input morph_sel]
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+close(gcf);
+fG=[G(8:end,1:7)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 400])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);c.Ticks=[-1:0.5:1];
+xticks([1:1:16]);yticks([1:1:25]);
+xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','Span EX','Span IN','Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+yticklabels({'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width/Height',...
+     'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width/Height'});set(gca,'FontSize',10)
+%% 
+a=find(~isnan(morph_sel(:,5)))
+
+corr_plot(morph_sel(a,9),max(span(a,4:6),[],2),[],{'','',''});ylabel('Max Span (µm)');xlabel('Dis. peak branch(µm)')
+%corr_plot(nanmax(db(a,:),[],2),max(span(a,4:6),[],2),[],{'','',''});
+corr_plot(morph_sel(a,5),L4fr(a,1),pia_input(a),{'','','Pial depth (µm)'});ylabel('EX L4fr','Color','r');
+xlabel('Width/Height');ylim([0 0.7]);yticks([0:0.35:0.7])
+c=colorbar;caxis([130 350]);c.Ticks=[130:110:350];
 
