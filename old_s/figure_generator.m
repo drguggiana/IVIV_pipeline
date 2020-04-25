@@ -766,3 +766,15 @@ corr_plot(morph_sel(a,5),L4fr(a,1),pia_input(a),{'','','Pial depth (µm)'});ylabe
 xlabel('Width/Height');ylim([0 0.7]);yticks([0:0.35:0.7])
 c=colorbar;caxis([130 350]);c.Ticks=[130:110:350];
 
+%% Cell plotter, morphology, in vivo, maps
+close all;
+for i=1:147;
+figure;
+iviv_plotter(str,i)
+end
+%% 
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block1\'
+savepdf_SW(fn,2);
+%% 
+pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0003_excitation_after\map04'
+load_raw_map(pathName,str,68)
