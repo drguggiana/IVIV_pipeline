@@ -610,24 +610,55 @@ savepdf_SW(fn,1);
 %Spon activity
 fig23 = figure;
 set(fig23, 'Name', 'Binocular protocol');set(fig23, 'Position', [1000, 800, 600, 200]);set(gcf,'color','w');
-subplot(1,2,1);
+subplot(1,3,1);
 binRange = 0.0013:0.025:0.2;
 hcx = histcounts(spon_out(find(~isnan(spon_out(:,1))),1),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,10))),10),[binRange Inf],'Normalization','probability');
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('SAD (Hz)','FontSize',10);ylabel('Fraction of cells');
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-xticks([0:0.025:0.15]);xtickangle(45);set(gca,'FontSize',10);
-
+xticks([0:0.05:0.15]);xtickangle(45);set(gca,'FontSize',10);
 ylim([0 0.8]);yticks([0:0.4:0.8]);
-subplot(1,2,2);
+
+subplot(1,3,2);
 binRange = -7:1:2;
-hcx = histcounts(log(abs(od_out_iviv(:,12))),[binRange Inf],'Normalization','probability');
-hcy = histcounts(log(abs(spon_out(:,2))),[binRange Inf],'Normalization','probability');
+hcy = histcounts(log(abs(od_out_iviv(:,12))),[binRange Inf],'Normalization','probability');
+hcx = histcounts(log(abs(spon_out(:,2))),[binRange Inf],'Normalization','probability');
 b1=bar(binRange,[hcx;hcy]');box off;xlabel('PCI','FontSize',10);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
+xticks([-7:2:2]);xtickangle(45);
 ylim([0 0.8]);yticks([0:0.4:0.8]);set(gca,'FontSize',10);
+
+%noise
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\noise\noise_correlations.mat')
+noise_OD(2115:2115+39,:,:)=[];
+for i=1:length(noise_OD)
+    if o_all(i)==0
+        noise_all(i)=NaN;
+    elseif o_all(i)==1
+        noise_all(i)=nanmean(noise_OD(i,:,1));
+         elseif o_all(i)==2
+        noise_all(i)=nanmean(noise_OD(i,:,2));
+    else o_all(i)==3
+        if od_out(i,3)>0
+        noise_all(i)=nanmean(noise_OD(i,:,1));
+        else od_out(i,3)<0
+            noise_all(i)=nanmean(noise_OD(i,:,2));
+        end
+    end    
+end
+
+subplot(1,3,3);
+binRange = -0.02:0.02:0.16;
+hcx = histcounts(noise_all(find(~isnan(noise_all))),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,11))),11),[binRange Inf],'Normalization','probability');
+
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Noise','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];xticks([-0.02:0.04:0.16]);xtickangle(45);
+ylim([0 0.8]);yticks([0:0.4:0.8]);set(gca,'FontSize',10);
+%% 
 
 %Correlation matirx PCI, SAD, noise with input
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,5)) abs(ang_inL23(:,5)) abs(ang_exL23(:,3)-ang_exL23(:,1))...
@@ -768,13 +799,29 @@ c=colorbar;caxis([130 350]);c.Ticks=[130:110:350];
 
 %% Cell plotter, morphology, in vivo, maps
 close all;
-for i=1:147;
+for i=1;
 figure;
 iviv_plotter(str,i)
 end
-%% 
+%% Save individual morpho, in vivo, maps panels
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block1\'
 savepdf_SW(fn,2);
-%% 
-pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0003_excitation_after\map04'
+%% Example for with and without TTX
+pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0005_inhibition_before\map04'
 load_raw_map(pathName,str,68)
+%% PCA supplementary
+close all;
+map_align_PCA(str);
+%% Display correlation between all PCs Multiple comparison 
+com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2) 90-abs(ang_exL23(:,5)) 90-abs(ang_inL23(:,5)) ang_exL23(:,3)-ang_exL23(:,1)...
+   ang_inL23(:,3)-ang_inL23(:,1) pia_input scores]
+G=correlation_matrix(com,0);close(gcf);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]);imagesc(G(10:15,1:9));c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:18]);yticks([1:1:18]);
+% xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});xtickangle(45)
+% yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});ylabel('Feature');
+yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}'});xlabel('Feature');xtickangle(45);set(gca,'FontSize',12)
+xticklabels({'L2/3fr','L4fr','L2/3fr','L4fr','C alpha L23','C alpha L23','C X L23','C X L23','Pial depth'});ylabel('Feature');ytickangle(45);set(gca,'FontSize',12)
+c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
