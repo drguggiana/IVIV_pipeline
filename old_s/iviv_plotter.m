@@ -93,6 +93,7 @@ ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZe
 ax.RTickLabel = []; 
 ax.ThetaTickLabel = [];  
 hold on;title(['n.c.'],'FontWeight','normal');
+axis off;
 end
 
 

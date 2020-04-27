@@ -7,7 +7,7 @@ cd(fn);
   print(figHandles(i),'-dpdf',num2str(figHandles(i).Number));
  
  end
- elseif form==1
+ elseif form==2
     for i=1:numel(figHandles)
  savefig(figHandles(i),num2str(figHandles(i).Number));
  

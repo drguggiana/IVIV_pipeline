@@ -88,6 +88,7 @@ for plots = 1:plot_number
                 'BOBmax','BLB','PLB','WHB','XSB','YSB','NB','pialD',...
                 'cellID','Cluster'};
         case 'span'
+            data_in = data_in*69;
             title_list = {'ex_spanhL23','ex_spanhL4','ex_spanhL5',...
                 'in_spanhL23','in_spanhL4','in_spanhL5'};
         otherwise

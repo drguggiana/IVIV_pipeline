@@ -260,7 +260,9 @@ var_exp(explained_com,[],[]);
 %% Display coefficent of PCs ALIGNED in and ex
 coeff_display(coeff_ex,coeff_in,bin_num,hbin_num);
 %% Display coefficent of PCs ALIGNED combined
-coeff_display(coeff_com(1:352,:),[],bin_num,hbin_num);
+coeff_display(coeff_com(1:352,:),coeff_com(353:end,:),bin_num,hbin_num);
+%% 
+
 com=[score_ex(:,1:3) score_in(:,1:3) score_com(:,1:3)]; 
 G=correlation_matrix(com,0);
 
@@ -271,4 +273,21 @@ xticks([1:1:9]);yticks([1:1:9]);
 xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}'});xtickangle(45);
 yticklabels({'PC1_{com}','PC2_{com}','PC3_{com}'});
 c=colorbar;c.Label.String = 'R';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12)
+
+%% Plot scores value
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 800, 600])
+subplot(2,1,1)
+[hN hP]=barExtended_SW(gca,score_ex(:,1:3));
+ hN(1).FaceColor=[0.3 0.3 0.3];hN(2).FaceColor=[1 1 1];hN(3).FaceColor=[0.6 0.6 0.6];
+  hP(1).FaceColor=[0.3 0.3 0.3];hP(2).FaceColor=[1 1 1];hP(3).FaceColor=[0.6 0.6 0.6];
+ xlabel('Cells');box off;ylabel('PC score');xlim([0 148]);xticks([1:9:147])
+ title('EX','Color','r');legend('PC1','PC2','PC3')
+ subplot(2,1,2)
+[hN hP]=barExtended_SW(gca,score_in(:,1:3));
+ hN(1).FaceColor=[0.3 0.3 0.3];hN(2).FaceColor=[1 1 1];hN(3).FaceColor=[0.6 0.6 0.6];
+  hP(1).FaceColor=[0.3 0.3 0.3];hP(2).FaceColor=[1 1 1];hP(3).FaceColor=[0.6 0.6 0.6];
+ xlabel('Cells');box off;ylabel('PC score');xlim([0 148]);xticks([1:9:147])
+ title('IN','Color','b');
+
+
 end
