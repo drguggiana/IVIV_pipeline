@@ -13,7 +13,7 @@ oris=[0:45:315];
 % set(gcf,'color','w');
 %H=subplot(1,4,1);
 
-axes(ha(1));
+axes(ha(4));
    if ~isnan(str(i).morph(1))==1
        
        m=plot_tree(str(i).morphtraces{1,1},[1 0 0],[0 str(i).morphtraces{1,5} 0],[],1,'-b');hold on;
@@ -28,7 +28,7 @@ axes(ha(1));
  ylim([0 500]);
  axis off;
  set(gcf,'color','w');
- hold on;text(-240,-115,['#' num2str(i)]);
+ hold on;text(-40,-115,['#' num2str(i)]);
        
 else
     m=plot(str(i).pialD,'Marker','^','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',4);
@@ -37,7 +37,7 @@ else
  ylim([0 500]);
  axis off;
  set(gcf,'color','w');
- hold on;text(-240,-115,['#' num2str(i)]);
+ hold on;text(-40,-115,['#' num2str(i)]);
    end
 
 
@@ -45,7 +45,7 @@ else
   
     
 %-----------Polarplot_ipsi_contra
-axes(ha(2));
+axes(ha(1));
 if str(i).iviv==1
 if str(i).resp==1
 %set(H2, 'Position', [0.2, 0.4, 0.1, 0.3]);
@@ -92,7 +92,8 @@ polarplot(deg2rad(oris([1:end 1])),str(i).TuningCurve([9:end 9])/max(str(i).Tuni
 ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
 ax.RTickLabel = []; 
 ax.ThetaTickLabel = [];  
-hold on;title(['n.c.'],'FontWeight','normal');
+%hold on;title(['n.c.'],'FontWeight','normal');
+%hold on;text(-0.5,1.2,['#' num2str(i)]);
 axis off;
 end
 
@@ -100,7 +101,7 @@ end
 
 
  hold on; 
- axes(ha(3));
+ axes(ha(2));
 sf=1
     %plot the excitatory map
     %get the map
@@ -123,7 +124,7 @@ sf=1
 %----------------------------Input map Inhibition------------------------
 %subplot(1,7,6);
  hold on;  
- axes(ha(4));
+ axes(ha(3));
 sf=1
     %plot the excitatory map
     %get the map
@@ -133,7 +134,7 @@ sf=1
         %define the plot type (2 for excitatory)
         plot_type = 3;
         %get the pial distance
-        soma_info = [str(i).subpixel_soma(1) str(i).pialD];
+        soma_info = [str(i).subpixel_soma(1) str(i).subpixel_soma(2)];
         %plot the map
       %H6=subplot(1,4,4);
       %set(H6, 'Position', [0.75, 0.4, 0.2, 0.4]);

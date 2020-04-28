@@ -237,7 +237,17 @@ xlabel('Orientation (deg)');set(gca,'FontSize',10);xlim([0 180]);xticks([0:45:18
 a=find(od_out_iviv(:,1)>0.25);
 corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'','',''});ylabel('L4fr','Color','r');
 xlabel('Orientation (deg)');set(gca,'FontSize',10);xlim([0 180]);xticks([0:45:180]);
-%% 
+%% Alternative polarplot
+a=find(od_out_iviv(:,1)>0.25);
+rho=90-abs(ang_inL23(a,5))
+theta=od_out_iviv(a,4);%or theta=linspace(0,180,numel(rho));
+figure;set(gcf,'color','w')
+polarscatter(deg2rad(theta),rho,'filled')
+ax = gca;ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+ax.ThetaLim = [0 180];
+% ax.RTickLabel = []; 
+ ax.ThetaTick = [0:45:180]; 
+      %% 
 %cell 126
 id_m=126;
 load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp14783\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
@@ -775,7 +785,7 @@ plot_morphologies(str,id_m,1,1,1);
 
 df=[morph_parameters(:,9) morph_parameters(:,10)];
 db=[morph_parameters(:,19) morph_parameters(:,20)];
-com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2)  max(span(:,1:3),[],2) max(span(:,4:6),[],2) pia_input morph_sel]
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2)  span(:,1) span(:,4) pia_input morph_sel]
 G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
 close(gcf);
 fG=[G(8:end,1:7)];
@@ -784,7 +794,7 @@ imagesc(fG);c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);c.Ticks=[-1:0.5:1];
 xticks([1:1:16]);yticks([1:1:25]);
-xticklabels({'L2/3_{ex}','L2/3_{in}','L4_{ex}','L4_{in}','Span EX','Span IN','Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+xticklabels({'L2/3fr','L2/3fr','L4fr','L4fr','Span L2/3','Span L2/3','Pial depth'});xtickangle(45);set(gca,'FontSize',10)
 yticklabels({'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width/Height',...
      'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width/Height'});set(gca,'FontSize',10)
 %% Plot 2 significant correlations
@@ -794,10 +804,13 @@ corr_plot(morph_sel(a,9),max(span(a,4:6)*69,[],2),[],{'','',''});ylabel('Max Spa
 corr_plot(morph_sel(a,5),pia_input(a),L4fr(a,1),{'','','EX L4fr'});ylabel('Pial depth (µm)');
 xlabel('Width/Height');ylim([130 350]);yticks([130:100:350])
 c=colorbar;caxis([0 0.8]);c.Ticks=[0:0.2:0.8];set(gca,'Ydir','reverse');
+%% 
+a=find(~isnan(morph_sel(:,5)))
+corr_plot(morph_sel(a,10),max(span(a,1)*69,[],2),[],{'','','EX L4fr'});
 
 %% Cell plotter, morphology, in vivo, maps
 close all;
-for i=1;
+for i=1:147;
 figure;
 iviv_plotter(str,i)
 end
@@ -810,6 +823,18 @@ load_raw_map(pathName,str,68)
 %% PCA supplementary
 close all;
 map_align_PCA(str);
+%% PC score display sorted
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]);
+subplot(1,2,1)
+[so soi]=sort(scores(:,1),'descend');
+imagesc(scores(soi,1:3));c=colorbar;caxis([-2 2]);c.Ticks=[-2:1:2];
+xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}'});xtickangle(45);ylabel('Cells');ylim([1 147]);
+yticks([1:24:147]);set(gca,'FontSize',10);
+subplot(1,2,2)
+[so soi]=sort(scores(:,4),'descend');
+imagesc(scores(soi,4:6));c=colorbar;caxis([-2 2]);c.Ticks=[-2:1:2];
+xticklabels({'PC1_{in}','PC2_{in}','PC3_{in}'});xtickangle(45);ylim([1 147]);
+yticks([1:24:147]);set(gca,'FontSize',10);
 %% Display correlation between all PCs Multiple comparison 
 com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2) 90-abs(ang_exL23(:,5)) 90-abs(ang_inL23(:,5)) ang_exL23(:,3)-ang_exL23(:,1)...
    ang_inL23(:,3)-ang_inL23(:,1) pia_input scores]
@@ -833,8 +858,7 @@ load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figur
 plot_list = {'frac_vert','ang_inL23','ang_exL23','span','ang_inL4','ang_exL4','PCs'};
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 %in vivo values non cyclic 
-% plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref'};
-% plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+
 % %cyclic values
 % plot_list ={'ORIpref','DIRpref'}
 % plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'phasemap');
@@ -860,15 +884,20 @@ figure(21);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];
 figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];
 figure(23);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];
 figure(24);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];
-% figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];
-% figure(3);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
-% figure(5);c=colorbar;caxis([0 110]);c.Ticks=[0:55:110];
-% figure(6);c=colorbar;caxis([0 90]);c.Ticks=[0:45:90];
-% figure(7);c=colorbar;caxis([120 350]);c.Ticks=[0:45:90];
-% figure(8);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];
+%% In vivo parameters
+close all;
+ plot_list = {'OSIpref','DSIpref','ODIpref','ORIpref','DIRpref','Sigmapref','Capeakpref','sad','pci','noise'};
+ plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+autoArrangeFigures;
+
+figure(6);c=colorbar;caxis([2 4.3]);c.Ticks=[2:1:4.3];
+figure(7);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];
+ figure(8);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];
+ figure(9);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];
+figure(10);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];
 %% Save
 
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\Final_panels\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\Final_panels\in vivo\'
 savepdf_SW(fn,1);
 %% Supplementary for Figure 5
 close all;
@@ -993,6 +1022,15 @@ ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);xtickangle(45)
 a=find(od_out_iviv(:,1)>0.25); 
 corr_plot(90-abs(ang_inL23(a,5)),L4fr(a,1),[],{'','',''});xlabel('L23 CoM\alpha (deg)','Color','b');
 ylabel('L4fr','Color','r');set(gca,'FontSize',10);
+%% 
+a=find(od_out_iviv(:,1)>0.25);  
+par=morph_sel(:,10);
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);xtickangle(45)
+
 %% 
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp_rolling\Final_panels\'
 savepdf_SW(fn,1);
