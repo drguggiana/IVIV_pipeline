@@ -1,4 +1,4 @@
-function PIPE_Trace_interpolate(folder_all,ori_setup,aux_file_path,out_path)
+function IMAPS_Trace_interpolate(folder_all,ori_setup,aux_file_path,out_path)
 
 %get the number of maps to do
 map_num = size(folder_all,1);
@@ -371,5 +371,3 @@ save_name = strcat(datestr(now,'yymmdd_HHMM'),'_rawClass',ori_setup,'.mat');
 save(fullfile(out_path,save_name),'folder_all','prctile_map',...
     'trace_background','trace_range','uni_cells',...
     'trace2folder','background_std','trace_direct','trace_pseudodirect','soma_unique','interp_cell')
-%terminate execution
-return
