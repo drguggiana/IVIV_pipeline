@@ -895,6 +895,10 @@ figure(7);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];
  figure(8);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];
  figure(9);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];
 figure(10);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];
+%% 
+close all
+plot_list = {'frac_vert','ang_inL23','ang_exL23','span','ang_inL4','ang_exL4','PCs'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 %% Save
 
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\Final_panels\in vivo\'
@@ -1059,3 +1063,59 @@ a=find(~isnan(ang_inL5(:,5)));
 corr_plot(90-abs((ang_inL5(a,5))),pia_input(a),[],{'','',''});
 ylabel('Pial depth (µm)','Color','k');xlabel('IN C_{\alpha} L5 (deg)','Color','b');set(gca,'FontSize',10);set(gca,'Ydir','reverse');
 %ylim([100 400]);yticks([100:150:400]);xlim([-5 100]);%xticks([-5:50:100])
+
+%% Try outs 
+
+ data_in=ang_inL23;
+for m=1:length(data_in)
+              if data_in(m,10)==1 
+                  temp(:,m)=(90-abs(data_in(m,5)))-180
+              elseif data_in(m,10)==2 
+                  temp(:,m)=abs((90-abs(data_in(m,5)))-180);
+                   elseif data_in(m,10)==3 
+                       temp(:,m)=(90-abs(data_in(m,5)))*-1
+                        elseif data_in(m,10)==4 
+                            temp(:,m)=(90-abs(data_in(m,5)))
+              end
+end
+   
+angle_h=temp';
+%% 
+
+close all
+plot_list = {'frac_vert','ang_inL23','ang_exL23','span','ang_inL4','ang_exL4','PCs'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+autoArrangeFigures;
+
+
+%% 
+rolling_avg_display(str,abs(angle_h),1)
+%% 
+
+rolling_avg_display(str,angle_h,2)
+%% 
+rolling_avg_display(str,90-abs(ang_inL23(:,5)),2)
+%% 
+
+rolling_avg_display(str,(ang_inL23(:,3)-ang_inL23(:,1))*69,2)
+%% 
+a=find(od_out_iviv(:,1)>0.25);  
+par=abs(angle_h(a));
+g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<70) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
+%% 
+a=find(od_out_iviv(:,2)>0.25 & od_out_iviv(:,1)>0.25);  
+par=(ang_inL23(a,3)-ang_inL23(a,1))*69
+g1=find(od_out_iviv(a,5)>65 & od_out_iviv(a,5)<130) ;
+g2=find(od_out_iviv(a,5)>275 & od_out_iviv(a,5)<340);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+%xticklabels({'20-70°','100-150°'});
+
+a=find(od_out_iviv(:,2)>0.25 & od_out_iviv(:,1)>0.25);  
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69
+g1=find(od_out_iviv(a,5)>65 & od_out_iviv(a,5)<130) ;
+g2=find(od_out_iviv(a,5)>275 & od_out_iviv(a,5)<340);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+%xticklabels({'20-70°','100-150°'});
