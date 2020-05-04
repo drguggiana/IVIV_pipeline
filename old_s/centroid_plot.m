@@ -82,7 +82,7 @@ ang2=out_ang_inL5
 hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,pointsize,fe,'filled','d');xlim([-4*69 4*69]);ylim([-4*69 8*69]);grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
-hold on;title('IN','Color','b','FontWeight','normal');c=colorbar;c.Label.String=label_name{1};c.Limits=[0 180];c.Ticks=[0:45:180];  
+hold on;title('IN','Color','b','FontWeight','normal');c=colorbar;c.Label.String=label_name{1};%c.Limits=[0 180];c.Ticks=[0:45:180];  
 yticks([-200:200:600]);
 ylabel('CoMy (µm)');xlabel('CoMx (µm)')
 elseif gr==2
