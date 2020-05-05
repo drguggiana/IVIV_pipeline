@@ -54,15 +54,15 @@ hold on;plot(nanmean((ex_spanhL5-in_spanhL5)*xf),50,'v','MarkerFaceColor',[0.5 0
 %Statistics
 temp=[diffL23fr diffL4fr diffL5fr ex_spanhL23-in_spanhL23 ex_spanhL4-in_spanhL4 ex_spanhL5-in_spanhL5];
 for i=1:6
-[r(i) k(i)]=ttest(temp(:,i));
+[r(i) k(i)]=signrank(temp(:,i));
 end
 
-[p1,tbl,stats1] = anova1(temp(:,1:3),[],'off');
+[p1,tbl,stats1] = kruskalwallis(temp(:,1:3),[],'off');
 multicom = multcompare(stats1,'CType','bonferroni','Display','off');
-[p1,tbl,stats2] = anova1(temp(:,4:6),[],'off');
+[p1,tbl,stats2] =  kruskalwallis(temp(:,4:6),[],'off');
 multicom2 = multcompare(stats2,'CType','bonferroni','Display','off');
 
-statsout.ttests=k;
+statsout.ttests=r;
 statsout.vert=multicom(:,6)';
 statsout.span=multicom2(:,6)';
 end
