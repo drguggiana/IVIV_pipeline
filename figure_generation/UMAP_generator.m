@@ -29,20 +29,22 @@ frac4ex = cat(1,str.frac_vert);
 frac4ex = sum(frac4ex(:,6:7),2);
 
 % get the inhibitory L23 angle
-out_ang_inL23 = cat(1,str.ang_exL23);
-alph23in=90-abs(out_ang_inL23(:,5));
+out_ang_inL23 = cat(1,str.ang_inL23);
 % get the inhibitory L23 x centroid
 centroidX23in=abs(out_ang_inL23(:,3)-out_ang_inL23(:,1));
+centroidY23in=abs(out_ang_inL23(:,4)-out_ang_inL23(:,2));
 
 % assemble the feature vector
-cell_cell = cat(2,pialD,frac4ex,alph23in,...
-    centroidX23in);
+cell_cell = cat(2,pialD,frac4ex,centroidY23in,centroidX23in);
 
 % cell_cell = cat(2,pcs(:,2),ang);
 cell_cell = normr_2(cell_cell,2);
-%% Run UMAP on the data
+%% Run UMAP on the data (or load the embedding)
 
 % run the embedding from scratch
+% load the embedding
+% reduced_data = load(umap_path);
+% reduced_data = reduced_data.reduced_data;
 [reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
 
 % % load the umap file from path
@@ -57,14 +59,14 @@ close all
 % respectively (vector)
 % plot_list = {'hemisphere','sliceOri','pialD','Cluster_id','somaCenter','cellID'};
 
-plot_list = {'pialD','frac_vert','span'};
+% plot_list = {'morph'};
 
 % plot_list = {'OSIpref','DSIpref','ODIpref','Capeakpref','ORIpref','DIRpref','noise','PCs',...
-%     'ang_exL23','ang_inL23','pialD','pci',...
+%     'ang_exL4','ang_inL4','pialD','pci',...
 %     'frac_vert','corr_exc_apical','corr_exc_basal','corr_inh_apical','corr_inh_basal'};
-% plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref','ORIpref','DIRpref','noise','PCs',...
-%    'ang_exL23','ang_inL23','pialD','pci',...
-%    'frac_vert'};
+plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref','ORIpref','DIRpref','noise','PCs',...
+   'ang_exL23','ang_inL23','pialD','pci',...
+   'frac_vert'};
 
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula')
 

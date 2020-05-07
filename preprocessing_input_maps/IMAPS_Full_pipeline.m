@@ -81,7 +81,7 @@ end
 %% Run the interpolation software
 %for both setups
 for setups = 1:2
-    PIPE_Trace_interpolate(path_info{setups,1},path_info{setups,2},preprocessing_path,trace_interp_path)
+    IMAPS_Trace_interpolate(path_info{setups,1},path_info{setups,2},preprocessing_path,trace_interp_path)
 end
 %% Run the mapmaker software
 
@@ -89,8 +89,8 @@ end
 file_tags = {{'_rawClassSetup1'},{'_rawClassSetup2'}};
 %for both setups
 for setups = 1:2
-    PIPE_Trace_mapmaker_Class(file_tags{setups},trace_interp_path,mapmaker_path)
+    IMAPS_Trace_mapmaker_Class(file_tags{setups},trace_interp_path,mapmaker_path)
 end
 %% Run the structure creator software
 
-PIPE_Map_structureCreator(mapmaker_path,preprocessing_path,layers_path,structure_path)
+IMAPS_Map_structureCreator(mapmaker_path,preprocessing_path,layers_path,structure_path)
