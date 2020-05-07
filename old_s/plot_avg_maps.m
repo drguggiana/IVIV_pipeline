@@ -1,5 +1,5 @@
 %% Plot average maps for all cells
-function plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,sf,clu,idx_input);
+function plot_avg_maps(str,nan_vector,ex_map,in_map,pia_input,sf,clu,idx_input,ang1);
 if clu==0
 F = figure;
 set(gcf,'color','w');
@@ -83,11 +83,14 @@ for clu = 1:clu_num
         inplot_type = 3;
         subplot(3,4,clu+4);
         map_plot3(inhc_map,'',inplot_type,F,sf,1,1);
+%         hold on;
+%         scatter(ang1(find(idx_input==clu),3)*69-ang1(find(idx_input==clu),1)*69,ang1(find(idx_input==clu),4)*69-ang1(find(idx_input==clu),2)*69,'k*')
   
    bplot_type = 1;
    subplot(3,4,clu+8);
    map_plot3(ove_map,'',bplot_type,F,sf,1,1);
     p_i=[];
+    
     
 end  
 end

@@ -56,12 +56,15 @@ if str(i).resp==1
     if str(i).contra==1
         polarplot(deg2rad(oris([1:end 1])),str(i).TCpref([1:8 1])/max(str(i).TCpref),'Color',[0 0.4 0.6]);hold on;
         ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+         ax.ThetaTick = [0:45:360]; 
         ax.RTickLabel = []; 
         ax.ThetaTickLabel = [];
+        
  hold on;title([num2str(round(str(i).OSIpref,2)) ' / ' num2str(round(str(i).DSIpref,2))],'Color',[0 0.4 0.6],'FontWeight','normal');
     elseif str(i).ipsi==1
             polarplot(deg2rad(oris([1:end 1])),str(i).TCpref([1:8 1])/max(str(i).TCpref),'Color',[0.7 0 0]);hold on;
         ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+       ax.ThetaTick = [0:45:360]; 
         ax.RTickLabel = []; 
         ax.ThetaTickLabel = [];
         hold on;title([num2str(round(str(i).OSIpref,2)) ' / ' num2str(round(str(i).DSIpref,2))],'Color',[0.7 0 0],'FontWeight','normal');
@@ -71,6 +74,7 @@ if str(i).resp==1
           polarplot(deg2rad(oris([1:end 1])),str(i).TuningCurve([1:8 1])/max(str(i).TuningCurve),'Color',[0 0.4 0.6]);hold on;
 polarplot(deg2rad(oris([1:end 1])),str(i).TuningCurve([9:end 9])/max(str(i).TuningCurve),'Color',[0.7 0 0]);
 ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+ax.ThetaTick = [0:45:360]; 
 ax.RTickLabel = []; 
 ax.ThetaTickLabel = []; 
          hold on;title([num2str(round(str(i).OSIpref,2)) ' / ' num2str(round(str(i).DSIpref,2))],'Color',[0.5 0.5 0.5],'FontWeight','normal');
@@ -81,6 +85,7 @@ else
       polarplot(deg2rad(oris([1:end 1])),ones(1,9)*NaN);hold on;
 polarplot(deg2rad(oris([1:end 1])),ones(1,9)*NaN);
 ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+ax.ThetaTick = [0:45:360]; 
 ax.RTickLabel = []; 
 ax.ThetaTickLabel = [];  
   hold on;title(['nvr'],'FontWeight','normal'); 
@@ -90,6 +95,7 @@ else
   polarplot(deg2rad(oris([1:end 1])),str(i).TuningCurve([1:8 1])/max(str(i).TuningCurve));hold on;
 polarplot(deg2rad(oris([1:end 1])),str(i).TuningCurve([9:end 9])/max(str(i).TuningCurve));
 ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+ax.ThetaTick = [0:45:360]; 
 ax.RTickLabel = []; 
 ax.ThetaTickLabel = [];  
 %hold on;title(['n.c.'],'FontWeight','normal');
