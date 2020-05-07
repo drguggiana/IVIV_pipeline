@@ -483,10 +483,10 @@ set(gca,'XLim',[0 clu_num+1],'YDir','reverse')
 %% Update the centroid angles
 
 % get the pial depth
-pialD = cat(1,str.pialD);
+% pialD = cat(1,str.pialD);
 % get the soma x position
-somax = cat(1,str.subpixel_soma);
-somax = somax(:,1);
+soma_coord = cat(1,str.subpixel_soma);
+% somax = somax(:,1);
 % define the index
 idx_centroid = 1:cell_num;
 
@@ -523,7 +523,7 @@ for exin = 1:2
         end
         % get the layer
         map_layers = maps(layers,:,:);
-        out_ang = centroid_map(map_layers,somax,pialD,idx_centroid,row_shift);
+        out_ang = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),idx_centroid,row_shift);
 
         % for all the cells
         for cells = 1:cell_num
