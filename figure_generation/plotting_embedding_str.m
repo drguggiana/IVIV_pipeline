@@ -58,35 +58,10 @@ for plots = 1:plot_number
             title_list = {'Capeakpref'};   
         case 'PCs'
             title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
-        case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4'}
-            %data_in = cat(2,abs(data_in(:,3)-data_in(:,1))*69,90-abs(data_in(:,5)));
-%             idx1=find(data_in(:,10)==1 | data_in(:,10)==3);
-%              idx2=find(data_in(:,10)==2 | data_in(:,10)==4);
-%              temp1=(90-abs(data_in(idx1,5)))*-1;
-%              temp2=(90-abs(data_in(idx2,5)));
-%           for m=1:length(data_in)
-%               if data_in(m,10)==1 | data_in(m,10)==3
-%                   temp(:,m)=(90-abs(data_in(m,5)))*-1;
-%               else data_in(m,10)==2 | data_in(m,10)==4;
-%                   temp(:,m)=(90-abs(data_in(m,5)));
-%               end
-%           end
-%          data_in = cat(2,abs(data_in(:,3)-data_in(:,1))*69,temp');
-           %data_in = cat(2,data_in(:,3)*69-data_in(:,1)*69,90-data_in(:,5));
-           
-           for m=1:length(data_in)
-              if data_in(m,10)==1 
-                  temp(:,m)=(90-abs(data_in(m,5)))-180
-              elseif data_in(m,10)==2 
-                  temp(:,m)=abs((90-abs(data_in(m,5)))-180);
-                   elseif data_in(m,10)==3 
-                       temp(:,m)=(90-abs(data_in(m,5)))*-1
-                        elseif data_in(m,10)==4 
-                            temp(:,m)=(90-abs(data_in(m,5)))
-              end
-           end
- data_in = cat(2,abs(data_in(:,3)-data_in(:,1))*69,temp');
-            title_list = {'centroidX_','alpha_'};
+        case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4','ang_exL5','ang_inL5'}
+%             data_in = cat(2,abs(data_in(:,3)-data_in(:,1)),90-abs(data_in(:,5)));
+            data_in = cat(2,abs(data_in(:,3)-data_in(:,1)),abs(data_in(:,4)-data_in(:,2)));
+            title_list = {'centroidX_','centroidY_'};
             title_list = cellfun(@strcat,title_list,...
                 num2cell(repmat(plot_list(plots),1,size(title_list,2))),...
                 'UniformOutput',false);
@@ -108,16 +83,12 @@ for plots = 1:plot_number
         case 'pci'
             data_in = log(abs(data_in));
             title_list = plot_list(plots);
-             case 'sad'
-            data_in = data_in;
-            title_list = plot_list(plots);
         case 'morph'
             title_list = {'RDAmax','LAtotal','PLAmax','BPA','BOAmax','BLA',...
                 'PLA','WHA','XSA','YSA','RDBmax','LBtotal','PLBmax','BPB',...
                 'BOBmax','BLB','PLB','WHB','XSB','YSB','NB','pialD',...
                 'cellID','Cluster'};
         case 'span'
-            data_in = data_in*69;
             title_list = {'ex_spanhL23','ex_spanhL4','ex_spanhL5',...
                 'in_spanhL23','in_spanhL4','in_spanhL5'};
         otherwise
@@ -149,7 +120,7 @@ for plots = 1:plot_number
         nan_data = reduced_data(isnan(data),:);
         value_data = reduced_data(~isnan(data),:);
 
-        figure;
+        figure
         set(gcf,'color','w');
 
         scatter(nan_data(:,1),nan_data(:,2),30,[0.8, 0.8 0.8])
@@ -158,14 +129,12 @@ for plots = 1:plot_number
         colormap(cmap)
 
         hold on;
-        title(title_list{count}, 'interpreter', 'none','FontWeight','normal');
+        title(title_list{count}, 'interpreter', 'none')
         axis square;
         xlabel('dm1');
         ylabel('dm2');
         hold on;
-%         c=colorbar;caxis([min(data(~isnan(data))) max(data(~isnan(data)))]);
-%         c.Ticks=[min(data(~isnan(data))):max(data(~isnan(data)))]
-          ylim([2 12]);yticks([2:2:12]);
-         xlim([-5 2.5]);xticks([-5:2.5:5]);
+%          ylim([-4 6]);yticks([-6:2:6]);
+%         xlim([-4 4]);xticks([-6:2:4]);
     end
 end
