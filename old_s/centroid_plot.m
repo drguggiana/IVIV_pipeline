@@ -6,17 +6,17 @@ if gr==0
 ang2=out_ang_exL23;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 600, 250]);
 subplot(1,2,1);
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,(ang2(a,4))*-69-(ang2(a,2))*-69,'m.','MarkerSize',8);
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,(ang2(a,4))*-69-(ang2(a,2))*-69,'m.','MarkerSize',8);
 xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
 hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
 grid on;%h4.MarkerFaceAlpha=0.5
 set(gca,'FontSize',10);
 ang2=out_ang_exL4
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
 set(gca,'FontSize',12);
 hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
 ang2=out_ang_exL5
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,'.','Color',[0.5 0.5 0.5],'MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor=[0.5 0.5 0.5];h4.MarkerSize=5;grid on;
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'.','Color',[0.5 0.5 0.5],'MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor=[0.5 0.5 0.5];h4.MarkerSize=5;grid on;
 hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','-');hold on;
 line([-8*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
 hold on;title('EX','Color','r','FontWeight','normal');ylabel('C_{y} (µm)');xlabel('C_{x} (µm)');hold on;%text(-250,350,'L5');%legend('L5');legend boxoff
@@ -25,17 +25,17 @@ box off;
 
 ang2=out_ang_inL23;
 subplot(1,2,2);
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,(ang2(a,4))*-69-(ang2(a,2))*-69,'m.','MarkerSize',8);
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,(ang2(a,4))*-69-(ang2(a,2))*-69,'m.','MarkerSize',8);
 xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
 hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
 grid on;%h4.MarkerFaceAlpha=0.5
 set(gca,'FontSize',10);
 ang2=out_ang_inL4
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
 set(gca,'FontSize',12);
 hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
 ang2=out_ang_inL5
-h4 = plot(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,'.','Color',[0.5 0.5 0.5],'MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor=[0.5 0.5 0.5];h4.MarkerSize=5;grid on;
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'.','Color',[0.5 0.5 0.5],'MarkerSize',8);xlim([-4*69 4*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor=[0.5 0.5 0.5];h4.MarkerSize=5;grid on;
 hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','-');hold on;
 line([-8*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
 hold on;title('IN','Color','b','FontWeight','normal');xlabel('C_{x} (µm)');hold on;%text(-250,350,'L5');%legend('L5');legend boxoff
@@ -52,23 +52,24 @@ grid on;
 set(gca,'FontSize',10);
 
 elseif gr==1
-    %inferno_wrap = vertcat(inferno,flipud(inferno));
+    inferno_wrap = vertcat(inferno,flipud(inferno));
 [cmap]=phasemap;
+%[cmap]=parula
 ang2=out_ang_exL23;    
 pointsize=10;
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);
 subplot(1,2,1);
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
 
 colormap(cmap);%text(-250,50,'L2/3');
 ang2=out_ang_exL4;
 yticks([-400:200:600])
 hold on;
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','v');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;%text(-250,150,'L4');
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','v');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;%text(-250,150,'L4');
 colormap(cmap);
 ang2=out_ang_exL5
 hold on;
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','d');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','d');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
 ;hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','-');hold on;line([-8*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
 hold on;;title('EX','Color','r','FontWeight','normal');
 c=colorbar;c.Label.String=label_name{1};
@@ -77,20 +78,20 @@ ylabel('C_{y} (µm)');xlabel('C_{x} (µm)');
 ang2=out_ang_inL23;
 subplot(1,2,2); 
 pointsize=10;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);
-subplot(1,2,1);
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
+
+subplot(1,2,2);
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
 
 colormap(cmap);%text(-250,50,'L2/3');
 ang2=out_ang_inL4;
 yticks([-400:200:600])
 hold on;
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','v');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;%text(-250,150,'L4');
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','v');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;%text(-250,150,'L4');
 colormap(cmap);
 ang2=out_ang_inL5
 hold on;
-h4 = scatter(ang2(a,3)*-69-ang2(a,1)*-69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','d');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
-;hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','-');hold on;line([-8*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');
+h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','d');xlim([-4*69 4*69]);ylim([-8*69 4*69]);grid on;
+;hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','-');hold on;line([-8*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',4);
 hold on;;title('IN','Color','b','FontWeight','normal');
 c=colorbar;c.Label.String=label_name{1};box off;
 xlabel('C_{x} (µm)');
