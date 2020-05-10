@@ -60,7 +60,7 @@ for plots = 1:plot_number
             title_list = {'PC1_exc','PC2_exc','PC3_exc','PC1_inh','PC2_inh','PC3_inh',};
         case {'ang_exL23','ang_exL4','ang_inL23','ang_inL4','ang_exL5','ang_inL5'}
 %             data_in = cat(2,abs(data_in(:,3)-data_in(:,1)),90-abs(data_in(:,5)));
-            data_in = cat(2,abs(data_in(:,3)-data_in(:,1)),abs(data_in(:,4)-data_in(:,2)));
+            data_in = cat(2,abs(data_in(:,3)-data_in(:,1))*69,abs(data_in(:,4)-data_in(:,2))*69);
             title_list = {'centroidX_','centroidY_'};
             title_list = cellfun(@strcat,title_list,...
                 num2cell(repmat(plot_list(plots),1,size(title_list,2))),...

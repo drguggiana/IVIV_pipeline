@@ -47,11 +47,11 @@ for i=1:length(nan_vector(incl_idx:end))
 end
 %L5
 for i=1:length(nan_vector(incl_idx:end))
-    tmp1=ex_map(8:10,:,i);
+    tmp1=ex_map(8:11,:,i);
     for k=1:16
         tL23e(k)=sum(tmp1(:,k))/sum(tmp1(:));
     end
-    tmp2=in_map(8:10,:,i);
+    tmp2=in_map(8:11,:,i);
     for k=1:16
         tL23i(k)=sum(tmp2(:,k))/sum(tmp2(:));
     end
