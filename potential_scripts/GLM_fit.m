@@ -68,7 +68,7 @@ bar(combination_rmse)
 ylabel('RMSE')
 set(gca,'XTick',1:num_comb,'XTickLabels',...
     label_cell,'XTickLabelRotation',45,'TickLabelInterpreter','None')
-%% Run the regression
+%% Run the regression with shuffles
 
 % get the selection vector (based on the OS cells)
 selection_vector = vertcat(str.OSIpref)>0.25;
@@ -100,83 +100,5 @@ set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
 figure
 bar(vertcat(coeff',shuffle_result(2:end,:)'))
 ylabel('Coeff weight')
-set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
+set(gca,'XTick',1:length(targets),'XTickLabels',...
     horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
-%% OFF 
-% % allocate memory for the actual data
-% target_data = zeros(sum(selection_vector),length(targets));
-% % for all the targets
-% for target = 1:length(targets)
-%     if contains(targets{target},'ang_')
-%         
-%         % parse the argument
-%         field_name = targets{target}(1:end-3);
-%         column_name = targets{target}(end-1:end);
-%         % load the field
-%         temp_var = vertcat(str(selection_vector).(field_name));
-%         switch column_name
-%             case 'Cx'
-%                 target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1));
-%             case 'Cy'
-%                 target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2));
-%             case 'Vt'
-%                 target_data(:,target) = temp_var(:,8);
-%             case 'Al'
-%                 target_data(:,target) = temp_var(:,5);
-%         end
-%     elseif contains(targets{target},'frac_vert')
-%         % parse the argument
-%         field_name = targets{target}(1:9);
-%         column_name = targets{target}(11:end);
-%         
-%         temp_var = vertcat(str(selection_vector).frac_vert);
-%         switch column_name
-%             case 'exL23'
-%                 target_data(:,target) = sum(temp_var(:,3:5),2);
-%             case 'exL4'
-%                 target_data(:,target) = sum(temp_var(:,6:7),2);
-%             case 'inL23'
-%                 target_data(:,target) = sum(temp_var(:,19:21),2);
-%             case 'inL4'
-%                 target_data(:,target) = sum(temp_var(:,22:23),2);
-%         end
-%     elseif contains(targets{target},'custom')
-%             temp_var = vertcat(str(selection_vector).ang_inL23);
-%             x = abs(temp_var(:,3)-temp_var(:,1));
-%             y = abs(temp_var(:,4)-temp_var(:,2));
-%             target_data = sqrt(x.^2 + y.^2);
-%     else
-%             target_data(:,target) = vertcat(str(selection_vector).(targets{target}));
-%             target_data(:,target) = target_data(randperm(sum(selection_vector)),target);
-%     end
-% end
-% 
-% % center the data
-% target_data = (target_data-nanmean(target_data,1))./nanstd(target_data,0,1);
-% 
-% % load the predictor
-% Y = vertcat(str(selection_vector).(dependent));
-% Y = (Y-mean(Y))/std(Y);
-% 
-% % figure
-% % 
-% % corr(Y,target_data(:,1))
-% % hold on
-% % scatter(Y,target_data(:,2))
-% % run the regression
-% % mdl = fitrsvm(target_data,Y,'KernelFunction','gaussian');
-% % mdl = fitglm(target_data,Y,[2 0 0;0 2 0],'Intercept',false); 
-% mdl = fitglm(target_data,Y);
-%% Plot the fit results
-close all
-
-figure
-subplot(1,2,1)
-scatter(Y,mdl.Fitted.Response)
-title(mdl.Rsquared.Adjusted)
-subplot(1,2,2)
-bar(mdl.Coefficients.Estimate)
-set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
-    horzcat({'Intercept'},targets),'XTickLabelRotation',45)
-set(gca,'TickLabelInterpreter','none')
-
