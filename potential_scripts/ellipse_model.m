@@ -223,6 +223,14 @@ xlabel('Angle of alignment')
 %% Attempt with cutting the cloud
 close all
 
+% get the maps
+%     selection_vector = vertcat(str.OSIpref)>0.25;
+%     selection_vector = selection_vector & (vertcat(str.ORIpref)<(angle_span+target_angle)...
+%         & vertcat(str.ORIpref)>(angle_span-target_angle));
+selection_vector = vertcat(str.resp)==0;
+
+target_maps = cat(3,str(selection_vector).subpixel_inhMap);
+
 % define a vector of distance to try
 distance_vector = 10:10:200;
 distance_vector = horzcat(distance_vector,8*69);
@@ -230,6 +238,49 @@ distance_vector = horzcat(distance_vector,8*69);
 distance_number = length(distance_vector);
 % allocate memory to store the results
 distance_correlation = zeros(distance_number,2);
+% allocate memory to store the actual asymmetries
+distance_values = zeros(distance_number, );
+
+% define the target angle for selecting the maps
+target_angle = 125;
+% define angle_span
+angle_span = 25;
+
+
+% get the number of maps
+target_num = size(target_maps,3);
+% also the soma positions
+target_somas = cat(1,str(selection_vector).subpixel_soma);
+% also the orientations
+target_ori = vertcat(str(selection_vector).ORIpref);
+% get the original centroids
+original_centroids = vertcat(str(selection_vector).ang_inL23);
+cx = abs(original_centroids(:,3)-original_centroids(:,1));
+cy = abs(original_centroids(:,4)-original_centroids(:,2));
+% calculate the length
+original_centroids = sqrt(cx.^2 + cy.^2);
+
+% get the number of maps
+number_of_targets = size(target_maps,3);
+
+% % select a layer
+% target_maps = target_maps(3:5,:,:);
+
+% define the grid spacing in microns
+grid_spacing = 69;
+
+% get the map size in microns
+map_size = round(16.*grid_spacing);
+% get the map limits
+map_lim = map_size/2-grid_spacing/2;
+
+% create the grid
+[Y,X] = ndgrid(-map_lim:grid_spacing:map_lim,...
+    -map_lim:grid_spacing:map_lim);
+
+% define the single micron grid
+[Y_single,X_single] = ndgrid(-map_lim:map_lim,...
+    -map_lim:map_lim);
 % for all the distances
 for distance = 1:distance_number
     
@@ -238,52 +289,7 @@ for distance = 1:distance_number
     % define the distance at which to cut
     distance_threshold = distance_vector(distance);
     
-    % define the target angle for selecting the maps
-    target_angle = 125;
-    % define angle_span
-    angle_span = 25;
-    
-    % get the maps
-%     selection_vector = vertcat(str.OSIpref)>0.25;
-%     selection_vector = selection_vector & (vertcat(str.ORIpref)<(angle_span+target_angle)...
-%         & vertcat(str.ORIpref)>(angle_span-target_angle));
-    selection_vector = vertcat(str.resp)==0;
-    
-    target_maps = cat(3,str(selection_vector).subpixel_inhMap);
-    % get the number of maps
-    target_num = size(target_maps,3);
-    % also the soma positions
-    target_somas = cat(1,str(selection_vector).subpixel_soma);
-    % also the orientations
-    target_ori = vertcat(str(selection_vector).ORIpref);
-    % get the original centroids
-    original_centroids = vertcat(str(selection_vector).ang_inL23);
-    cx = abs(original_centroids(:,3)-original_centroids(:,1));
-    cy = abs(original_centroids(:,4)-original_centroids(:,2));
-    % calculate the length
-    original_centroids = sqrt(cx.^2 + cy.^2);
-    
-    % get the number of maps
-    number_of_targets = size(target_maps,3);
-    
-    % % select a layer
-    % target_maps = target_maps(3:5,:,:);
-    
-    % define the grid spacing in microns
-    grid_spacing = 69;
-    
-    % get the map size in microns
-    map_size = round(16.*grid_spacing);
-    % get the map limits
-    map_lim = map_size/2-grid_spacing/2;
-    
-    % create the grid
-    [Y,X] = ndgrid(-map_lim:grid_spacing:map_lim,...
-        -map_lim:grid_spacing:map_lim);
-    
-    % define the single micron grid
-    [Y_single,X_single] = ndgrid(-map_lim:map_lim,...
-        -map_lim:map_lim);
+
     
     % get the slice ori cloud centers for setup 2
     centroid_vector = zeros(target_num,1);
@@ -340,6 +346,7 @@ for distance = 1:distance_number
     % calculate and store the correlation and pvalue
     [distance_correlation(distance,1),distance_correlation(distance,2)] =...
         corr(centroid_vector,original_centroids);
+    
 end
 % % plot the 2
 % figure
