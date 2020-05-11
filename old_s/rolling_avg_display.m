@@ -1,4 +1,4 @@
-function rolling_avg_display(str,parameter_vector,parameter_vector2,window,or)
+function rolling_avg_display(str,parameter_vector,parameter_vector2,window,or,multi)
 %% Calculate the rolling average for orientation
 if or==1
 % define the window width (in degrees)
@@ -48,7 +48,7 @@ mean_shuffle2 = nanmean(shuffle_ori2,1);
 CI_shuffle = cat(1,abs(prctile(shuffle_ori,5,1)-mean_shuffle),prctile(shuffle_ori,95,1)-mean_shuffle);
 CI_shuffle2 = cat(1,abs(prctile(shuffle_ori2,5,1)-mean_shuffle2),prctile(shuffle_ori2,95,1)-mean_shuffle2);
 %% Plot the results
-
+if multi==1
 %close all
 figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
@@ -56,7 +56,7 @@ shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'line
 hold on
 shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 hold on
-shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','g')
+shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','r')
 hold on
 shadedErrorBar(1:180,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
 xlabel('Orientation (deg)');
@@ -67,7 +67,22 @@ lgd.ItemTokenSize = [5,5];
 %title(strjoin({'Rolling orientation average','window',...
    % num2str(window)},'_'),'Interpreter','None')
 axis tight
-
+else multi==0
+    figure;set(gcf, 'Position', [800, 500, 200, 225])
+set(gcf,'color','w');
+shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
+hold on
+shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
+hold on
+xlabel('Orientation (deg)');
+xlim([0 180]);xticks([0:45:180]);
+lgd=legend('data','shuffle');legend boxoff;lgd.Location='northwest';
+lgd.ItemTokenSize = [5,5];
+%ylabel('Parameter')
+%title(strjoin({'Rolling orientation average','window',...
+   % num2str(window)},'_'),'Interpreter','None')
+axis tight
+end
 else or==2
     %window = 65;
 direction_vector = cat(1,str.DIRpref);
