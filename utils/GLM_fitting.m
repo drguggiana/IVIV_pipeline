@@ -78,7 +78,7 @@ target_data = (target_data-nanmean(target_data,1))./nanstd(target_data,0,1);
 % if shuffles are desired , shuffle according to the shuffling vector
 if shuffle_number > 0
     % allocate memory to store the shuffles
-    shuffle_out = zeros(shuffle_number,size(target_data,2)+2,size(target_data,2));
+    shuffle_out = zeros(shuffle_number,size(target_data,2)+1,size(target_data,2));
     % for all the shuffles
     for shuff = 1:shuffle_number
 %         % get the indexes for the columns to be shuffled
@@ -90,7 +90,7 @@ if shuffle_number > 0
             % generate the permutations
             temp_data(:,col) = temp_data(randperm(size(temp_data,1)),col);
             % perform the fit
-            mdl = fitglm(temp_data,Y);
+            mdl = fitglm(temp_data,Y,'linear','Distribution','normal','intercept',false);
             % save the coefficients and fit
             shuffle_out(shuff,1,col) = mdl.Rsquared.Adjusted;
             shuffle_out(shuff,2:end,col) = mdl.Coefficients.Estimate;
@@ -115,7 +115,7 @@ if cross_validate
     
 end
 % calculate the model and output
-mdl = fitglm(target_data,Y,'linear','Distribution','normal');
+mdl = fitglm(target_data,Y,'linear','Distribution','normal','intercept',false);
 
 r2 = mdl.Rsquared.Adjusted;
 coeff = mdl.Coefficients.Estimate;
