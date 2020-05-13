@@ -615,9 +615,13 @@ w2=find(od_out_iviv(:,4)>100 & od_out_iviv(:,4)<150 & od_out_iviv(:,1)>0.25 & od
 %  w1=find(pia_input<220);
 %  w2=find(pia_input>220);
 %% responsive or not
-%nvr=find([str(:).sftf_resp]==0 & [str(:).resp]==0)
-nvr=find([str(:).resp]==0);
+nvr=find([str(:).sftf_resp]==0 & [str(:).resp]==0)
+nvra=find([str(:).resp]==0);
+nvrb=find([str(:).sftf_resp]==1 & [str(:).resp]==0);
+%nvr=find([str(:).resp]==0);
 vr=find([str(:).resp]==1);
+
+%% 
 
 a=find(od_out_iviv(:,1)>0.25);
 corr_plot((abs(ang_inL23(a,3)-ang_inL23(a,1)))*69,(abs(ang_inL23(a,4)-ang_inL23(a,2)))*69,od_out_iviv(a,4),{'','',''});ylabel('C_{y} (µm)','Color','b');xlabel('C_{x} (µm)','Color','b');
@@ -651,9 +655,9 @@ g2=vr
 xticklabels({'NV','VR'});
 ylabel('Span','Color','k');set(gca,'FontSize',10);xtickangle(45)
 %% 
-par=ang_exL23(:,8)*69
-g1=nvr
-g2=w1
+par=od_out_iviv(:,13)
+g1=w1
+g2=w2
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'non visual resp','100-150°'});
 ylabel('Cvr (µm)','Color','k');set(gca,'FontSize',10);xtickangle(45)
@@ -667,10 +671,48 @@ g2=w2
 xticklabels({'broad tuning width','100-150°'});
 ylabel('Vector length  (µm)','Color','r');set(gca,'FontSize',10);xtickangle(45)
 %% 
+s_vr=[];
+inpuj=ang_exL23
+tz1=find(inpuj(:,10)==1 | inpuj(:,10)==3);
+tz2=find(inpuj(:,10)==2 | inpuj(:,10)==4);
+ para1=inpuj(tz1,8)*-1;
+para2=inpuj(tz2,8)*1;
+s_vr=ones(147,1)*NaN;
+s_vr(tz1)=para1;
+s_vr(tz2)=para2;
+
+%% Direction
+%Rolling average plots L23alpha
+%parameter_vector = s_vr*69
+parameter_vector = (ang_exL23(:,3)-ang_exL23(:,1))*69
+rolling_avg_display(str,parameter_vector,parameter_vector2,65,2,0);title('');
+ ylabel('C_{x} L2/3 (µm)','Color','r');xlabel('Direction (deg)');
+ %ylim([-70 100]);%yticks([-70:70:140]);
+ xlim([0 360]);xticks([0:90:360]);
+ set(gca,'FontSize',10);
+ %% 
+a=find(od_out_iviv(:,2)>0.25 & od_out_iviv(:,2)>0);  
+%par=s_vr*69
+par=ang_exL23(a,3)-ang_exL23(a,1)
+g1=find(od_out_iviv(a,5)>75 & od_out_iviv(a,5)<140)
+g2=find(od_out_iviv(a,5)>255 & od_out_iviv(a,5)<320)
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'~125','~305°'});
+ylabel('C_{x} L2/3 (µm)','Color','r');set(gca,'FontSize',10);xtickangle(45)
+%% 
+
 data= vertcat(ang_inL23(nvr,8)*69,ang_inL23(w1,8)*69,ang_inL23(w2,8)*69);
 groups_idx=vertcat(ones(length(nvr),1),ones(length(w1),1)*2,ones(length(w2),1)*3)
 [statsout] = barplot_sw(data,groups_idx,{'','Cvr L2/3'});ylim([0 100]);yticks([0:25:100])
 
+%% 
+par=ang_inL23(:,8)*69
+g1=contra_id
+g2=ipsi_id
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+%% 
+wz=find(od_out_iviv(:,4)>75 & od_out_iviv(:,1)>0.25)
+corr_plot(od_out_iviv(wz,7),(ang_inL23(wz,8))*69,[],{'Tuning Width','Cvr',''}); 
 %% 
 figure;scatter(abs((ang_inL23(w1,3)-ang_inL23(w1,1))*69),abs((ang_inL23(w1,4)-ang_inL23(w1,2))*69),20,od_out_iviv(w1,7),'filled');hold on;xlim([0 80]);ylim([0 80])
 figure;scatter(abs((ang_inL23(w2,3)-ang_inL23(w2,1))*69),abs((ang_inL23(w2,4)-ang_inL23(w2,2))*69),20,od_out_iviv(w2,7),'filled');hold on;xlim([0 80]);ylim([0 80])

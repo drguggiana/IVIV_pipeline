@@ -16,7 +16,7 @@ for i=1:length(test_map)
     %    R=NaN;
     % end
     out(i,:) = [tot_mass,R,C];
-    cell_cord(i,:)=[(8.5+somax(idx(i))/69) pia_input(idx(i))/69];
+    cell_cord(i,:)=[(8.5+somax(idx(i))/69) 8.5-pia_input(idx(i))/69];
     %val_hot(i)=A(round(R),round(C));
 end
 %ALTERNATIVE for centroid
@@ -26,6 +26,7 @@ end
 
 wx=out(:,3);
 wy=out(:,2)+row_shift;
+%wy=out(:,2);
 
 sx=cell_cord(:,1);
 sy=cell_cord(:,2);
@@ -58,5 +59,8 @@ for i=1:length(test_map)
     end
 end
 %out
+
 out_ang=[sx sy wx wy ang_a' ang_b' ang_a_v' hypo' vec_slope' qd'];
+
+
 end
