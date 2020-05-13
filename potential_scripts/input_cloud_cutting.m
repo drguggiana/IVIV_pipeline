@@ -244,7 +244,7 @@ end
 % xlabel('Average vector length')
 xlabel('Cutting point')
 ylabel('Correlation')
-legend({'NR','Aligned','Ortho'},'location','southeast')
+legend({'non resp.','Aligned','Ortho'},'location','southeast')
 %% Plot fractions
 close all
 figure
