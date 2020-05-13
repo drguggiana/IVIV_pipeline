@@ -116,6 +116,8 @@ if cross_validate
 end
 % calculate the model and output
 mdl = fitglm(target_data,Y,'linear','Distribution','normal','intercept',false);
-
 r2 = mdl.Rsquared.Adjusted;
 coeff = mdl.Coefficients.Estimate;
+
+varargout{4} = mdl;
+varargout{5} = nan_vector;
