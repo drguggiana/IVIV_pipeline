@@ -1,4 +1,4 @@
-function PIPE_Map_structureCreator(input_path,flip_path,layers_path,out_path)
+function IMAPS_Map_structureCreator(input_path,flip_path,layers_path,out_path)
 %% Load the gaussian models
 
 %define the main file path

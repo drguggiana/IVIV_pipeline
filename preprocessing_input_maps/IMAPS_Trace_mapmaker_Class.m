@@ -1,4 +1,4 @@
-function PIPE_Trace_mapmaker_Class(file_tags,input_path,out_path)
+function IMAPS_Trace_mapmaker_Class(file_tags,input_path,out_path)
 %% Load the pre-processed traces
 
 %define the main file path

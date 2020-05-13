@@ -19,11 +19,11 @@ orientation_vector = cat(1,str.ORIpref);
 
 % parameter_vector = cat(1,str.frac_vert);
 % parameter_vector = sum(parameter_vector(:,3:5),2);
-% parameter_vector = cat(1,str.ang_exL23);
+out_ang_inL23 = cat(1,str.ang_inL23);
 % parameter_vector = abs(parameter_vector(:,3) - parameter_vector(:,1));
 %parameter_vector = 90-abs(parameter_vector(:,5));
-%parameter_vector = (abs(out_ang_exL23(:,3)-out_ang_exL23(:,1)))*69;
-parameter_vector = 90-abs(out_ang_inL23(:,5));
+parameter_vector = ((out_ang_inL23(:,3)-out_ang_inL23(:,1)))*69;
+% parameter_vector = 90-abs(out_ang_inL23(:,5));
 
 % add osi cutoff
 cutoff_osi = 0.25;
@@ -83,14 +83,14 @@ direction = cat(1,str.DIRpref);
 % parameter = cat(1,str.frac_vert);
 % parameter = sum(parameter(:,6:7),2);
 parameter = cat(1,str.ang_inL23);
-parameter = abs(parameter(:,3) - parameter(:,1));
+parameter = (parameter(:,3) - parameter(:,1));
 % parameter_vector = 90-abs(parameter_vector(:,5));
 
 % define the window width (in degrees)
-window = 45;
+window = 61;
 
 % add osi cutoff
-cutoff_dsi = 0.3;
+cutoff_dsi = 0.25;
 % get the osi
 dsi = cat(1,str.DSIpref);
 % get the vector

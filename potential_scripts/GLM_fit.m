@@ -17,11 +17,16 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
+<<<<<<< HEAD
 % targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
 %     'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23'};
 
 
 targets = {'ang_exL23_Vt','ang_inL23_Vt','ang_inL4_Vt','frac_vert_exL4','pialD'};
+=======
+targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
+    'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23'};
+>>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
 
 % get the number of parameters
 num_parameters = length(targets);
@@ -59,6 +64,7 @@ for combos = 1:num_comb
     
 end
 %% Plot the parameter results
+<<<<<<< HEAD
 % 
 % close all
 % 
@@ -88,6 +94,24 @@ label_cell,'XTickLabelRotation',45,'TickLabelInterpreter','None');
  ylim([0 1.2]);
  xticklabels({'Cvt L2/3','Cvt L2/3','Cvt L4','L4fr','pialD','Cvt+Cvt L2/3','Cvt L2/3+Cvt L4','Cvt L2/3+L4fr','Cvt L2/3+pialD'...
     'Cvt L2/3+Cvt L4','Cvt L2/3+L4fr','Cvt L2/3+pialD', 'Cvt L4+L4fr','Cvt L4+pialD','L4fr+pialD'});
+=======
+
+close all
+
+% plot the r2
+figure
+bar(combination_results)
+ylabel('R squared')
+set(gca,'XTick',1:num_comb,'XTickLabels',...
+    label_cell,'XTickLabelRotation',45,'TickLabelInterpreter','None')
+
+% plot the rmse
+figure
+bar(combination_rmse)
+ylabel('RMSE')
+set(gca,'XTick',1:num_comb,'XTickLabels',...
+    label_cell,'XTickLabelRotation',45,'TickLabelInterpreter','None')
+>>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
 %% Plot a desired fit
 
 close all
@@ -113,6 +137,7 @@ model_data = model_data.*std(real_data) + mean(real_data);
 % calculate a simple linear fit
 lin_mdl = fitlm(model_data,real_data);
 
+<<<<<<< HEAD
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
 scatter(real_data,model_data,'k','filled')
 hold on
@@ -124,6 +149,16 @@ xlim([0 180]);xticks([0:45:180]);
 ylim([0 180]);yticks([0:45:180]);
 axis square;
 set(gca,'FontSize',10)
+=======
+figure
+scatter(real_data,model_data,'k','filled')
+hold on
+plot(real_data,predict(lin_mdl,real_data))
+xlabel('Real data')
+ylabel('Predicted data')
+title(strjoin({'Model: ',target_label,'r2:',num2str(lin_mdl.Rsquared.Adjusted)},' '),'Interpreter','None')
+axis equal
+>>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
 %% Run the regression with shuffles
 
 % get the selection vector (based on the OS cells)
@@ -151,6 +186,7 @@ errorbar(2:length(targets)+1,shuffle_result(1,:),shuffle_result(2,:),'ko')
 ylabel('R squared')
 set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
     horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
+<<<<<<< HEAD
 %% 
 
 % plot the coefficients
@@ -164,3 +200,12 @@ xlabel('Coeff weight')
 %     horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None');
 box off
 set(gca,'FontSize',10)
+=======
+
+% plot the coefficients
+figure
+bar(vertcat(coeff',shuffle_result(2:end,:)'))
+ylabel('Coeff weight')
+set(gca,'XTick',1:length(targets),'XTickLabels',...
+    horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
+>>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
