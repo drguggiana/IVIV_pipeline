@@ -348,21 +348,21 @@ fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4
 savepdf_SW(fn,1);
 %% 
 %Correlation Matrix Panel B
-com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) ang_exL23(:,3)-ang_exL23(:,1)...
-    ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2)...
-   ang_inL23(:,4)-ang_inL23(:,2) pia_input od_out_iviv(:,[1 2 3 4 5 6 7])]; 
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
+   abs(ang_inL23(:,4)-ang_inL23(:,2)) pia_input od_out_iviv(:,[1 2 3 4 5 6 7])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
 close(gcf);
 %Subsample data OSI
 a=find(od_out_iviv(:,1)>0.25)
-com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1) L4fr(a,2) ang_exL23(a,3)-ang_exL23(a,1)  ang_inL23(a,3)-ang_inL23(a,1)...
-   ang_exL23(a,4)-ang_exL23(a,2) ang_inL23(a,4)-ang_inL23(a,2) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1) L4fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))  abs(ang_inL23(a,3)-ang_inL23(a,1))...
+   abs(ang_exL23(a,4)-ang_exL23(a,2)) abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
 M=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
 close(gcf);
 %Subsample data DSI
 a=find(od_out_iviv(:,2)>0.25)
 com=[];com=[L23fr(a,1) L23fr(a,2) L4fr(a,1)  L4fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
-    ang_inL23(a,3)-ang_inL23(a,1) ang_exL23(a,4)-ang_exL23(a,2) ang_inL23(a,4)-ang_inL23(a,2) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2)) abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a) od_out_iviv(a,[1 2 3 4 5 6 7])];
 O=correlation_matrix(com,0);title('');xticks([1:1:17]);yticks([1:1:17]);
 close(gcf);
 %Assemble matrix
