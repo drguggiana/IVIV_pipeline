@@ -1713,4 +1713,28 @@ xticklabels({'20-70°','100-150°'});
 corr_plot(180-abs(a_L23in_mod(a)),pia_input(a),[],{'','',''});ylabel('C_{\alpha} (deg)','Color','b');;xlabel('ORI')
 %% 
 
+%% Discussion 
+a=find(od_out_iviv(:,1)>0.25);  
+par=od_out_iviv(a,9)
+g1=find(od_out_iviv(a,4)>15 & od_out_iviv(a,4)<65) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'20-70°','100-150°'});
 
+figure;histogram(par)
+
+figure;scatter((ang_exL23(a,3)-ang_exL23(a,1))*69,(ang_inL23(a,3)-ang_inL23(a,1))*69)
+%% 
+a=find(od_out_iviv(:,1)>0.25);  
+corr_plot(od_out_iviv(a,9),od_out_iviv(a,4),ang_inL23(a,8),{'','',''});ylabel('C_{\alpha} (deg)','Color','b');;xlabel('ORI')
+
+%% 
+ [od spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,1:147)
+ %% 
+ a=find(sftf_out_sel_iviv(:,2)>0.0);  
+corr_plot(sftf_out_pref_iviv(a,1),ang_inL23(a,8),od_out_iviv(a,4),{'','',''});ylabel('C_{\alpha} (deg)','Color','b');;xlabel('ORI')
+%% 
+c_prf=vertcat(str(:).Ori)
+diffb=abs(c_prf(bino_id,1)-c_prf(bino_id,2))
+
+corr_plot(od_out_iviv(ipsi_id,4),ang_inL23(ipsi_id,8),ang_inL23(ipsi_id,8),{'','',''});
