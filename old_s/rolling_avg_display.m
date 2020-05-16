@@ -5,6 +5,10 @@ if or==1
 %window = 45;
 % get the orientation and the parameter of interest
 orientation_vector = cat(1,str.ORIpref);
+
+% temp=[str(:).ORIpref]+90
+% temp(temp>179) = temp(temp>179) -180;
+% orientation_vector=temp';
 % add osi cutoff
 cutoff_osi = 0.25;
 % get the osi
@@ -52,11 +56,11 @@ if multi==1
 %close all
 figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
-shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
+shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','m')
 hold on
 shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 hold on
-shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','r')
+shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','y')
 hold on
 shadedErrorBar(1:180,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
 xlabel('Orientation (deg)');
