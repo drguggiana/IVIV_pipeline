@@ -559,6 +559,27 @@ for f = 1:num_fields
         end
     end
 end
+%% Fix the orientation fields to match the convention of the horizontal
+% bar being 0 degrees
+
+% define the target fields
+ori_fields = {'ORIpref','Ori','Ori_sftf_all'};
+% replace the orientations in each of the affected fields
+% for all the cells
+for cells = 1:cell_num
+    
+    % for all the fields
+    for ori_field = 1:length(ori_fields)
+        
+        % get the value and correct it
+        temp_val = vertcat(str(cells).(ori_fields{ori_field})) + 90;
+        temp_val(temp_val>179) = temp_val(temp_val>179) - 180;
+        % replace it in the structure
+        str(cells).(ori_fields{ori_field}) = temp_val;
+    
+    
+    end
+end
 %% OFF Plotting
 % figure
 % 
