@@ -302,8 +302,137 @@ xlabel('Cutting distance')
 ylabel('Cells')
 cba = colorbar;
 ylabel(cba,'Vector length')
+%%
+var1 = vertcat(str.ORIpref);
+% var2 = vertcat(str.ang_inL5);
+% var2 = abs(var2(:,4)-var2(:,1));
+% var2 = var2(:,8);
+var2 = vertcat(str.PCs);
+var3 = vertcat(str.ang_inL5);
+var3 = var3(:,8);
+% var3 = abs(var3(:,3)-var3(:,1));
+% [var2,var3] = nan_remover(var2,var3);
+
+% [r,p] = corr(var2,var3)
+% close all
+% figure
+% scatter(var2,var3)
+% remove nans
+for i = 1:6
+% [x,a] = cxcorr(var1',var2');
+% [rho,pval] = circ_corrcc(deg2rad(var1),deg2rad(var2));
+    var2i = var2(:,i);
+    var1i = var1;
+    [var1i,var2i] = nan_remover(var1i,var2i);
+
+    [rho,pval] = circ_corrcl(deg2rad(var1i),var2i)
+%     [rho,pval] = corr(deg2rad(var1i),var2i)
+end
+% close all
+% figure
+% 
+% scatter(var2(:,5),var1)
+% [rho,pval] = corr(deg2rad(var1),var2);
+% close all
+% figure
+% plot(x,a)
+% 
+% corr(var1,var2)
+% 
+% corrs = zeros(length(var1),1);
+% for i = 1:length(var1)
+%     corrs(i) = corr(var1,circshift(var2,i-1));
+% end
+% 
+% hold on
+% plot(1:length(var1),corrs)
+%% 
+close all
+skeletons = figure;
+colors = {'r','b'};
+type_colors = {'k','m','c'};
 
 
+ex_in_cell = cell(2,3);
+
+counter = 50;
+for celltype = 1:3
+    figure(skeletons)
+    % for exc and inh
+    for maptype = 1:2
+        switch maptype
+            case 1
+                l23 = vertcat(str.ang_exL23);
+                l4 = vertcat(str.ang_exL4);
+                l5 = vertcat(str.ang_exL5);
+
+            case 2
+                l23 = vertcat(str.ang_inL23);
+                l4 = vertcat(str.ang_inL4);
+                l5 = vertcat(str.ang_inL5);
+        end
+        
+        l23 = l23(celltype_matrix(:,celltype),:);
+        l4 = l4(celltype_matrix(:,celltype),:);
+        l5 = l5(celltype_matrix(:,celltype),:);
+        
+        xl23 = (l23(:,3)-l23(:,1))+(1:length(l23))'+counter;
+        yl23 = (l23(:,4)-l23(:,2));
+        somax = zeros(length(l23),1)+(1:length(l23))'+counter;
+        somay = zeros(length(l23),1);
+        xl4 = (l4(:,3)-l4(:,1))+(1:length(l23))'+counter;
+        yl4 = (l4(:,4)-l4(:,2));
+        xl5 = (l5(:,3)-l5(:,1))+(1:length(l23))'+counter;
+        yl5 = (l5(:,4)-l5(:,2));
+
+        scatter(xl23,yl23,colors{maptype},'filled')
+        hold on
+        scatter(xl4,yl4,colors{maptype},'filled')
+        scatter(xl5,yl5,colors{maptype})
+        scatter(somax,somay,'k')
+    %     for celltype = 1:3
+    %         scatter(somax(celltype_matrix(:,celltype)),...
+    %             somay(celltype_matrix(:,celltype)),type_colors{celltype},'filled')
+    %         ex_in_cell{maptype,celltype} = atan2(xl23(celltype_matrix(:,celltype))-xl4(celltype_matrix(:,celltype)),...
+    %             yl23(celltype_matrix(:,celltype))-yl4(celltype_matrix(:,celltype)));
+    %         ex_in_cell{maptype,celltype} = xl23(celltype_matrix(:,celltype));
+    %     end
+
+        % for all the points
+        for points = 1:size(xl23,1)
+            plot([xl23(points),somax(points)],[yl23(points),somay(points)],'k')
+            if ~isnan(xl4(points))
+                plot([xl23(points),xl4(points)],[yl23(points),yl4(points)],'k')
+            end
+            if ~isnan(xl5(points))
+                plot([xl4(points),xl5(points)],[yl4(points),yl5(points)],'k')
+            end
+            text(xl23(points),yl23(points),num2str(points))
+            text(somax(points),somay(points),num2str(points))
+
+        end
+        set(gca,'YDir','reverse')
+        
+
+    %     ex_in_cell{maptype} = atan2(yl23-yl4,xl23-xl4);
+    end
+    counter = counter + 50;
+end
+param = vertcat(str.DSIpref);
+for maptype = 1:2
+    figure
+    for celltype = 1:3
+        [x,y] = nan_remover(param(celltype_matrix(:,celltype)),ex_in_cell{maptype,celltype});
+        scatter(x,y,type_colors{celltype})
+        hold on
+        [rho2,pval2] = circ_corrcc(x,y)
+    end
+end
+
+
+% axis equal
+% axis tight
+%%
 % plot the average +/- sem of the group centroid trajectories
 figure
 for celltype = 1:celltype_num
