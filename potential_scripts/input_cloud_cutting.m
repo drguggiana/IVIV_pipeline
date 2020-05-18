@@ -390,13 +390,13 @@ for celltype = 1:3
         scatter(xl4,yl4,colors{maptype},'filled')
         scatter(xl5,yl5,colors{maptype})
         scatter(somax,somay,'k')
-    %     for celltype = 1:3
-    %         scatter(somax(celltype_matrix(:,celltype)),...
-    %             somay(celltype_matrix(:,celltype)),type_colors{celltype},'filled')
-    %         ex_in_cell{maptype,celltype} = atan2(xl23(celltype_matrix(:,celltype))-xl4(celltype_matrix(:,celltype)),...
-    %             yl23(celltype_matrix(:,celltype))-yl4(celltype_matrix(:,celltype)));
-    %         ex_in_cell{maptype,celltype} = xl23(celltype_matrix(:,celltype));
-    %     end
+%         for celltype = 1:3
+%             scatter(somax(celltype_matrix(:,celltype)),...
+%                 somay(celltype_matrix(:,celltype)),type_colors{celltype},'filled')
+%             ex_in_cell{maptype,celltype} = atan2(xl23(celltype_matrix(:,celltype))-xl4(celltype_matrix(:,celltype)),...
+%                 yl23(celltype_matrix(:,celltype))-yl4(celltype_matrix(:,celltype)));
+%             ex_in_cell{maptype,celltype} = xl23(celltype_matrix(:,celltype));
+%         end
 
         % for all the points
         for points = 1:size(xl23,1)
@@ -449,3 +449,55 @@ end
 
 ylabel('Vector length')
 xlabel('Cutting distance')
+%% 
+
+close all
+figure
+for maptype = 1:2
+%     for layers = 1:3
+        switch maptype
+            case 1
+                exin_term = 'ex';
+            case 2
+                exin_term = 'in';
+        end
+%         switch layers
+%             case 1
+%                 layer_term = '23';
+%             case 2
+%                 layer_term = '4';
+%             case 3
+%                 layer_term = '5';
+%         end
+        % get the angles
+        anglesL23 = vertcat(str.(strcat('ang_',exin_term,'L23')));
+        anglesL23 = (anglesL23(:,3) - anglesL23(:,1));
+        anglesL4 = vertcat(str.(strcat('ang_',exin_term,'L4')));
+%         anglesL4 = anglesL4(:,5);
+        anglesL4 = (anglesL4(:,3) - anglesL4(:,1));
+        
+        subplot(1,2,maptype)
+        legend_cell = cell(3,1);
+        for celltype = 1:3
+            % get the celltype index
+            cell_idx = celltype_matrix(:,celltype);
+            % get the angle vectors
+            type_angles23 = anglesL23(cell_idx);
+            type_angles4 = anglesL4(cell_idx);
+            % remove nans
+            [x,y] = nan_remover(type_angles23,type_angles4);
+            % calculate the circular correlation
+%             [rho,pval] = circ_corrcc(deg2rad(x),deg2rad(y));
+            [rho,pval] = corr(x,y);
+            
+            % plot 
+            scatter(x,y,30,type_colors{celltype},'o')
+            hold on
+            % save the values for the legend
+            legend_cell{celltype} =  strjoin({num2str(rho),num2str(pval)},'_');
+        end
+        % apply the legend
+        legend(legend_cell,'Interpreter','None')
+        title(exin_term)
+%     end
+end
