@@ -94,7 +94,8 @@ hold on;
 h4 = scatter(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,pointsize,fe,'filled','d');xlim([-3*69 3*69]);ylim([-6.7*69 1.45*69]);grid off;
 ;hold on;line([0 0], [-8*69 8*69],'Color','k','LineStyle','--','LineWidth',0.2);hold on;line([-8*69 8*69],[0 0],'Color','k','LineStyle','--','LineWidth',0.2);hold on;hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',4);
 hold on;;title('IN','Color','b','FontWeight','normal');
-c=colorbar;c.Label.String=label_name{1};box off;caxis([0 180]);c.Ticks=[0:45:180];
+c=colorbar;c.Label.String=label_name{1};box off;
+caxis([0 180]);c.Ticks=[0:45:180];
 xlabel('C_{x} (µm)');
 
 

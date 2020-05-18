@@ -56,11 +56,11 @@ if multi==1
 %close all
 figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
-shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','m')
+shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','r')
 hold on
 shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 hold on
-shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','y')
+shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','b')
 hold on
 shadedErrorBar(1:180,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
 xlabel('Orientation (deg)');
