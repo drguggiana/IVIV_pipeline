@@ -106,6 +106,9 @@ contra_id=find([str(:).contra]==1);
 bino_id=find([str(:).bino]==1);
 unres_id=find([str(:).unres]==1);
 %% 
+
+
+%% 
 [ang_in] = centroid_map(in_map(:,:,:),somac(:,1),somac(:,2),[1:147],0);
 [ang_inL23] = centroid_map(in_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2);
 [ang_inL4] = centroid_map(in_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5);
@@ -114,7 +117,18 @@ unres_id=find([str(:).unres]==1);
 [ang_exL23] = centroid_map(ex_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2);
 [ang_exL4] = centroid_map(ex_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5);
 [ang_exL5] = centroid_map(ex_map(8:11,:,:),somac(:,1),somac(:,2),[1:147],7);
-
+%% 
+%non weighted centroid
+bin_map_in=in_map(:,:,:)>0
+[ang_inL23nw] = centroid_map(bin_map_in(3:5,:,:),somac(:,1),somac(:,2),[1:147],2,0);
+%% 
+bin_map_in=ex_map(:,:,:)>0
+[ang_exL23nw] = centroid_map(bin_map_in(3:5,:,:),somac(:,1),somac(:,2),[1:147],2,0);
+%% 
+a=find(od_out_iviv(:,1)>0 & ang_exL23nw(:,8)*69<300)
+corr_plot(ang_exL23(a,8)*69,ang_exL23nw(a,8)*69,[],{'','',''});ylabel('NON weighted CVL L2/3 (µm)');xlabel('Weighted CVL L2/3 (µm)');
+%% 
+cr=xcorr2(ang_inL23nw(:,[3 4]),ang_inL23(:,[3 4]));figure;imagesc(cr)
 %% Figure 1 panels
 close all;
 % Histogram of pia distribution with color coded in vivo morpho by itself
@@ -455,6 +469,7 @@ yticks([0:50:100]);xlim([0 180]);xticks([0:45:180]);set(gca,'FontSize',10);
 corr_plot(od_out_iviv(a,4),ang_inL23(a,8)*69,[],{'','',''});ylabel('CVL L2/3 (µm)');xlabel('Orientation (deg)');
 yticks([0:50:100]);xlim([0 180]);xticks([0:45:180]);set(gca,'FontSize',10);
 %% 
+%% 
 a=find(od_out_iviv(:,1)>0.25);
 corr_plot(od_out_iviv(a,4),abs(ang_exL23(a,3)*69-ang_exL23(a,1)*69),[],{'','',''});
 
@@ -494,9 +509,9 @@ xticklabels({'15-65°','100-150°'});xtickangle(45);
 ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
 
 %% EX
-a=find(od_out_iviv(:,1)>0.25);  
+a=find(od_out_iviv(:,1)>0.25 & ang_inL4(:,3)*69-ang_inL4(:,1)*69<150);  
 %par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
-par=ang_inL4(a,8)*69
+par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
 g1=find(od_out_iviv(a,4)>15 & od_out_iviv(a,4)<65) ;
 g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
@@ -507,6 +522,15 @@ data= vertcat(abs(ang_exL4(g2,4)*69-ang_exL4(g2,2)*69),abs(ang_inL4(g2,4)*69-ang
 groups_idx=vertcat(ones(length(g2),1)*1,ones(length(g2),1)*2)
 [statsout] = barplot_sw(data,groups_idx,{'','Cvr L2/3'});ylim([0 100]);yticks([0:25:100])
 
+%% 
+a=find(od_out_iviv(:,1)>0.25);  
+%par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
+par=ang_inL4(a,8)*69
+g1=find(od_out_iviv(a,4)>15 & od_out_iviv(a,4)<65) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'15-65°','100-150°'});xtickangle(45);
+ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
 
 %% Cx and Cy sperately
 
