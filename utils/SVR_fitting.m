@@ -35,6 +35,22 @@ for target = 1:length(targets)
             case 'Al'
                 target_data(:,target) = temp_var(:,5);
         end
+    elseif contains(targets{target},'nw_')
+        % parse the argument
+        field_name = strcat('ang',targets{target}(3:end-3),'_nonweighted');
+        column_name = targets{target}(end-1:end);
+        % load the field
+        temp_var = vertcat(str(selection_vector).(field_name));
+        switch column_name
+            case 'Cx'
+                target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1));
+            case 'Cy'
+                target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2));
+            case 'Vt'
+                target_data(:,target) = temp_var(:,8);
+            case 'Al'
+                target_data(:,target) = temp_var(:,5);
+        end
     elseif contains(targets{target},{'frac_vert','frac_horz'})
         % parse the argument
         field_name = targets{target}(1:9);
@@ -52,13 +68,41 @@ for target = 1:length(targets)
                 target_data(:,target) = sum(temp_var(:,22:23),2);
         end
     elseif contains(targets{target},'custom')
-            temp_var = vertcat(str(selection_vector).ang_inL23);
-            x = abs(temp_var(:,3)-temp_var(:,1));
-            y = abs(temp_var(:,4)-temp_var(:,2));
-            target_data = sqrt(x.^2 + y.^2);
+        temp_var = vertcat(str(selection_vector).ang_inL23);
+        x = abs(temp_var(:,3)-temp_var(:,1));
+        y = abs(temp_var(:,4)-temp_var(:,2));
+        target_data = sqrt(x.^2 + y.^2);
+    elseif contains(targets{target},'max_')
+        % parse the argument
+        field_name = targets{target}(1:6);
+        coord_name = targets{target}(8);
+        layer_name = targets{target}(10:end);
+        
+        % get the data
+        temp_var = reshape(vertcat(str(selection_vector).(field_name)),[],3,3);
+        switch coord_name
+            case 'v'
+                coord = 1;
+            case 'x'
+                coord = 2;
+            case 'y'
+                coord = 3;
+        end
+        switch layer_name
+            case 'L23'
+                layer = 1;
+            case 'L4'
+                layer = 2;
+            case 'L5'
+                layer = 3;
+        end
+        
+        % store the data
+        target_data(:,target) = squeeze(temp_var(:,coord,layer));
+        
     else
-            target_data(:,target) = vertcat(str(selection_vector).(targets{target}));
-            target_data(:,target) = target_data(randperm(sum(selection_vector)),target);
+        target_data(:,target) = vertcat(str(selection_vector).(targets{target}));
+        target_data(:,target) = target_data(randperm(sum(selection_vector)),target);
     end
     
 end
@@ -95,9 +139,9 @@ if shuffle_number > 0
             temp_data(:,col) = temp_data(randperm(size(temp_data,1)),col);
             % perform the fit
 %             mdl = fitglm(temp_data,Y,'linear','Distribution','normal','intercept',false);
-%             mdl = fitrsvm(temp_data,Y,'KFold',40,'KernelFunction',kernel_function,...
-%                 'Standardize',true,'KernelScale',1);
-            mdl = fitrgp(temp_data,Y,'Standardize',true,'Leaveout','on');
+            mdl = fitrsvm(temp_data,Y,'KFold',40,'KernelFunction',kernel_function,...
+                'Standardize',true,'KernelScale',1);
+%             mdl = fitrgp(temp_data,Y,'Standardize',true,'Leaveout','on');
 
             % save the coefficients and fit
             lm = fitlm(Y,kfoldPredict(mdl));
@@ -122,9 +166,9 @@ if shuffle_number > 0
 end
 
 % calculate the actual fit
-mdl = fitrgp(target_data,Y,'Standardize',true,'Leaveout','on');
-% mdl = fitrsvm(target_data,Y,'KFold',40,'KernelFunction',kernel_function,...
-%     'Standardize',true,'KernelScale',1);
+% mdl = fitrgp(target_data,Y,'Standardize',true,'Leaveout','on');
+mdl = fitrsvm(target_data,Y,'KFold',40,'KernelFunction',kernel_function,...
+    'Standardize',true,'KernelScale',1);
 varargout{3} = kfoldLoss(mdl);
 
 % if the kernel function is not linear, skip

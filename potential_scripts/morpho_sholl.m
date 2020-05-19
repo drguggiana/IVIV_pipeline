@@ -71,26 +71,17 @@ distance_vector = 10:ring_diameter:125;
 distance_vector = horzcat(distance_vector,8*69);
 % get the number of distances
 distance_number = length(distance_vector);
-% % allocate memory to store the results
-% distance_correlation = zeros(distance_number,2);
-% allocate memory to calculate the correlation per group
-distance_percelltype = zeros(distance_number,celltype_num,2);
 
 % get the number of maps
 target_num = size(target_maps,3);
 
 % allocate memory to store the actual asymmetries
 distance_values = zeros(distance_number, target_num,3);
-% allocate memory for the horizontal fraction of input
-fraction_values = zeros(target_num,1);
 
 % get the soma positions
 target_somas = cat(1,str(selection_vector).subpixel_soma);
 % get the orientations
 target_ori = vertcat(str(selection_vector).ORIpref);
-
-% get the number of maps
-number_of_targets = size(target_maps,3);
 
 % define the grid spacing in microns
 grid_spacing = 69;
@@ -113,7 +104,6 @@ mask_cell = cell(target_num,2);
 
 % initialize a frame counter
 frame_counter = 1;
-% define the path for the gif
 
 % for all the distances
 for distance = distance_number:-1:2
@@ -154,10 +144,6 @@ for distance = distance_number:-1:2
             % isolate layer
 %             layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
             layer = interp_map(idx1:idx2,:);
-
-            % get the horizontal input ratio
-            fraction_values(cells) = sum(sum(layer(:,soma_x-extent:soma_x)))./...
-                sum(sum(layer(:,soma_x-extent:soma_x+extent)));
         end
 
         % get the center coordinates of the map
@@ -292,83 +278,3 @@ for celltype = 1:celltype_num
     
 end
 autoArrangeFigures
-%% Plots per cell type
-
-close all
-
-figure
-% mean_celltype = mean(distance_percelltype,1);
-% std_celltype = std(distance_percelltype,0,1);
-
-% for all celltypes
-for celltype = 1:celltype_num
-    plot(distance_vector,distance_percelltype(:,celltype,1),colors{celltype})
-%     plot(distance_percelltype(:,celltype,2),distance_percelltype(:,celltype,1),colors{celltype})
-%     plot3(distance_vector,distance_percelltype(:,celltype,2),distance_percelltype(:,celltype,1),colors{celltype})
-%     scatter(distance_vector,distance_percelltype(:,celltype,1),distance_percelltype(:,celltype,2).*50,colors{celltype})
-    hold on
-%     plot(distance_vector,distance_percelltype(:,celltype,1),colors{celltype})
-%     plot(distance_vector,distance_percelltype(:,celltype,2),strcat('--',colors{celltype}))
-%     plot(distance_vector([1 distance_number]),[0.05 0.05],'m--')
-end
-% xlabel('Average vector length')
-xlabel('Cutting point')
-ylabel('Correlation')
-legend({'NR','Aligned','Ortho'},'location','southeast')
-%% Plot fractions
-close all
-figure
-
-% allocate memory for the bar values
-fraction_mean = zeros(celltype_num,2);
-% extract the averages per cell type
-for celltype = 1:celltype_num
-    
-    fraction_mean(celltype,1) = mean(fraction_values(celltype_matrix(:,celltype)));
-    fraction_mean(celltype,2) = std(fraction_values(celltype_matrix(:,celltype)))./...
-        sqrt(sum(celltype_matrix(:,celltype)));
-end
-
-bar(fraction_mean(:,1))
-hold on
-errorbar(1:celltype_num,fraction_mean(:,1),fraction_mean(:,2),'o')
-
-ylabel('Horizontal layer 2/3 input fraction')
-set(gca,'XTick',1:celltype_num,'XTickLabels',{'NR','Aligned','Ortho'})
-%% Plots using all cells
-close all
-% plot all of the centroid trajectories for the aligned, ortho and nr groups
-figure
-
-for celltype = 1:celltype_num
-    % get the current cells
-    current_celltype = distance_values(:,celltype_matrix(:,celltype),:);
-    
-%     current_celltype(:,current_celltype(1,:,2)<0,2) = ...
-%         current_celltype(:,current_celltype(1,:,2)<0,2) + 180;
-%     current_celltype(:,current_celltype(end,:,2)<90,2) = ...
-%         180 - current_celltype(:,current_celltype(end,:,2)<90,2);
-    
-    subplot(1,2,1)
-    plot(distance_vector,current_celltype(:,:,1),colors{celltype})
-    hold on
-    subplot(1,2,2)
-    plot(distance_vector,current_celltype(:,:,2),strcat(colors{celltype},'--'))
-    hold on
-
-end
-subplot(1,2,1)
-ylabel('Vector length')
-xlabel('Cutting distance')
-
-subplot(1,2,2)
-ylabel('Vector angle')
-xlabel('Cutting distance')
-% plot the curves in an image
-figure
-[~,sort_idx] = sort(vertcat(str.pialD));
-imagesc(distance_values(:,sort_idx,1)')
-xlabel('Cutting distance')
-ylabel('Cells')
-cba = colorbar;
-ylabel(cba,'Vector length')

@@ -1,4 +1,4 @@
-function [out_ang] = centroid_map(test_map,somax,somay,idx,row_shift)
+function [out_ang] = centroid_map(test_map,somax,somay,idx,row_shift,we)
 % calculate the centroid and centroid related metrics for the given set of
 % maps
 
@@ -17,7 +17,22 @@ for i = 1:length(test_map)
     R = sum(ii(:).*A(:))/tot_mass;
     C = sum(jj(:).*A(:))/tot_mass;
     % store the masses in total and every dimension
-    out(i,:) = [tot_mass,R,C];
+    if we == 1
+        out(i,:) = [tot_mass,R,C];
+        
+    else 
+        tt = regionprops(abs(A)>0,'Centroid','Area');
+        if isempty(tt)
+            out(i,:) = [tot_mass, NaN,NaN];
+
+        elseif length(tt) > 1
+            [~,max_idx] = max(vertcat(tt.Area));
+            out(i,:) = [tot_mass, tt(max_idx).Centroid(2),tt(max_idx).Centroid(1)];
+        else
+            out(i,:) = [tot_mass, tt.Centroid(2),tt.Centroid(1)];
+        end
+
+    end
     % store the soma coordinates (converting to grid pixels and 
     % reversing the y axis)
 %     cell_coord(i,:)=[(8.5+somax(idx(i))/69) pia_input(idx(i))/69];
