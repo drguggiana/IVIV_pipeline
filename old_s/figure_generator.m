@@ -109,14 +109,14 @@ unres_id=find([str(:).unres]==1);
 
 
 %% 
-[ang_in] = centroid_map(in_map(:,:,:),somac(:,1),somac(:,2),[1:147],0);
-[ang_inL23] = centroid_map(in_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2);
-[ang_inL4] = centroid_map(in_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5);
-[ang_inL5] = centroid_map(in_map(8:11,:,:),somac(:,1),somac(:,2),[1:147],7);
+[ang_in] = centroid_map(in_map(:,:,:),somac(:,1),somac(:,2),[1:147],0,1);
+[ang_inL23] = centroid_map(in_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2,1);
+[ang_inL4] = centroid_map(in_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5,1);
+[ang_inL5] = centroid_map(in_map(8:11,:,:),somac(:,1),somac(:,2),[1:147],7,1);
 %EX ang centroid
-[ang_exL23] = centroid_map(ex_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2);
-[ang_exL4] = centroid_map(ex_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5);
-[ang_exL5] = centroid_map(ex_map(8:11,:,:),somac(:,1),somac(:,2),[1:147],7);
+[ang_exL23] = centroid_map(ex_map(3:5,:,:),somac(:,1),somac(:,2),[1:147],2,1);
+[ang_exL4] = centroid_map(ex_map(6:7,:,:),somac(:,1),somac(:,2),[1:147],5,1);
+[ang_exL5] = centroid_map(ex_map(8:11,:,:),somac(:,1),somac(:,2),[1:147],7,1);
 %% 
 %non weighted centroid
 bin_map_in=in_map(:,:,:)>0
@@ -404,7 +404,7 @@ c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 %% 
 %Selection of correlation from Panel B shown in Panel E
 a=find(od_out_iviv(:,1)>0.25);
-corr_plot(od_out_iviv(a,4),L4fr(a,1),[],{'','',''});ylabel('EX L4fr','Color','r');
+corr_plot(od_out_iviv(a,4),L4fr(a,2),[],{'','',''});ylabel('EX L4fr','Color','r');
 xlabel('Orientation (deg)');set(gca,'FontSize',10);xlim([0 180]);xticks([0:45:180]);
 %% Cx and Cy with ori pref 
 a=find(od_out_iviv(:,1)>0.25);
@@ -645,6 +645,16 @@ g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'10-60°','100-150°'});xtickangle(45);
 ylabel('L5fr EX (µm)','Color','k'); ;set(gca,'FontSize',10);
+%% %% Direction
+%Rolling average plots L23alpha
+%parameter_vector = s_vr*69
+parameter_vector = ang_exL23(:,8)*69
+parameter_vector2 = ang_inL23(:,8)*69
+rolling_avg_display(str,parameter_vector,parameter_vector2,65,2,1);title('');
+ ylabel('C_{x} L2/3 (µm)','Color','r');xlabel('Direction (deg)');
+ %ylim([-70 100]);%yticks([-70:70:140]);
+ xlim([0 360]);xticks([0:90:360]);
+ set(gca,'FontSize',10);
 
 %% IN L4 Cx
 
