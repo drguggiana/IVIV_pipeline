@@ -46,6 +46,9 @@ switch layer
         layer_idx1 = 8;
         layer_idx2 = 10;
         row_shift = 7;
+    case 'all'
+        layer_idx1 = 1;
+        layer_idx2 = 16;
 end
 % define the cells groups
 aligned_cells = OS_cells & (vertcat(str.ORIpref)<(angle_span+125)...
@@ -62,9 +65,9 @@ celltype_num = size(celltype_matrix,2);
 target_maps = cat(3,str(selection_vector).(strcat('subpixel_',map_type,'Map')));
 
 % define the ring effective diameter
-ring_diameter = 20;
+ring_diameter = 5;
 % define a vector of distance to try
-distance_vector = 10:ring_diameter:500;
+distance_vector = 10:ring_diameter:125;
 distance_vector = horzcat(distance_vector,8*69);
 % get the number of distances
 distance_number = length(distance_vector);
@@ -108,6 +111,10 @@ map_lim = map_size/2-grid_spacing/2;
 % allocate memory to store the masks
 mask_cell = cell(target_num,2);
 
+% initialize a frame counter
+frame_counter = 1;
+% define the path for the gif
+
 % for all the distances
 for distance = distance_number:-1:2
     
@@ -140,9 +147,14 @@ for distance = distance_number:-1:2
             else
                 extent = size(X_single,2) - soma_x;
             end
+            % get the layer boundaries
+            [~,idx1] = min(abs(Y_single(:,1)-((layer_idx1-1)*grid_spacing-517.5)));
+            [~,idx2] = min(abs(Y_single(:,1)-((layer_idx2-1)*grid_spacing-517.5)));
             
             % isolate layer
-            layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+%             layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+            layer = interp_map(idx1:idx2,:);
+
             % get the horizontal input ratio
             fraction_values(cells) = sum(sum(layer(:,soma_x-extent:soma_x)))./...
                 sum(sum(layer(:,soma_x-extent:soma_x+extent)));
@@ -166,6 +178,15 @@ for distance = distance_number:-1:2
         
         % produce the annular mask
         mask = xor(mask_cell{cells,1},mask_cell{cells,2});
+
+        % get the map and layers
+        cut_map = interp_map(idx1:idx2,:);
+        % filter the map
+        cut_map = cut_map.*mask(idx1:idx2,:);
+        % calculate the position and value of the maximum and store
+        [distance_values(distance,cells,1),max_idx] = max(cut_map(:));
+        % convert the coordinates into x and y
+        [max_y,max_x] = ind2sub(size(cut_map),max_idx);
         
 %         % plot mask and soma
 %         [~,center_x_coord] = min(abs(X_single(1,:)-target_somas(cells,1)));
@@ -174,24 +195,24 @@ for distance = distance_number:-1:2
 %         hold on
 %         plot(center_x_coord,size(Y_single,1)-center_y_coord,'ro')
 
-        % get the map and layers
-        cut_map = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
-        % filter the map
-        cut_map = cut_map.*mask((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
-        % calculate the position and value of the maximum and store
-        [distance_values(distance,cells,1),max_idx] = max(cut_map(:));
-        % convert the coordinates into x and y
-        [max_y,max_x] = ind2sub(size(cut_map),max_idx);
-
+%         % make a gif of the rings
+%         imagesc(cut_map)
+%         hold on
+%         plot(max_x,max_y,'ro')
+%         axis equal
+%         pause(0.1)
+%         make_gif_frame(gcf,frame_counter,fullfile(gif_path,'test.gif'),0.1)
+%         frame_counter = frame_counter + 1;
+        
         % if the max is 1 (i.e. at the corner of the image), leave a NaN
-        if max_idx == 1
+        if max_idx == 1 || max_y == 1 || max_y == size(cut_map,1)
             distance_values(distance,cells,2:3) = NaN;
             continue
         end
         % store the distances in both axis from the soma
-        distance_values(distance,cells,2) = max_x; %- soma_x;
-        distance_values(distance,cells,3) = max_y;% - ...
-%             (size(Y_single,1)-soma_y-(layer_idx1-1)*grid_spacing);
+        distance_values(distance,cells,2) = max_x - soma_x;
+        distance_values(distance,cells,3) = max_y - ...
+            (size(Y_single,1)-soma_y-(layer_idx1-1)*grid_spacing);
     end
 end
 
@@ -200,22 +221,77 @@ distance_values = distance_values(2:end,:,:);
 distance_vector = distance_vector(2:end);
 %% Plot the distributions of max values
 close all
-figure
+% figure
+% define the offset
+offset = 500;
 % for all the cell types
 for celltype = 1:celltype_num
-    subplot(1,3,celltype)
+%     subplot(1,3,celltype)
+    figure
+    % get the idx vector
+    idx = celltype_matrix(:,celltype);
+    % plot value and location of the maxima
+    current_val = distance_values(:,idx,:);
+    % get a colormap for the cells
+    cmap = lines(size(current_val,2));
+    % for all the cells
+    for cells = 1:size(current_val,2)
+        
+        current_cell = current_val(:,cells,:);
+        %     histogram(current_val(20,:,3),30)
+        %     current_val = reshape(current_val,[],3);
+        % %     current_val = mean(current_val,2);
+        %     current_val = squeeze(current_val(10,:,:));
+        scatter(current_cell(:,2)+offset*(cells-1),current_cell(:,3),30,current_cell(:,1))
+        hold on
+        plot(current_cell(:,2)+offset*(cells-1),current_cell(:,3),'color',cmap(cells,:))
+    end
+    set(gca,'YDir','reverse')
+    axis equal
+    
+end
+autoArrangeFigures
+%% Plot the maxima linearly
+
+close all
+% for all the cell types
+for celltype = 1:celltype_num
+%     subplot(1,3,celltype)
+    figure
     % get the idx vector
     idx = celltype_matrix(:,celltype);
     % plot value and location of the maxima
     current_val = distance_values(:,idx,:);
     
-    histogram(current_val(20,:,3),30)
-%     current_val = reshape(current_val,[],3);
-% %     current_val = mean(current_val,2);
-%     scatter(current_val(:,2),current_val(:,3),30,current_val(:,1))
-%     hold on
+    % plot the values as a matrix
+    subplot(1,2,1)
+    imagesc(current_val(:,:,1))
+    
+    % plot the euclidean displacement
+    euc_displacement = sqrt(diff(current_val(:,:,2),1,1).^2 + diff(current_val(:,:,3),1,1).^2);
+    subplot(1,2,2)
+    imagesc(log(euc_displacement))
+    
+%     % for all the cells
+%     for cells = 1:size(current_val,2)
+%         
+%         current_cell = current_val(:,cells,:);
+%         %     histogram(current_val(20,:,3),30)
+%         %     current_val = reshape(current_val,[],3);
+%         % %     current_val = mean(current_val,2);
+%         %     current_val = squeeze(current_val(10,:,:));
+%             
+% 
+%         
+% %         scatter(current_cell(:,2)+offset*(cells-1),current_cell(:,3),30,current_cell(:,1))
+% %         hold on
+% %         plot(current_cell(:,2)+offset*(cells-1),current_cell(:,3),'color',cmap(cells,:))
+%     end
+%     set(gca,'YDir','reverse')
+%     axis equal
     
 end
+autoArrangeFigures
 %% Plots per cell type
 
 close all

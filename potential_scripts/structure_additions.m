@@ -573,7 +573,7 @@ for cells = 1:cell_num
         
         % get the value and correct it
         temp_val = vertcat(str(cells).(ori_fields{ori_field})) + 90;
-        temp_val(temp_val>179) = temp_val(temp_val>179) - 180;
+        temp_val(temp_val>179.9999999) = temp_val(temp_val>179.9999999) - 180;
         % replace it in the structure
         str(cells).(ori_fields{ori_field}) = temp_val;
     
