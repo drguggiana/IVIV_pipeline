@@ -153,11 +153,12 @@ ylabel('R squared')
 set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
     horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
 
-% plot the coefficients
-figure
-bar(vertcat(coeff',shuffle_result(2:end,:)'))
-ylabel('Coeff weight')
-set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
-    horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
-
+if ~isempty(target_coeff)
+    % plot the coefficients
+    figure
+    bar(vertcat(coeff',shuffle_result(2:end,:)'))
+    ylabel('Coeff weight')
+    set(gca,'XTick',1:length(targets)+1,'XTickLabels',...
+        horzcat({'Original'},targets),'XTickLabelRotation',45,'TickLabelInterpreter','None')
+end
 autoArrangeFigures

@@ -27,7 +27,7 @@ OS_cells = vertcat(str.OSIpref)>0.25;
 % tw = vertcat(str.Sigmapref);
 
 % allocate memory for the horizontal fraction of input
-subpixel_span = zeros(size(OS_cells,1),2);
+subpixel_span = zeros(size(OS_cells,1),2,2);
 % OS_cells = tw<prctile(tw,25);
 for maptype = 1:2
     switch maptype
@@ -39,8 +39,8 @@ for maptype = 1:2
     end
 
     % select the layer
-    layer = 5;
-    switch layer
+    layer_selection = 4;
+    switch layer_selection
         case 23
             layer_idx1 = 3;
             layer_idx2 = 5;
@@ -108,7 +108,7 @@ for maptype = 1:2
         [~,soma_idx] = min(abs(X_single(1,:)-target_somas(cells,1)));
 
         % isolate layer
-        layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+        layer = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
         
 
         % get the span of the cloud
@@ -141,7 +141,7 @@ for maptype = 1:2
             temp_span(half) = max_idx;
         end
         % save the max distance
-        subpixel_span(cells,maptype) = sum(temp_span);
+        subpixel_span(cells,maptype,:) = temp_span;
 
     end
 end
@@ -149,23 +149,52 @@ end
 
 close all
 
+markers = {'o','*'};
+maptype_names = {'Exc','Inh'};
 for maptype = 1:2
     figure
     % for all celltypes
     for celltype = 1:celltype_num
-    %     scatter(target_param(celltype_matrix(:,celltype)),subpixel_span(celltype_matrix(:,celltype)))
+        % for both sides
+        for sides = 1:2
+        %     scatter(target_param(celltype_matrix(:,celltype)),subpixel_span(celltype_matrix(:,celltype)))
 
-    %     [N,edges] = histcounts(subpixel_span(celltype_matrix(:,celltype)),'Normalization','probability');
-    %     plot(N,colors{celltype})
-        errorbar(celltype,mean(subpixel_span(celltype_matrix(:,celltype),maptype)),...
-            std(subpixel_span(celltype_matrix(:,celltype),maptype))./sqrt(sum(celltype_matrix(:,celltype))),...
-            colors{celltype},'marker','o')
-        hold on
-
+        %     [N,edges] = histcounts(subpixel_span(celltype_matrix(:,celltype)),'Normalization','probability');
+        %     plot(N,colors{celltype})
+        
+            errorbar(celltype,mean(subpixel_span(celltype_matrix(:,celltype),maptype,sides)),...
+                std(subpixel_span(celltype_matrix(:,celltype),maptype,sides))./sqrt(sum(celltype_matrix(:,celltype))),...
+                colors{celltype},'marker',markers{sides})
+            hold on
+        end
     end
     set(gca,'XLim',[0 celltype+1])
     set(gca,'XTick',1:celltype_num,'XTickLabels',{'NA','Aligned','Ortho'})
+    title(strjoin({'Subpixel span',maptype_names{maptype},'L',num2str(layer_selection)},' '))
+    legend({'Medial','Lateral'})
 end
+
+for maptype = 1:2
+    figure
+    % for all celltypes
+    for celltype = 1:celltype_num
+
+        %     scatter(target_param(celltype_matrix(:,celltype)),subpixel_span(celltype_matrix(:,celltype)))
+
+        %     [N,edges] = histcounts(subpixel_span(celltype_matrix(:,celltype)),'Normalization','probability');
+        %     plot(N,colors{celltype})
+        
+        errorbar(celltype,mean(sum(subpixel_span(celltype_matrix(:,celltype),maptype,:),3)),...
+            std(sum(subpixel_span(celltype_matrix(:,celltype),maptype,:),3))./sqrt(sum(celltype_matrix(:,celltype))),...
+            colors{celltype},'marker','o')
+        hold on
+    end
+    set(gca,'XLim',[0 celltype+1])
+    set(gca,'XTick',1:celltype_num,'XTickLabels',{'NA','Aligned','Ortho'})
+    title(strjoin({'Total span',maptype_names{maptype},'L',num2str(layer_selection)},' '))
+end
+autoArrangeFigures
+%% Plot a scatter plot with a parameters
 
 figure
 target_param = vertcat(str.ORIpref);
@@ -178,3 +207,4 @@ hold on
 scatter(sub_span(:,2),target_param)
 [cor2,pval2] = circ_corrcl(deg2rad(target_param),sub_span(:,2));
 title(strjoin({num2str(cor),num2str(pval),num2str(cor2),num2str(pval2)},'_'),'Interpreter','None')
+autoArrangeFigures

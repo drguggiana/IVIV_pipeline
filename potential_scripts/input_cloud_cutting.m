@@ -29,7 +29,7 @@ OS_cells = vertcat(str.OSIpref)>0.25;
 map_type = 'inh';
 
 % select the layer
-layer = 5;
+layer = 23;
 switch layer
     case 23
         layer_idx1 = 3;
@@ -133,7 +133,7 @@ for distance = distance_number:-1:1
             end
             
             % isolate layer
-            layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+            layer = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
             % get the horizontal input ratio
             fraction_values(cells) = sum(sum(layer(:,soma_idx-extent:soma_idx)))./...
                 sum(sum(layer(:,soma_idx-extent:soma_idx+extent)));
@@ -160,9 +160,9 @@ for distance = distance_number:-1:1
 %         plot(center_x_coord,size(Y_single,1)-center_y_coord,'ro')
         
         % get the map and layers
-        cut_map = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+        cut_map = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
         % filter the map
-        cut_map = cut_map.*mask(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+        cut_map = cut_map.*mask((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
    
 %         % cut the map
 %         cut_map(:,cutting_map:end) = 0;
