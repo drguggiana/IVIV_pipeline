@@ -120,9 +120,5 @@ r2 = mdl.Rsquared.Adjusted;
 coeff = mdl.Coefficients.Estimate;
 
 varargout{4} = mdl;
-
 varargout{5} = nan_vector;
-
-varargout{5} = nan_vector;
-
 

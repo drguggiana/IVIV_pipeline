@@ -43,15 +43,9 @@ cell_cell = normr_2(cell_cell,2);
 
 % run the embedding from scratch
 % load the embedding
-<<<<<<< HEAD
-% reduced_data = load(umap_path);
-% reduced_data = reduced_data.reduced_data;
-[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
-=======
 reduced_data = load(umap_path);
 reduced_data = reduced_data.reduced_data;
 % [reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 15, 'min_dist', 0.5);
->>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
 
 % % load the umap file from path
 % reduced_data = load(umap_path);
@@ -72,11 +66,7 @@ close all
 %     'frac_vert','corr_exc_apical','corr_exc_basal','corr_inh_apical','corr_inh_basal'};
 plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref','ORIpref','DIRpref','noise','PCs',...
    'ang_exL23','ang_inL23','pialD','pci',...
-<<<<<<< HEAD
-   'frac_vert'};
-=======
    'frac_vert','resp'};
->>>>>>> d978a27a5ad3f9256da7db2ff072b009dafaa506
 
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula')
 

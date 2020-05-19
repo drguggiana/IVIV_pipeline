@@ -225,7 +225,7 @@ end
 
 close all
 
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 300, 250]);
+figure
 % mean_celltype = mean(distance_percelltype,1);
 % std_celltype = std(distance_percelltype,0,1);
 colors = {'k','b','r'};
@@ -235,9 +235,8 @@ for celltype = 1:celltype_num
     plot(distance_vector,distance_percelltype(:,celltype,1),colors{celltype})
 %     plot(distance_percelltype(:,celltype,2),distance_percelltype(:,celltype,1),colors{celltype})
 %     plot3(distance_vector,distance_percelltype(:,celltype,2),distance_percelltype(:,celltype,1),colors{celltype})
+%     scatter(distance_vector,distance_percelltype(:,celltype,1),distance_percelltype(:,celltype,2).*50,colors{celltype})
     hold on
-scatter(distance_vector,distance_percelltype(:,celltype,1),distance_percelltype(:,celltype,2).*50,colors{celltype},'filled')
-box off;    
 %     plot(distance_vector,distance_percelltype(:,celltype,1),colors{celltype})
 %     plot(distance_vector,distance_percelltype(:,celltype,2),strcat('--',colors{celltype}))
 %     plot(distance_vector([1 distance_number]),[0.05 0.05],'m--')
@@ -245,8 +244,7 @@ end
 % xlabel('Average vector length')
 xlabel('Cutting point')
 ylabel('Correlation')
-set(gca,'FontSize',10)
-%legend({'NR','Aligned','Ortho'},'location','southeast')
+legend({'NR','Aligned','Ortho'},'location','southeast')
 %% Plot fractions
 close all
 figure
