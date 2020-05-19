@@ -1,7 +1,7 @@
 function G=correlation_matrix(data,bon)
 
+[R,P]=corrcoef(data,'rows','complete');
 %[R,P]=corrcoef(data);
-[R,P]=corrcoef(data,'Rows','pairwise')
  G=R;
  if bon==1
  [h, crit_p, adj_ci_cvrg, adj_p]=fdr_bh(P,0.05,'pdep');
