@@ -480,6 +480,16 @@ ylabel('CVL L2/3 (µm)','Color','k');
  ylim([15 85]);yticks([15:35:85]);
  xlim([0 180]);xticks([0:45:180]);
 set(gca,'FontSize',10);
+%% Rolling average plots L23CVL Non weighted centroid
+parameter_vector = abs(ang_exL23nw(:,8)*69)
+parameter_vector2 = abs(ang_inL23nw(:,8)*69)
+%parameter_vector = abs(ang_exL23(:,3)*69-ang_exL23(:,1)*69-(ang_inL23(:,3)*69-ang_inL23(:,1)*69))
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
+ylabel('NON WEIGHTED CVL L2/3 (µm)','Color','k');
+%  ylim([15 85]);yticks([15:35:85]);
+%  xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
+
 %% IN
 a=find(od_out_iviv(:,1)>0.25);  
 %par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
@@ -560,16 +570,72 @@ nvra=find([str(:).resp]==0);
 nvrb=find([str(:).sftf_resp]==1 & [str(:).resp]==0);
 %nvr=find([str(:).resp]==0);
 vr=find([str(:).resp]==1);
+w1=find(od_out_iviv(:,4)>10 & od_out_iviv(:,4)<60 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+w1a=find(od_out_iviv(:,5)>195 & od_out_iviv(:,5)<245 & od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25);
+w1b=find(od_out_iviv(:,5)>15 & od_out_iviv(:,5)<65 & od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25);
+w2=find(od_out_iviv(:,4)>100 & od_out_iviv(:,4)<150 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+%% comparing non visual to all others
+par1=ang_inL23(:,8)*69;
+%par1=span(:,6);
+%par1=ang_inL5(:,3)*69-ang_inL5(:,1)*69
+%par1=ang_inL5(:,8)*69
+data= vertcat(par1(nvra),par1(w1),par1(w2));
+groups_idx=vertcat(ones(length(nvra),1)*1,ones(length(w1),1)*2,ones(length(w2),1)*3)
+[statsout] = barplot_sw(data,groups_idx,{'','Cd length'});
+%ylim([0 100]);yticks([0:25:100])
 %% 
+%par1=ang_inL23(:,8)*69;
+par1=span(:,4);
+%par1=ang_inL5(:,3)*69-ang_inL5(:,1)*69
+%par1=ang_inL5(:,8)*69
+data= vertcat(par1(nvra),par1(w1),par1(w2));
+groups_idx=vertcat(ones(length(nvra),1)*1,ones(length(w1),1)*2,ones(length(w2),1)*3)
+[statsout] = barplot_sw(data,groups_idx,{'','Span L2/3'});xtickangle(45);
+%ylim([0 100]);yticks([0:25:100])
+%% NVR vs 100-150 group
+par=span(:,4)
+g1=w1
+g2=w2
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'10-60°.','100-150°'});xtickangle(45);
+ylabel('Span (µm)','Color','k'); ;set(gca,'FontSize',10);
+
+%% Subpixel span
+par=subpixel_span(:,1,2)./subpixel_span(:,1,1)
+g1=w1
+g2=w2
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'non resp.','100-150°'});xtickangle(45);
+ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
+%% Subpixel span
+%IN
+par1=subpixel_span(:,1,1)+subpixel_span(:,1,2);
+%par1=ang_inL5(:,3)*69-ang_inL5(:,1)*69
+%par1=ang_inL5(:,8)*69
+data= vertcat(par1(nvra),par1(w1),par1(w2));
+groups_idx=vertcat(ones(length(nvra),1)*1,ones(length(w1),1)*2,ones(length(w2),1)*3)
+[statsout] = barplot_sw(data,groups_idx,{'','Span L2/3 In'});
+%% %% Rolling average plots L23CVL span
+parameter_vector = subpixel_span(:,1,1)
+parameter_vector2 = subpixel_span(:,2,1)
+%parameter_vector = abs(ang_exL23(:,3)*69-ang_exL23(:,1)*69-(ang_inL23(:,3)*69-ang_inL23(:,1)*69))
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
+ylabel('Span L2/3 (µm)','Color','k');
+%  ylim([15 85]);yticks([15:35:85]);
+%  xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
+%% 
+
 par1=L5frt(:,1);
 %par1=span(:,6);
 %par1=ang_inL5(:,3)*69-ang_inL5(:,1)*69
 %par1=ang_inL5(:,8)*69
 data= vertcat(par1(contra_id),par1(ipsi_id),par1(bino_id));
 groups_idx=vertcat(ones(length(contra_id),1)*1,ones(length(ipsi_id),1)*2,ones(length(bino_id),1)*3)
-[statsout] = barplot_sw(data,groups_idx,{'','Cvr L2/3'});
+[statsout] = barplot_sw(data,groups_idx,{'','L5fr ex'});
 %ylim([0 100]);yticks([0:25:100])
-
+gca
+xticklabels({'ipsi','contra','bino'});
 %% 
 a=find(od_out_iviv(:,3)>0.25);  
 par=abs(ang_exL5(a,3)*69-ang_exL5(a,1)*69)
@@ -578,7 +644,7 @@ g1=find(od_out_iviv(a,4)>10 & od_out_iviv(a,4)<60) ;
 g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'10-60°','100-150°'});xtickangle(45);
-ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
+ylabel('L5fr EX (µm)','Color','k'); ;set(gca,'FontSize',10);
 
 %% IN L4 Cx
 
