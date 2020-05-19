@@ -95,7 +95,10 @@ if shuffle_number > 0
             temp_data(:,col) = temp_data(randperm(size(temp_data,1)),col);
             % perform the fit
 %             mdl = fitglm(temp_data,Y,'linear','Distribution','normal','intercept',false);
-            mdl = fitrsvm(temp_data,Y,'KFold',10,'KernelFunction',kernel_function,'Standardize',true);
+%             mdl = fitrsvm(temp_data,Y,'KFold',40,'KernelFunction',kernel_function,...
+%                 'Standardize',true,'KernelScale',1);
+            mdl = fitrgp(temp_data,Y,'Standardize',true,'Leaveout','on');
+
             % save the coefficients and fit
             lm = fitlm(Y,kfoldPredict(mdl));
             temp_r2 = lm.Rsquared.Adjusted;
@@ -119,12 +122,13 @@ if shuffle_number > 0
 end
 
 % calculate the actual fit
-mdl = fitrsvm(target_data,Y,'KFold',10,'KernelFunction',kernel_function,'Standardize',true);
+mdl = fitrgp(target_data,Y,'Standardize',true,'Leaveout','on');
+% mdl = fitrsvm(target_data,Y,'KFold',40,'KernelFunction',kernel_function,...
+%     'Standardize',true,'KernelScale',1);
 varargout{3} = kfoldLoss(mdl);
 
 % if the kernel function is not linear, skip
 if strcmp(kernel_function,'linear')
-    % r2 = mdl.Rsquared.Adjusted;
     coeff = cellfun(@(x) x.Beta,mdl.Trained,'UniformOutput',false);
     coeff = mean(horzcat(coeff{:}),2);
 else
