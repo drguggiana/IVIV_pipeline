@@ -20,7 +20,13 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 response = 'ORIpref';
 
 targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
-    'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23'};
+    'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
+% targets = {'ang_inL23_Vt','max_ex_v_L23','max_ex_x_L23','max_ex_y_L23',...
+%     'max_ex_v_L4','max_ex_x_L4','max_ex_y_L4','max_ex_v_L4','max_ex_x_L5','max_ex_y_L5'};
+% targets = {'ang_inL23_Vt','max_in_v_L23','max_in_x_L23','max_in_y_L23',...
+%     'max_in_v_L4','max_in_x_L4','max_in_y_L4','max_in_v_L4','max_in_x_L5','max_in_y_L5'};
+
+% targets = {'ang_inL23_Vt','nw_inL23_Vt'};
 
 % define the kernel function to use
 kernel_function = 'rbf';
