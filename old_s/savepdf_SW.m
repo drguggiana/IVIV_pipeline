@@ -7,11 +7,16 @@ cd(fn);
   print(figHandles(i),'-dpdf',num2str(figHandles(i).Number));
  
  end
- else
+ elseif form==2
     for i=1:numel(figHandles)
  savefig(figHandles(i),num2str(figHandles(i).Number));
  
- end
+    end
+ else
+   for i=1:numel(figHandles)
+  print(figHandles(i),'-dpng',num2str(figHandles(i).Number));
+ 
+ end   
  end
 end
  
