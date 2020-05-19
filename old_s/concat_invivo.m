@@ -10,9 +10,7 @@ for i=1:length(L23_PC)
      prefDir_all{i,:}=L23_PC(i).OD.prefDir(:,:);
      OSIall{i,:}=L23_PC(i).OD.gOSI(:,:); 
      DSIall{i,:}=L23_PC(i).OD.gDSI(:,:); 
-     Ca_od{i,:}=L23_PC(i).OD.deltapeaks_averagetrace(:,:);
-     sigma{i,:}=L23_PC(i).OD.sigma(:,:);
-     
+     Ca_od{i,:}=L23_PC(i).OD.deltapeaks_averagetrace(:,:)
       %SFTF protocol
      sf_all{i,:}=L23_PC(i).SFTF.sf;
      tf_all{i,:}=L23_PC(i).SFTF.tf;
@@ -104,7 +102,6 @@ end
   OSI_all=vertcat(OSIall{:});
   DSI_all=vertcat(DSIall{:});
   Ca_peak_od=vertcat(Ca_od{:});
-  tw=vertcat(sigma{:});
   %Pial depth
   pial_all=horzcat(pia{:});
   
@@ -145,14 +142,12 @@ end
           pOSI_a(i)=OSI_all(i,1);
           pDSI_a(i)=DSI_all(i,1);
           pCa_a(i)=max(Ca_peak_od(i,1:8));
-          pTW(i)=tw(i,1);
           
       elseif con(i)==0 & ips(i)==1;
           pORI_a(i)=pOSI_all(i,2);
           pDIR_a(i)=pDSI_all(i,2);
           pOSI_a(i)=OSI_all(i,2);
           pDSI_a(i)=DSI_all(i,2);
-          pTW(i)=tw(i,2);
            pCa_a(i)=max(Ca_peak_od(i,9:16));
       elseif con(i)==1 & ips(i)==1;
           if odi(i)>0
@@ -160,14 +155,12 @@ end
               pDIR_a(i)=pDSI_all(i,1);
               pOSI_a(i)=OSI_all(i,1);
               pDSI_a(i)=DSI_all(i,1);
-              pTW(i)=tw(i,1);
                pCa_a(i)=max(Ca_peak_od(i,1:8));
           else odi(i)<0
               pORI_a(i)=pOSI_all(i,2);
               pDIR_a(i)=pDSI_all(i,2);
               pDSI_a(i)=DSI_all(i,2);
               pOSI_a(i)=OSI_all(i,2);
-              pTW(i)=tw(i,2);
               pCa_a(i)=max(Ca_peak_od(i,9:16));
           end
       else con(i)==0 & ips(i)==0
@@ -176,7 +169,6 @@ end
        pOSI_a(i)=NaN;
        pDSI_a(i)=NaN;
        pCa_a(i)=NaN;
-       pTW(i)=NaN;
       end
   end
   %% 
@@ -278,7 +270,7 @@ end
       end
   end
   %% 
-  od_out=[pOSI_a;pDSI_a; ODI_res;pORI_a ;pDIR_a;  pCa_a; pTW; resp; con; ips]';
+  od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; pCa_a; resp; con; ips]';
   spon_out=[sad_a;pci_a']';
   sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' Ca_pref_sftft' sftfs_res_a']
   sftf_sel=[1-osi_sc 1-dsi_sc]; 
