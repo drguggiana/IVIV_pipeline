@@ -178,6 +178,37 @@ close all;
 %Overview of centroid x any with respect to soma for EX and IN, Panel B
 a=1:147;
 centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[]);
+%% Position of centroid, with soma
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 600, 300]);
+subplot(1,2,1);
+ang2=ang_exL23;
+%xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
+hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
+grid on;%h4.MarkerFaceAlpha=0.5
+hold on;
+h4 = plot(ang2(:,1)*69,ang2(:,2)*69,'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',3);box off;
+hold on;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'m.','MarkerSize',8);
+hold on;
+ang2=ang_exL4;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'g.','MarkerSize',8);
+ang2=ang_exL5;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'.k','MarkerSize',8);
+set(gca,'Ydir','reverse')
+ang2=ang_inL23;
+subplot(1,2,2);
+%xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
+hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
+grid on;%h4.MarkerFaceAlpha=0.5
+hold on;
+h4 = plot(ang2(:,1)*69,ang2(:,2)*69,'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',3);box off;
+hold on;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'m.','MarkerSize',8);
+ang2=ang_inL4;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'g.','MarkerSize',8);
+ang2=ang_inL5;
+h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'.k','MarkerSize',8);
+set(gca,'Ydir','reverse')
 %% 
 
 %EX vs IN horizontal centroid CoMx for L2/3, L4, L5, Panel C
@@ -459,6 +490,7 @@ savepdf_SW(fn,1);
 %% 
 %% 
 
+
 %Overview of centroid x and y with respect to soma for EX and IN and OSI colurcoded, Panel B
 a=find(od_out_iviv(:,1)>0.25);
 fe=od_out_iviv(a,4);
@@ -564,6 +596,16 @@ g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'10-60°','100-150°'});xtickangle(45);
 ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
+%% pial depth
+a=find(od_out_iviv(:,1)>0.25);  
+par=pia_input(a)
+%par=ang_exL5(a,8)*69
+g1=find(od_out_iviv(a,4)>10 & od_out_iviv(a,4)<60) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'10-60°','100-150°'});xtickangle(45);
+ylabel('Pial depth (µm)','Color','k'); ;set(gca,'FontSize',10);
+
 %% 
 nvr=find([str(:).sftf_resp]==0 & [str(:).resp]==0)
 nvra=find([str(:).resp]==0);
@@ -624,6 +666,42 @@ ylabel('Span L2/3 (µm)','Color','k');
 %  ylim([15 85]);yticks([15:35:85]);
 %  xlim([0 180]);xticks([0:45:180]);
 set(gca,'FontSize',10);
+%% Looking at soma and centroids
+a=find(od_out_iviv(:,1)>0.25);  
+fe=od_out_iviv(a,4)
+[cmap]=phasemap;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 600, 300]);
+subplot(1,2,1);
+ang2=ang_exL23;
+%xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
+hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
+grid on;%h4.MarkerFaceAlpha=0.5
+hold on;
+%h4 = plot(8.5*69+somac(a,1),somac(a,2),'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',3);box off;
+h4 = scatter(ang2(a,1)*69,ang2(a,2)*69,20,fe,'filled','^');colormap(cmap);%text(-250,50,'L2/3');
+hold on;
+h4 = scatter(ang2(a,3)*69,ang2(a,4)*69,20,fe,'filled');colormap(cmap);%text(-250,50,'L2/3');
+hold on;
+ang2=ang_exL4;
+h4 = scatter(ang2(a,3)*69,ang2(a,4)*69,20,fe,'filled');colormap(cmap);%text(-250,50,'L2/3');
+% ang2=ang_exL5;
+% h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'.k','MarkerSize',8);
+set(gca,'Ydir','reverse')
+ang2=ang_inL23;
+subplot(1,2,2);
+%xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
+hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
+grid on;%h4.MarkerFaceAlpha=0.5
+hold on;
+%h4 = plot(8.5*69+somac(a,1),somac(a,2),'^','MarkerFaceColor','w','MarkerEdgeColor','k','MarkerSize',3);box off;
+h4 = scatter(ang2(a,1)*69,ang2(a,2)*69,20,fe,'filled','^');colormap(cmap);%text(-250,50,'L2/3');
+hold on;
+h4 = scatter(ang2(a,3)*69,ang2(a,4)*69,20,fe,'filled');colormap(cmap);%text(-250,50,'L2/3');
+ang2=ang_inL4;
+h4 = scatter(ang2(a,3)*69,ang2(a,4)*69,20,fe,'filled');colormap(cmap);%text(-250,50,'L2/3');
+% ang2=ang_inL5;
+% h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'.k','MarkerSize',8);
+set(gca,'Ydir','reverse')
 %% 
 
 par1=L5frt(:,1);
@@ -712,6 +790,15 @@ ylabel('IN Length (µm)','Color','b');
   %ylim([15 85]);yticks([15:35:85]);
   %xlim([0 180]);xticks([0:45:360]);
 set(gca,'FontSize',10);
+%% 
+parameter_vector = somac(:,2);
+parameter_vector2 = ang_inL23(:,4);
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,0)
+ylabel('IN Length (µm)','Color','b');
+  %ylim([15 85]);yticks([15:35:85]);
+  %xlim([0 180]);xticks([0:45:360]);
+set(gca,'FontSize',10);
+
 %% 
 a=find(od_out_iviv(:,1)>0.25); 
 par=abs(a,4)

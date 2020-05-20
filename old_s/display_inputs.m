@@ -15,6 +15,7 @@ end
 hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
 hold on;line([-1 1], [8 8],'Color','k','LineStyle','--');hold on;line([-1 1], [11 11],'Color','k','LineStyle','--');
 hold on;mexp=errorbar(nanmean(frac_v(:,1:16)),1:16,nanstd(frac_v(:,1:16))/sqrt(size(frac_v,1)),'horizontal','k');set(gca,'Ydir','reverse');
+hold on;mexp.CapSize=3;
 hold on;mexp=errorbar(nanmean(frac_v(:,17:end))*-1,1:16,nanstd(frac_v(:,17:end))/sqrt(size(frac_v,1)),'horizontal','k');set(gca,'Ydir','reverse');
 mexp.CapSize=3;xlim([-1 1]);xticks([-1:0.5:1]);hold on;ylim([1 16]);yticks([1:5:16]);yticklabels({'1','6','11','16'});xlabel('Fraction of total input')
 hold on;text(-0.95,4.5,'L2/3');hold on;text(-0.95,7,'L4');hold on;text(-0.95,9.5,'L5');set(gca,'FontSize',8);
@@ -51,6 +52,7 @@ exp=plot(frac_h(i,17:end)'*-1,'-b');ylabel('Fraction of total input');box off;
 exp.Color(4) = 0.2;
 end
 mexp=errorbar(nanmean(frac_h(:,1:16)),nanstd(frac_h(:,1:16))/sqrt(size(frac_h,1)),'k');
+hold on;mexp.CapSize=3;
 mexp=errorbar(nanmean(frac_h(:,17:end))*-1,nanstd(frac_h(:,17:end))/sqrt(size(frac_h,1)),'k');
 mexp.CapSize=3;ylim([-0.6 0.6]);yticks([-0.6:0.3:0.6]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');text(2.5,0.675,'Medial');text(10,0.675,'Lateral');set(gca,'FontSize',8);
@@ -61,7 +63,7 @@ for i=1:size(frac_diffh,1)
 exp=plot(frac_diffh(i,1:16),'Color',[0.5 0.5 0.5]);xlabel('Horizontal map position');box off;
 exp.Color(4) = 0.2;
 end
-hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'horizontal','k');
+hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'k');
 mexp.CapSize=3;
 ylim([-0.3 0.3]);
 yticks([-0.3:0.15:0.3]);
@@ -71,7 +73,7 @@ stats_g=[];
 hold on;text(5,0.33,'\Delta EX - IN','Color','k');ylabel('\Delta Fraction of total input')
 
 subplot(1,5,5);hold on;
-;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'horizontal','k');
+;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'k');
 mexp.CapSize=3;
 ylim([-0.05 0.05]);
 yticks([-0.05:0.05:0.05]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
