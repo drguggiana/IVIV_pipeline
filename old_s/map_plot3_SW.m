@@ -195,11 +195,11 @@ axis square
     hold('on')
 %     set(gca,'YTick',[1.1, 4.1, 7.1, 9.6, 12.6, 15.1].*sf_plot,'YTickLabels',{'L1','L2/3','L4','L5','L6','WM'},...
 %         'TickLength',[0 0],'XTick',[])
-    p1=plot(linspace(0,17*sf_plot,18),2.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;
-    p1=plot(linspace(0,17*sf_plot,18),6.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;
-    p1=plot(linspace(0,17*sf_plot,18),8.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;
-    p1=plot(linspace(0,17*sf_plot,18),11.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;
-    p1=plot(linspace(0,17*sf_plot,18),14.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;
+    p1=plot(linspace(0,17*sf_plot,18),2.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;p1.Color(4) = 0.5;
+    p1=plot(linspace(0,17*sf_plot,18),6.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;p1.Color(4) = 0.5;
+    p1=plot(linspace(0,17*sf_plot,18),8.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;p1.Color(4) = 0.5;
+    p1=plot(linspace(0,17*sf_plot,18),11.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;p1.Color(4) = 0.5;
+    p1=plot(linspace(0,17*sf_plot,18),14.1.*ones(1,18).*sf_plot,':','Color',[0.5 0.5 0.5]);p1.LineWidth=0.25;p1.Color(4) = 0.5
     % plot(0:17,6.5.*ones(1,18),'k-')
     % plot(0:17,9.5.*ones(1,18),'k-')
 % end

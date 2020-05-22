@@ -56,6 +56,8 @@ if str(i).resp==1
     if str(i).contra==1
         polarplot(deg2rad(oris([1:end 1])),str(i).TCpref([1:8 1])/max(str(i).TCpref),'Color',[0 0.4 0.6]);hold on;
         ax = gca;rticks([0:0.5:1]);ax.LineWidth = 1;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+        ax = gca;rticks([0:0.5:1]);ax.LineWidth = 2;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
+ ax.ThetaTick = [0:45:360]; 
          ax.ThetaTick = [0:45:360]; 
         ax.RTickLabel = []; 
         ax.ThetaTickLabel = [];

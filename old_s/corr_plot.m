@@ -1,7 +1,7 @@
 function corr_plot(par1,par2,par3,label_names)
 if isempty(par3)==1
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [900, 500, 200, 200]);
- [R P]=corrcoef(par1,par2);s=scatter(par1,par2,10,'o','MarkerEdgeColor','k','MarkerFaceColor','k');box off;xlabel(label_names{1});ylabel(label_names{2});
+ [R P]=corrcoef(par1,par2);s=scatter(par1,par2,4,'o','MarkerEdgeColor','k','MarkerFaceColor','k');box off;xlabel(label_names{1});ylabel(label_names{2});
 %set(gca,'Ydir','reverse');
  if P(2)<0.05 & P(2)>0.01
      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'],'FontWeight','normal')
