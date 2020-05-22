@@ -19,12 +19,14 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
-targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
-    'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
+% targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
+%     'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
 % targets = {'ang_inL23_Vt','max_ex_v_L23','max_ex_x_L23','max_ex_y_L23',...
 %     'max_ex_v_L4','max_ex_x_L4','max_ex_y_L4','max_ex_v_L4','max_ex_x_L5','max_ex_y_L5'};
 % targets = {'ang_inL23_Vt','max_in_v_L23','max_in_x_L23','max_in_y_L23',...
 %     'max_in_v_L4','max_in_x_L4','max_in_y_L4','max_in_v_L4','max_in_x_L5','max_in_y_L5'};
+
+targets = {'ang_inL23_Vt','ang_inL23_Cx','ang_inL23_Cy','ang_inL23_Sy','ang_inL23_Al','ang_inL23_Sx'};
 
 % targets = {'ang_inL23_Vt','nw_inL23_Vt'};
 
@@ -92,7 +94,9 @@ autoArrangeFigures
 
 close all
 % define the target fot
-target_label = 'ang_inL23_Vt,frac_vert_inL4';
+% target_label = 'ang_inL23_Vt,frac_vert_inL4';
+target_label = 'ang_inL23_Vt,ang_inL23_Sx';
+
 
 % find the target model
 target_model = model_cell{contains(label_cell,target_label),1};
@@ -138,7 +142,7 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
-targets = {'ang_inL23_Vt','frac_vert_inL4'};
+targets = {'ang_inL23_Vt','ang_inL23_Sx'};
 
 % define the shuffle number and vector
 shuffle_number = 100;

@@ -1,6 +1,18 @@
-function [out_ang] = centroid_map(test_map,somax,somay,idx,row_shift,we)
+function [out_ang] = centroid_map(test_map,somax,somay,pialD,row_shift,varargin)
 % calculate the centroid and centroid related metrics for the given set of
 % maps
+
+% parse the varargin
+if length(varargin) >= 1
+    % take the given constant
+    we = varargin{1};
+else
+    % default is weighted
+    we = 1;
+end
+
+% correct the row_shift
+row_shift = row_shift + 0.5;
 
 % allocate memory
 out = zeros(length(test_map),3);
@@ -9,13 +21,17 @@ cell_coord = zeros(length(test_map),2);
 %Calculate weighted centroid and total mass
 for i = 1:length(test_map)
     % load the current map
-    A = test_map(:,:,i);
+    A = vertcat(mean(test_map(1:2,:,i),1),test_map(2:end-1,:,i),mean(test_map(end-1:end,:,i),1));
+
     % calculate the total mass
     tot_mass = sum(A(:));
     % calculate the weighted centroid
-    [ii,jj] = ndgrid(1:size(A,1),1:size(A,2));
-    R = sum(ii(:).*A(:))/tot_mass;
-    C = sum(jj(:).*A(:))/tot_mass;
+    [ii,jj] = ndgrid([0,0.5:size(test_map,1)-2.5,size(test_map,1)-2],1:size(A,2));
+%     [ii,jj] = meshgrid(1:size(A,1)+1,1:size(A,2)+1);
+%     A = interp2(ii0,jj0,A',ii,jj);
+    
+    R = nansum(ii(:).*A(:))/tot_mass;
+    C = nansum(jj(:).*A(:))/tot_mass;
     % store the masses in total and every dimension
     if we == 1
         out(i,:) = [tot_mass,R,C];
@@ -50,6 +66,11 @@ wy = out(:,2) + row_shift;
 % get the soma coordinates
 sx = cell_coord(:,1);
 sy = cell_coord(:,2);
+% correct the y centroid and soma position
+soma_delta = pialD./69 - sy;
+sy = pialD./69;
+wy = wy + soma_delta;
+
 % get the delta
 dpx = wx-sx;
 dpy = wy-sy;
@@ -70,7 +91,8 @@ qd = zeros(length(test_map),1);
 for i=1:length(test_map)
     hypo(i)=sqrt(((dpx(i)^2)+(dpy(i)^2)));
     sina(i)=dpy(i)/hypo(i);
-    ang_a(i)=asind(sina(i));
+%     ang_a(i)=asind(sina(i));
+    ang_a(i) = rad2deg(atan2(dpy(i),dpx(i)));
     ang_b(i)=90-ang_a(i);
     centr_vector=polyfit([sx(i), wx(i)],[sy(i), wy(i)],1);
     vec_slope(i)=centr_vector(1);

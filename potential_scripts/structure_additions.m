@@ -489,7 +489,7 @@ set(gca,'XLim',[0 clu_num+1],'YDir','reverse')
 %% Update the centroid angles
 
 % get the pial depth
-% pialD = cat(1,str.pialD);
+pialD = cat(1,str.pialD);
 % get the soma x position
 soma_coord = cat(1,str.subpixel_soma);
 % somax = somax(:,1);
@@ -515,23 +515,23 @@ for exin = 1:2
         % select the rows for layer 2/3 and layer 4 respectively
         switch layer
             case 1
-                layers = 3:5;
+                layers = 2:6;
                 field2 = 'L23';
                 row_shift = 2;
             case 2
-                layers = 6:7;
+                layers = 5:8;
                 field2 = 'L4';
                 row_shift = 5;
             case 3
-                layers = 8:10;
+                layers = 7:11;
                 field2 = 'L5';
                 row_shift = 7;
         end
 
         % get the layer
         map_layers = maps(layers,:,:);
-        out_ang = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),idx_centroid,row_shift,1);
-        out_ang_nonwe = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),idx_centroid,row_shift,0);
+        out_ang = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),pialD,row_shift,1);
+        out_ang_nonwe = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),pialD,row_shift,0);
 
         % for all the cells
         for cells = 1:cell_num
@@ -602,7 +602,7 @@ for cells = 1:cell_num
         end
         % load the structure
         temp_max = max_values(cells,maptype,1:3,:);
-        str(cells).(strcat('max_',field1)) = temp_max(:);
+        str(cells).(strcat('max_',field1)) = temp_max(:)';
         
     end
 end
