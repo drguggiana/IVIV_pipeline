@@ -55,6 +55,18 @@ for target = 1:number_targets
                 target_data(:,target) = temp_var(:,8);
             case 'Al'
                 target_data(:,target) = temp_var(:,5);
+            case 'Sx'
+                target_data(:,target) = temp_var(:,1);
+            case 'Sy'
+                target_data(:,target) = temp_var(:,2);
+            case 'Rx'
+                target_data(:,target) = temp_var(:,3);
+            case 'Ry'
+                target_data(:,target) = temp_var(:,4);
+            case 'Dx'
+                target_data(:,target) = temp_var(:,3)-temp_var(:,1);
+            case 'Dy'
+                target_data(:,target) = temp_var(:,4)-temp_var(:,2);
         end
     elseif contains(targets{target},{'frac_vert','frac_horz'})
         % parse the argument
@@ -131,6 +143,5 @@ for target = 1:number_targets
 
     else
         target_data(:,target) = vertcat(str(selection_vector).(targets{target}));
-        target_data(:,target) = target_data(randperm(sum(selection_vector)),target);
     end
 end

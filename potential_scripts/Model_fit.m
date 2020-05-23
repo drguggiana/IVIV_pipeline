@@ -19,6 +19,18 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
+% legend:
+% ang_inL23_(Cx,Cy,Vt,Al,Rx,Ry,Dx,Dy,Sx,Sy) load the centroid x or y , vector
+% length, alpha, raw centroid x and y, non absolute centroid - soma x and
+% y, soma x and y
+% nw_inL23_(Cx,Cy,Vt,Al,Rx,Ry,Dx,Dy,Sx,Sy) same as the above for the
+% non-weighted centroid
+% max_ex_(v,x,y)_L23 loads the maximum value, x or y position for that
+% layer and ex or in
+% frac_vert_(exL23,inL23,exL4,inL4,exL5,inL5) loads the vertical fraction
+% for ex in and the layer
+% span_(L23,L4,L5)_(ex,in) loads the span for the layer and ex in desired
+
 % targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
 %     'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
 % targets = {'ang_inL23_Vt','max_ex_v_L23','max_ex_x_L23','max_ex_y_L23',...
@@ -61,14 +73,14 @@ for combos = 1:num_comb
     % get the indexing vector
     idx_vector = comb(combos,:);
     idx_vector = idx_vector(idx_vector>0);
-    sub_targets = targets(idx_vector);
+    sub_targets = strjoin(targets(idx_vector),',');
     % run the regression
     [combination_results(combos),combination_coefficients{combos},...
         ~,~,combination_loss(combos),model_cell{combos,1},model_cell{combos,2}] =...
         SVR_fitting(str,selection_vector,response,...
         sub_targets,0,kernel_function);
     % write the label also
-    label_cell{combos} = strjoin(sub_targets,',');
+    label_cell{combos} = sub_targets;
     
 end
 %% Plot the parameter results
@@ -143,14 +155,14 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 response = 'ORIpref';
 
 targets = {'ang_inL23_Vt','ang_inL23_Sx'};
-
+fit_targets = strjoin(targets,',');
 % define the shuffle number and vector
 shuffle_number = 100;
 % shuffle_vector = [1 1];
 
 % run the regression
 [r2,coeff,shuffle_result,shuffle_prc]= SVR_fitting(str,selection_vector,response,...
-    targets,shuffle_number,kernel_function);
+    fit_targets,shuffle_number,kernel_function);
 %% Plot the shuffle results
 
 close all
