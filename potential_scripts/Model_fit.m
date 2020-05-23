@@ -19,12 +19,26 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
-targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
-    'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
+% legend:
+% ang_inL23_(Cx,Cy,Vt,Al,Rx,Ry,Dx,Dy,Sx,Sy) load the centroid x or y , vector
+% length, alpha, raw centroid x and y, non absolute centroid - soma x and
+% y, soma x and y
+% nw_inL23_(Cx,Cy,Vt,Al,Rx,Ry,Dx,Dy,Sx,Sy) same as the above for the
+% non-weighted centroid
+% max_ex_(v,x,y)_L23 loads the maximum value, x or y position for that
+% layer and ex or in
+% frac_vert_(exL23,inL23,exL4,inL4,exL5,inL5) loads the vertical fraction
+% for ex in and the layer
+% span_(L23,L4,L5)_(ex,in) loads the span for the layer and ex in desired
+
+% targets = {'ang_inL23_Vt','ang_inL4_Cx','pialD','frac_vert_exL4','frac_vert_exL23',...
+%     'ang_exL23_Vt','ang_inL4_Vt','frac_vert_inL4','frac_vert_inL23','nw_inL23_Vt'};
 % targets = {'ang_inL23_Vt','max_ex_v_L23','max_ex_x_L23','max_ex_y_L23',...
 %     'max_ex_v_L4','max_ex_x_L4','max_ex_y_L4','max_ex_v_L4','max_ex_x_L5','max_ex_y_L5'};
 % targets = {'ang_inL23_Vt','max_in_v_L23','max_in_x_L23','max_in_y_L23',...
 %     'max_in_v_L4','max_in_x_L4','max_in_y_L4','max_in_v_L4','max_in_x_L5','max_in_y_L5'};
+
+targets = {'ang_inL23_Vt','ang_inL23_Cx','ang_inL23_Cy','ang_inL23_Sy','ang_inL23_Al','ang_inL23_Sx'};
 
 % targets = {'ang_inL23_Vt','nw_inL23_Vt'};
 
@@ -59,14 +73,14 @@ for combos = 1:num_comb
     % get the indexing vector
     idx_vector = comb(combos,:);
     idx_vector = idx_vector(idx_vector>0);
-    sub_targets = targets(idx_vector);
+    sub_targets = strjoin(targets(idx_vector),',');
     % run the regression
     [combination_results(combos),combination_coefficients{combos},...
         ~,~,combination_loss(combos),model_cell{combos,1},model_cell{combos,2}] =...
         SVR_fitting(str,selection_vector,response,...
         sub_targets,0,kernel_function);
     % write the label also
-    label_cell{combos} = strjoin(sub_targets,',');
+    label_cell{combos} = sub_targets;
     
 end
 %% Plot the parameter results
@@ -92,7 +106,9 @@ autoArrangeFigures
 
 close all
 % define the target fot
-target_label = 'ang_inL23_Vt,frac_vert_inL4';
+% target_label = 'ang_inL23_Vt,frac_vert_inL4';
+target_label = 'ang_inL23_Vt,ang_inL23_Sx';
+
 
 % find the target model
 target_model = model_cell{contains(label_cell,target_label),1};
@@ -138,15 +154,15 @@ selection_vector = vertcat(str.OSIpref)>0.25;
 % define the target variables
 response = 'ORIpref';
 
-targets = {'ang_inL23_Vt','frac_vert_inL4'};
-
+targets = {'ang_inL23_Vt','ang_inL23_Sx'};
+fit_targets = strjoin(targets,',');
 % define the shuffle number and vector
 shuffle_number = 100;
 % shuffle_vector = [1 1];
 
 % run the regression
 [r2,coeff,shuffle_result,shuffle_prc]= SVR_fitting(str,selection_vector,response,...
-    targets,shuffle_number,kernel_function);
+    fit_targets,shuffle_number,kernel_function);
 %% Plot the shuffle results
 
 close all

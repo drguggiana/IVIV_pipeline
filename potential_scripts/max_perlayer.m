@@ -241,7 +241,7 @@ for maptype = 1:2
             scatter(centroid_x.*69,centroid_y.*69,30,celltype_colors{celltype},'filled')
             title(strjoin({field2,num2str(rho),num2str(pval)},' '),'Interpreter','None')
             set(gca,'YDir','reverse')
-            axis square
+            axis equal
             % update the counter
             counter = counter + 1;
 %         end
@@ -252,3 +252,103 @@ for maptype = 1:2
 end
 
 % autoArrangeFigures
+%% 
+close all
+
+selection_vector = ones(147,1)==1;
+% selection_vector = vertcat(str.OSIpref)>0.25;
+
+figure
+L23 = vertcat(str.ang_inL23);
+L4 = vertcat(str.ang_inL4);
+L23x = L23(selection_vector,3).*69;
+L23y = L23(selection_vector,4).*69;
+
+somax = L23(selection_vector,1).*69;
+somay = L23(selection_vector,2).*69;
+
+L4x = L4(selection_vector,3).*69;
+L4y = L4(selection_vector,4).*69;
+
+% subplot(1,2,1)
+scatter(L23x,L23y)
+% axis equal
+% subplot(1,2,2)
+hold on
+scatter(L4x,L4y)
+scatter(somax,somay)
+
+axis equal
+set(gca,'YDir','reverse')
+% [L23x,somay] = nan_remover(vertcat(str.pialD),somay);
+% [L23y,L4y] = nan_remover(L23y,L4y);
+% [rho,pval] = corr(abs(L23x),somay)
+% [rho,pval] = corr(L23y,L4y)
+
+
+L23 = vertcat(str.ang_exL23);
+L4 = vertcat(str.ang_exL4);
+L23x = L23(selection_vector,3).*69;
+L23y = L23(selection_vector,4).*69;
+
+somax = L23(selection_vector,1).*69;
+somay = L23(selection_vector,2).*69;
+
+L4x = L4(selection_vector,3).*69;
+L4y = L4(selection_vector,4).*69;
+
+scatter(L23x,L23y)
+scatter(L4x,L4y)
+
+% for cells = 1:sum(selection_vector)
+%     plot([somax(cells),L23x(cells)],[somay(cells),L23y(cells)],'k')
+% end
+% scatter(somax,somay)
+axis equal
+set(gca,'YDir','reverse')
+% % MAXIMA
+% L23 = horzcat(str.max_in)';
+% L4 = horzcat(str.max_in)';
+% L23x = L23(:,2);
+% L23y = L23(:,3);
+% 
+% % somax = L23(:,1);
+% % somay = L23(:,2);
+% 
+% L4x = L4(:,5);
+% L4y = L4(:,6);
+% 
+% subplot(1,2,2)
+% scatter(L23x,L23y)
+% % axis equal
+% % subplot(1,2,2)
+% hold on
+% scatter(L4x,L4y)
+% scatter(somax,somay)
+% 
+% axis equal
+% set(gca,'YDir','reverse')
+% 
+% 
+% 
+% L23 = horzcat(str.max_ex)';
+% L4 = horzcat(str.max_ex)';
+% L23x = L23(:,2);
+% L23y = L23(:,3);
+% 
+% somax = L23(:,5);
+% somay = L23(:,6);
+% 
+% L4x = L4(:,3);
+% L4y = L4(:,4);
+% 
+% % subplot(1,2,2)
+% scatter(L23x,L23y)
+% % axis equal
+% % subplot(1,2,2)
+% hold on
+% scatter(L4x,L4y)
+% % scatter(somax,somay)
+% axis equal
+% set(gca,'YDir','reverse')
+
