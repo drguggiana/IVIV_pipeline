@@ -58,14 +58,14 @@ figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
 shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','r')
 hold on
-shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
+% shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 hold on
 shadedErrorBar(1:180,rolling_orientation2,rolling_ori_error2,'transparent',1,'lineprops','b')
 hold on
-shadedErrorBar(1:180,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
+% shadedErrorBar(1:180,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
 xlabel('Orientation (deg)');
 xlim([0 180]);xticks([0:45:180]);
-lgd=legend('data','shuffle');legend boxoff;lgd.Location='northwest';
+% lgd=legend('data','shuffle');legend boxoff;lgd.Location='northwest';
 lgd.ItemTokenSize = [5,5];
 %ylabel('Parameter')
 %title(strjoin({'Rolling orientation average','window',...
@@ -74,13 +74,13 @@ axis tight
 else multi==0
     figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
-shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','b')
+ shadedErrorBar(1:180,rolling_orientation,rolling_ori_error,'transparent',1,'lineprops','m')
 hold on
-shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
+% shadedErrorBar(1:180,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 hold on
 xlabel('Orientation (deg)');
 xlim([0 180]);xticks([0:45:180]);
-lgd=legend('data','shuffle');legend boxoff;lgd.Location='northwest';
+% lgd=legend('data','shuffle');legend boxoff;lgd.Location='northwest';
 lgd.ItemTokenSize = [5,5];
 %ylabel('Parameter')
 %title(strjoin({'Rolling orientation average','window',...
@@ -91,7 +91,7 @@ else or==2
     %window = 65;
 direction_vector = cat(1,str.DIRpref);
 % add osi cutoff
-cutoff_dsi = 0.25;
+cutoff_dsi = 0.2;
 % get the osi
 dsi = cat(1,str.DSIpref);
 % get the vector

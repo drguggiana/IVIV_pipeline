@@ -1,6 +1,6 @@
 
-g1=find(od_out_iviv(:,1)>0.25 & ang_inL4(:,3)*69-ang_inL4(:,1)*69<150 & od_out_iviv(:,4)>10 & od_out_iviv(:,4)<60);
-g2=find(od_out_iviv(:,1)>0.25 & ang_inL4(:,3)*69-ang_inL4(:,1)*69<150 & od_out_iviv(:,4)>100 & od_out_iviv(:,4)<150);
+g1=find(od_out_iviv(:,1)>0.25 & ang_inL4(:,3)*69-ang_inL4(:,1)*69<135 & od_out_iviv(:,4)>10 & od_out_iviv(:,4)<60);
+g2=find(od_out_iviv(:,1)>0.25 & ang_inL4(:,3)*69-ang_inL4(:,1)*69<135 & od_out_iviv(:,4)>100 & od_out_iviv(:,4)<150);
 %% EX g1
 
 par1=ang_exL23(g1,3)*69-ang_exL23(g1,1)*69
