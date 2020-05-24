@@ -185,6 +185,23 @@ close all;
 %Overview of centroid x any with respect to soma for EX and IN, Panel B
 a=1:147;
 centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[]);
+%% Excitataion hori comparison
+par1=[];
+groups_idx=[];
+par1=vertcat(abs(ang_exL23(:,3)*69-ang_exL23(:,1)*69),abs(ang_exL4(:,3)*69-ang_exL4(:,1)*69),abs(ang_exL5(:,3)*69-ang_exL5(:,1)*69))
+groups_idx=vertcat(ones(length(ang_exL23(:,3)*69-ang_exL23(:,1)*69),1)*1,ones(length(ang_exL4(:,3)*69-ang_exL4(:,1)*69),1)*2,ones(length(ang_exL5(:,3)*69-ang_exL5(:,1)*69),1)*3)
+groups_idx(find(isnan(par1)))=[];
+par1(find(isnan(par1)))=[];
+[statsout] = barplot_sw(par1,groups_idx,{'','Cd length'});
+%% Inhbition
+par1=[];
+groups_idx=[];
+par1=vertcat(abs(ang_inL23(:,3)*69-ang_inL23(:,1)*69),abs(ang_inL4(:,3)*69-ang_inL4(:,1)*69),abs(ang_inL5(:,3)*69-ang_inL5(:,1)*69))
+groups_idx=vertcat(ones(length(ang_inL23(:,3)*69-ang_inL23(:,1)*69),1)*1,ones(length(ang_inL4(:,3)*69-ang_inL4(:,1)*69),1)*2,ones(length(ang_inL5(:,3)*69-ang_inL5(:,1)*69),1)*3)
+groups_idx(find(isnan(par1)))=[];
+par1(find(isnan(par1)))=[];
+[statsout] = barplot_sw(par1,groups_idx,{'','Cd length'});
+
 %% Position of centroid, with soma
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 600, 300]);
 subplot(1,2,1);
@@ -224,36 +241,38 @@ subplot(3,2,1);
 plot(ang_exL23(:,3)*69-ang_exL23(:,1)*69,ang_inL23(:,3)*69-ang_inL23(:,1)*69,'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-100 100];
 ref.YData=[-100 100];
-ref.Color='k';box off;xlim([-100 100]);ylim([-100 100]);hold on;title('L23','FontWeight','normal');xticks([-100:50:100]);yticks([-100:50:100]);
+ref.Color='k';box off;xlim([-115 100]);ylim([-115 100]);hold on;title('L23','FontWeight','normal');xticks([-100:50:100]);yticks([-100:50:100]);
 subplot(3,2,3);
 plot(ang_exL4(:,3)*69-ang_exL4(:,1)*69,ang_inL4(:,3)*69-ang_inL4(:,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
 ref.YData=[-150 150];ylabel('IN C_{x} (µm)','Color','b')
-ref.Color='k';box off;xlim([-150 150]);ylim([-150 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
+ref.Color='k';box off;xlim([-175 150]);ylim([-175 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
 subplot(3,2,5);
 plot(ang_exL5(:,3)*69-ang_exL5(:,1)*69,ang_inL5(:,3)*69-ang_inL5(:,1)*69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
-ref.Color='k';box off;xlim([-300 300]);ylim([-300 300]);hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
+ref.Color='k';box off;xlim([-335 300]);ylim([-335 300]);hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
 xlabel('EX C_{x} (µm)','Color','r')
+ref.XData=[-300 300];
+ref.YData=[-300 300];
 %EX vs IN verticalcentroid CoMY for L2/3, L4, L5, Panel C
 subplot(3,2,2);
 plot(ang_exL23(:,4)*-69-ang_exL23(:,2)*-69,ang_inL23(:,4)*-69-ang_inL23(:,2)*-69,'.','MarkerFaceColor','m','MarkerEdgeColor','m','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
-ref.YData=[-150 150];;xlim([-150 150]);ylim([-150 150]);xticks([-150:100:150]);yticks([-150:100:150]);
+ref.YData=[-150 150];;xlim([-175 150]);ylim([-175 150]);xticks([-150:100:150]);yticks([-150:100:150]);
 ref.Color='k';box off;;hold on;title('L23','FontWeight','normal');
 subplot(3,2,4);
 plot(((ang_exL4(:,4)*-69))-ang_exL4(:,2)*-69,((ang_inL4(:,4)*-69))-ang_inL4(:,2)*-69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
-set(gcf,'color','w');;xlim([-325 -25]);ylim([-325 -25]);
+set(gcf,'color','w');;xlim([-365 -25]);ylim([-365 -25]);
 ;ref= refline(1,0);
 set(gca,'FontSize',10);ref.LineStyle='--';
-ref.XData=[-325 -25];
-ref.YData=[-325 -25];
+ref.XData=[-340 -25];
+ref.YData=[-340 -25];
 ylabel('IN C_{y} (µm)','Color','b')
 ref.Color='k';box off;hold on;title('L4','FontWeight','normal');xticks([-325:100:-25]);yticks([-325:100:-25]);
 subplot(3,2,6);
 plot(((ang_exL5(:,4)*-69))-ang_exL5(:,2)*-69,((ang_inL5(:,4)*-69))-ang_inL5(:,2)*-69,'.','MarkerFaceColor',[0.5 0.5 0.5],'MarkerEdgeColor',[0.5 0.5 0.5],'MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--';ref.XData=[-500 -50];
-ref.YData=[-500 -50];xlim([-500 -50]);ylim([-500 -50]);xticks([-500:225:-50]);yticks([-500:225:-50]);
+ref.YData=[-500 -50];xlim([-525 -50]);ylim([-525 -50]);xticks([-500:225:-50]);yticks([-500:225:-50]);
 
 ref.Color='k';box off;hold on;title('L5','FontWeight','normal');
 xlabel('EX C_{y} (µm)','Color','r');
@@ -301,13 +320,13 @@ xticks([1:1:3]);yticks([1:1:3]);
 xticklabels({'PC1in','PC2in','PC3in'});xtickangle(45);set(gca,'FontSize',10);xlabel('');
 yticklabels({'PC1in','PC2in','PC3in'});ytickangle(45);set(gca,'FontSize',10);ylabel('');
 %PC2in with Cy
-corr_plot(scores(:,5),abs((ang_inL23(:,4)-ang_inL23(:,2))*-69),[],{'','',''});xlabel('PC2_{in}','Color','b');
+corr_plot(scores(:,5),abs((ang_inL23(:,4)-ang_inL23(:,2))*-69),[],{'','',''});xlabel('PC2_{in}','Color','b');xlim([-2.2 2]);xticks([-2:1:2]);ylim([-10 150]);yticks([0:50:150])
 %PC1ex with 
 corr_plot(scores(:,1),pia_input,[],{'','',''});xlabel('PC1_{ex}','Color','r');
-ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','reverse');ylim([100 400]);yticks([100:150:400]);xticks([-2:1:2]);
+ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','reverse');ylim([100 420]);yticks([100:150:400]);xticks([-2:1:2]);xlim([-2.2 2])
 %CoMX vs PC13in, Panel G
-corr_plot((ang_inL23(:,3)-ang_inL23(:,1))*69,scores(:,6),[],{'','',''});ylabel('PC3_{in}','Color','b');
-xlabel('IN C_{x} L2/3 (µm)','Color','b');set(gca,'FontSize',10);ylim([-1.2 1.2]);yticks([-1.2:0.6:1.2]);xlim([-120 120]);xticks([-120:60:120])
+corr_plot(scores(:,6),(ang_inL23(:,3)-ang_inL23(:,1))*69,[],{'','',''});xlabel('PC3_{in}','Color','b');
+ylabel('IN C_{x} L2/3 (µm)','Color','b');set(gca,'FontSize',10);xlim([-1.4 1.2]);xticks([-1.2:0.6:1.2]);ylim([-140 120]);yticks([-120:60:120])
 %% Correlation matrix Pial depth Cx Cy layers for supplement
 com=[];com=[ang_exL23(:,3)-ang_exL23(:,1)...
     ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2) ang_inL23(:,4)-ang_inL23(:,2)... 
@@ -387,6 +406,7 @@ plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 plot_list ={'ORIpref','DIRpref'}
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'phasemap');
 autoArrangeFigures;
+%% 
 
  %figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
  figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
@@ -409,6 +429,47 @@ figure(15);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200508_embedding\'
 savepdf_SW(fn,1);
 %% 
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
+   abs(ang_inL23(:,4)-ang_inL23(:,2))  pia_input od_out_iviv(:,[1 2 3 6 7])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%% 
+
+%% Circular correlation for ORI
+a=find(od_out_iviv(:,1)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
+   abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a)]
+for i=1:9
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(a,4)), par_c(:,i))
+end
+%% Circular correlation for DRI
+a=find(od_out_iviv(:,2)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
+   abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a)]
+for i=1:9
+    [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(a,5)), par_c(:,i))
+end
+%% Combine matrices
+c_cor=[rho1;rho2]
+c_pva=[pval1;pval2]
+c_cor_e=c_cor;
+  m=c_pva<0.05;
+c_cor_e(m==0)=m(m==0);
+%% 
+fG=[G([10 11 12 13 14],1:9)];
+fG=[fG ;c_cor_e];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
+imagesc(fG);c=colorbar;pos = get(c,'Position');
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:12])
+yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}','ORI*','DIR*'});set(gca,'FontSize',10);
+xticklabels({'L2/3','L2/3','L4','L4','C L2/3 ','C L2/3','C L2/3','C L2/3', 'Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+%% 
+
 %Correlation Matrix Panel B
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
     abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
@@ -1657,7 +1718,7 @@ b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);
 xlim([-0.1 1]);xticks([0:0.2:0.8])
 a=od_out_iviv(:,1)>0.25;
-b=od_out(:,1)>0.25;set(gca,'FontSize',10);
+b=od_out(:,1)>0.25;set(gca,'FontSize',10);xtickangle(45);
 subplot(1,2,2);
 binRange = 0:45:179;
 hcx = histcounts(od_out(b,4),[binRange Inf],'Normalization','probability');
@@ -1666,6 +1727,7 @@ b1=bar(binRange,[hcx;hcy]');box off;xlabel('Orientation (deg)','FontSize',12);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10);
+xtickangle(45);
 %DSI and DIR
 fig21 = figure;
 set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [800, 200, 600, 200]);set(gcf,'color','w');
@@ -1968,8 +2030,8 @@ imagesc(scores(soi,4:6));c=colorbar;caxis([-2 2]);c.Ticks=[-2:1:2];
 xticklabels({'PC1_{in}','PC2_{in}','PC3_{in}'});xtickangle(45);ylim([1 147]);
 yticks([1:24:147]);set(gca,'FontSize',10);
 %% Display correlation between all PCs Multiple comparison 
-com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2) abs(a_L23ex) abs(a_L23in) ang_exL23(:,3)-ang_exL23(:,1)...
-   ang_inL23(:,3)-ang_inL23(:,1) pia_input scores]
+com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2) ang_exL23(:,3)-ang_exL23(:,1) ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2)...
+   ang_inL23(:,4)-ang_inL23(:,2) pia_input scores]
 G=correlation_matrix(com,0);close(gcf);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]);imagesc(G(10:15,1:9));c=colorbar;
 [cmap]=buildcmap('bwg');
