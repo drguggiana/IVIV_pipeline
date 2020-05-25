@@ -11,7 +11,7 @@ parameter_vector2 = abs(ang_inL23(:,4)*69-ang_inL23(:,2)*69)
 rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
 ylabel('Cy L2/3 (µm)','Color','k');
   ylim([5 70]);yticks([10:30:70]);
- xlim([0 180]);xticks([0:10:180]);
+ xlim([0 180]);xticks([0:1:180]);
 set(gca,'FontSize',10);
 %% Circular correlation for Cy EX and IN
 a=find(od_out_iviv(:,1)>0.25);  
@@ -20,16 +20,16 @@ a=find(od_out_iviv(:,1)>0.25);
 %% Barplots Cy ex and EX
 a=find(od_out_iviv(:,1)>0.25);  
 par=abs(ang_exL23(a,4)*69-ang_exL23(a,2)*69)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<185);
+g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<85) ;
+g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<175);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Cy L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10); 
 %% Barplots Cy ex and IN
 a=find(od_out_iviv(:,1)>0.25);  
 par=abs(ang_inL23(a,4)*69-ang_inL23(a,2)*69)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<170);
+g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<85) ;
+g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<175);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Cy L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
@@ -44,8 +44,8 @@ set(gca,'Ydir','reverse')
 %% Pial depth barplot
 a=find(od_out_iviv(:,1)>0.25);  
 par=pia_input(a)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<170);
+g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<85) ;
+g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<175);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Pial depth (µm)','Color','k'); ;set(gca,'FontSize',10);
@@ -63,16 +63,16 @@ set(gca,'Ydir','reverse')
 %% Cy raw ex
 a=find(od_out_iviv(:,1)>0.25);  
 par=ang_exL23(a,4)*69
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<170);
+g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<85) ;
+g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<175);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Cy raw (µm)','Color','k'); ;set(gca,'FontSize',10);
 %% Cy raw ex
 a=find(od_out_iviv(:,1)>0.25);  
 par=ang_inL23(a,4)*69
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<170);
+g1=find(od_out_iviv(a,4)>25 & od_out_iviv(a,4)<85) ;
+g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<175);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Cy raw (µm)','Color','k'); ;set(gca,'FontSize',10);
@@ -80,8 +80,8 @@ ylabel('Cy raw (µm)','Color','k'); ;set(gca,'FontSize',10);
 %% L4 fraction
 a=find(od_out_iviv(:,1)>0.25);  
 par=L4fr(a,1)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<185);
+g1=find(od_out_iviv(a,4)>5 & od_out_iviv(a,4)<60) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('L4fr','Color','k'); ;set(gca,'FontSize',10); 
@@ -89,8 +89,8 @@ ylim([0 0.6]);yticks([0:0.3:0.6]);
 %% %% L4 fraction
 a=find(od_out_iviv(:,1)>0.25);  
 par=L4fr(a,2)
-g1=find(od_out_iviv(a,4)>20 & od_out_iviv(a,4)<90) ;
-g2=find(od_out_iviv(a,4)>115 & od_out_iviv(a,4)<185);
+g1=find(od_out_iviv(a,4)>10 & od_out_iviv(a,4)<60) ;
+g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('L4fr','Color','k'); ;set(gca,'FontSize',10); 
@@ -114,6 +114,39 @@ q=quiver(ang_inL23(a,1)*69,ang_inL23(a,2)*69,ones(length(a),1)*69*2,(ang_inL23(a
  q.Color='black';q.MaxHeadSize=0.1;q.LineWidth=0.1;
 hold on;scatter(ang_inL23(a,1)*69,ang_inL23(a,2)*69,60,od_out_iviv(a,4),'filled','^');cmap=phasemap;colormap(cmap)
 set(gca,'Ydir','reverse');box off;ylabel('Pial depth (µm)');
+
+%% IN
+a1=find(od_out_iviv(:,4)>25 & od_out_iviv(:,4)<85 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+a2=find(od_out_iviv(:,4)>115 & od_out_iviv(:,4)<175 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 175, 300]);
+
+ q=quiver(ones(length(a2),1)*69*8.5,ang_inL23(a2,2)*69,ones(length(a2),1)*69*2,(ang_inL23(a2,4)-ang_inL23(a2,2))*69,0);
+ q.Color=[0 0.5 0.5];q.MaxHeadSize=0;q.LineWidth=1;
+ hold on;scatter(ones(length(a2),1)*69*8.5,ang_inL23(a2,2)*69,60,[0 0.5 0.5],'filled','^');cmap=phasemap;colormap(cmap)
+ hold on;xlim([8*69 750])
+ q=quiver(ones(length(a1),1)*69*8.5,ang_inL23(a1,2)*69,ones(length(a1),1)*69*2,(ang_inL23(a1,4)-ang_inL23(a1,2))*69,0);
+ q.Color=[0.7 0 0.4];q.MaxHeadSize=0;q.LineWidth=1;
+ hold on;scatter(ones(length(a1),1)*69*8.5,ang_inL23(a1,2)*69,60,[0.7 0 0.4],'filled','^');cmap=phasemap;colormap(cmap)
+ set(gca,'Ydir','reverse');box off;ylabel('Depth (µm) (µm)');ylim([100 300])
+   xticks([])
+ %%EX
+a1=find(od_out_iviv(:,4)>25 & od_out_iviv(:,4)<85 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+a2=find(od_out_iviv(:,4)>115 & od_out_iviv(:,4)<175 & od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 175, 300]);
+
+ q=quiver(ones(length(a2),1)*69*8.5,ang_exL23(a2,2)*69,ones(length(a2),1)*69*2,(ang_exL23(a2,4)-ang_exL23(a2,2))*69,0);
+ q.Color=[0 0.5 0.5];q.MaxHeadSize=0;q.LineWidth=1;
+ hold on;scatter(ones(length(a2),1)*69*8.5,ang_exL23(a2,2)*69,60,[0 0.5 0.5],'filled','^');cmap=phasemap;colormap(cmap)
+ hold on;xlim([8*69 750])
+ q=quiver(ones(length(a1),1)*69*8.5,ang_exL23(a1,2)*69,ones(length(a1),1)*69*2,(ang_exL23(a1,4)-ang_exL23(a1,2))*69,0);
+ q.Color=[0.7 0 0.4];q.MaxHeadSize=0;q.LineWidth=1;
+ hold on;scatter(ones(length(a1),1)*69*8.5,ang_exL23(a1,2)*69,60,[0.7 0 0.4],'filled','^');cmap=phasemap;colormap(cmap)
+ set(gca,'Ydir','reverse');box off;ylabel('Depth (µm)');ylim([100 300])
+ xticks([])
+ 
+%% 
+% figure;set(gcf,'color','w')
+% plot(ang_inL23(a1,1)*69,ang_inL23(a1,4)*69);
 %% 
 %% 
 parameter_vector = abs(ang_exL4(:,4)*69-ang_exL4(:,2)*69)
@@ -164,7 +197,7 @@ ylabel('Cx L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
 %% Barplots Cx ex and IN
 a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);  
 par=abs(ang_inL23(a,3)*69-ang_inL23(a,1)*69)
-g1=find(od_out_iviv(a,4)>0 & od_out_iviv(a,4)<50) ;
+g1=find(od_out_iviv(a,4)>10 & od_out_iviv(a,4)<60) ;
 g2=find(od_out_iviv(a,4)>100 & od_out_iviv(a,4)<150);
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
@@ -220,6 +253,15 @@ g1=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.15 & od_out_iviv(:,5)>270 & od_o
 figure;histogram(od_out_iviv(g1,5))
 figure;scatter(ang_inL23(g1,3)*69-ang_inL23(g1,1)*69,ones(length(g1),1),20,od_out_iviv(g1,5),'filled')
 %% 
+%% 
+%% Rolling average  Cx
+parameter_vector = ang_exL23(:,8)*69
+parameter_vector2 = ang_inL23(:,8)*69
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
+ylabel('Cd L2/3 (µm)','Color','k');
+   ylim([10 90]);yticks([10:40:90]);
+ xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
 
 %% 
 

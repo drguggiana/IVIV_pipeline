@@ -234,7 +234,7 @@ ang2=ang_inL5;
 h4 = plot(ang2(:,3)*69,ang2(:,4)*69,'.k','MarkerSize',8);
 set(gca,'Ydir','reverse')
 %% 
-
+g=find(ang_inL4(:,3)*69-ang_inL4(:,1)*69<135)
 %EX vs IN horizontal centroid CoMx for L2/3, L4, L5, Panel C
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 675]);
 subplot(3,2,1);
@@ -243,7 +243,7 @@ set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
 ref.YData=[-100 100];
 ref.Color='k';box off;xlim([-115 100]);ylim([-115 100]);hold on;title('L23','FontWeight','normal');xticks([-100:50:100]);yticks([-100:50:100]);
 subplot(3,2,3);
-plot(ang_exL4(:,3)*69-ang_exL4(:,1)*69,ang_inL4(:,3)*69-ang_inL4(:,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
+plot(ang_exL4(g,3)*69-ang_exL4(g,1)*69,ang_inL4(g,3)*69-ang_inL4(g,1)*69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
 ref.YData=[-150 150];ylabel('IN C_{x} (µm)','Color','b')
 ref.Color='k';box off;xlim([-175 150]);ylim([-175 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
@@ -261,7 +261,8 @@ set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
 ref.YData=[-150 150];;xlim([-175 150]);ylim([-175 150]);xticks([-150:100:150]);yticks([-150:100:150]);
 ref.Color='k';box off;;hold on;title('L23','FontWeight','normal');
 subplot(3,2,4);
-plot(((ang_exL4(:,4)*-69))-ang_exL4(:,2)*-69,((ang_inL4(:,4)*-69))-ang_inL4(:,2)*-69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
+
+plot(((ang_exL4(g,4)*-69))-ang_exL4(g,2)*-69,((ang_inL4(g,4)*-69))-ang_inL4(g,2)*-69,'.','MarkerFaceColor','g','MarkerEdgeColor','g','MarkerSize',10);
 set(gcf,'color','w');;xlim([-365 -25]);ylim([-365 -25]);
 ;ref= refline(1,0);
 set(gca,'FontSize',10);ref.LineStyle='--';
@@ -409,24 +410,24 @@ autoArrangeFigures;
 %% 
 
  %figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
- figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(3);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(5);c=colorbar;caxis([0 110]);c.Ticks=[0:55:110];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(6);c=colorbar;caxis([0 160]);c.Ticks=[0:80:160];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(7);c=colorbar;caxis([120 360]);c.Ticks=[120:120:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+ figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
+ figure(3);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+ figure(5);c=colorbar;caxis([0 120]);c.Ticks=[0:60:120];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
+ figure(6);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
+ figure(7);c=colorbar;caxis([120 360]);c.Ticks=[120:120:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
 % figure(8);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
 % 
- figure(14);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(15);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(16);c=colorbar;caxis([-1 1]);c.Ticks=[-1:1:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(17);c=colorbar;caxis([2 4]);c.Ticks=[2:5];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(19);c=colorbar;caxis([0 180]);c.Ticks=[0:45:180];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(20);c=colorbar;caxis([0 360]);c.Ticks=[0:90:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+ figure(14);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(14), 'Position', [200, 0, 200, 200])
+figure(15);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(15), 'Position', [200, 0, 200, 200])
+ figure(16);c=colorbar;caxis([-1 1]);c.Ticks=[-1:1:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(16), 'Position', [200, 0, 200, 200])
+ figure(17);c=colorbar;caxis([2 4]);c.Ticks=[2:5];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(17), 'Position', [200, 0, 200, 200])
+ figure(19);c=colorbar;caxis([0 180]);c.Ticks=[0:45:180];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(19), 'Position', [200, 0, 200, 200])
+ figure(20);c=colorbar;caxis([0 360]);c.Ticks=[0:90:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(20), 'Position', [200, 0, 200, 200])
 % 
 %  close(figure(1));close(figure(4));close(figure(9));close(figure(10));close(figure(11));close(figure(12));close(figure(13));
 %  close(figure(8));close(figure(17));close(figure(18));
 %% 
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200508_embedding\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\'
 savepdf_SW(fn,1);
 %% 
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
@@ -1382,7 +1383,7 @@ rolling_avg_display(str,parameter_vector,parameter_vector2,65,2,0);title('');
  xlim([0 360]);xticks([0:90:360]);
  set(gca,'FontSize',10);
  %% 
-a=find(od_out_iviv(:,2)>0.25 & od_out_iviv(:,2)>0);  
+a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0);  
 %par=s_vr*69
 par=ang_exL23(a,3)-ang_exL23(a,1)
 g1=find(od_out_iviv(a,5)>75 & od_out_iviv(a,5)<140)
@@ -2004,12 +2005,12 @@ corr_plot(morph_sel(a,10),max(span(a,1)*69,[],2),[],{'','','EX L4fr'});
 
 %% Cell plotter, morphology, in vivo, maps
 close all;
-for i=67:69;
+for i=1:147;
 figure;
 iviv_plotter(str,i)
 end
 %% Save individual morpho, in vivo, maps panels
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block1\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block2\'
 savepdf_SW(fn,0);
 %% Example for with and without TTX
 pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0005_inhibition_before\map04'
@@ -2047,7 +2048,7 @@ c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 close all;
 %UMAP projections Panel C and D
 %load embedding
-load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200508_embedding\reduced_data.mat')
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\reduced_data.mat')
 plot_list = {'frac_vert','ang_inL23','ang_exL23','ang_inL4','ang_exL4','ang_inL5','ang_exL5','PCs'};
 plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 %in vivo values non cyclic 
@@ -2058,31 +2059,42 @@ plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 autoArrangeFigures;
 %% 
 
-figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(4);c=colorbar;caxis([0 0.6]);c.Ticks=[0:0.3:0.6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(7);c=colorbar;caxis([0 85]);c.Ticks=[0:40:85];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(8);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(9);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(10);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(11);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(12);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(13);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-% figure(14);c=colorbar;caxis([0 1000]);c.Ticks=[0:500:1000];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(8);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(9);c=colorbar;caxis([0 160]);c.Ticks=[0:80:160];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(10);c=colorbar;caxis([100 320]);c.Ticks=[100:80:320];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(11);c=colorbar;caxis([0 130]);c.Ticks=[0:65:130];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(12);c=colorbar;caxis([50 350]);c.Ticks=[50:100:350];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(13);c=colorbar;caxis([0 500]);c.Ticks=[0:250:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(14);c=colorbar;caxis([200 500]);c.Ticks=[200:150:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(15);c=colorbar;caxis([0 500]);c.Ticks=[0:250:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(16);c=colorbar;caxis([200 500]);c.Ticks=[200:150:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(17);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(18);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(19);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(20);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(21);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
+figure(4);c=colorbar;caxis([0 0.6]);c.Ticks=[0:0.3:0.6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
+figure(7);c=colorbar;caxis([0 110]);c.Ticks=[0:55:110];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
+figure(8);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(8), 'Position', [200, 0, 200, 200])
+
+
+%figure(8);c=colorbar;caxis([0 120]);c.Ticks=[0:70:120];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(8), 'Position', [200, 0, 200, 200])
+figure(9);c=colorbar;caxis([0 120]);c.Ticks=[0:60:120];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(9), 'Position', [200, 0, 200, 200])
+figure(10);c=colorbar;caxis([100 280]);c.Ticks=[100:80:320];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(10), 'Position', [200, 0, 200, 200])
+figure(11);c=colorbar;caxis([0 130]);c.Ticks=[0:65:130];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(11), 'Position', [200, 0, 200, 200])
+figure(12);c=colorbar;caxis([50 350]);c.Ticks=[50:100:350];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(12), 'Position', [200, 0, 200, 200])
+figure(13);c=colorbar;caxis([0 500]);c.Ticks=[0:250:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(13), 'Position', [200, 0, 200, 200])
+figure(14);c=colorbar;caxis([200 500]);c.Ticks=[200:150:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(14), 'Position', [200, 0, 200, 200])
+figure(15);c=colorbar;caxis([0 500]);c.Ticks=[0:250:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(15), 'Position', [200, 0, 200, 200])
+figure(16);c=colorbar;caxis([200 500]);c.Ticks=[200:150:500];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(16), 'Position', [200, 0, 200, 200])
+
+figure(17);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(17), 'Position', [200, 0, 200, 200])
+figure(18);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(18), 'Position', [200, 0, 200, 200])
+figure(19);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(19), 'Position', [200, 0, 200, 200])
+figure(20);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(20), 'Position', [200, 0, 200, 200])
+figure(21);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(21), 'Position', [200, 0, 200, 200])
+figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(22), 'Position', [200, 0, 200, 200])
+%% 
+close all;
+%UMAP projections Panel C and D
+%load embedding
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\reduced_data.mat')
+plot_list = {'span'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%in vivo values non cyclic 
+figure(1);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
+figure(2);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
+figure(3);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+figure(4);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
+figure(5);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
+figure(6);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
 
 % figure(15);c=colorbar;caxis([0 200]);c.Ticks=[0:100:200];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
 % figure(16);c=colorbar;caxis([0 54]);c.Ticks=[0:27:54];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
@@ -2094,26 +2106,26 @@ figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visi
 % figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
 % figure(23);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
 % figure(24);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-close(figure(2));close(figure(3));close(figure(5));close(figure(6));
+
 %% 
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\200511\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\200524\span'
 savepdf_SW(fn,1);
 
 %% In vivo parameters
 close all;
- plot_list = {'OSIpref','DSIpref','ODIpref','ORIpref','DIRpref','Sigmapref','Capeakpref','sad','pci','noise','PCs','frac_vert'};
+ plot_list = {'Sigmapref','Capeakpref','sad','pci','noise'};
  plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 autoArrangeFigures;
 
-figure(6);c=colorbar;caxis([2 4.3]);c.Ticks=[2:1:4.3];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(7);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(8);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(9);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
-figure(10);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+figure(1);c=colorbar;caxis([2 4.3]);c.Ticks=[2:1:4.3];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
+figure(2);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
+ figure(3);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+ figure(4);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
+figure(5);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
 
 %% Save
 
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\200511\in vivo\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\invivo'
 savepdf_SW(fn,1);
 %% Supplementary for Figure 5
 close all;
