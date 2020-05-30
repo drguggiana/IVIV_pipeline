@@ -1713,22 +1713,26 @@ subplot(1,2,1);
 binRange = 0:0.2:1;
 hcx = histcounts(od_out(find(~isnan(od_out(:,1))),1),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,1))),1),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('OSI','FontSize',12);ylabel('Fraction of cells');
+b1=bar([0.1:0.2:0.9] ,[hcx(1:5);hcy(1:5)]');box off;xlabel('OSI','FontSize',12);ylabel('Fraction of cells');
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);
-xlim([-0.1 1]);xticks([0:0.2:0.8])
+xlim([-0.1 1]);xticks([0.1:0.2:0.9])
 a=od_out_iviv(:,1)>0.25;
 b=od_out(:,1)>0.25;set(gca,'FontSize',10);xtickangle(45);
 subplot(1,2,2);
-binRange = 0:45:179;
+binRange = [0 45 90 135 180 225]-22.5;
 hcx = histcounts(od_out(b,4),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(a,4),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('Orientation (deg)','FontSize',12);
+hcy_m=[hcy(1)+hcy(5) hcy(2:4)];
+hcx_m=[hcx(1)+hcx(5) hcx(2:4)];
+b1=bar([0 45 90 135],[hcx_m;hcy_m]');box off;xlabel('Orientation (°)','FontSize',12);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
 ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10);
 xtickangle(45);
+%% 
+
 %DSI and DIR
 fig21 = figure;
 set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [800, 200, 600, 200]);set(gcf,'color','w');
