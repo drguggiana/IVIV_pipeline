@@ -1669,7 +1669,7 @@ tmp1=ex_map(3:end,:,i);
 tmp2=in_map(:,:,i);
 tot_input(i,:)=[sum(tmp1(:));sum(tmp2(:))];
 end
-corr_plot(max_s(morph_cells_id)',tot_input(morph_cells_id,1),[],{'','',''});xlabel('Peak Nr. sholl crossings','Color','k');
+corr_plot(max_s_ba(morph_cells_id)',tot_input(morph_cells_id,1),[],{'','',''});xlabel('Peak Nr. sholl crossings','Color','k');
 ylabel('Total input','Color','r');
 %% Sum input for ex and in
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [900, 500, 200, 200])
@@ -1740,21 +1740,25 @@ subplot(1,2,1);
 binRange = 0:0.2:1;
 hcx = histcounts(od_out(find(~isnan(od_out(:,2))),2),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,2))),2),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('DSI','FontSize',12);ylabel('Fraction of cells');
+b1=bar([0.1:0.2:0.9],[hcx(1:5);hcy(1:5)]');box off;xlabel('DSI','FontSize',12);ylabel('Fraction of cells');
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
-ylim([0 0.4]);yticks([0:0.2:0.4]);xlim([-0.1 1]);xticks([0:0.2:0.8])
+ylim([0 0.4]);yticks([0:0.2:0.4]);xlim([-0.1 1]);xticks([0.1:0.2:0.9])
 a=od_out_iviv(:,2)>0.25;
 b=od_out(:,2)>0.25;set(gca,'FontSize',10);
 subplot(1,2,2);
-binRange = 0:45:315;
+binRange = [0:45:405]-22.5;
 hcx = histcounts(od_out(b,5),[binRange Inf],'Normalization','probability');
 hcy = histcounts(od_out_iviv(a,5),[binRange Inf],'Normalization','probability');
-b1=bar(binRange,[hcx;hcy]');box off;xlabel('Direction (deg)','FontSize',10);
+hcy_m=[hcy(1)+hcy(9) hcy(2:8)];
+hcx_m=[hcx(1)+hcx(9) hcx(2:8)];
+b1=bar([0:45:315],[hcx_m;hcy_m]');box off;xlabel('Direction (deg)','FontSize',10);
 b1(1).FaceColor=[0 0 0];
 b1(2).FaceColor=[0 0.7 0.6];
 xtickangle(45)
 ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10); 
+%% 
+
 %ipsi contra bino
 for i=1:length(od_out)
 if od_out(i,9)==1 & od_out(i,10)==0;
@@ -1789,6 +1793,7 @@ h=histogram(od_out(find(~isnan(od_out(:,3))),3),7,'Normalization','probability')
 hold on;h=histogram(od_out_iviv(find(~isnan(od_out_iviv(:,3))),3),7,'Normalization','probability');
 h.FaceColor=[0 0.7 0.6];box off;
 ylim([0 0.3]);yticks([0:0.15:0.3]);xlabel('ODI');ylabel('Fraction of cells');set(gca,'FontSize',10);
+%% 
 
 %TW distribution 
 fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');

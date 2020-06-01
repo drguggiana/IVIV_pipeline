@@ -12,6 +12,7 @@ hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
 grid on;%h4.MarkerFaceAlpha=0.5
 set(gca,'FontSize',10);
 ang2=out_ang_exL4
+
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4.3*69 4.3*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
 set(gca,'FontSize',12);
 hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
@@ -31,6 +32,7 @@ hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
 grid on;%h4.MarkerFaceAlpha=0.5
 set(gca,'FontSize',10);
 ang2=out_ang_inL4
+
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4.3*69 4.3*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
 set(gca,'FontSize',12);
 hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
