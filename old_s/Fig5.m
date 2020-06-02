@@ -315,3 +315,13 @@ g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 [statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
 ylabel('Span(µm)','Color','k'); ;set(gca,'FontSize',10); 
+%% SF/TF
+
+a=find(od_out_iviv(:,1)>0.25);  
+par=od_out_iviv(a,9);
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
+xticklabels({'',''});xtickangle(45);
+ylabel('TF','Color','k'); ;set(gca,'FontSize',10); 
+
