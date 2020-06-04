@@ -2019,7 +2019,7 @@ figure;
 iviv_plotter(str,i)
 end
 %% Save individual morpho, in vivo, maps panels
-fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block2\'
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block3\'
 savepdf_SW(fn,0);
 %% Example for with and without TTX
 pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0005_inhibition_before\map04'

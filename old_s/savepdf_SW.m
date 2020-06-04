@@ -14,7 +14,7 @@ cd(fn);
     end
  else
    for i=1:numel(figHandles)
-  print(figHandles(i),'-dpng',num2str(figHandles(i).Number));
+  print(figHandles(i),'-dpng','-r800',num2str(figHandles(i).Number));
  
  end   
  end
