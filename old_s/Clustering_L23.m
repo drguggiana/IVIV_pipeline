@@ -11,8 +11,9 @@ clu_num =2;
 plot_avg_maps(str,1:147,ex_map,in_map,pia_input,10,1,idx_input);
 %% 
 %% Looking at input fractions
-dendroplot_SW(clustering_input,leafOrder,4,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'},pia_input)
-
+dendroplot_SW(clustering_input,leafOrder,2,[L23fr(:,1) L4fr(:,1)  L5fr(:,1)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'})
+%% 
+dendroplot_SW(clustering_input,leafOrder,2,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'},pia_input)
 %% kmeans clustering
 % idx_input=[];
 % idx_input = kmeans([score_ex(:,pcs) score_in(:,pcs)],4)
@@ -20,7 +21,7 @@ dendroplot_SW(clustering_input,leafOrder,4,[L23fr(:,1) L4fr(:,1)  L5fr(:,1) L23f
 %Pial depth
 [statsout] = barplot_sw(pia_input,idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
 %% 
-[statsout] = barplot_sw(span(:,6),idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
+[statsout] = barplot_sw(span(:,1),idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
 %% 
 [statsout] = barplot_sw(abs(ang_inL23(:,4)-ang_inL23(:,2)),idx_input,{'Clusters','Pial depth (µm)'});set(gca,'Ydir','reverse');xtickangle(45)
 %% 

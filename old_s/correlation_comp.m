@@ -70,13 +70,13 @@ par1=ang_inL4(g2,3)*69-ang_inL4(g2,1)*69
 par2=ang_inL5(g2,3)*69-ang_inL5(g2,1)*69
 %% 
 
-par1=ang_exL23(nvra,3)*69-ang_exL23(nvra,1)*69
-par2=ang_exL4(nvra,3)*69-ang_exL4(nvra,1)*69
-[R13,P13,RLO13,RUP13]= corrcoef(par1, par2,'Rows','pairwise', 'alpha', 0.05)
-
-par1=ang_inL23(nvra,3)*69-ang_inL23(nvra,1)*69
-par2=ang_inL4(nvra,3)*69-ang_inL4(nvra,1)*69
-[R14,P14,RLO14,RUP14]= corrcoef(par1, par2,'Rows','pairwise', 'alpha', 0.05)
+% par1=ang_exL23(nvra,3)*69-ang_exL23(nvra,1)*69
+% par2=ang_exL4(nvra,3)*69-ang_exL4(nvra,1)*69
+% [R13,P13,RLO13,RUP13]= corrcoef(par1, par2,'Rows','pairwise', 'alpha', 0.05)
+% 
+% % par1=ang_inL23(nvra,3)*69-ang_inL23(nvra,1)*69
+% par2=ang_inL4(nvra,3)*69-ang_inL4(nvra,1)*69
+% [R14,P14,RLO14,RUP14]= corrcoef(par1, par2,'Rows','pairwise', 'alpha', 0.05)
 %% 
 % cor_all=horzcat([z1(2)], [z4(2)],...
 %     [z7(2)],[z10(2)]);
