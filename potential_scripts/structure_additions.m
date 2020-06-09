@@ -178,15 +178,15 @@ for cells = 1:size(noise_matched,1)
         fprintf(strjoin({'Cell absent:',num2str(iviv_id(cells)),'\r\n'},'_'))
         continue
     end
-    % take the correlation for the preferred direction
-    [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
-    % rectify the last bin
-    if bin == 9
-        bin = 1;
-    elseif bin == 0
-        str(id_bool).noise = NaN;
-        continue
-    end
+%     % take the correlation for the preferred direction
+%     [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
+%     % rectify the last bin
+%     if bin == 9
+%         bin = 1;
+%     elseif bin == 0
+%         str(id_bool).noise = NaN;
+%         continue
+%     end
     % check the preference of the cell and take the corresponding average
     if str(id_bool).contra == 1
 %         str(id_bool).noise = squeeze(noise_matched(cells,bin,1));

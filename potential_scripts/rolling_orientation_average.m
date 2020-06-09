@@ -15,6 +15,9 @@ close all
 % define whether to do orientation or direction
 response = 'ori';
 
+% define the metric to put in the title
+metric = 'sine_fit';
+
 % define whether to plot the histogram
 plot_histo = 0;
 
@@ -43,9 +46,11 @@ end
 angle_vector = angle_vector(selection_vector);
 
 % define the list of plots
-plot_list = {'ang_exL23_Cx,ang_inL23_Cx','ang_inL23_Sy,ang_inL23_Cy,ang_inL23_Ry,ang_inL23_Dy',...
-    'ang_exL23_Sx','ang_inL23_Sy','ang_exL23_Vt,ang_inL23_Vt','ang_exL23_Al,ang_inL23_Al',...
-    'ang_exL23_Dx,ang_inL23_Dx','ang_exL23_Dy,ang_inL23_Dy'};
+% plot_list = {'ang_exL23_Cx,ang_inL23_Cx','ang_exL23_Cy,ang_inL23_Cy',...
+%     'ang_exL23_Sx','ang_inL23_Sy','ang_exL23_Vt,ang_inL23_Vt','ang_exL23_Al,ang_inL23_Al',...
+%     'ang_exL23_Dx,ang_inL23_Dx','ang_exL23_Dy,ang_inL23_Dy'};
+plot_list = {'ang_inL23_Sy,ang_inL23_Ry'};
+
 % plot_list = {'ang_exL4_Cx,ang_inL4_Cx','ang_exL4_Cy,ang_inL4_Cy',...
 %     'ang_exL4_Vt,ang_inL4_Vt','ang_exL4_Al,ang_inL4_Al',...
 %     'ang_exL4_Rx,ang_inL4_Rx','ang_exL4_Ry,ang_inL4_Ry'};
@@ -122,10 +127,35 @@ for plots = 1:plot_number
         end
         xlabel(strcat(axis_label,'(deg)'))
         ylabel('Parameter')
-        % remove nans and calculate the correlation
-        [ang,vec] = nan_remover(angle_vector,plot_vector);
-        [pvals(1,mapnumber),pvals(2,mapnumber)] = circ_corrcl(deg2rad(ang),vec);
-        
+        switch metric
+            case 'corr'
+                % remove nans and calculate the correlation
+                [ang,vec] = nan_remover(angle_vector,plot_vector);
+                [pvals(1,mapnumber),pvals(2,mapnumber)] = circ_corrcl(deg2rad(ang),vec);
+                
+            case 'fourier'
+                % attempt Fourier analysis
+                tar_trace = normr_2(rolling_orientation');
+                %     tar_trace = sind(1:180);
+                startFrame = 1;
+                endFrame = plot_limit;
+                des_freq = 1/plot_limit;
+                frame_rate = plot_limit;
+                aggregate = 0;
+                plot_flag = 1;
+                intval = 1;
+                [four_out,qual_out] = ...
+                    AssignFourier(tar_trace,startFrame,endFrame,des_freq,...
+                    frame_rate,aggregate,plot_flag,intval);
+                pvals(1,mapnumber) = four_out;
+            case 'sine_fit'
+                [sorted_angle,sort_idx] = sort(angle_vector);
+                sorted_points = plot_vector(sort_idx);
+                pvals(1,mapnumber) = fit_sine(sorted_angle',sorted_points',0);
+%                 pvals(1,mapnumber) = fit_sine(1:plot_limit,rolling_orientation',1);
+
+        end
+
         legend(strsplit(plot_list{plots},','),'Interpreter','None','Location','best')
         axis tight
     end
@@ -139,5 +169,6 @@ for plots = 1:plot_number
         xlabel('Orientation (deg)')
         ylabel('Nr points')
     end
+    
 end
 autoArrangeFigures

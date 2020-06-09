@@ -291,6 +291,7 @@ end
 
 % randomly permute the maps
 map_perm = randperm(map_num);
+% map_perm = 1:map_num;
 % allocate memory to save the target maps and locations
 blanked_maps = struct([]);
 % initialize a stopping counter
@@ -312,16 +313,27 @@ for maps = 1:map_num
 
     %get the info for the current map
     curr_info = trace2folder(trace2folder(:,2)==map_perm(maps),:);
+
+    % only leave positions with a minimum of 5 neighbors
+    % define the neighbor minimum
+    neighbor_min = 5;
+    
+    % reshape and binarize the curr_info
+    matrix_info = reshape(curr_info(:,5),16,16)>0;
+    % calculate the number of neighbors per point
+    neighbor_mat = (conv2(single(matrix_info),ones(3),'same') == neighbor_min + 1) & matrix_info;
+    % mask the current info with only the traces that pass this criterion
+    curr_info(:,5) = curr_info(:,5) .* neighbor_mat(:);
     % get a random, non-direct position to interpolate
     % if non present, skip to the next map
-    if isempty(find(curr_info(:,5)==1,1))
+    if isempty(find(curr_info(:,5)==1,1)) || curr_info(1,3) == 1
         continue
     end
     target_position = find(curr_info(:,5)==1);
-    target_position = target_position(randperm(length(control_positions),1));
-    
+    target_position = target_position(randperm(length(target_position),1));
     %load the complete map
     curr_map = bin_matrix(:,trace2folder(:,2)==map_perm(maps));
+
     % store the target position
     blanked_maps(stop_counter+1).target_map = map_perm(maps);
     blanked_maps(stop_counter+1).target_position = target_position;

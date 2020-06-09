@@ -1,6 +1,5 @@
 %% Calculate the max value per layer
 
-%% Calculate the input map maxima appearing in concentric rings around the soma
 %% Clean up
 clearvars
 close all
