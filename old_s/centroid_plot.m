@@ -9,6 +9,11 @@ subplot(1,2,1);
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'m.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
 hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
 grid on;%h4.MarkerFaceAlpha=0.5
+
+set(gca,'FontSize',10);
+ang2=out_ang_exL4
+
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4.3*69 4.3*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
 set(gca,'FontSize',12);
 ang2=out_ang_exL4
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'g.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
@@ -23,12 +28,17 @@ box off;
 
 ang2=out_ang_inL23;
 subplot(1,2,2);
-h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'m.','MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';grid on;%h4.MarkerFaceAlpha=0.5
-hold on;set(gca,'FontSize',10);%legend('L2/3');legend boxoff
-ang2=out_ang_inL4;
-h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'g.','MarkerSize',9);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';grid on;
-set(gca,'Ydir','reverse');%legend('L4');legend boxoff
-hold on;set(gca,'FontSize',12);
+
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,(ang2(a,4))*-69-(ang2(a,2))*-69,'m.','MarkerSize',8);
+xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor='m';h4.MarkerEdgeColor='m';h4.MarkerSize=5;grid on;%h4.MarkerFaceAlpha=0.5
+hold on;%text(-250,50,'L2/3');%legend('L2/3');legend boxoff
+grid on;%h4.MarkerFaceAlpha=0.5
+set(gca,'FontSize',10);
+ang2=out_ang_inL4
+
+h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*-69-ang2(a,2)*-69,'g.','MarkerSize',8);xlim([-4.3*69 4.3*69]);ylim([-8*69 4*69]);%h4.MarkerFaceColor='g';h4.MarkerEdgeColor='g';h4.MarkerSize=5;grid on;
+set(gca,'FontSize',12);
+hold on;hold on;%text(-250,200,'L4');%legend(ang2,'L4');legend boxoff
 ang2=out_ang_inL5
 h4 = plot(ang2(a,3)*69-ang2(a,1)*69,ang2(a,4)*69-ang2(a,2)*69,'.','Color',[0.5 0.5 0.5],'MarkerSize',10);xlim([-4*69 4*69]);ylim([-4*69 8*69]);%h4.MarkerFaceColor=[0.5 0.5 0.5];h4.MarkerEdgeColor=[0.5 0.5 0.5];grid on;
 set(gca,'Ydir','reverse');hold on;line([0 0], [-4*69 8*69],'Color','k','LineStyle','-');hold on;line([-4*69 8*69],[0 0],'Color','k','LineStyle','-');hold on;plot(0,0,'^','MarkerFaceColor','w','MarkerEdgeColor','k');

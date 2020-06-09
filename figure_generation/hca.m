@@ -1,8 +1,10 @@
 function [idx, clustering, leafOrder] = hca(input,pc_ana,linkage_meth,cluster_number,pia,inputd,threshold)
 if inputd==1;
 Z=normr_2(input,2);
-else
+elseif inputd==2
  Z=zscore(input);
+else 
+    Z=input;
 end
 if pc_ana==1
 [coeff,score,latent,tsquared,explained,mu] = pca(Z);
