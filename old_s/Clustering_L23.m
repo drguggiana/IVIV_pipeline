@@ -4,7 +4,7 @@ clu_num =2;
 %pcs =[];
 %pcs     =[5];
 %including the 6 PCs = pial depth 
-[idx_input, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'ward',clu_num,pia_input,0,0.6);%call function for clustering
+[idx_input, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'ward',clu_num,pia_input,3,0.6);%call function for clustering
 %[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
 
 %% Plot average maps of clusters

@@ -21,8 +21,8 @@ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [900, 500, 200, 200]);
 
 
 else
-%[cmap]=parula;
-[cmap]=phasemap;
+[cmap]=parula;
+%[cmap]=phasemap;
 pointsize=20;
 figure; set(gcf,'color','w');
 scatter(par1,par2,pointsize,par3,'filled');

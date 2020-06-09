@@ -55,8 +55,9 @@ setups=[zeros(47,1);ones(100,1)];
 % Slice orientation
 slice_ori=[str(:).sliceOri];
 %Fractions
-frv=reshape([str(:).frac_vert],32,length(str))';
+
 frh=reshape([str(:).frac_horz],32,length(str))';
+frv=reshape([str(:).frac_vert],32,length(str))';
 L23fr=[sum(frv(:,3:5),2) sum(frv(:,19:21),2)];
 L4fr=[sum(frv(:,6:7),2) sum(frv(:,22:23),2)];
 L5fr=[sum(frv(:,8:11),2) sum(frv(:,24:27),2)];

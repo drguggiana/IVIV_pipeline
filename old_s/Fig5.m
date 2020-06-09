@@ -318,10 +318,35 @@ ylabel('L2/3 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10);
 %% SF/TF
 
 a=find(od_out_iviv(:,1)>0.25);  
-par=od_out_iviv(a,9);
+par=od_out_iviv(a,8);
 g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
 g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 [statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
-ylabel('TF','Color','k'); ;set(gca,'FontSize',10); 
+ylabel('SF','Color','k'); ;set(gca,'FontSize',10); 
 
+%% TF SF
+parameter_vector = od_out_iviv(:,9)
+parameter_vector2 = od_out_iviv(:,9)
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,0)
+ylabel('TF','Color','k');
+%   ylim([5 70]);yticks([10:30:70]);
+ xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
+%% TF SF
+parameter_vector = od_out_iviv(:,8)
+parameter_vector2 = od_out_iviv(:,9)
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,0)
+ylabel('SF','Color','k');
+%   ylim([5 70]);yticks([10:30:70]);
+ xlim([0 180]);xticks([0:45:180]);
+set(gca,'FontSize',10);
+%% Span with SF
+ a=find(od_out_iviv(:,4)>90)
+%par=abs(span(a,1)*69-span(a,4)*69);
+par=span(a,1)*69
+g1=find(od_out_iviv(a,8)==0.02) ;
+g2=find(od_out_iviv(a,8)==0.08) ;
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+xticklabels({'',''});xtickangle(45);
+ylabel('L2/3 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
