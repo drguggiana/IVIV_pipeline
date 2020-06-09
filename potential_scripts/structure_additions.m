@@ -178,15 +178,15 @@ for cells = 1:size(noise_matched,1)
         fprintf(strjoin({'Cell absent:',num2str(iviv_id(cells)),'\r\n'},'_'))
         continue
     end
-    % take the correlation for the preferred direction
-    [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
-    % rectify the last bin
-    if bin == 9
-        bin = 1;
-    elseif bin == 0
-        str(id_bool).noise = NaN;
-        continue
-    end
+%     % take the correlation for the preferred direction
+%     [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
+%     % rectify the last bin
+%     if bin == 9
+%         bin = 1;
+%     elseif bin == 0
+%         str(id_bool).noise = NaN;
+%         continue
+%     end
     % check the preference of the cell and take the corresponding average
     if str(id_bool).contra == 1
 %         str(id_bool).noise = squeeze(noise_matched(cells,bin,1));
@@ -489,7 +489,7 @@ set(gca,'XLim',[0 clu_num+1],'YDir','reverse')
 %% Update the centroid angles
 
 % get the pial depth
-% pialD = cat(1,str.pialD);
+pialD = cat(1,str.pialD);
 % get the soma x position
 soma_coord = cat(1,str.subpixel_soma);
 % somax = somax(:,1);
@@ -515,25 +515,28 @@ for exin = 1:2
         % select the rows for layer 2/3 and layer 4 respectively
         switch layer
             case 1
-                layers = 3:5;
+                layers = 2:6;
                 field2 = 'L23';
                 row_shift = 2;
             case 2
-                layers = 6:7;
+                layers = 5:8;
                 field2 = 'L4';
                 row_shift = 5;
             case 3
-                layers = 8:10;
+                layers = 7:11;
                 field2 = 'L5';
                 row_shift = 7;
         end
+
         % get the layer
         map_layers = maps(layers,:,:);
-        out_ang = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),idx_centroid,row_shift);
+        out_ang = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),pialD,row_shift,1);
+        out_ang_nonwe = centroid_map(map_layers,soma_coord(:,1),soma_coord(:,2),pialD,row_shift,0);
 
         % for all the cells
         for cells = 1:cell_num
             str(cells).(strcat('ang_',field1,field2)) = out_ang(cells,:);
+            str(cells).(strcat('ang_',field1,field2,'_nonweighted')) = out_ang_nonwe(cells,:);
         end
     end
 end
@@ -559,6 +562,51 @@ for f = 1:num_fields
         end
     end
 end
+%% Fix the orientation fields to match the convention of the horizontal
+% bar being 0 degrees
+
+% define the target fields
+ori_fields = {'ORIpref','Ori','Ori_sftf_all'};
+% replace the orientations in each of the affected fields
+% for all the cells
+for cells = 1:cell_num
+    
+    % for all the fields
+    for ori_field = 1:length(ori_fields)
+        
+        % get the value and correct it
+        temp_val = vertcat(str(cells).(ori_fields{ori_field})) + 90;
+        temp_val(temp_val>179.9999999) = temp_val(temp_val>179.9999999) - 180;
+        % replace it in the structure
+        str(cells).(ori_fields{ori_field}) = temp_val;
+    
+    
+    end
+end
+%% Calculate the maximum per layer subpixel
+
+% saved as l23 val,x,y, l4 val,x,y, l5 val,x,y
+% get the numbers
+max_values = max_perlayer_calculation(str);
+
+% save in the structure
+% for all the cells
+for cells = 1:cell_num
+    % for maptype
+    for maptype = 1:2
+        switch maptype
+            case 1
+                field1 = 'ex';
+            case 2
+                field1 = 'in';
+        end
+        % load the structure
+        temp_max = max_values(cells,maptype,1:3,:);
+        str(cells).(strcat('max_',field1)) = temp_max(:)';
+        
+    end
+end
+
 %% OFF Plotting
 % figure
 % 

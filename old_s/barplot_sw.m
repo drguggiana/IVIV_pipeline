@@ -1,8 +1,11 @@
 function [statsout] = barplot_sw(data,groups_idx,labelxy)
 gr_nr=max(groups_idx);
-color_id={'m','c','g','r','b'};
-clus_id={'C1','C2','C3','C4','C5'};
 
+%color_id={[0.5 0.5 0.5],[0.7 0 0.4],[0 0.5 0.5]};
+color_id={'c','m','g'};
+clus_id={'C1','C2','C3','C4','C5'};
+%clus_id={'ipsi','contra','bino'};
+%clus_id={'non resp.','10-60°','100-150°'};
 fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [200, 0, 300, 300]);set(gcf,'color','w');
 
 

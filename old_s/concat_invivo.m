@@ -99,6 +99,12 @@ end
   odi=horzcat(ODI_all{:});
   pOSI_all=vertcat(prefOri_all{:});
   pDSI_all=vertcat(prefDir_all{:});
+  
+  temp= pOSI_all+90
+temp(temp>179.999) = temp(temp>179.999) -180
+pOSI_all=[];
+ pOSI_all=temp;
+ 
   OSI_all=vertcat(OSIall{:});
   DSI_all=vertcat(DSIall{:});
   Ca_peak_od=vertcat(Ca_od{:});

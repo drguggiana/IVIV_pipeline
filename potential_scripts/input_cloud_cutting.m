@@ -29,7 +29,7 @@ OS_cells = vertcat(str.OSIpref)>0.25;
 map_type = 'inh';
 
 % select the layer
-layer = 5;
+layer = 23;
 switch layer
     case 23
         layer_idx1 = 3;
@@ -133,7 +133,7 @@ for distance = distance_number:-1:1
             end
             
             % isolate layer
-            layer = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+            layer = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
             % get the horizontal input ratio
             fraction_values(cells) = sum(sum(layer(:,soma_idx-extent:soma_idx)))./...
                 sum(sum(layer(:,soma_idx-extent:soma_idx+extent)));
@@ -160,9 +160,9 @@ for distance = distance_number:-1:1
 %         plot(center_x_coord,size(Y_single,1)-center_y_coord,'ro')
         
         % get the map and layers
-        cut_map = interp_map(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+        cut_map = interp_map((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
         % filter the map
-        cut_map = cut_map.*mask(layer_idx1*grid_spacing:layer_idx2*grid_spacing,:);
+        cut_map = cut_map.*mask((layer_idx1-1)*grid_spacing:layer_idx2*grid_spacing,:);
    
 %         % cut the map
 %         cut_map(:,cutting_map:end) = 0;
@@ -302,8 +302,137 @@ xlabel('Cutting distance')
 ylabel('Cells')
 cba = colorbar;
 ylabel(cba,'Vector length')
+%%
+var1 = vertcat(str.ORIpref);
+% var2 = vertcat(str.ang_inL5);
+% var2 = abs(var2(:,4)-var2(:,1));
+% var2 = var2(:,8);
+var2 = vertcat(str.PCs);
+var3 = vertcat(str.ang_inL5);
+var3 = var3(:,8);
+% var3 = abs(var3(:,3)-var3(:,1));
+% [var2,var3] = nan_remover(var2,var3);
+
+% [r,p] = corr(var2,var3)
+% close all
+% figure
+% scatter(var2,var3)
+% remove nans
+for i = 1:6
+% [x,a] = cxcorr(var1',var2');
+% [rho,pval] = circ_corrcc(deg2rad(var1),deg2rad(var2));
+    var2i = var2(:,i);
+    var1i = var1;
+    [var1i,var2i] = nan_remover(var1i,var2i);
+
+    [rho,pval] = circ_corrcl(deg2rad(var1i),var2i)
+%     [rho,pval] = corr(deg2rad(var1i),var2i)
+end
+% close all
+% figure
+% 
+% scatter(var2(:,5),var1)
+% [rho,pval] = corr(deg2rad(var1),var2);
+% close all
+% figure
+% plot(x,a)
+% 
+% corr(var1,var2)
+% 
+% corrs = zeros(length(var1),1);
+% for i = 1:length(var1)
+%     corrs(i) = corr(var1,circshift(var2,i-1));
+% end
+% 
+% hold on
+% plot(1:length(var1),corrs)
+%% 
+close all
+skeletons = figure;
+colors = {'r','b'};
+type_colors = {'k','m','c'};
 
 
+ex_in_cell = cell(2,3);
+
+counter = 50;
+for celltype = 1:3
+    figure(skeletons)
+    % for exc and inh
+    for maptype = 1:2
+        switch maptype
+            case 1
+                l23 = vertcat(str.ang_exL23);
+                l4 = vertcat(str.ang_exL4);
+                l5 = vertcat(str.ang_exL5);
+
+            case 2
+                l23 = vertcat(str.ang_inL23);
+                l4 = vertcat(str.ang_inL4);
+                l5 = vertcat(str.ang_inL5);
+        end
+        
+        l23 = l23(celltype_matrix(:,celltype),:);
+        l4 = l4(celltype_matrix(:,celltype),:);
+        l5 = l5(celltype_matrix(:,celltype),:);
+        
+        xl23 = (l23(:,3)-l23(:,1))+(1:length(l23))'+counter;
+        yl23 = (l23(:,4)-l23(:,2));
+        somax = zeros(length(l23),1)+(1:length(l23))'+counter;
+        somay = zeros(length(l23),1);
+        xl4 = (l4(:,3)-l4(:,1))+(1:length(l23))'+counter;
+        yl4 = (l4(:,4)-l4(:,2));
+        xl5 = (l5(:,3)-l5(:,1))+(1:length(l23))'+counter;
+        yl5 = (l5(:,4)-l5(:,2));
+
+        scatter(xl23,yl23,colors{maptype},'filled')
+        hold on
+        scatter(xl4,yl4,colors{maptype},'filled')
+        scatter(xl5,yl5,colors{maptype})
+        scatter(somax,somay,'k')
+%         for celltype = 1:3
+%             scatter(somax(celltype_matrix(:,celltype)),...
+%                 somay(celltype_matrix(:,celltype)),type_colors{celltype},'filled')
+%             ex_in_cell{maptype,celltype} = atan2(xl23(celltype_matrix(:,celltype))-xl4(celltype_matrix(:,celltype)),...
+%                 yl23(celltype_matrix(:,celltype))-yl4(celltype_matrix(:,celltype)));
+%             ex_in_cell{maptype,celltype} = xl23(celltype_matrix(:,celltype));
+%         end
+
+        % for all the points
+        for points = 1:size(xl23,1)
+            plot([xl23(points),somax(points)],[yl23(points),somay(points)],'k')
+            if ~isnan(xl4(points))
+                plot([xl23(points),xl4(points)],[yl23(points),yl4(points)],'k')
+            end
+            if ~isnan(xl5(points))
+                plot([xl4(points),xl5(points)],[yl4(points),yl5(points)],'k')
+            end
+            text(xl23(points),yl23(points),num2str(points))
+            text(somax(points),somay(points),num2str(points))
+
+        end
+        set(gca,'YDir','reverse')
+        
+
+    %     ex_in_cell{maptype} = atan2(yl23-yl4,xl23-xl4);
+    end
+    counter = counter + 50;
+end
+param = vertcat(str.DSIpref);
+for maptype = 1:2
+    figure
+    for celltype = 1:3
+        [x,y] = nan_remover(param(celltype_matrix(:,celltype)),ex_in_cell{maptype,celltype});
+        scatter(x,y,type_colors{celltype})
+        hold on
+        [rho2,pval2] = circ_corrcc(x,y)
+    end
+end
+
+
+% axis equal
+% axis tight
+%%
 % plot the average +/- sem of the group centroid trajectories
 figure
 for celltype = 1:celltype_num
@@ -320,3 +449,55 @@ end
 
 ylabel('Vector length')
 xlabel('Cutting distance')
+%% 
+
+close all
+figure
+for maptype = 1:2
+%     for layers = 1:3
+        switch maptype
+            case 1
+                exin_term = 'ex';
+            case 2
+                exin_term = 'in';
+        end
+%         switch layers
+%             case 1
+%                 layer_term = '23';
+%             case 2
+%                 layer_term = '4';
+%             case 3
+%                 layer_term = '5';
+%         end
+        % get the angles
+        anglesL23 = vertcat(str.(strcat('ang_',exin_term,'L23')));
+        anglesL23 = (anglesL23(:,3) - anglesL23(:,1));
+        anglesL4 = vertcat(str.(strcat('ang_',exin_term,'L4')));
+%         anglesL4 = anglesL4(:,5);
+        anglesL4 = (anglesL4(:,3) - anglesL4(:,1));
+        
+        subplot(1,2,maptype)
+        legend_cell = cell(3,1);
+        for celltype = 1:3
+            % get the celltype index
+            cell_idx = celltype_matrix(:,celltype);
+            % get the angle vectors
+            type_angles23 = anglesL23(cell_idx);
+            type_angles4 = anglesL4(cell_idx);
+            % remove nans
+            [x,y] = nan_remover(type_angles23,type_angles4);
+            % calculate the circular correlation
+%             [rho,pval] = circ_corrcc(deg2rad(x),deg2rad(y));
+            [rho,pval] = corr(x,y);
+            
+            % plot 
+            scatter(x,y,30,type_colors{celltype},'o')
+            hold on
+            % save the values for the legend
+            legend_cell{celltype} =  strjoin({num2str(rho),num2str(pval)},'_');
+        end
+        % apply the legend
+        legend(legend_cell,'Interpreter','None')
+        title(exin_term)
+%     end
+end

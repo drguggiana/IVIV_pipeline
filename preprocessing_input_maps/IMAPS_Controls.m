@@ -105,7 +105,8 @@ for setups = 1:2
     for position = 1:control_positions
         % calculate the square differences between the traces
         raw_deltas = sqrt((blanked_str(position).real - blanked_str(position).interp).^2)./...
-            abs(blanked_str(position).real);
+                        abs(blanked_str(position).real);
+%             movstd(blanked_str(position).real,20);
         % calculate mean and std
         delta_matrix(position,1) = nanmean(raw_deltas);
         delta_matrix(position,2) = nanstd(raw_deltas);
@@ -115,6 +116,8 @@ for setups = 1:2
     errorbar(1:control_positions,delta_matrix(:,1),delta_matrix(:,2),'ko')
     xlabel('Random position')
     ylabel('Normalized delta')
+    title(strjoin({'Average error:',num2str(mean(delta_matrix(:,1))),...
+        's.e.m.',num2str(std(delta_matrix(:,1))/sqrt(control_positions))},' '))
     set(gca,'XLim',[0 control_positions+1])
     
     % plot all the traces side by side in subplots

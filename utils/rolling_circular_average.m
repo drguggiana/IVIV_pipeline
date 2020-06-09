@@ -1,4 +1,4 @@
-function [rolling_average,rolling_std] = rolling_circular_average(circular_vector,parameter_vector,window,dir_ori_flag)
+function [rolling_average,rolling_std,counts] = rolling_circular_average(circular_vector,parameter_vector,window,dir_ori_flag)
 % function to take a circular rolling window average and std of the
 % parameter
 
@@ -23,6 +23,7 @@ parameter = repmat(parameter_vector,2,1);
 % allocate memory for the average
 rolling_mean_ori = zeros(2*single_angle,1);
 rolling_std_ori = zeros(2*single_angle,1);
+counts = zeros(2*single_angle,1);
 % for all degrees, starting at the window width and stopping 1 window width
 % before the end
 for degrees = (window-1)/2:2*single_angle-(window-1)/2
@@ -32,6 +33,7 @@ for degrees = (window-1)/2:2*single_angle-(window-1)/2
     % get the average of the involved numbers
     rolling_mean_ori(degrees) = nanmean(parameter(indexes));
     rolling_std_ori(degrees) = nanstd(parameter(indexes))./sqrt(sum(indexes));
+    counts(degrees) = sum(indexes);
 end
 
 % assemble the orientation only vector based on the window width
@@ -39,3 +41,6 @@ rolling_average = cat(1,rolling_mean_ori(single_angle+1:single_angle-1+(window-1
     rolling_mean_ori((window-1)/2:single_angle));
 rolling_std = cat(1,rolling_std_ori(single_angle+1:single_angle-1+(window-1)/2),...
     rolling_std_ori((window-1)/2:single_angle));
+% also output the count of points per angle
+counts = cat(1,counts(single_angle+1:single_angle-1+(window-1)/2),...
+    counts((window-1)/2:single_angle));

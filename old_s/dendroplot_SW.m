@@ -23,6 +23,7 @@ color_idx={'m','g','c','y'};
 
 %[cmap]=buildcmap('kby');
 [cmap]=buildcmap('wb')
+%[cmap]=buildcmap('wr')
 %create new figure
 figure
  set(gcf,'color','w');
