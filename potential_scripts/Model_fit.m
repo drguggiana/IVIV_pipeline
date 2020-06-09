@@ -38,8 +38,9 @@ response = 'ORIpref';
 % targets = {'ang_inL23_Vt','max_in_v_L23','max_in_x_L23','max_in_y_L23',...
 %     'max_in_v_L4','max_in_x_L4','max_in_y_L4','max_in_v_L4','max_in_x_L5','max_in_y_L5'};
 
-targets = {'ang_inL23_Vt','ang_inL23_Cx','ang_inL23_Cy','ang_inL23_Sy','ang_inL23_Al','ang_inL23_Sx'};
-
+% targets = {'ang_inL23_Vt','ang_inL23_Cx','ang_inL23_Cy','ang_inL23_Sy','ang_inL23_Al','ang_inL23_Sx'};
+targets = {'ang_exL23_Cx','ang_inL23_Cx','ang_inL4_Cx','ang_exL23_Cy',...
+    'ang_inL23_Cy','frac_vert_exL4','frac_vert_inL4','pialD'};
 % targets = {'ang_inL23_Vt','nw_inL23_Vt'};
 
 % define the kernel function to use

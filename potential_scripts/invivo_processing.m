@@ -66,7 +66,7 @@ for experiment = 1:experiment_number
             invivo_str(cell_counter).(field_list{field}) = current_field;
         end
         % also add the pia
-        invivo_str(cells).pialD = current_pia(cells);
+        invivo_str(cell_counter).pialD = current_pia(cells);
         % update the counter
         cell_counter = cell_counter + 1;
     end
@@ -92,23 +92,25 @@ ORI_pref(ORI_pref>179.999999) = ORI_pref(ORI_pref>179.999999) - 180;
 piald = vertcat(invivo_str(OSI>0.25).pialD);
 
 % separate the orientation in bins based on pia
-[N,edges,bin] = histcounts(piald,3);
+[N,edges,bin] = histcounts(piald,[100 200 300 500]);
 
 % define edges for the angle bins
-angle_edges = [0 45 90 135 180 225]-22.5;
+% angle_edges = [0 45 90 135 180 225]-22.5;
+% angle_edges = [0 32.5 82.5 122.5 172.5 225]-22.5;
+angle_edges = [0 35 80 125 170 225]-22.5;
 % allocate memory for the bin results
 depth_bins = zeros(size(N,2),size(angle_edges,2)-2);
 % for all the depth bins
 for bins = 1:size(N,2)
     % bin the angles
-    temp_bins = histcounts(ORI_pref(bins==bin),angle_edges,'Normalization','Probability');
+    temp_bins = histcounts(ORI_pref(bins==bin),angle_edges,'Normalization','probability');
     % combine the edge bins
-    depth_bins(bins,:) = [sum(temp_bins([1,5])), temp_bins(2:4)];
+    depth_bins(bins,:) = [temp_bins(2:4),sum(temp_bins([1,5]))];
 end
 
 % plot the results
 bar(depth_bins')
-set(gca,'XTickLabels',string(angle_edges(1:4)+22.5))
+set(gca,'XTickLabels',string(angle_edges(2:5)+22.5))
 legend({'High','Mid','Low'})
 xlabel('Preferred Orientation')
 ylabel('Probability')
