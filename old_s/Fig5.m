@@ -299,22 +299,37 @@ a=find(od_out_iviv(:,1)>0.25);
 
 %% 
 %% SPAN
+
 parameter_vector = span(:,3)*69
 parameter_vector2 = span(:,6)*69
 rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
 ylabel('L5 Horizontal extent (µm)','Color','k');
+
+parameter_vector = span(:,1)*69
+parameter_vector2 = span(:,4)*69
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
+ylabel('L2/3 Horizontal extent (µm)','Color','k');
+
 %   ylim([5 70]);yticks([10:30:70]);
  xlim([0 180]);xticks([0:45:180]);
 set(gca,'FontSize',10);
 
 %% Barplots Span using left tailed test
 a=find(od_out_iviv(:,1)>0.25);  
+
 par=span(a,6)*69;
+
+par=span(a,4)*69;
+
 g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
 g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 [statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
+
 ylabel('L5 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
+
+ylabel('L2/3 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
+
 %% SF/TF
 
 a=find(od_out_iviv(:,1)>0.25);  

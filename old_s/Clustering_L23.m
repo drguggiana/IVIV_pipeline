@@ -4,9 +4,15 @@ clu_num =2;
 %pcs =[];
 %pcs     =[5];
 %including the 6 PCs = pial depth 
+
 [idx_input_ward, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'ward',clu_num,pia_input,3,0.6);%call function for clustering
 %[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
 %[idx_input_comp, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'complete',clu_num,pia_input,3,0.6);%call function for clustering
+
+[idx_input, clustering_input, leafOrder] = hca([L23fr L4fr L5fr],0,'ward',clu_num,pia_input,3,0.6);%call function for clustering
+%[idx_input, clustering_input, leafOrder] = hca([data_w_input(:,pcs)],0,'ward',clu_num,pia_input,1);%call function for clustering
+
+
 %% Plot average maps of clusters
 plot_avg_maps(str,1:147,ex_map,in_map,pia_input,10,1,idx_input);
 %% 
@@ -15,6 +21,7 @@ dendroplot_SW(clustering_input,leafOrder,2,[L23fr(:,1) L4fr(:,1)  L5fr(:,1)],{'L
 %% 
 dendroplot_SW(clustering_input,leafOrder,2,[L23fr(:,2) L4fr(:,2)  L5fr(:,2)],{'L2/3ex','L4ex','L5ex','L2/3in','L4in','L5in'},pia_input)
 %% kmeans clustering
+
 idx_input=[];
  idx_input2 = kmeans([L23fr L4fr L5fr],5)
  %% 
@@ -22,6 +29,10 @@ idx_input=[];
  %% 
  
  [idx_k,C,SUMD,K,PC]=kmeans_opt([L23fr L4fr L5fr],50);
+
+
+% idx_input=[];
+% idx_input = kmeans([score_ex(:,pcs) score_in(:,pcs)],4)
 
 %% Barplot difference of clusters
 %Pial depth

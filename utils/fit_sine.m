@@ -25,9 +25,18 @@ yp = fit(s,x);
 if length(varargin)>=1
     if varargin{1}
 %         figure(1)
+
         plot(x,y,'b',  x,yp, 'r')
+
+%         plot(x,y,'b',  x,yp, 'r')
+        plot(x,yp, 'k',x,y,'ok')
+
         grid
     end
 end
+
+
+
+% calculate r2
 
 r2 = 1-(sum(sqrt((y-yp).^2))/sum(sqrt((y-ym).^2)));
