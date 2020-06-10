@@ -434,7 +434,7 @@ savepdf_SW(fn,1);
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
     abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
    abs(ang_inL23(:,4)-ang_inL23(:,2))  pia_input od_out_iviv(:,[1 2 3 6 7])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+G=correlation_matrix(com,1);title('');xticks([1:1:16]);yticks([1:1:16]);
 %% 
 
 %% Circular correlation for ORI
@@ -462,14 +462,70 @@ c_cor_e=c_cor;
   m=c_pva<0.05;
 c_cor_e(m==0)=m(m==0);
 %% 
+fG=[];
 fG=[G([10 11 12 13 14],1:9)];
 fG=[fG ;c_cor_e];
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
 imagesc(fG);c=colorbar;pos = get(c,'Position');
 [cmap]=buildcmap('bwg');
-colormap(cmap);caxis([-1 1]);xticks([1:1:12])
+colormap(cmap);caxis([-1 1]);xticks([1:1:12]);yticks([1:1:12])
 yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}','ORI*','DIR*'});set(gca,'FontSize',10);
-xticklabels({'L2/3','L2/3','L4','L4','C L2/3 ','C L2/3','C L2/3','C L2/3', 'Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+xticklabels({'L2/3','L2/3','L4','L4','C L2/3 ','C L2/3','C L2/3','C L2/3', 'Pial depth'});xtickangle(45);set(gca,'FontSize',10);
+%% Adding more parameters
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) L5fr(:,1) L5fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
+    abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
+   abs(ang_inL23(:,4)-ang_inL23(:,2)) span pia_input od_out_iviv(:,[1 2 3 6 7 8 9])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%% Circular correlation for ORI
+a=find(od_out_iviv(:,1)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
+   abs(ang_inL23(a,4)-ang_inL23(a,2)) span(a,:) pia_input(a) ]
+for i=1:size(par_c,2)
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(a,4)), par_c(:,i))
+end
+%% %% Circular correlation for DRI
+a=find(od_out_iviv(:,2)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
+   abs(ang_inL23(a,4)-ang_inL23(a,2)) span(a,:) pia_input(a) ]
+for i=1:size(par_c,2)
+    [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(a,5)), par_c(:,i))
+end
+%% %% Combine matrices
+c_cor=[rho1;rho2]
+c_pva=[pval1;pval2]
+c_cor_e=c_cor;
+  m=c_pva<0.05;
+c_cor_e(m==0)=m(m==0);
+%% 
+fG=[];
+fG=[G([18:24],1:17)];
+fG=[fG ;c_cor_e];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
+imagesc(fG);c=colorbar;pos = get(c,'Position');
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:18]);yticks([1:1:18])
+yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}','SF','TF','ORI','DIR'});set(gca,'FontSize',10);
+xticklabels({'L2/3','L2/3','L4','L4','L5','L5','C L2/3 ','C L2/3','C L2/3','C L2/3', 'HEL2/3','HEL4','HEL5','HEL23',...
+    'HEL4','HEL5','Pial depth'});xtickangle(45);set(gca,'FontSize',10);
+%% Random correlations
+
+figure;scatter(span(:,6)*69,od_out_iviv(:,[3]),'filled');ylabel('ODI');xlabel('HEL5 IN');set(gcf,'color','w');
+[R,P,RL,RU] = corrcoef(span(:,6)*69,od_out_iviv(:,[3]),'rows','pairwise')
+
+%% Random correlationsII
+figure;scatter(L23fr(:,1),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L2/3 fr EX');set(gcf,'color','w');
+[R,P,RL,RU] = corrcoef(L23fr(:,1),od_out_iviv(:,[8]),'rows','pairwise')
+figure;scatter(L4fr(:,1),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L4 fr EX');set(gcf,'color','w');
+[R,P,RL,RU] = corrcoef(L4fr(:,1),od_out_iviv(:,[8]),'rows','pairwise')
+figure;scatter(L5fr(:,2),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L5 fr IN');set(gcf,'color','w');
+[R,P,RL,RU] = corrcoef(L5fr(:,2),od_out_iviv(:,[8]),'rows','pairwise')
+%% Random correlationsIII
+figure;scatter(L4fr(:,1),od_out_iviv(:,[9]),'filled');ylabel('TF');xlabel('L4 fr EX');set(gcf,'color','w');
+[R,P,RL,RU] = corrcoef(L4fr(:,1),od_out_iviv(:,[9]),'rows','pairwise')
 %% 
 
 %Correlation Matrix Panel B
@@ -1560,7 +1616,7 @@ for i=1:length(str)
         zz{:,i}=NaN;
     end
 end
-[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,0);
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147);
 %% 
 for i=1:length(zz)
 if morph_cells(i)==1
@@ -2123,16 +2179,18 @@ savepdf_SW(fn,1);
 
 %% In vivo parameters
 close all;
- plot_list = {'Sigmapref','Capeakpref','sad','pci','noise'};
+ plot_list = {'Sigmapref','Capeakpref','sad','pci','noise','SF','TF'};
  plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
 autoArrangeFigures;
+%% 
 
 figure(1);c=colorbar;caxis([2 4.3]);c.Ticks=[2:1:4.3];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
 figure(2);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
  figure(3);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
  figure(4);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
 figure(5);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
-
+figure(6);c=colorbar;caxis([0.02 0.16]);c.Ticks=[0.02:0.02:0.16]; h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
+figure(7);c=colorbar;caxis([1 4]);c.Ticks=[1:1:4]; h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
 %% Save
 
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\invivo'
