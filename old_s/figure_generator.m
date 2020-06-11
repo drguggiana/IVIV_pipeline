@@ -538,7 +538,25 @@ figure;scatter(L4fr(:,1),od_out_iviv(:,[9]),'filled');ylabel('TF');xlabel('L4 fr
 colormap(cmap);caxis([-1 1]);xticks([1:1:12])
 yticklabels({'OSI','DSI','ODI','TW','Ca_{peak}','ORI*','DIR*'});set(gca,'FontSize',10);
 xticklabels({'L2/3','L2/3','L4','L4','C L2/3 ','C L2/3','C L2/3','C L2/3', 'Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+%% Spontaneuos activity corr matrix
+ a=find(od_out_iviv(:,[11])<0.2)
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
+   abs(ang_inL23(a,4)-ang_inL23(a,2)) span(a,:) pia_input(a) od_out_iviv(a,[10 11 12])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
 
+fG=[];
+fG=[G([18:end],1:17)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 125])
+imagesc(fG);c=colorbar;pos = get(c,'Position');
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:18]);yticks([1:1:18])
+yticklabels({'SAD','Noise','PCI'});set(gca,'FontSize',10);
+xticklabels({'L2/3','L2/3','L4','L4','L5','L5','C L2/3 ','C L2/3','C L2/3','C L2/3', 'HEL2/3','HEL4','HEL5','HEL23',...
+    'HEL4','HEL5','Pial depth'});xtickangle(45);set(gca,'FontSize',10);
+%% 
+
+figure;scatter(L23fr(a,1),od_out_iviv(a,[11]),'filled');ylabel('Noise');xlabel('L23fr EX');set(gcf,'color','w')
 %% 
 
 %Correlation Matrix Panel B

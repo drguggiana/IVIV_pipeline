@@ -26,10 +26,10 @@ if length(varargin)>=1
     if varargin{1}
 %         figure(1)
 
-        plot(x,y,'b',  x,yp, 'r')
+        plot(x,y,'k',  x,yp, 'r')
 
 %         plot(x,y,'b',  x,yp, 'r')
-        plot(x,yp, 'k',x,y,'ok')
+        plot(x,yp, 'm',x,y,'ok')
 
         grid
     end

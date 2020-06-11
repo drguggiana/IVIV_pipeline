@@ -5,7 +5,7 @@ if isempty(explained2)==1 & isempty(des)==1
 fig1=figure();left_color = [0 0 0];right_color = [0 0 0];set(fig1,'defaultAxesColorOrder',[left_color; right_color]);
 hold on;y1=explained1;yyaxis left;h=bar(y1);h.EdgeColor = 'k';h.FaceColor = [1 1 1];
 xlim([0 10.5]);ylabel('Variance explained per component');xlabel('Principal Component');
-yticks([0:5:25]);
+%yticks([0:5:25]);
 y3=cumsum(y1);yyaxis right
 %cdfplot(r.explained);hold on;
 p1=plot(y3,'--');hold on;

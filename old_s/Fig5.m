@@ -113,6 +113,25 @@ g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 xticklabels({'',''});xtickangle(45);
 ylabel('L4fr','Color','k'); ;set(gca,'FontSize',10); 
 ylim([0 0.6]);yticks([0:0.3:0.6]);
+%% L5fraction EX
+a=find(od_out_iviv(:,1)>0.25);  
+par=L5fr(a,1)
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
+xticklabels({'',''});xtickangle(45);
+ylabel('L5fr','Color','k'); ;set(gca,'FontSize',10); 
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+%% L5fraction IN
+a=find(od_out_iviv(:,1)>0.25);  
+par=L5fr(a,2)
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
+xticklabels({'',''});xtickangle(45);
+ylabel('L5fr','Color','k'); ;set(gca,'FontSize',10); 
+%ylim([0 0.341]);yticks([0:0.17:0.341]);
+ylim([0 0.04]);yticks([0:0.02:0.04]);
 %% 
 a=find(od_out_iviv(:,1)>0.25);
  corr_plot((ang_inL23(a,4)*69-ang_inL23(a,2)*69)*-1,pia_input(a),od_out_iviv(a,4),{'','',''});
@@ -317,16 +336,16 @@ set(gca,'FontSize',10);
 %% Barplots Span using left tailed test
 a=find(od_out_iviv(:,1)>0.25);  
 
-par=span(a,6)*69;
+par=span(a,1)*69;
 
-par=span(a,4)*69;
+
 
 g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
 g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 [statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
 xticklabels({'',''});xtickangle(45);
-
-ylabel('L5 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
+ylim([0 1100]);yticks([0:550:1100])
+%ylabel('L5 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
 
 ylabel('L2/3 Horizontal extent (µm)','Color','k'); ;set(gca,'FontSize',10); 
 
