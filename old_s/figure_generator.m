@@ -483,7 +483,7 @@ xticklabels({'L2/3','L2/3','L4','L4','C L2/3 ','C L2/3','C L2/3','C L2/3', 'Pial
 com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) L5fr(:,1) L5fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
     abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
    abs(ang_inL23(:,4)-ang_inL23(:,2)) span pia_input od_out_iviv(:,[1 2 3 6 7 8 9])]; 
-G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+G=correlation_matrix(com,1);title('');xticks([1:1:16]);yticks([1:1:16]);
 %% Circular correlation for ORI
 a=find(od_out_iviv(:,1)>0.25); 
 par_c=[];
@@ -506,7 +506,7 @@ end
 c_cor=[rho1;rho2]
 c_pva=[pval1;pval2]
 c_cor_e=c_cor;
-  m=c_pva<0.05;
+  m=c_pva<0.05/17;
 c_cor_e(m==0)=m(m==0);
 %% 
 fG=[];
@@ -526,7 +526,9 @@ figure;scatter(span(:,6)*69,od_out_iviv(:,[3]),'filled');ylabel('ODI');xlabel('H
 
 %% Random correlationsII
 figure;scatter(L23fr(:,1),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L2/3 fr EX');set(gcf,'color','w');
-[R,P,RL,RU] = corrcoef(L23fr(:,1),od_out_iviv(:,[8]),'rows','pairwise')
+[R,P] = corr(L23fr(:,1),od_out_iviv(:,[8]),'rows','pairwise','Type','Spearman')
+%% 
+
 figure;scatter(L4fr(:,1),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L4 fr EX');set(gcf,'color','w');
 [R,P,RL,RU] = corrcoef(L4fr(:,1),od_out_iviv(:,[8]),'rows','pairwise')
 figure;scatter(L5fr(:,2),od_out_iviv(:,[8]),'filled');ylabel('SF');xlabel('L5 fr IN');set(gcf,'color','w');
@@ -2604,3 +2606,24 @@ figure;histogram(od_out(:,4))
 figure;histogram(od_out(find(gd==1),4),4)
 figure;histogram(od_out(find(gd==2),4),4)
 figure;histogram(od_out(find(gd==3),4),4)
+%% SF TF multiple barplots with Fraction 
+par=L5fr(:,2)
+g1=find(od_out_iviv(:,8)==0.02);
+g2=find(od_out_iviv(:,8)==0.08);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'0.02','0.08'});xtickangle(45);
+%ylim([0 80]);yticks([0:40:80]);
+ylabel('L5 fraction','Color','k'); ;set(gca,'FontSize',10); 
+%% 
+par1=[];
+groups_idx=[];
+g1=find(od_out_iviv(:,9)==1);
+g2=find(od_out_iviv(:,9)==2);
+g3=find(od_out_iviv(:,9)==4);
+par1=vertcat(L5fr(g1,1),L5fr(g2,1),L5fr(g3,1))
+groups_idx=vertcat(ones(length(g1),1)*1,ones(length(g2),1)*2,ones(length(g3),1)*3)
+groups_idx(find(isnan(par1)))=[];
+par1(find(isnan(par1)))=[];
+[statsout] = barplot_sw(par1,groups_idx,{'','L5 fraction'});ylabel('L23 fraction')
+%% non visual response cells
+
