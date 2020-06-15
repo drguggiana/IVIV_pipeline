@@ -2,6 +2,7 @@ function G=correlation_matrix(data,bon)
 
 %[R,P]=corrcoef(data,'rows','complete');
 [R,P]=corrcoef(data,'rows','pairwise');
+%[R,P]=corr(data,'rows','pairwise','Type','Kendall');
 %[R,P]=corr(data,'Type','Spearman','rows','pairwise');
 %[R,P]=corrcoef(data);
  G=R;

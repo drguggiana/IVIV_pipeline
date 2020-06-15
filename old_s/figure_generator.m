@@ -107,12 +107,55 @@ oris=[0:45:315];
 % % end
 % oric=temp;
 od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
-             ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci]]';
+             ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci];[str(:).error_pref];[str(:).r2_pref];[str(:).tun_pref]]';
 %ipsi, contra, bino, unres
-ipsi_id=find([str(:).ipsi]==1);
-contra_id=find([str(:).contra]==1);
-bino_id=find([str(:).bino]==1);
-unres_id=find([str(:).unres]==1);
+ ipsi_id=find([str(:).ipsi]==1);
+ contra_id=find([str(:).contra]==1);
+ bino_id=find([str(:).bino]==1);
+ unres_id=find([str(:).unres]==1);
+ resp_id=find([str(:).resp]==1);
+%% 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
+for i=1:length(resp_id)
+subplot(6,10,i)
+hold on;plot(oris,str(resp_id(i)).TCpref,'--o');
+y=str(resp_id(i)).TCpref;
+ym=mean(y)
+;xticks([0:90:360]);
+hold on;
+if str(resp_id(i)).ipsi==1 
+ plot(str(resp_id(i)).fit_resp(361:end));
+ yp=(str(resp_id(i)).fit_resp(361:end));
+ yp_s=yp(oris+1);
+ 
+elseif str(resp_id(i)).contra==1 
+     plot(str(resp_id(i)).fit_resp(1:360));
+     yp=(str(resp_id(i)).fit_resp(1:360));
+ yp_s=yp(oris+1);
+else str(resp_id(i)).bino==1 
+    if str(resp_id(i)).ODIpref>0 
+    hold on;plot(str(resp_id(i)).fit_resp(1:360))
+        yp=(str(resp_id(i)).fit_resp(1:360));
+ yp_s=yp(oris+1);
+    else str(resp_id(i)).ODIpref<0 
+        ;hold on;plot(str(resp_id(i)).fit_resp(361:end))
+            yp=(str(resp_id(i)).fit_resp(361:end));
+ yp_s=yp(oris+1);
+    end
+end
+r2=1-(sum(sqrt((y-yp_s').^2))/sum(sqrt((y-ym).^2)))
+r_square(i)=r2
+title([num2str(str(resp_id(i)).tun_pref) ' / ' num2str(str(resp_id(i)).OSIpref)  ' / ']);
+y=[]
+ym=[];
+yp=[];
+yp_s=[];
+r2=[];
+end
+%r2 = 1-(sum(sqrt((y-yp).^2))/sum(sqrt((y-ym).^2)));
+%% 
+r_sq=ones(147,1)*NaN
+r_sq(resp_id)=r_square
 %% 
 
 
@@ -1671,10 +1714,10 @@ end
 close all;
 %Plot representative examples, cell 143 and 122 for panel A, 
 %NOTE tuning curve: individual traces not in the str only the average atm
-id_m=143;
-plot_morphologies(str,id_m,1,1,1);
-id_m2=122;
-plot_morphologies(str,id_m2,2,1,1);
+% id_m=143;
+% plot_morphologies(str,id_m,1,1,1);
+% id_m2=122;
+% plot_morphologies(str,id_m2,2,1,1);
 %Plot the tuning curves and width from the folders
 %cell 143
 load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\exp15006\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
@@ -1721,14 +1764,14 @@ ylabel('OSI','Color','k');xlabel('Peak number of sholl crossings','Color','k');s
 %plot peak nr of sholl crossings APICAL vs TW, PANEL D
 %remove obvious TW outlier
 morph_res_sub2=morph_res_sub;
-morph_res_sub2(find(od_out_iviv(morph_res_sub2,7)>50))=[];
+morph_res_sub2(find(r_sq(morph_res_sub2)<0.4))=[];
 %Plot
 corr_plot(morph_parameters(morph_res_sub2,4),od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 25]);
 ylabel('Tuning Width','Color','k');xlabel('Nr of branch points','Color','k');set(gca,'FontSize',10)
-ylim([5 40]);yticks([0:10:40]);
+ylim([5 60]);yticks([0:10:60]);
 corr_plot(max_s(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 15]);
 ylabel('Tuning Width','Color','k');xlabel('Peak number of sholl crossings','Color','k');set(gca,'FontSize',10)
-ylim([5 40]);yticks([0:10:40]);
+ylim([5 60]);yticks([0:10:60]);
 
 corr_plot(morph_parameters(morph_res_sub2,14),od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([5 25]);
 ylabel('Tuning Width','Color','k');xlabel('Nr of branch points','Color','k');set(gca,'FontSize',10)

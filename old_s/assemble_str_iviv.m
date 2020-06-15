@@ -20,12 +20,17 @@ load(char(filename));%load mat file
      gOSI{i,:}=L23_PC(i).OD.gOSI(temp,:);
      gDSI{i,:}=L23_PC(i).OD.gDSI(temp,:);
      ODI{i,:}=L23_PC(i).OD.ODI(temp);
+     c_tun{i,:}=L23_PC(i).OD.contra_tun(temp);
+     i_tun{i,:}=L23_PC(i).OD.ipsi_tun(temp);
+     
      allCa{i,:}=[sum(L23_PC(i).OD.deltapeaks_averagetrace(temp,1:8),2) sum(L23_PC(i).OD.deltapeaks_averagetrace(temp,9:16),2)];
     peakCaOD{i,:}=[nanmax(L23_PC(i).OD.deltapeaks_averagetrace(temp,1:8),[],2) nanmax(L23_PC(i).OD.deltapeaks_averagetrace(temp,9:16),[],2)];
      prefOri{i,:}=L23_PC(i).OD.prefOri(temp,:);
      prefDir{i,:}=L23_PC(i).OD.prefDir(temp,:);
      oppResp{i,:}=L23_PC(i).OD.oppResp(temp,:);
      sigma{i,:}=L23_PC(i).OD.sigma(temp,:);
+     erro{i,:}=L23_PC(i).OD.fit_error(temp,:);
+     r2f{i,:}=L23_PC(i).OD.fit_r2(temp,:);
      fit_tuning{i,:}=L23_PC(i).OD.fit_tuning(temp,:)';
      pia{i,:}=L23_PC(i).pial_depth(temp);
      temp=[];
@@ -42,10 +47,14 @@ load(char(filename));%load mat file
  Ori=vertcat(prefOri{:});
  oppResp=vertcat(oppResp{:});
  sigma_tuning=vertcat(sigma{:});
+ error_fit=vertcat(erro{:});
+ r2_fit=vertcat(r2f{:});
  fit_resp=horzcat(fit_tuning{:});
  respo=horzcat(oresp{:});
  contra=horzcat(contra{:});
  ipsi=horzcat(ipsi{:});
+ contra_tun=horzcat(c_tun{:});
+ ipsi_tun=horzcat(i_tun{:});
  OSI=vertcat(gOSI{:});
  DSI=vertcat(gDSI{:});
  ODI=horzcat(ODI{:});
@@ -360,6 +369,19 @@ for i=1:length(aiviv)
    %pia from in vivo
    str_m(aiviv(i)).pia_invivo=pia_all(i);
 end
+%% 
+aiviv=find(iviv_cells==1);
+for i=1:length(aiviv)
+    str_m(aiviv(i)).c_tun=contra_tun(i);
+    str_m(aiviv(i)).i_tun=ipsi_tun(i);
+    str_m(aiviv(i)).error_fit=error_fit(i,:);
+    str_m(aiviv(i)).r2_fit=r2_fit(i,:);
+    
+end
+%% 
+
+%% 
+
 str=str_m;
 %% Extract eye specific info and add to strcuture 
 
@@ -426,8 +448,9 @@ pia_input=original_maps(:,end);
 incl_idx=1;
 %% Read out eye specific info
 
-[od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str_m,nan_vector)
+[od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str_m,1:147)
 %% Add OD eye specific info to strcuture
+nan_vector=1:147;
 for i=1:length(nan_vector)
     str(nan_vector(i)).OSIpref=od_out_iviv(i,1);
     str(nan_vector(i)).DSIpref=od_out_iviv(i,2);
@@ -437,6 +460,9 @@ for i=1:length(nan_vector)
     str(nan_vector(i)).Casumpref=od_out_iviv(i,6);
     str(nan_vector(i)).Sigmapref=od_out_iviv(i,7);
     str(nan_vector(i)).Capeakpref=od_out_iviv(i,8);
+    str(nan_vector(i)).error_pref=od_out_iviv(i,10);
+    str(nan_vector(i)).r2_pref=od_out_iviv(i,11);
+    str(nan_vector(i)).tun_pref=od_out_iviv(i,12);
 end
 %% 
 %% ADD preferred Tuning Curve

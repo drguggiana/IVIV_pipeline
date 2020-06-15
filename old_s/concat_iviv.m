@@ -11,7 +11,11 @@ if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
      oripref(i)=str(non_nan_idx(i)).Ori(1); 
      dirpref(i)=str(non_nan_idx(i)).Dir(1);
      sigma(i)=str(non_nan_idx(i)).sigma(1);
+     fit_err(i)=str(non_nan_idx(i)).error_fit(1);
+     fit_r2(i)=str(non_nan_idx(i)).r2_fit(1);
+     tun_pre(i)=str(non_nan_idx(i)).c_tun;
      fit_resp(i,:)=str(non_nan_idx(i)).fit_resp(1:360);
+   
      iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
      iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
      iv_Ca(i)=str(non_nan_idx(i)).Ca_sum(1);
@@ -24,6 +28,9 @@ if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
       oripref(i)=str(non_nan_idx(i)).Ori(2);
       dirpref(i)=str(non_nan_idx(i)).Dir(2);
       sigma(i)=str(non_nan_idx(i)).sigma(2);
+        fit_err(i)=str(non_nan_idx(i)).error_fit(2);
+     fit_r2(i)=str(non_nan_idx(i)).r2_fit(2);
+      tun_pre(i)=str(non_nan_idx(i)).i_tun;
       fit_resp(i,:)=str(non_nan_idx(i)).fit_resp(361:end);
       iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
       iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
@@ -38,6 +45,9 @@ if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
         oripref(i)=str(non_nan_idx(i)).Ori(1);
         dirpref(i)=str(non_nan_idx(i)).Dir(1);
         sigma(i)=str(non_nan_idx(i)).sigma(1);
+        fit_err(i)=str(non_nan_idx(i)).error_fit(1);
+        tun_pre(i)=str(non_nan_idx(i)).c_tun;
+     fit_r2(i)=str(non_nan_idx(i)).r2_fit(1);
         fit_resp(i,:)=str(non_nan_idx(i)).fit_resp(1:360);
         iv_OSI(i)=str(non_nan_idx(i)).OSI(1);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(1);
@@ -51,6 +61,9 @@ if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
             oripref(i)=str(non_nan_idx(i)).Ori(2);
         dirpref(i)=str(non_nan_idx(i)).Dir(2);
         sigma(i)=str(non_nan_idx(i)).sigma(2);
+           fit_err(i)=str(non_nan_idx(i)).error_fit(2);
+     fit_r2(i)=str(non_nan_idx(i)).r2_fit(2);
+     tun_pre(i)=str(non_nan_idx(i)).i_tun;
         fit_resp(i,:)=str(non_nan_idx(i)).fit_resp(361:end);
         iv_OSI(i)=str(non_nan_idx(i)).OSI(2);
         iv_DSI(i)=str(non_nan_idx(i)).DSI(2);
@@ -65,12 +78,15 @@ if ~isnan(str(non_nan_idx(i)).Ori)==1 & str(non_nan_idx(i)).resp==1
         oripref(i)=NaN;
         dirpref(i)=NaN;
         sigma(i)=NaN;
+        fit_err(i)=NaN;
+         fit_r2(i)=NaN;
         fit_resp(i,:)=ones(360,1)*NaN;
         iv_ODI(i)=NaN;
         iv_OSI(i)=NaN;
         iv_DSI(i)=NaN;
         iv_Ca(i)=NaN;
         iv_Ca_peak(i)=NaN;
+        tun_pre(i)=NaN;
         %ori_both(:,i)=ones(1,2)*NaN;
  end
 
@@ -79,11 +95,14 @@ oripref(i)=NaN;
 dirpref(i)=NaN;
 sigma(i)=NaN;
 fit_resp(i,:)=ones(360,1)*NaN;
+fit_err(i)=NaN;
+fit_r2(i)=NaN;
 iv_ODI(i)=NaN;
 iv_OSI(i)=NaN;
 iv_DSI(i)=NaN;
 iv_Ca(i)=NaN;
 iv_Ca_peak(i)=NaN;
+tun_pre(i)=NaN;
 end
 end
 %% Extract other in vivo paramters: PCI and spontenaeous events 
@@ -151,7 +170,7 @@ for i=1:length(non_nan_idx)
     end
 end
 %% Assemble out
-od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma' iv_Ca_peak' iv_pia_input'];
+od_out_iviv = [iv_OSI' iv_DSI' iv_ODI'  oripref' dirpref' iv_Ca' sigma' iv_Ca_peak' iv_pia_input' fit_err' fit_r2' tun_pre'];
 spon_out_iviv = [iv_spon' iv_popcop'];
 sftf_out_iviv = [iv_resp2' iv_SF' iv_TF' osi_sftf' dsi_sftf' oripref_sftf' dirpref_sftf' Ca_peak_sftf']
 sftf_out_sel_iviv=[osi_sftf_all dsi_sftf_all];

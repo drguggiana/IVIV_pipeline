@@ -6,6 +6,8 @@ function [OD] = extractOD_mod(peaks,Fit)
            contra_resp(k)=peaks(k).anova_p_mean_trial_contra<=0.05;
            ipsi_resp(k)=peaks(k).anova_p_mean_trial_ipsi<=0.05;
            oresp(k)=peaks(k).responder_mean_trial_anov;
+           contra_tun(k)=peaks(k).Tune_Anova_maxAmpDelAve_contra;
+           ipsi_tun(k)=peaks(k).Tune_Anova_maxAmpDelAve_ipsi;
            
             gOSI_ipsi(k)=1-peaks(k).ori_circvar_ipsi;
             gOSI_contra(k)=1-peaks(k).ori_circvar_contra;
@@ -55,10 +57,10 @@ function [OD] = extractOD_mod(peaks,Fit)
              fit_ipsi(:,k)=Fit(k).ipsi.FittedData;
             sigma_ipsi(k)=Fit(k).ipsi.Sigma;
              sigma_contra(k)=Fit(k).contra.Sigma;
-%            error_contra(k)=Fit(k).contra.Error;
-%            rsquare_contra(k)=Fit(k).contra.R2;
-%            error_ipsi(k)=Fit(k).ipsi.Error;
-%            rsquare_ipsi(k)=Fit(k).ipsi.R2;
+            error_contra(k)=Fit(k).contra.Error;
+            rsquare_contra(k)=Fit(k).contra.R2;
+            error_ipsi(k)=Fit(k).ipsi.Error;
+            rsquare_ipsi(k)=Fit(k).ipsi.R2;
        end
       %read contra/ipsi/bino cells
       contra_only=find(contra_resp==1 & ipsi_resp==0);
@@ -84,6 +86,8 @@ function [OD] = extractOD_mod(peaks,Fit)
      OD.gDSI=[gDSI_contra;gDSI_ipsi]' ;
      OD.ODI=ODI;
      OD.deltapeaks_averagetrace=[deltapeaks_averagetrace_contra;deltapeaks_averagetrace_ipsi]';
+     OD.contra_tun=contra_tun;
+     OD.ipsi_tun=ipsi_tun;
 %       OD.gOSI_b=max([gOSI_ipsi(bino);gOSI_contra(bino)]);
 %       OD.gDSI_c=gDSI_contra(contra_only);
 %       OD.gDSI_i=gDSI_ipsi(ipsi_only);
@@ -121,6 +125,8 @@ function [OD] = extractOD_mod(peaks,Fit)
        OD.oppResp=[oppResp_contra;oppResp_ipsi]';
        OD.sigma=[sigma_contra;sigma_ipsi]';
        OD.fit_tuning=[fit_contra;fit_ipsi]'; 
+       OD.fit_error=[error_contra;error_ipsi]';
+       OD.fit_r2=[rsquare_contra; rsquare_ipsi]';
      
     
 %       OD.prefDir_contra=prefDir_contra(contra_only);
@@ -196,6 +202,12 @@ function [OD] = extractOD_mod(peaks,Fit)
       oppResp_contra=[];
       fit_contra=[];
       fit_ipsi=[];
+      rsquare_ipsi=[];
+      rsquare_contra=[];
+        error_ipsi=[];
+      error_contra=[];
+      contra_tun=[];
+      ipsi_tun=[];
       
       PSTH_raw_ipsi={};
       PSTH_raw_contra={};
