@@ -114,7 +114,7 @@ od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref]
  bino_id=find([str(:).bino]==1);
  unres_id=find([str(:).unres]==1);
  resp_id=find([str(:).resp]==1);
-%% 
+%% Plot data with fits and calculate R2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
 for i=1:length(resp_id)
 subplot(6,10,i)
@@ -154,8 +154,8 @@ r2=[];
 end
 %r2 = 1-(sum(sqrt((y-yp).^2))/sum(sqrt((y-ym).^2)));
 %% 
-r_sq=ones(147,1)*NaN
-r_sq(resp_id)=r_square
+r_sq=ones(147,1)*NaN;
+r_sq(resp_id)=r_square;
 %% 
 
 
@@ -654,6 +654,7 @@ yticklabels({'C_{x}','C_{y}','Pial depth','ORI*'});ytickangle(45);set(gca,'FontS
 %% 
 a=find(od_out_iviv(:,1)>0.25 & pia_input<300);
 corr_plot(pia_input(w1),abs((ang_inL23(w1,3)-ang_inL23(w1,1))),od_out_iviv(w1,4),{'','',''});ylabel('C_{\alpha} (deg)','Color','b');
+%% 
 
 % %% Alternative polarplot
 % a=find(od_out_iviv(:,1)>0.25);
@@ -1840,7 +1841,10 @@ directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitym
 filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
 load(char(filename));%load mat file
 %% %% Read out ori pref of all 
- [od_out sftf_out sftf_sel sftf_pref spon_out pia_all] = concat_invivo(L23_PC);
+ [od_out sftf_out sftf_sel sftf_pref spon_out pia_all delta_Ca fit_Ca] = concat_invivo(L23_PC);
+ %% calculate R2 of fit
+ 
+ 
 %% Supplementary Fig 3 Panel A
 close all
 %OSI and ORI
