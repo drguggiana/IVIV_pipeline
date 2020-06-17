@@ -1777,28 +1777,10 @@ ylim([5 60]);yticks([0:10:60]);
 corr_plot(morph_parameters(morph_res_sub2,14),od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([5 25]);
 ylabel('Tuning Width','Color','k');xlabel('Nr of branch points','Color','k');set(gca,'FontSize',10)
 
-%plot peak nr of sholl crossings BASAL vs TW, PANEL E
-corr_plot(max_s_ba(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 30]);
-ylabel('Tuning Width','Color','k');xlabel('Peak Nr. sholl crossings','Color','k');set(gca,'FontSize',10)
-ylim([5 40]);yticks([0:10:40]);
+
 %% 
 
-%Plot correlation matrix, PANEL F
-df=[morph_parameters(morph_res_sub,9) morph_parameters(morph_res_sub,10)];
-db=[morph_parameters(morph_res_sub,19) morph_parameters(morph_res_sub,20)];
-com=[];com=[morph_parameters(morph_res_sub,2) nanmax(df,[],2) dis_s(morph_res_sub)'  morph_parameters(morph_res_sub,4)  max_s(morph_res_sub)' ...
-    morph_parameters(morph_res_sub,12) nanmax(db,[],2) dis_s_ba(morph_res_sub)'  morph_parameters(morph_res_sub,14) max_s_ba(morph_res_sub)'  od_out_iviv(morph_res_sub,[1 2 3 4 5 7 8]) pia_input(morph_res_sub)]
-G=correlation_matrix(com,0);close(gcf)
-Gf=G(11:end,1:10)
-Gf(6,1)=0;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 500, 325]);imagesc(Gf);c=colorbar;
-[cmap]=buildcmap('bwg');
-colormap(cmap);caxis([-1 1]);
-xticks([1:1:12]);yticks([1:1:8]);
- 
-xticklabels({'Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing'});xtickangle(45);set(gca,'FontSize',12)
-yticklabels({'OSI','DSI','ODI','ORI','DIR','TW','Ca_{peak}','Pial depth'});set(gca,'FontSize',12)
-c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10);
+
 %% 
 % Plot the input vs morphology density,panel G
 for i=1:length(str)

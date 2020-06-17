@@ -1,4 +1,4 @@
-function shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,ori1,ori2,tw1,tw2)
+function shift_ori_oe(fit_ex1,fit_ex1oe,fit_ex2,fit_ex2oe,ind_tr1,ind_tr1oe,ind_tr2,ind_tr2oe,ori1,ori2,tw1,tw2)
 ori=90-[1:1:180];
 pori=[0:45:315];
 peak=max(fit_ex1);
@@ -12,10 +12,12 @@ if isempty(ind_tr1)==0
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 200, 700, 250]);
 subplot(1,3,1)
 %errorbar(nanmean(ind_tr1,2)/max(nanmean(ind_tr1,2)),(nanstd(ind_tr1,[],2)/sqrt(4))/max(nanmean(ind_tr1,2)))
-errorbar(pori,nanmean(ind_tr1,2)/max(nanmean(ind_tr1,2)),nanstd(ind_tr1/max(nanmean(ind_tr1,2)),[],2)/sqrt(4),'-o','Color','k');
+errorbar(pori,nanmean(ind_tr1,2)/max(nanmean(ind_tr1,2)),nanstd(ind_tr1/max(nanmean(ind_tr1,2)),[],2)/sqrt(4),'-o','Color','b');
+hold on;
+errorbar(pori,nanmean(ind_tr1oe,2)/max(nanmean(ind_tr1,2)),nanstd(ind_tr1oe/max(nanmean(ind_tr1,2)),[],2)/sqrt(4),'-o','Color','r');
 % plot(fit_ex1/max(fit_ex1),'k');
 hold on;
-text(140,1.4,['OSI= ' num2str(round(ori1,2))]);
+text(140,1.4,['OSI= ' num2str(round(ori1,2))],'Color','b');
 hold on;box off
 ylabel('Normalized response');xlabel('Orientation (deg)');
 yticks([0:0.5:1.5]);
@@ -25,8 +27,10 @@ set(gca,'FontSize',10);
 
 subplot(1,3,2)
 %plot(fit_ex2/max(fit_ex2),'b');box off;
-errorbar(pori,nanmean(ind_tr2,2)/max(nanmean(ind_tr2,2)),nanstd(ind_tr2/max(nanmean(ind_tr2,2)),[],2)/sqrt(4),'-o','Color','b');
-hold on; text(140,1.4,['OSI= ' num2str(round(ori2,2))],'Color','b');
+errorbar(pori,nanmean(ind_tr2,2)/max(nanmean(ind_tr2,2)),nanstd(ind_tr2/max(nanmean(ind_tr2,2)),[],2)/sqrt(4),'-o','Color','r');
+hold on; text(140,1.4,['OSI= ' num2str(round(ori2,2))],'Color','r');
+hold on;
+errorbar(pori,nanmean(ind_tr2oe,2)/max(nanmean(ind_tr2,2)),nanstd(ind_tr2oe/max(nanmean(ind_tr2,2)),[],2)/sqrt(4),'-o','Color','b');
 ylabel('Normalized response');xlabel('Orientation (deg)');
 ylim([0 1.5]);yticks([0:0.5:1.5]);
 xlim([0 315]);xticks([0:45:315]);xtickangle(45);
