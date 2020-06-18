@@ -131,7 +131,7 @@ else str(resp_id(i)).bino==1
 end
 r2=1-(sum(sqrt((y-yp_s').^2))/sum(sqrt((y-ym).^2)))
 r_square(i)=r2
-title([num2str(str(resp_id(i)).Sigmapref) ' / ' num2str(r_square(i))  ' / ']);
+title([num2str(str(resp_id(i)).OSIpref) ' / ' num2str(r_square(i))]);
 y=[]
 ym=[];
 yp=[];
@@ -267,30 +267,7 @@ ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10);set(gca,'Ydir','rev
 %CoMX vs PC13in, Panel G
 corr_plot(scores(:,6),(ang_inL23(:,3)-ang_inL23(:,1))*69,[],{'','',''});xlabel('PC3_{in}','Color','b');
 ylabel('IN C_{x} L2/3 (µm)','Color','b');set(gca,'FontSize',10);xlim([-1.4 1.2]);xticks([-1.2:0.6:1.2]);ylim([-140 120]);yticks([-120:60:120])
-%% Correlation matrix Pial depth Cx Cy layers for supplement
-com=[];com=[ang_exL23(:,3)-ang_exL23(:,1)...
-    ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2) ang_inL23(:,4)-ang_inL23(:,2)... 
-    ang_exL4(:,3)-ang_exL4(:,1) ang_inL4(:,3)-ang_inL4(:,1) ang_exL4(:,4)-ang_exL23(:,2) ang_inL4(:,4)-ang_inL4(:,2)... 
-    ang_exL5(:,3)-ang_exL5(:,1) ang_inL5(:,3)-ang_inL5(:,1) ang_exL5(:,4)-ang_exL5(:,2) ang_inL5(:,4)-ang_inL5(:,2)...
-    pia_input]; 
-O=correlation_matrix(com,0);title('');
 
-xticks([1:1:13]);yticks([1:1:13]);caxis([-1 1]);c=colorbar;c.Ticks=[-1:0.5:1];
-xticklabels({'C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','PiaD'});set(gca,'FontSize',10);xlabel('');set(gca,'FontSize',12)
-yticklabels({'C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','PiaD'});set(gca,'FontSize',10);ylabel('');set(gca,'FontSize',12)
-%Correlatoion matrix PCs and reald data 
-com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2)  ang_exL23(:,3)-ang_exL23(:,1)...
-   ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2) ang_inL23(:,4)-ang_inL23(:,2) pia_input scores]
-G=correlation_matrix(com,0);close(gcf);
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]);imagesc(G(10:15,1:9));c=colorbar;
-[cmap]=buildcmap('bwg');
-colormap(cmap);caxis([-1 1]);
-xticks([1:1:18]);yticks([1:1:18]);
-% xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});xtickangle(45)
-% yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});ylabel('Feature');
-yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}'});xtickangle(45);set(gca,'FontSize',12)
-xticklabels({'L2/3fr','L4fr','L2/3fr','L4fr','C_{x} L2/3','C_{x} L2/3','C_{y} L2/3','C_{y} L2/3','Pial depth'});ytickangle(45);set(gca,'FontSize',12)
-c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
 %% Save figures as PDF in a folder specified by fn IF DESIRED
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure3\Final_panels\'
 savepdf_SW(fn,1);
@@ -331,17 +308,17 @@ autoArrangeFigures;
 %% Rearrange umap plots and scale
  %figure(1);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];
  figure(2);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
- figure(3);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
- figure(5);c=colorbar;caxis([0 120]);c.Ticks=[0:60:120];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
- figure(6);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
- figure(7);c=colorbar;caxis([120 360]);c.Ticks=[120:120:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
+ figure(4);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+ figure(7);c=colorbar;caxis([0 120]);c.Ticks=[0:60:120];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
+ figure(8);c=colorbar;caxis([0 140]);c.Ticks=[0:70:140];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
+ figure(9);c=colorbar;caxis([120 360]);c.Ticks=[120:120:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
 % figure(8);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
- figure(14);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(14), 'Position', [200, 0, 200, 200])
-figure(15);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(15), 'Position', [200, 0, 200, 200])
- figure(16);c=colorbar;caxis([-1 1]);c.Ticks=[-1:1:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(16), 'Position', [200, 0, 200, 200])
- figure(17);c=colorbar;caxis([2 4]);c.Ticks=[2:5];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(17), 'Position', [200, 0, 200, 200])
- figure(19);c=colorbar;caxis([0 180]);c.Ticks=[0:45:180];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(19), 'Position', [200, 0, 200, 200])
- figure(20);c=colorbar;caxis([0 360]);c.Ticks=[0:90:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(20), 'Position', [200, 0, 200, 200])
+ figure(16);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(14), 'Position', [200, 0, 200, 200])
+figure(17);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(15), 'Position', [200, 0, 200, 200])
+ figure(18);c=colorbar;caxis([-1 1]);c.Ticks=[-1:1:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(16), 'Position', [200, 0, 200, 200])
+ figure(19);c=colorbar;caxis([2 4]);c.Ticks=[2:5];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(17), 'Position', [200, 0, 200, 200])
+ figure(21);c=colorbar;caxis([0 180]);c.Ticks=[0:45:180];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(19), 'Position', [200, 0, 200, 200])
+ figure(22);c=colorbar;caxis([0 360]);c.Ticks=[0:90:360];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(20), 'Position', [200, 0, 200, 200])
 %  close(figure(1));close(figure(4));close(figure(9));close(figure(10));close(figure(11));close(figure(12));close(figure(13));
 %  close(figure(8));close(figure(17));close(figure(18));
 %% Save umap figures
@@ -676,7 +653,48 @@ c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 
 
 %% Supplementary Figures
-%in vivo in vitro comparison
+%% Cell plotter, morphology, in vivo, maps , SUPPLEMENTRAY 1
+close all;
+for i=1:147;
+figure;
+iviv_plotter(str,i)
+end
+%% Save individual morpho, in vivo, maps panels
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block3\'
+savepdf_SW(fn,0);
+%% Example for with and without TTX
+pathName='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\TTX\161116\SW0005_inhibition_before\map04'
+load_raw_map(pathName,str,68)
+%% PCA supplementary: PCs eigenvector map plots, varaince expalined PCcom and C3x/in correlation matrix
+close all;
+map_align_PCA(str);
+%% Correlation matrix Pial depth Cx Cy layers for supplement + PCs and real data corr matrix
+com=[];com=[ang_exL23(:,3)-ang_exL23(:,1)...
+    ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2) ang_inL23(:,4)-ang_inL23(:,2)... 
+    ang_exL4(:,3)-ang_exL4(:,1) ang_inL4(:,3)-ang_inL4(:,1) ang_exL4(:,4)-ang_exL23(:,2) ang_inL4(:,4)-ang_inL4(:,2)... 
+    ang_exL5(:,3)-ang_exL5(:,1) ang_inL5(:,3)-ang_inL5(:,1) ang_exL5(:,4)-ang_exL5(:,2) ang_inL5(:,4)-ang_inL5(:,2)...
+    pia_input]; 
+O=correlation_matrix(com,0);title('');
+
+xticks([1:1:13]);yticks([1:1:13]);caxis([-1 1]);c=colorbar;c.Ticks=[-1:0.5:1];
+xticklabels({'C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','PiaD'});set(gca,'FontSize',10);xlabel('');set(gca,'FontSize',12)
+yticklabels({'C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','C_{x}','C_{x}','C_{y}','C_{y}','PiaD'});set(gca,'FontSize',10);ylabel('');set(gca,'FontSize',12)
+%Correlatoion matrix PCs and reald data 
+com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1) L4fr(:,2)  ang_exL23(:,3)-ang_exL23(:,1)...
+   ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2) ang_inL23(:,4)-ang_inL23(:,2) pia_input scores]
+G=correlation_matrix(com,0);close(gcf);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 0, 400, 300]);imagesc(G(10:15,1:9));c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:18]);yticks([1:1:18]);
+% xticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});xtickangle(45)
+% yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}','L2/3_{ex}','L4_{ex}','L2/3_{in}','L4_{in}','aL2/3_{ex}','aL4_{ex}','aL2/3_{in}','aL4_{in}','med_{ex}','med_{in}','lat_{ex}','lat_{in}'});ylabel('Feature');
+yticklabels({'PC1_{ex}','PC2_{ex}','PC3_{ex}','PC1_{in}','PC2_{in}','PC3_{in}'});xtickangle(45);set(gca,'FontSize',12)
+xticklabels({'L2/3fr','L4fr','L2/3fr','L4fr','C_{x} L2/3','C_{x} L2/3','C_{y} L2/3','C_{y} L2/3','Pial depth'});ytickangle(45);set(gca,'FontSize',12)
+c.Label.String = 'R';set(gca,'FontSize',12); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',12);
+
+
+%% in vivo in vitro comparison
 % LOAD data structure, you need uipickfiles function
 out_dir='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str_out'
 directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitymoph atm:191804
@@ -695,11 +713,241 @@ r2_all(i)=r2;
 end
  figure;set(gcf,'color','w');scatter(od_out(:,1),r2_all);box off;
  xlabel('gOSI');ylabel('R2 of fit');
+%% OSI and ORI
+close all;
+fig21 = figure;
+set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [200, 200, 600, 200]);set(gcf,'color','w');
+subplot(1,2,1);
+binRange = 0:0.2:1;
+hcx = histcounts(od_out(find(~isnan(od_out(:,1))),1),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,1))),1),[binRange Inf],'Normalization','probability');
+b1=bar([0.1:0.2:0.9] ,[hcx(1:5);hcy(1:5)]');box off;xlabel('OSI','FontSize',12);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);
+xlim([-0.1 1]);xticks([0.1:0.2:0.9])
+a=od_out_iviv(:,1)>0.25;
+b=od_out(:,1)>0.25;set(gca,'FontSize',10);xtickangle(45);
+subplot(1,2,2);
+binRange = [0 45 90 135 180 225]-22.5;
+hcx = histcounts(od_out(b,4),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(a,4),[binRange Inf],'Normalization','probability');
+hcy_m=[hcy(1)+hcy(5) hcy(2:4)];
+hcx_m=[hcx(1)+hcx(5) hcx(2:4)];
+b1=bar([0 45 90 135],[hcx_m;hcy_m]');box off;xlabel('Orientation (°)','FontSize',12);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);
+%% DSI and DIR
+fig21 = figure;
+set(fig21, 'Name', 'Binocular protocol');set(fig21, 'Position', [800, 200, 600, 200]);set(gcf,'color','w');
+subplot(1,2,1);
+binRange = 0:0.2:1;
+hcx = histcounts(od_out(find(~isnan(od_out(:,2))),2),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,2))),2),[binRange Inf],'Normalization','probability');
+b1=bar([0.1:0.2:0.9],[hcx(1:5);hcy(1:5)]');box off;xlabel('DSI','FontSize',12);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.4]);yticks([0:0.2:0.4]);xlim([-0.1 1]);xticks([0.1:0.2:0.9])
+a=od_out_iviv(:,2)>0.25;
+b=od_out(:,2)>0.25;set(gca,'FontSize',10);
+subplot(1,2,2);
+binRange = [0:45:405]-22.5;
+hcx = histcounts(od_out(b,5),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(a,5),[binRange Inf],'Normalization','probability');
+hcy_m=[hcy(1)+hcy(9) hcy(2:8)];
+hcx_m=[hcx(1)+hcx(9) hcx(2:8)];
+b1=bar([0:45:315],[hcx_m;hcy_m]');box off;xlabel('Direction (deg)','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+xtickangle(45)
+ylim([0 0.4]);yticks([0:0.2:0.4]);set(gca,'FontSize',10);
+%% ipsi contra bino
+for i=1:length(od_out)
+if od_out(i,9)==1 & od_out(i,10)==0;
+    o_all(i)=1;
+elseif od_out(i,9)==0 & od_out(i,10)==1;
+    o_all(i)=2;
+elseif od_out(i,9)==1 & od_out(i,10)==1;
+    o_all(i)=3;
+else od_out(i,9)==0 & od_out(i,10)==0;
+    o_all(i)=0;
+end
+end
+fig22=figure;set(gcf,'color','w');set(fig22, 'Position', [300, 700, 250, 200]);set(gcf,'color','w');
+resp_all=length(find(o_all==1))+length(find(o_all==2))+length(find(o_all==3));
+resp_iviv=length(contra_id)+length(ipsi_id)+length(bino_id);
+b=bar([1 2],[length(find(o_all==1))/resp_all length(find(o_all==2))/resp_all length(find(o_all==3))/resp_all; length(contra_id)/resp_iviv ...
+    length(ipsi_id)/resp_iviv length(bino_id)/resp_iviv],'stacked');box off;ylabel('Fraction of cells');
+ b(1, 1).FaceColor='b';b(1, 2).FaceColor='r';b(1, 3).FaceColor='w';
+ xticklabels({'all','iviv'});legend('contra','ipsi','bino');legend boxoff;set(gca,'FontSize',10);
  
- 
- 
- 
- 
+  fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 300, 200]);set(gcf,'color','w');
+h=histogram(od_out(find(~isnan(od_out(:,3))),3),7,'Normalization','probability');h.FaceColor=[0 0 0];
+hold on;h=histogram(od_out_iviv(find(~isnan(od_out_iviv(:,3))),3),7,'Normalization','probability');
+h.FaceColor=[0 0.7 0.6];box off;
+ylim([0 0.3]);yticks([0:0.15:0.3]);xlabel('ODI');ylabel('Fraction of cells');set(gca,'FontSize',10);
+%% TW
+c=r2_all>0.3;set(gca,'FontSize',10);
+d=r_sq>0.3;set(gca,'FontSize',10);
+%TW distribution 
+fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');
+binRange = 0:20:90;
+hcx = histcounts(od_out(c,7),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(d,7),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Tuning width (deg)','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.6]);yticks([0:0.2:0.6]);set(gca,'FontSize',10);
+%% Ca peak
+fig23=figure;set(gcf,'color','w');set(fig23, 'Position', [800, 600, 250, 200]);set(gcf,'color','w');
+binRange = 0:50:400;
+hcx = histcounts(od_out(find(~isnan(od_out(:,6))),6),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,6))),6),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Ca_{peak} (?R/R0)','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+ylim([0 0.7]);yticks([0:0.35:0.7]);set(gca,'FontSize',10);xtickangle(45);
+%% SPon activities display
+%Spon activity
+fig23 = figure;
+set(fig23, 'Name', 'Binocular protocol');set(fig23, 'Position', [1000, 800, 600, 200]);set(gcf,'color','w');
+subplot(1,3,1);
+binRange = 0.0013:0.025:0.2;
+hcx = histcounts(spon_out(find(~isnan(spon_out(:,1))),1),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,10))),10),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('SAD (Hz)','FontSize',10);ylabel('Fraction of cells');
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+xticks([0:0.05:0.15]);xtickangle(45);set(gca,'FontSize',10);
+ylim([0 0.8]);yticks([0:0.4:0.8]);
+
+subplot(1,3,2);
+binRange = -7:1:2;
+hcy = histcounts(log(abs(od_out_iviv(:,12))),[binRange Inf],'Normalization','probability');
+hcx = histcounts(log(abs(spon_out(:,2))),[binRange Inf],'Normalization','probability');
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('PCI','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];
+xticks([-7:2:2]);xtickangle(45);
+ylim([0 0.8]);yticks([0:0.4:0.8]);set(gca,'FontSize',10);
+
+%noise
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\noise\noise_correlations.mat')
+noise_OD(2115:2115+39,:,:)=[];
+for i=1:length(noise_OD)
+    if o_all(i)==0
+        noise_all(i)=NaN;
+    elseif o_all(i)==1
+        noise_all(i)=nanmean(noise_OD(i,:,1));
+         elseif o_all(i)==2
+        noise_all(i)=nanmean(noise_OD(i,:,2));
+    else o_all(i)==3
+        if od_out(i,3)>0
+        noise_all(i)=nanmean(noise_OD(i,:,1));
+        else od_out(i,3)<0
+            noise_all(i)=nanmean(noise_OD(i,:,2));
+        end
+    end    
+end
+
+subplot(1,3,3);
+binRange = -0.02:0.02:0.16;
+hcx = histcounts(noise_all(find(~isnan(noise_all))),[binRange Inf],'Normalization','probability');
+hcy = histcounts(od_out_iviv(find(~isnan(od_out_iviv(:,11))),11),[binRange Inf],'Normalization','probability');
+
+b1=bar(binRange,[hcx;hcy]');box off;xlabel('Noise','FontSize',10);
+b1(1).FaceColor=[0 0 0];
+b1(2).FaceColor=[0 0.7 0.6];xticks([-0.02:0.04:0.16]);xtickangle(45);
+ylim([0 0.8]);yticks([0:0.4:0.8]);set(gca,'FontSize',10);
+
+%% 
+% tm1=length(find(sftf_out(:,1)==0.02 & sftf_out(:,2)==1))/sum(~isnan(sftf_out(:,1)));
+% tm2=length(find(sftf_out(:,1)==0.02 & sftf_out(:,2)==2))/sum(~isnan(sftf_out(:,1)));
+% tm3=length(find(sftf_out(:,1)==0.02 & sftf_out(:,2)==4))/sum(~isnan(sftf_out(:,1)));
+% tm4=length(find(sftf_out(:,1)==0.08 & sftf_out(:,2)==1))/sum(~isnan(sftf_out(:,1)));
+% tm5=length(find(sftf_out(:,1)==0.08 & sftf_out(:,2)==2))/sum(~isnan(sftf_out(:,1)));
+% tm6=length(find(sftf_out(:,1)==0.08 & sftf_out(:,2)==4))/sum(~isnan(sftf_out(:,1)));
+% tm7=length(find(sftf_out(:,1)==0.16 & sftf_out(:,2)==1))/sum(~isnan(sftf_out(:,1)));
+% tm8=length(find(sftf_out(:,1)==0.16 & sftf_out(:,2)==2))/sum(~isnan(sftf_out(:,1)));
+% tm9=length(find(sftf_out(:,1)==0.16 & sftf_out(:,2)==4))/sum(~isnan(sftf_out(:,1)));
+%sftfall=[tm1 tm4 tm7;tm2 tm5 tm8;tm3 tm6 tm9];
+tm1=length(find(od_out_iviv(:,8)==0.02 & od_out_iviv(:,9)==1))/sum(~isnan( od_out_iviv(:,9)));
+tm2=length(find(od_out_iviv(:,8)==0.02 &  od_out_iviv(:,9)==2))/sum(~isnan( od_out_iviv(:,9)));
+tm3=length(find(od_out_iviv(:,8)==0.02 &  od_out_iviv(:,9)==4))/sum(~isnan( od_out_iviv(:,9)));
+tm4=length(find(od_out_iviv(:,8)==0.08 &  od_out_iviv(:,9)==1))/sum(~isnan( od_out_iviv(:,9)));
+tm5=length(find(od_out_iviv(:,8)==0.08 &  od_out_iviv(:,9)==2))/sum(~isnan( od_out_iviv(:,9)));
+tm6=length(find(od_out_iviv(:,8)==0.08 &  od_out_iviv(:,9)==4))/sum(~isnan( od_out_iviv(:,9)));
+tm7=length(find(od_out_iviv(:,8)==0.16 &  od_out_iviv(:,9)==1))/sum(~isnan( od_out_iviv(:,9)));
+tm8=length(find(od_out_iviv(:,8)==0.16 &  od_out_iviv(:,9)==2))/sum(~isnan( od_out_iviv(:,9)));
+tm9=length(find(od_out_iviv(:,8)==0.16 &  od_out_iviv(:,9)==4))/sum(~isnan( od_out_iviv(:,9)));
+sftfalli=[tm1 tm4 tm7;tm2 tm5 tm8;tm3 tm6 tm9];
+%% 
+
+fig23 = figure;
+set(fig23, 'Name', 'SFTF');set(fig23, 'Position', [200, 800, 400, 200]);
+set(gcf,'color','w');
+subplot(1,2,1);imagesc(sftfall);c=colorbar;ylim([0.5 3.5]);xlim([0.5 3.5])
+yticks([1:1:3]);xticks([1:1:3]);caxis([0 0.25]);
+set(gca,'YTickLabel',{'1' '2','4'});set(gca,'Ydir','reverse');ylabel('TF');
+set(gca,'XTickLabel',{'0.02' '0.08','0.16'});xlabel('SF');axis square;xtickangle(45);
+hold on; title(['all' ' n=' num2str(sum(~isnan(sftf_out(:,1))))]);caxis([0 0.25]);
+set(gca,'FontSize',10);
+subplot(1,2,2);imagesc(sftfalli);colorbar;ylim([0.5 3.5]);xlim([0.5 3.5])
+yticks([1:1:3]);xticks([1:1:3]);
+set(gca,'YTickLabel',{'1' '2','4'});set(gca,'Ydir','reverse');ylabel('TF');
+set(gca,'XTickLabel',{'0.02' '0.08','0.16'});xlabel('SF');axis square;
+hold on; title(['iviv' ' n=' num2str(sum(~isnan( od_out_iviv(:,9))))]);caxis([0 0.25]);
+xtickangle(45);
+set(gca,'FontSize',10);
+ %% UMAP supplement
+%% 
+close all;
+%UMAP projections Panel C and D
+%load embedding
+load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\reduced_data.mat')
+plot_list = {'span','frac_vert'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%in vivo values non cyclic 
+figure(1);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
+figure(2);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
+figure(3);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+figure(4);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
+figure(5);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
+figure(6);c=colorbar;caxis([0 16]);c.Ticks=[0:8:16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
+figure(7);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
+figure(9);c=colorbar;caxis([0 0.7]);c.Ticks=[0:0.35:0.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(9), 'Position', [200, 0, 200, 200])
+figure(11);c=colorbar;caxis([0 0.6]);c.Ticks=[0:0.3:0.6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(11), 'Position', [200, 0, 200, 200])
+figure(12);c=colorbar;caxis([0 0.6]);c.Ticks=[0:0.3:0.6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(12), 'Position', [200, 0, 200, 200])
+% figure(15);c=colorbar;caxis([0 200]);c.Ticks=[0:100:200];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(16);c=colorbar;caxis([0 54]);c.Ticks=[0:27:54];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(17);c=colorbar;caxis([0 124]);c.Ticks=[0:62:124];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(18);c=colorbar;caxis([0 34]);c.Ticks=[0:17:34];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(19);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(20);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(21);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(22);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(23);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+% figure(24);c=colorbar;caxis([-2 1.7]);c.Ticks=[-2:1.5:1.7];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;
+%% Save
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp6\200524\span'
+savepdf_SW(fn,1);
+%% In vivo parameters
+close all;
+ plot_list = {'Sigmapref','Capeakpref','sad','pci','noise','SF','TF'};
+ plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+autoArrangeFigures;
+%% 
+figure(1);c=colorbar;caxis([2 4.3]);c.Ticks=[2:1:4.3];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(1), 'Position', [200, 0, 200, 200])
+figure(2);c=colorbar;caxis([1 6]);c.Ticks=[1:2:6];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(2), 'Position', [200, 0, 200, 200])
+ figure(3);c=colorbar;caxis([0 0.16]);c.Ticks=[0:0.08:0.16];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(3), 'Position', [200, 0, 200, 200])
+ figure(4);c=colorbar;caxis([-4 1]);c.Ticks=[-4:2.5:1];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(4), 'Position', [200, 0, 200, 200])
+figure(5);c=colorbar;caxis([-9.4 -2.4]);c.Ticks=[-9:3:-2.4];h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(5), 'Position', [200, 0, 200, 200])
+figure(6);c=colorbar;caxis([0.02 0.16]);c.Ticks=[0.02:0.02:0.16]; h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(6), 'Position', [200, 0, 200, 200])
+figure(7);c=colorbar;caxis([1 4]);c.Ticks=[1:1:4]; h = gca; h.XAxis.Visible = 'off';h = gca; h.YAxis.Visible = 'off';title('');set(gca,'FontSize',10);c.Label.FontSize=10;set(figure(7), 'Position', [200, 0, 200, 200])
+%% Save
+fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\invivo'
+savepdf_SW(fn,1); 
  
  
  
@@ -718,17 +966,17 @@ end
  
  %% 
  %% SF TF multiple barplots with Fraction 
-par=morph_parameters(:,18)
+par=morph_parameters(:,20)
 g1=find(od_out_iviv(:,8)==0.02);
 g2=find(od_out_iviv(:,8)==0.08);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
 xticklabels({'0.02','0.08'});xtickangle(45);
 %ylim([0 80]);yticks([0:40:80]);
-ylabel('L5 fraction','Color','k'); ;set(gca,'FontSize',10); 
+ylabel('Extent Basal Y','Color','k'); ;set(gca,'FontSize',10); 
 %% 
 
 %% 
-b=8
+b=20
 par1=[];
 groups_idx=[];
 g1=find(od_out_iviv(:,9)==1);
@@ -738,14 +986,29 @@ par1=vertcat(morph_parameters(g1,b),morph_parameters(g2,b),morph_parameters(g3,b
 groups_idx=vertcat(ones(length(g1),1)*1,ones(length(g2),1)*2,ones(length(g3),1)*3)
 groups_idx(find(isnan(par1)))=[];
 par1(find(isnan(par1)))=[];
-[statsout] = barplot_sw(par1,groups_idx,{'','L5 fraction'});ylabel('L23 fraction')
+[statsout] = barplot_sw(par1,groups_idx,{'','Extent Basal Y'});ylabel('L23 fraction')
 %% 
-par=span(:,5) 
+par=span(:,3) 
 g1=find(od_out_iviv(:,1)>0.25 &  od_out_iviv(:,4)>s2a & od_out_iviv(:,4)<s2b & od_out_iviv(:,8)==0.02);
 g2=find(od_out_iviv(:,1)>0.25 &  od_out_iviv(:,4)>s2a & od_out_iviv(:,4)<s2b & od_out_iviv(:,8)==0.08);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+ylabel('Span','Color','k');xticklabels({'0.02','0.08'}) ;set(gca,'FontSize',10); 
 %% 
 par=L5fr(:,1) 
 g1=find(od_out_iviv(:,1)>0.25 &  od_out_iviv(:,4)>s2a & od_out_iviv(:,4)<s2b & od_out_iviv(:,9)<=2);
 g2=find(od_out_iviv(:,1)>0.25 &  od_out_iviv(:,4)>s2a & od_out_iviv(:,4)<s2b & od_out_iviv(:,9)==4);
 
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+ylabel('fr','Color','k');xticklabels({'Slow','Fast'}) ;set(gca,'FontSize',10); xtickangle(45);
+%% 
+
+nvr=find([str(:).sftf_resp]==0 & [str(:).resp]==0);
+nvra=find([str(:).resp]==0);
+nvrb=find([str(:).sftf_resp]==1 & [str(:).resp]==0);
+%nvr=find([str(:).resp]==0);
+vr=find([str(:).resp]==1);
+par=abs(ang_exL23(:,8)*69)
+g1=vr;
+g2=nvra;
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+ylabel('span','Color','k');xticklabels({'VR','NVR'}) ;set(gca,'FontSize',10); xtickangle(45);

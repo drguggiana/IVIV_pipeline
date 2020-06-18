@@ -12,7 +12,7 @@ for i=1:length(L23_PC)
      DSIall{i,:}=L23_PC(i).OD.gDSI(:,:); 
      Ca_od{i,:}=L23_PC(i).OD.deltapeaks_averagetrace(:,:);
      fit_od{i,:}=L23_PC(i).OD.fit_tuning(:,:);
-     
+     sigma{i,:}=L23_PC(i).OD.sigma(:,:);
       %SFTF protocol
      sf_all{i,:}=L23_PC(i).SFTF.sf;
      tf_all{i,:}=L23_PC(i).SFTF.tf;
@@ -111,6 +111,7 @@ pOSI_all=[];
   DSI_all=vertcat(DSIall{:});
   Ca_peak_od=vertcat(Ca_od{:});
   fit_res=vertcat(fit_od{:});
+   tw=vertcat(sigma{:});
   %Pial depth
   pial_all=horzcat(pia{:});
   
@@ -153,7 +154,7 @@ pOSI_all=[];
           pCa_a(i)=max(Ca_peak_od(i,1:8));
           delta_Ca(i,:)=Ca_peak_od(i,1:8);
           fit_Ca(i,:)=fit_res(i,1:360);
-          
+            pTW(i)=tw(i,1);
       elseif con(i)==0 & ips(i)==1;
           pORI_a(i)=pOSI_all(i,2);
           pDIR_a(i)=pDSI_all(i,2);
@@ -162,6 +163,7 @@ pOSI_all=[];
            pCa_a(i)=max(Ca_peak_od(i,9:16));
            delta_Ca(i,:)=Ca_peak_od(i,9:16);
            fit_Ca(i,:)=fit_res(i,361:end);
+           pTW(i)=tw(i,2);
            
       elseif con(i)==1 & ips(i)==1;
           if odi(i)>0
@@ -172,6 +174,7 @@ pOSI_all=[];
                pCa_a(i)=max(Ca_peak_od(i,1:8));
                delta_Ca(i,:)=Ca_peak_od(i,1:8);
                fit_Ca(i,:)=fit_res(i,1:360);
+                pTW(i)=tw(i,1);
           else odi(i)<0
               pORI_a(i)=pOSI_all(i,2);
               pDIR_a(i)=pDSI_all(i,2);
@@ -180,6 +183,7 @@ pOSI_all=[];
               pCa_a(i)=max(Ca_peak_od(i,9:16));
               delta_Ca(i,:)=Ca_peak_od(i,9:16);
               fit_Ca(i,:)=fit_res(i,361:end);
+              pTW(i)=tw(i,2);
           end
       else con(i)==0 & ips(i)==0
        pORI_a(i)=NaN;
@@ -189,6 +193,7 @@ pOSI_all=[];
        pCa_a(i)=NaN;
        delta_Ca(i,:)=ones(8,1)*NaN;
        fit_Ca(i,:)=ones(360,1)*NaN;
+         pTW(i)=NaN;
       end
   end
   %% 
@@ -290,7 +295,7 @@ pOSI_all=[];
       end
   end
   %% 
-  od_out=[pOSI_a;pDSI_a ;pORI_a ;pDIR_a; ODI_res; pCa_a; resp; con; ips]';
+  od_out=[pOSI_a;pDSI_a ;ODI_res;pORI_a ;pDIR_a; pCa_a;  pTW; resp; con; ips]';
   spon_out=[sad_a;pci_a']';
   sftf_out=[sf_com' tf_com'  1-osi_pref_sftf' 1-dsi_pref_sftf' ori_pref_sftf_f' dir_pref_sftf_f' Ca_pref_sftft' sftfs_res_a']
   sftf_sel=[1-osi_sc 1-dsi_sc]; 
