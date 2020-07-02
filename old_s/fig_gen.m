@@ -949,21 +949,89 @@ figure(7);c=colorbar;caxis([1 4]);c.Ticks=[1:1:4]; h = gca; h.XAxis.Visible = 'o
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\invivo'
 savepdf_SW(fn,1); 
  
+%% 
+ %% Perform sholl anaylsis, this should be incoorporated into the structure
+%Get all morphtraces
+for i=1:length(str)
+    if ~isempty(str(i).morph)==1 
+    zz{:,i}=str(i).morphtraces;
+    else
+        zz{:,i}=NaN;
+    end
+end
+
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,0);
+
+
+
+ 
+%% Histograms of parameters for morpho
+morph_sel=[morph_parameters(:,[1 2]) max_s' dis_s' morph_parameters(:,[8]) morph_parameters(:,[11 12]) max_s_ba' dis_s_ba' morph_parameters(:,[18])]
+
+ stri={'RDA_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch (µm)','WHA',...
+     'RDB_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch(µm)','WHA'}
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200])
+ for i=1:10
+hold on;
+subplot(2,5,i)
+h=histogram(morph_sel(:,i),8,'FaceColor',[1 1 1],'EdgeColor',[0 0 0],'LineWidth',1.5)
+h.EdgeColor = 'k';
+h.FaceColor = [0.5 0.5 0.5];
+xlabel(stri(i));
+ylim([0 50]);
+xlim([0 max(morph_sel(:,i))+max(morph_sel(:,i))*0.25]);
+hAxis = gca;
+hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
+hAxis.XAxisLocation = 'bottom'
+box off
+%ylabel('Counts');
+ end
+ %% 
+ 
+ for i=1:length(str)
+%whole map
+tmp1=ex_map(3:end,:,i);
+tmp2=in_map(:,:,i);
+tot_input(i,:)=[sum(tmp1(:));sum(tmp2(:))];
+end
+ %% Correlation matrix between input, morpho, pia
+
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+com=[];com=[L23fr(morph_cells_id,1)  L23fr(morph_cells_id,2) L4fr(morph_cells_id,1)  L4fr(morph_cells_id,2)  span(morph_cells_id,1)...
+    span(morph_cells_id,4) tot_input(morph_cells_id,1) tot_input(morph_cells_id,2) pia_input(morph_cells_id) morph_sel(morph_cells_id,:)]
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+close(gcf);
+fG=[G(10:end,1:9)];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 400])
+imagesc(fG);c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);c.Ticks=[-1:0.5:1];
+xticks([1:1:16]);yticks([1:1:25]);
+xticklabels({'L2/3fr','L2/3fr','L4fr','L4fr','Span L2/3','Span L2/3', 'Total norm. input','Total norm. input','Pial depth'});xtickangle(45);set(gca,'FontSize',10)
+yticklabels({'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width/Height',...
+     'Radial dis.','Total Length','Peak Nr. crossing','Dis. peak branch','Width'});set(gca,'FontSize',10)
+ 
+ %% 
+ 
+ com=[];com=[morph_sel(morph_cells_id,:) morph_parameters(morph_cells_id,[9]) morph_parameters(morph_cells_id,[10]) morph_parameters(morph_cells_id,[19]) morph_parameters(morph_cells_id,[20])]
+ 
+ G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+;set(gca,'FontSize',10)
+xticklabels({'AP Radial dis.','AP Total Length','AP Peak Nr. crossing','AP Dis. peak branch','AP Width/Height','AP Width','AP Height'...
+     'BA Radial dis.','BA Total Length','BA Peak Nr. crossing','BA Dis. peak branch','BA Width/Height','BA Width','BA Height'});set(gca,'FontSize',10)
+ xtickangle(45)
+ yticklabels({'AP Radial dis.','AP Total Length','AP Peak Nr. crossing','AP Dis. peak branch','AP Width/Height','AP Width','AP Height'...
+     'BA Radial dis.','BA Total Length','BA Peak Nr. crossing','BA Dis. peak branch','BA Width/Height','BA Width','BA Height'});set(gca,'FontSize',10)
+
+ ytickangle(45)
+ %% 
+% corr_plot(com(:,2),com(:,3),[],{'','',''});xlabel('Apical Total Length','Color','k'); ylabel('Apical Peak number crossings','Color','k'); 
+% corr_plot(com(:,2),com(:,6),[],{'','',''});xlabel('Apical Total Length','Color','k'); ylabel('Apical Width','Color','k'); 
+ corr_plot(com(:,9),com(:,10),[],{'','',''});xlabel('Basal Total Length','Color','k'); ylabel('Basal Peak number crossings','Color','k'); 
+ corr_plot(com(:,9),com(:,13),[],{'','',''});xlabel('Basal Total Length','Color','k'); ylabel('Basal Width','Color','k'); 
  %% 
  %% SF TF multiple barplots with Fraction 
 par=morph_parameters(:,20)
@@ -1012,3 +1080,19 @@ g1=vr;
 g2=nvra;
 [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 ylabel('span','Color','k');xticklabels({'VR','NVR'}) ;set(gca,'FontSize',10); xtickangle(45);
+%% Pia_all vs pia_input
+od_id=[str(:).ODexpID]
+pia_invivo=[str(:).pia_invivo]
+figure;scatter(pia_invivo,od_id,20,pia_input,'filled');set(gcf,'color','w');ylabel('EXP ID');xlabel('Pia in vivo')
+figure;histogram(pia_all);
+%% 
+iviv_id=find([str(:).iviv]==1)
+u_id=unique(od_id(iviv_id))
+p_i=pia_input(iviv_id)
+p_ia=pia_invivo(iviv_id)
+%% 
+
+for i=1:31
+temp=find(od_id(iviv_id)==u_id(i))
+scale_di(i)=mean(p_ia(temp)-p_i(temp)')
+end
