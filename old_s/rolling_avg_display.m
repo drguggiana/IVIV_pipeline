@@ -91,7 +91,7 @@ else or==2
     %window = 65;
 direction_vector = cat(1,str.DIRpref);
 % add osi cutoff
-cutoff_dsi = 0.2;
+cutoff_dsi = 0.25;
 % get the osi
 dsi = cat(1,str.DSIpref);
 % get the vector

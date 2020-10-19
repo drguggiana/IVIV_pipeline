@@ -4,7 +4,7 @@
 %plotting_embedding_str,
 %% START
 %Load structure with 147 cells used for the paper
-str_invitro       = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str\';
+str_invitro       = 'D:\Postdoc_Margrie\Projects\L23\structure\';
 folder_list = uipickfiles('FilterSpec',str_invitro);
 load(char(folder_list));
 %% %% Read out important parameters
@@ -14,6 +14,10 @@ iviv_cells = find([str(:).iviv]==1);
 for i=1:length(str)
 ex_map(:,:,i) = str(i).subpixel_excMap;
 in_map(:,:,i) = str(i).subpixel_inhMap;
+end
+for i=1:length(str)
+ex_map_raw(:,:,i) = str(i).subpixel_raw_excMap;
+in_map_raw(:,:,i) = str(i).subpixel_raw_inhMap;
 end
 %Calculate simple difference between maps
 diff_map=ex_map-in_map;
@@ -92,8 +96,10 @@ ang_inL23nw=reshape([str(:).ang_inL23_nonweighted],10,length(str))';
 pia_input=[str(:).pialD]';
 %Orientations
 oris=[0:45:315];
+% od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
+%              ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci];[str(:).error_pref];[str(:).r2_pref];[str(:).tun_pref]]';
 od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref];[str(:).DIRpref]...
-             ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci];[str(:).error_pref];[str(:).r2_pref];[str(:).tun_pref]]';
+              ;[str(:).Capeakpref];[str(:).Sigmapref];[str(:).SF];[str(:).TF];[str(:).sad];[str(:).noise];[str(:).pci]]';
 %ipsi, contra, bino, unres, resp
  ipsi_id=find([str(:).ipsi]==1);
  contra_id=find([str(:).contra]==1);
@@ -1096,3 +1102,82 @@ for i=1:31
 temp=find(od_id(iviv_id)==u_id(i))
 scale_di(i)=mean(p_ia(temp)-p_i(temp)')
 end
+%% Correlation cx, cy non absolute
+%% Circular correlation for ORI
+%% Creating correlation matrix
+com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) L5fr(:,1) L5fr(:,2) ang_exL23(:,3)-ang_exL23(:,1)...
+    ang_inL23(:,3)-ang_inL23(:,1) ang_exL23(:,4)-ang_exL23(:,2)...
+   ang_inL23(:,4)-ang_inL23(:,2) span abs(span(:,1)-span(:,4)) abs(span(:,2)-span(:,5)) abs(span(:,3)-span(:,6)) pia_input od_out_iviv(:,[1 2 3 6])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:24]);yticks([1:1:24]);
+%% Subsample sigma based on quality of the fit
+a=find(od_out_iviv(:,7)>0.3);
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) ang_exL23(a,3)-ang_exL23(a,1)...
+    ang_inL23(a,3)-ang_inL23(a,1) ang_exL23(a,4)-ang_exL23(a,2)...
+   ang_inL23(a,4)-ang_inL23(a,2) span(a,:) abs(span(a,1)-span(a,4)) abs(span(a,2)-span(a,5)) abs(span(a,3)-span(a,6)) pia_input(a) od_out_iviv(a,[7])]; 
+G2=correlation_matrix(com,0);title('');xticks([1:1:24]);yticks([1:1:24]);
+%% Circular correlation for ORI
+a=find(od_out_iviv(:,1)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1)  L5fr(a,2) ang_exL23(a,3)-ang_exL23(a,1)...
+    ang_inL23(a,3)-ang_inL23(a,1) ang_exL23(a,4)-ang_exL23(a,2)...
+   ang_inL23(a,4)-ang_inL23(a,2) span(a,:) abs(span(a,1)-span(a,4)) abs(span(a,2)-span(a,5)) abs(span(a,3)-span(a,6)) pia_input(a)]
+for i=1:20
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(a,4)), par_c(:,i))
+end
+%% 
+
+% Circular correlation for DRI
+a=find(od_out_iviv(:,2)>0.25); 
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1)  L5fr(a,2)  ang_exL23(a,3)-ang_exL23(a,1)...
+    ang_inL23(a,3)-ang_inL23(a,1) ang_exL23(a,4)-ang_exL23(a,2)...
+   ang_inL23(a,4)-ang_inL23(a,2) span(a,:) abs(span(a,1)-span(a,4)) abs(span(a,2)-span(a,5)) abs(span(a,3)-span(a,6)) pia_input(a)]
+for i=1:20
+    [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(a,5)), par_c(:,i))
+end
+%% only signifcant from circ
+c_cor=[rho1;rho2]
+c_pva=[pval1;pval2]
+c_cor_e=c_cor;
+  m=c_pva<0.05;
+c_cor_e(m==0)=m(m==0);
+%% Combine matrixes and Plot combined correlatioan matrix
+fG=[];fG2=[];
+fG=[G([21 22 23 24],1:20)];
+fG2=[G2(21,1:20)]
+fG=[fG; fG2;c_cor_e];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
+imagesc(fG);c=colorbar;pos = get(c,'Position');
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:24]);yticks([1:1:24])
+yticklabels({'gOSI','gDSI','ODI','Ca_{peak}','TW*','ORI*','DIR*'});set(gca,'FontSize',10);
+xticklabels({'L2/3','L2/3','L4','L4','L5','L5','C L2/3 na ','C L2/3 na','C L2/3 na','C L2/3 na','HL23','HL4','HL5','HL23','HL4','HL5','EX-IN HL23','EX-IN HL4','EX-IN HL4','Pial depth'});xtickangle(45);set(gca,'FontSize',10);
+%% 
+ corr_plot(od_out_iviv(:,8),od_out_iviv(:,9),[],{'','',''});xlabel('SF','Color','k'); ylabel('TF','Color','k'); 
+ %% 
+ 
+par=abs((ang_inL5(:,4)-ang_inL5(:,2))*69)
+g1=find(od_out_iviv(:,8)==0.02 & od_out_iviv(:,9)==4);
+g2=find(od_out_iviv(:,8)>=0.08 & od_out_iviv(:,9)==1);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'low SF/high TF','high SF/low TF'});xtickangle(45);
+%ylim([0 80]);yticks([0:40:80]);
+ylabel('Cy EX L5','Color','k'); ;set(gca,'FontSize',10);
+%% 
+par=L5fr(:,2)
+g1=find(od_out_iviv(:,1)<0.35);
+g2=find(od_out_iviv(:,1)>=0.35);
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+xticklabels({'OSI<0.35','OSI>0.35'});xtickangle(45);
+%ylim([0 80]);yticks([0:40:80]);
+ylabel('Span','Color','k'); ;set(gca,'FontSize',10);
+%% 
+s1a=10;s1b=60;s2a=100;s2b=150
+a=find(od_out_iviv(:,1)>0.25);  
+par=span(a,6)
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,2);xticks([1:1:2]);
+xticklabels({'45','135'});xtickangle(45);
+%ylim([0 80]);yticks([0:40:80]);
+ylabel('Span L5 IN (µm)','Color','k'); ;set(gca,'FontSize',10); 
