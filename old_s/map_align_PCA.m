@@ -4,12 +4,14 @@ field_list = {'subpixel_raw_excMap','subpixel_raw_inhMap','pialD'};
 % get the number of fields
 field_number = length(field_list);
 % get a vector with the cells to use
-iviv_cells = [str(:).iviv]==1;
+%iviv_cells = [str(:).iviv]==1;
+iviv_cells = [str(:).resp]==1;
+ dsi_cells=[str(:).DSIpref]>0.25;
 morpho_cells = ~cellfun(@isempty, {str.morph});
 % cell_idx = find(iviv_cells&morpho_cells);
-% cell_idx = find(iviv_cells);
-% cell_idx = find(morpho_cells);
-cell_idx = 1:length(str);
+ cell_idx = find(iviv_cells);
+ %cell_idx=find(dsi_cells);
+%cell_idx = 1:length(str);
 % get the number of cells to include
 cell_num = length(cell_idx);
 % allocate memory for the individual cells

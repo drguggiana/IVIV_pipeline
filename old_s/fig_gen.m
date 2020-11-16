@@ -1181,3 +1181,73 @@ g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
 xticklabels({'45','135'});xtickangle(45);
 %ylim([0 80]);yticks([0:40:80]);
 ylabel('Span L5 IN (µm)','Color','k'); ;set(gca,'FontSize',10); 
+%% 
+a=find(od_out_iviv(:,1)>0.25); 
+pv = abs(ang_exL23(a,3)*69-ang_exL23(a,1)*69)
+pv2 = abs(ang_inL23(a,3)*69-ang_inL23(a,1)*69)
+corr_plot(pv,pv2,[],{'EX','IN',''});
+
+a=find(od_out_iviv(:,1)>0.25); 
+pv = (ang_exL23(a,3)-ang_exL23(a,1))*69
+pv2 = (ang_inL23(a,3)-ang_inL23(a,1))*69
+corr_plot(pv,pv2,od_out_iviv(a,5),{'EX','IN',''});
+
+%% 
+
+pv = (ang_exL23(a,3)-ang_inL23(a,3))*69
+figure;histogram(pv)
+
+%% 
+
+corr_plot(abs(pv),od_out_iviv(a,2),od_out_iviv(a,5),{'EX','IN',''});
+
+%% 
+a=find(od_out_iviv(:,2)>0.25);  
+par=ang_exL23(a,3)*69-ang_exL23(a,1)*69;
+g1=find(od_out_iviv(a,5)>80 & od_out_iviv(a,5)<140);
+g2=find(od_out_iviv(a,5)>300 & od_out_iviv(a,5)<350);
+%% 
+
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+%% New idea_splitting paper
+
+%% Barplots Cx EX and IN
+%define two barplots windows
+s1a=15;s1b=65;s2a=105;s2b=155;
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25);  
+par=abs(ang_exL4(a,3)*69-ang_exL4(a,1)*69)
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+xticklabels({'',''});xtickangle(45);
+ylim([0 110]);yticks([0:55:110]);ylabel('Cx L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10); 
+%IN
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25); 
+b=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)<0.25); 
+par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=find(od_out_iviv(a,4)>s2a & od_out_iviv(a,4)<s2b);
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+%
+xticklabels({'',''});xtickangle(45);ylim([0 110]);yticks([0:55:110]);ylabel('Cx L2/3 (µm)','Color','k') ;set(gca,'FontSize',10);
+%% 
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25); 
+b=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)<0.25); 
+g1=find(od_out_iviv(a,4)>s1a & od_out_iviv(a,4)<s1b) ;
+g2=od_out_iviv(b,4) ;
+par=abs(ang_exL23(:,3)*69-ang_exL23(:,1)*69)
+[statsout]=dual_barplot(par,g1,b,1);xticks([1:1:2]);
+%% 
+
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25);
+pv = (ang_exL23(a,3)-ang_exL23(a,1))*69
+corr_plot(od_out_iviv(a,4),abs(pv),od_out_iviv(a,2),{'Orientation along slice','IN',''});
+
+%% 
+parameter_vector = abs(ang_exL4(:,3)*69-ang_exL4(:,1)*69)
+parameter_vector2 = abs(ang_inL4(:,3)*69-ang_inL4(:,1)*69)
+rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1)
+ylabel('Cx L2/3 (µm)','Color','k');
+ylim([5 70]);yticks([10:30:70]);xlim([0 180]);xticks([0:45:180]);set(gca,'FontSize',10); 
+
+%% 

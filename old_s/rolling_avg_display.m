@@ -12,7 +12,8 @@ orientation_vector = cat(1,str.ORIpref);
 % add osi cutoff
 cutoff_osi = 0.25;
 % get the osi
-osi = cat(1,str.OSIpref);
+osi = cat(1,str.DSIpref);
+%osi = cat(1,str.OSIpref);
 % get the vector
 osi_selection = osi > cutoff_osi;
 % get the selected traces
@@ -95,7 +96,7 @@ cutoff_dsi = 0.25;
 % get the osi
 dsi = cat(1,str.DSIpref);
 % get the vector
-dsi_selection = dsi > cutoff_dsi;
+dsi_selection = dsi >cutoff_dsi;
 % get the selected traces
 direction_vector = direction_vector(dsi_selection);
 parameter_vector = parameter_vector(dsi_selection);
@@ -139,11 +140,11 @@ figure;set(gcf, 'Position', [800, 500, 200, 225])
 set(gcf,'color','w');
 shadedErrorBar(1:360,rolling_direction,rolling_dir_error,'transparent',1,'lineprops','r')
 hold on
-shadedErrorBar(1:360,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
-hold on;
+% shadedErrorBar(1:360,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
+% hold on;
 shadedErrorBar(1:360,rolling_direction2,rolling_dir_error2,'transparent',1,'lineprops','b')
-hold on
-shadedErrorBar(1:360,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
+% hold on
+% shadedErrorBar(1:360,mean_shuffle2,CI_shuffle2,'transparent',1,'lineprops','k')
 xlabel('Direction')
 ylabel('Parameter')
 title(strjoin({'Rolling direction average','window',...
@@ -155,10 +156,10 @@ set(gcf,'color','w');
 shadedErrorBar(1:360,rolling_direction,rolling_dir_error,'transparent',1,'lineprops','b')
 hold on
 shadedErrorBar(1:360,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')  
-xlabel('Direction')
+xlabel('Direction preference (deg)')
 ylabel('Parameter')
-title(strjoin({'Rolling direction average','window',...
-    num2str(window)},'_'),'Interpreter','None')
+% title(strjoin({'Rolling direction average','window',...
+%     num2str(window)},'_'),'Interpreter','None')
 axis tight
 end
 end
