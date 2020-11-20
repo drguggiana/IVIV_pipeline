@@ -104,6 +104,8 @@ od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref]
  bino_id=find([str(:).bino]==1);
  unres_id=find([str(:).unres]==1);
  resp_id=find([str(:).resp]==1);
+ %% 
+ 
  
   %% Plot data with fits and calculate R2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
@@ -528,7 +530,7 @@ frac_diffh=frac_h(s2,1:16)-frac_h(s2,17:end);
 % exp.Color(4) = 0.05;
 % end
 hold on;
-mexp=errorbar(nanmean(frac_h(s2,1:16)),nanstd(frac_h(s2,1:16))/sqrt(size(frac_h(s1,:),1)),'Color',[0 0.5 0.5]);
+mexp=errorbar(nanmean(frac_h(s2,1:16)),nanstd(frac_h(s2,1:16))/sqrt(size(frac_h(s2,:),1)),'Color',[0 0.5 0.5]);
 hold on;mexp.CapSize=3;
 hold on;
 mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(frac_h(s2,:),1))*-1,'Color',[0 0.5 0.5]);

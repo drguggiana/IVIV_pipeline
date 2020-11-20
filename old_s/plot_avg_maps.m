@@ -7,8 +7,8 @@ set(F, 'Name', 'Correlation pial depth');
 set(F, 'Position', [200, 0, 800, 200]);
 subplot(1,3,1);
 sf=sf;    
-exc_map =nanmean(ex_map,3);
-inh_map =nanmean(in_map,3);
+exc_map =nanmean(ex_map(:,:,nan_vector),3);
+inh_map =nanmean(in_map(:,:,nan_vector),3);
 ove_map = cat(3,exc_map,inh_map);
 %define the plot type (2 for excitatory)
 explot_type = 2;

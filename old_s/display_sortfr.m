@@ -2,7 +2,7 @@
 function display_sortfr(Lfr,vh,des)
 
 if vh==1
-[sv idxsort] = sort(Lfr(:,1),'descend');
+[sv idxsort] = sort(Lfr(:,1),'ascend');
 [cmap]=buildcmap('wmk');
 
 % fig5=figure;set(gcf,'color','w');set(fig5, 'Position', [200, 0, 600,400]);
@@ -13,24 +13,25 @@ if vh==1
 % hold on
 % plot(tmp,1:147)
 
-fig6=figure;set(gcf,'color','w');set(fig6, 'Position', [200, 0, 300, 500]);
+fig6=figure;set(gcf,'color','w');set(fig6, 'Position', [200, 0, 200, 225]);
 x=[1:147; 1:147]';
-y=[Lfr(idxsort,1)*-1 Lfr(idxsort,2)]
+y=[Lfr(idxsort,2)*-1 Lfr(idxsort,3)]
 bh=barh(x,y);
  bh(2).FaceColor=[0 0 1];
  bh(1).FaceColor=[1 0 0];
 set(gca,'Ydir','reverse')
 box off;
 hold on;
-tmp=(Lfr(idxsort,1)-Lfr(idxsort,2))
-plot(tmp*-1,1:147,'Color','k','LineWidth',2);
-ylabel('Cells');
+tmp=(Lfr(idxsort,2)-Lfr(idxsort,3))
+plot(tmp*-1,1:147,'Color','k','LineWidth',1);
+ylabel('Cells sorted by pial depth');
 xlabel('Fraction input');ylim([1 length(y)]);
 yticks([0:20:147])
-xlim([-0.4 0.4])
-text(-0.2,-3,'EX','Color','r');
-text(0.2,-3,'IN','Color','b');
+xlim([-1 1])
+text(-0.5,-4,'EX','Color','r');
+text(0.5,-4,'IN','Color','b');
 title(des)
+set(gca,'FontSize',10)
 else
     
     
@@ -45,7 +46,7 @@ bh=bar(x,y);
  box off;
 hold on;
 tmp=(Lfr(idxsort,1)-Lfr(idxsort,2))
-plot(1:147,tmp*-1,'Color','k','LineWidth',2);
+plot(1:147,tmp*-1,'Color','k','LineWidth',1);
 xlabel('Cells');
 ylabel('Fraction input');ylim([1 length(y)]);
 xticks([0:20:147])
