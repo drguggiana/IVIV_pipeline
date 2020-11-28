@@ -6,20 +6,20 @@ Sponp=1;
 savefile=1;
 %% 
 %Excel sheet with all information
-ExpXls            = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\L23PC_project_all_invivo.xlsx';%directory where excel batch file is located;change accordingly
+ExpXls            = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\L23PC_project_all_invivo.xlsx';%directory where excel batch file is located;change accordingly
 %Structure in vitro
-str_invitro       = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str';
+str_invitro       = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\old_structures';
 %OD info
-adata_dir         = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\OD-20200208T204106Z-001\';%data directory of raw data;change accordingly
+adata_dir         = 'D:\Postdoc_Margrie\Projects\L23\data_invivo\OD\';%data directory of raw data;change accordingly
 %SFTF info
-sftf_path         = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\SFTF\all';
-sftf_path_resp    = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\SFTF';
+sftf_path         = 'D:\Postdoc_Margrie\Projects\L23\data_invivo\SFTF\all';
+sftf_path_resp    = 'D:\Postdoc_Margrie\Projects\L23\data_invivo\SFTF';
 %spontanues
-spon_path         = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Spon_act';
+spon_path         = 'D:\Postdoc_Margrie\Projects\L23\data_invivo\Spon_act';
 %Pial depth info
-roi_z             = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Pial_depth';
+roi_z             = 'D:\Postdoc_Margrie\Projects\L23\data_invivo\pial_depth_output';
 
-out_dir           = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\str_out';%data directory of extracted date;change accordingly
+out_dir           = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\structures_invivo';%data directory of extracted date;change accordingly
 %%   Read out excel info
 batchopt          = parseExperimentsXls_L23(ExpXls);%calls the nested function parseExperimentsXls_dLGN and considers the user flag (1 or 0)
 nummice           = length(batchopt.mouse);%length of experiments to be analyzed

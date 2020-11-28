@@ -7,7 +7,7 @@
 %%2. You need the invitro structure 
 
  %% LOAD in vivo data structure L23PC data structure, you need uipickfiles function
-out_dir='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23'
+out_dir='C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\structures_invivo'
 directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitymoph atm:191804
 filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
 load(char(filename));%load mat file
@@ -311,12 +311,35 @@ Dir_sftf1(idxn1)=NaN;
  
  
   %% Load in vitro strcuture
-  str_invitro       = 'C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\';
+  str_invitro       = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Stage1_invitro_only_structure';
 folder_list = uipickfiles('FilterSpec',str_invitro);
 load(char(folder_list));
+%% 
+  str_invitro2       = 'D:\Postdoc_Margrie\Projects\L23\structure';
+folder_list = uipickfiles('FilterSpec',str_invitro2);
+load(char(folder_list));
+
+
 %% Read out iviv cells
 iviv_cells = [str(:).iviv]==1;
-str_m=str;
+
+%% 
+%invitro_struct([44 48 68 71 91 94 109 121 156 157])=[]
+%% 
+% for i=1:147
+% invitro_struct(i).morph=str(i).morph;
+% invitro_struct(i).morphtraces=str(i).morphtraces;
+% invitro_struct(i).iviv=str(i).iviv;
+% invitro_struct(i).morphoMap_apical_aligned=str(i).morphoMap_apical_aligned;
+% invitro_struct(i).morphoMap_basal_aligned=str(i).morphoMap_basal_aligned;
+% end
+%% 
+str_m=invitro_struct;
+%% 
+for i=1:157
+    str_m(i).iviv=iviv_cells(i);
+end
+
 %% Add contra, bino, ipsi, unresposnive for OD protocol
 aiviv=find(iviv_cells==1);
 for i=1:length(aiviv)
@@ -329,6 +352,26 @@ for i=1:length(aiviv)
     else contra(i)==0 & ipsi(i)==0
         str_m(aiviv(i)).unres=1;       
     end
+end
+%% Replace empty fields with NaNs
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.ipsi),str_m))
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).ipsi=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.contra),str_m))
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).contra=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.bino),str_m))
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).bino=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.unres),str_m))
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).unres=NaN; 
 end
 %% ADD invivo features to strcutre, for OD protocol: first column contra, second column ipsi
 aiviv=find(iviv_cells==1);
@@ -370,6 +413,91 @@ for i=1:length(aiviv)
    str_m(aiviv(i)).pia_invivo=pia_all(i);
 end
 %% 
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.Ori),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).Ori=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.Dir),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).Dir=NaN; 
+end
+
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.sigma),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).sigma=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.fit_resp),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).fit_resp=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.resp),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).resp=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.OSI),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).OSI=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.DSI),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).DSI=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.ODI),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).ODI=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.Ca_peak),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).Ca_peak=NaN; 
+end
+
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.Ca_sum),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).Ca_sum=NaN; 
+end
+emptyIndex = [];
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.TuningCurve),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).TuningCurve=NaN; 
+end
+
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.SF),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).SF=NaN; 
+end
+
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.TF),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).TF=NaN; 
+end
+
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.sftf_resp),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).sftf_resp=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.pci),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).pci=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.sad),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).sad=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.pia_invivo),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).pia_invivo=NaN; 
+end
+%% 
 aiviv=find(iviv_cells==1);
 for i=1:length(aiviv)
     str_m(aiviv(i)).c_tun=contra_tun(i);
@@ -379,11 +507,44 @@ for i=1:length(aiviv)
     
 end
 %% 
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.c_tun),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).c_tun=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.i_tun),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).i_tun=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.error_fit),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).error_fit=NaN; 
+end
+emptyIndex = find(arrayfun(@(str_m) isempty(str_m.r2_fit),str_m));
+for i=1:length(emptyIndex)
+   str_m(emptyIndex(i)).r2_fit=NaN; 
+end
+%% 
+str_m([44 48 68 71 91 94 109 121 156 157])=[]
+%% 
 
+  str_invitro2       = 'D:\Postdoc_Margrie\Projects\L23\structure';
+folder_list = uipickfiles('FilterSpec',str_invitro2);
+load(char(folder_list));
+%% 
+ for i=1:147
+ str_m(i).morph=str(i).morph;
+ str_m(i).morphtraces=str(i).morphtraces;
+ 
+ str_m(i).morphoMap_apical_aligned=str(i).morphoMap_apical_aligned;
+str_m(i).morphoMap_basal_aligned=str(i).morphoMap_basal_aligned;
+ end
 %% 
 
 str=str_m;
+%% END FOR NOW
+
 %% Extract eye specific info and add to strcuture 
+%Here strcuture with 147 is necessary
 
 %% 
 %% Define array names and get the arrays without NaNs etc.

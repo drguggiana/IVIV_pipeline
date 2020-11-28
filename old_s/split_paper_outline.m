@@ -1,7 +1,7 @@
 
 %% START
 %Load structure with 147 cells used for the paper
-str_invitro       = 'D:\Postdoc_Margrie\Projects\L23\structure\';
+str_invitro       = 'D:\Postdoc_Margrie\Projects\L23\structure';
 folder_list = uipickfiles('FilterSpec',str_invitro);
 load(char(folder_list));
 
@@ -301,13 +301,36 @@ a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25);
 figure;scatter(abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,5))
 
 [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), abs((ang_inL23(a,3)-ang_inL23(a,1))*69))
+%% ipsi contra
+tmp = cat(3,[str(:).contra],[str(:).ipsi]); 
+eye_sp = nansum(tmp,3)
+tmp2 = cat(3,eye_sp,[str(:).bino]*2);
+eye_spec=nansum(tmp2,3)
+%% bino cells
+bino_dir=reshape([str(find(eye_spec==2)).Dir],[20,2])
+stats=paired_plot(bino_dir,1,{'b','r'})
+%% 
+bino_dir_d=[]
+bino_dir_d=reshape([str(:).Dir],[2,147])';
 %% 
 
-corr_plot(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),abs(od_out_iviv(a,3)),{'Orientation along slice','IN',''});
+bino_dir_delta=bino_dir_d(:,1)-bino_dir_d(:,2)
+%% 
+
+figure;histogram(abs(bino_dir(:,1)-bino_dir(:,2)),5)
+%% 
+
+corr_plot(bino_dir(:,1)-bino_dir(:,2),diffL23fr(find(eye_spec==2)),[],{'Orientation along slice','IN',''});
+%% 
+corr_plot(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,3),{'Orientation along slice','IN',''});
+%% 
+
+corr_plot(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,3),{'Orientation along slice','IN',''});
 %% 
 close all
 fig3= figure;set(fig3, 'Name', 'Input distribution');set(fig3, 'Position', [200, 600, 200, 200]);set(gcf,'color','w');
 scatter(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),12,'bo','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
+%hold on;scatter(od_out_iviv(a,4)-45,(ang_inL23(a,3)-ang_inL23(a,1))*69,12,'ro','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
 
 [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), abs((ang_inL23(a,3)-ang_inL23(a,1))*69));
 text(-20,90,['cc=' num2str(round(rho1,3)) ' ' 'p<0.001'],'Color','b')
@@ -353,6 +376,10 @@ par(g1)=par(g1)*-1
 par2=[];
 par2=od_out_iviv(a,2);
 corr_plot(abs(par(s1)),par2(s1),[],{'PC1ex','PC1com','Pial depth'});
+%% 
+%% EX and IN
+
+
 %% Correlation comparison across layers
 a=[];
 a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
@@ -537,11 +564,49 @@ mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(
 hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
 %hold on;text(2.5,0.55,'L5','FontSize',12);
+%% Later Medial
+%% Calculate difference between ex and in (ex-in) medial and lateral for whole map
+%mean
+L23h_medial=[nanmean(L23h(:,1:8),2) nanmean(L23h(:,17:24),2)];
+L23h_lateral=[nanmean(L23h(:,9:16),2) nanmean(L23h(:,25:end),2)];
+
+a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
+sector=60;
+midpoint=130;
+
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
+par=L23h_medial(a,2);
+par2=L23h_lateral(a,2);
+par(g1)=par2(g1);
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+% 
+% % %sum
+% frh_medial_s=[sum(frh(:,1:8),2) sum(frh(:,17:24),2)];
+% frh_lateral_s=[sum(frh(:,9:16),2) sum(frh(:,25:end),2)];
+%% 
+
 %% 
 miviv=find([str(:).iviv]==1 & morph_cells==1);
 smo=morph_cells(a)
 par=[];
-par=morph_parameters(a,21)
+par=morph_parameters(a,1)
 [statsout]=dual_barplot(par,s1,s2,0);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 %% 
 %% Morphology
@@ -596,6 +661,10 @@ s1L=s1t(:);
 [s1M s1L]
 
 p1=paired_plot([s1M s1L],1,{'k','r'});xticklabels({'M','L'});ylabel('Density basal');;set(gca,'FontSize',10)
+
+
+
+
 %% 
 parameter_vector = span(:,1)*69;
 parameter_vector2 = span(:,4)*69;
