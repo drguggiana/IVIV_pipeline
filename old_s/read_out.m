@@ -229,6 +229,7 @@ spon.sad=event_store{idx(i)};
      L23_PC(adder).mouse=[char(batchopt.mouse{i})];
      L23_PC(adder).exp_invitro=[char(batchopt.exp_invitro{i})];
      L23_PC(adder).ivivROI=batchopt.ivivROI{i};
+     %L23_PC(adder).exp_invitro=[char(batchopt.invitro_rec{i})];
      L23_PC(adder).OD=OD;
      L23_PC(adder).SFTF=SFTF; 
      L23_PC(adder).spon=spon; 
@@ -236,4 +237,5 @@ spon.sad=event_store{idx(i)};
     adder=adder+1;
  end 
  
- %% 
+ %% Add other information 
+ 

@@ -378,7 +378,19 @@ par2=od_out_iviv(a,2);
 corr_plot(abs(par(s1)),par2(s1),[],{'PC1ex','PC1com','Pial depth'});
 %% 
 %% EX and IN
+par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+par1(g1)=par1(g1)*-1;
+par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+par2(g1)=par2(g1)*-1;
+p1=paired_plot([par2(s1) par1(s1)],1,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
 
+%% 
+%% EX and IN
+par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+
+par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+
+p1=paired_plot([par2(s2) par1(s2)],1,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
 
 %% Correlation comparison across layers
 a=[];

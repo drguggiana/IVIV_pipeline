@@ -319,6 +319,8 @@ load(char(folder_list));
 folder_list = uipickfiles('FilterSpec',str_invitro2);
 load(char(folder_list));
 
+%% 
+str(53)=[]
 
 %% Read out iviv cells
 iviv_cells = [str(:).iviv]==1;
@@ -336,7 +338,7 @@ iviv_cells = [str(:).iviv]==1;
 %% 
 str_m=invitro_struct;
 %% 
-for i=1:157
+for i=1:156
     str_m(i).iviv=iviv_cells(i);
 end
 
@@ -524,7 +526,7 @@ for i=1:length(emptyIndex)
    str_m(emptyIndex(i)).r2_fit=NaN; 
 end
 %% 
-str_m([44 48 68 71 91 94 109 121 156 157])=[]
+str_m([48 68 71 91 94 109 121 156 157])=[]
 %% 
 
   str_invitro2       = 'D:\Postdoc_Margrie\Projects\L23\structure';
@@ -609,7 +611,7 @@ pia_input=original_maps(:,end);
 incl_idx=1;
 %% Read out eye specific info
 
-[od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str_m,1:147)
+[od_out_iviv spon_out_iviv sftf_out_iviv sftf_out_sel_iviv sftf_out_pref_iviv] = concat_iviv(str,1:147)
 %% Add OD eye specific info to strcuture
 nan_vector=1:147;
 for i=1:length(nan_vector)
