@@ -2,9 +2,8 @@
 %% START
 %Load structure with 147 cells used for the paper
 str_invitro       = 'D:\Postdoc_Margrie\Projects\L23\structure';
-folder_list = uipickfiles('FilterSpec',str_invitro);
+folder_list = uipickfiles('FilterSpec',str);
 load(char(folder_list));
-
 %% %% Read out important parameters
 % get a vector with the cells to use
 iviv_cells = find([str(:).iviv]==1);
@@ -104,9 +103,6 @@ od_out_iviv=[[str(:).OSIpref];[str(:).DSIpref];[str(:).ODIpref];[str(:).ORIpref]
  bino_id=find([str(:).bino]==1);
  unres_id=find([str(:).unres]==1);
  resp_id=find([str(:).resp]==1);
- %% 
- 
- 
   %% Plot data with fits and calculate R2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
 for i=1:length(resp_id)
@@ -136,7 +132,7 @@ else str(resp_id(i)).bino==1
  yp_s=yp(oris+1);
     end
 end
-r2=1-(sum(sqrt((y-yp_s').^2))/sum(sqrt((y-ym).^2)))
+r2=1-(sum(sqrt((y-yp_s').^2))/sum(sqrt((y-ym).^2)));
 r_square(i)=r2
 title([num2str(str(resp_id(i)).OSIpref) ' / ' num2str(r_square(i))]);
 y=[]
@@ -153,12 +149,8 @@ r_sq(resp_id)=r_square;
 for i=1:length(r_sq)
     str(i).r_sq=r_sq(i);
 end
-%% 
-
-close all;
-% Histogram of pia distribution with color coded in vivo morpho by itself
-% for panel B
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 300, 300]);
+%%  Histogram of pia distribution with color coded in vivo morpho by itself
+close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 300, 300]);
 hold on;histogram(pia_input(iviv_cells),'FaceColor','k','EdgeColor','k','Orientation','horizontal');
 hold on;histogram(pia_input(find([str(:).iviv]==1 & morph_cells==1)),'FaceColor','w','EdgeColor','k','Orientation','horizontal');
 legend([' in vivo + input  (n=' num2str(length(pia_input(iviv_cells))),')'],...
@@ -166,18 +158,10 @@ legend([' in vivo + input  (n=' num2str(length(pia_input(iviv_cells))),')'],...
 ylim([100 350])
 legend boxoff ;set(gca,'Ydir','reverse');yticks([100:100:400]);set(gca,'FontSize',10);
 ;ylabel('Pial depth (µm)');xlabel('Cell count');box off;
-%% 
-%Example input maps of cell 99 in Panel D
-plot_maps(str,ex_map_raw,in_map_raw,[1:147],99,pia_input);
-%Polar plot peak normalized in Panel C
-u=99;
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [500, 600, 200, 200]);
-polarplot(deg2rad(oris([1:end 1])),str(u).TuningCurve([1:8 1])/max(str(u).TuningCurve));hold on;
-polarplot(deg2rad(oris([1:end 1])),str(u).TuningCurve([9:end 1])/max(str(u).TuningCurve));
-ax = gca;rticks([0:0.5:1]);ax.LineWidth = 2;ax.ThetaDir = 'clockwise';ax.ThetaZeroLocation = 'left';
- ax.ThetaTick = [0:45:360]; 
  %% Plot average iviv cells maps
  plot_avg_maps(str,iviv_cells,ex_map,in_map,pia_input,10,0,[]);
+ %% 
+  plot_avg_maps(str,116,ex_map,in_map,pia_input,1,0,[]);
 %% Show vertical per layer for iviv cells
  [stats_g] = display_inputs_part2([frv(iviv_cells,:)],[frh(iviv_cells,:)],frv(iviv_cells,1:16)-frv(iviv_cells,17:end),frh(iviv_cells,1:16)-frh(iviv_cells,17:end),[]);
   %% Show horizontal fraction per layer
@@ -247,27 +231,21 @@ mexp.CapSize=3;
 xlabel('Horizontal map position')
 hold on;text(2.5,0.6,'L5','FontSize',12);
 %% Plot centroid Cx fdr EX IN
-%% 
-
+%% L23 and L4 centroid EX and IN
 corr_plot((ang_exL23(iviv_cells,3)-ang_exL23(iviv_cells,1))*69,(ang_inL23(iviv_cells,3)-ang_inL23(iviv_cells,1))*69,[],{'EX','IN',''});ylabel('IN C_{x} (µm)','Color','b');xlabel('EX C_{x} (µm)','Color','r');
-
 temp1=ang_exL4(iviv_cells,3)-ang_exL4(iviv_cells,1);
 temp2=ang_inL4(iviv_cells,3)-ang_inL4(iviv_cells,1);
 temp1(find(isnan(temp2)))=[];
 temp2(find(isnan(temp2)))=[];
-
 corr_plot(temp1*69,temp2*69,[],{'EX','IN',''});ylabel('IN C_{x} (µm)','Color','b');xlabel('EX C_{x} (µm)','Color','r');
-
-
-%% 
-
+%% L5 centroid
 temp1=[];temp2=[];
 temp1=ang_exL5(iviv_cells,3)-ang_exL5(iviv_cells,1);
 temp2=ang_inL5(iviv_cells,3)-ang_inL5(iviv_cells,1);
 aa=[find(isnan(temp2)); find(isnan(temp1))]
 temp1(aa)=[];
 temp2(aa)=[];
-corr_plot(temp1*69,temp2*69,[],{'EX','IN',''});ylabel('IN','Color','b');xlabel('EX','Color','r');xlim([-200 200]);ylim([-200 200]);xlabel('EX C_{x} (µm)','Color','r');
+corr_plot(temp1*69,temp2*69,[],{'EX','IN',''});ylabel('IN','Color','b');xlabel('EX','Color','r');%xlim([-200 200]);ylim([-200 200]);xlabel('EX C_{x} (µm)','Color','r');
 %% 
 
 g=find(ang_inL4(iviv_cells,3)*69-ang_inL4(iviv_cells,1)*69<135)
@@ -286,8 +264,8 @@ xlabel('EX C_{x} (µm)','Color','r')
 subplot(1,3,3);
 plot(ang_exL5(iviv_cells,3)*69-ang_exL5(iviv_cells,1)*69,ang_inL5(iviv_cells,3)*69-ang_inL5(iviv_cells,1)*69,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
-ref.Color='k';box off;xlim([-335 300]);ylim([-335 300]);hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
-
+ref.Color='k';box off;;hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
+%xlim([-335 300]);ylim([-335 300])
 ref.XData=[-300 300];
 ref.YData=[-300 300];
 %% Rolling average
