@@ -1,7 +1,7 @@
 
 %% START
 %Load structure with 147 cells used for the paper
-str_invitro       = 'D:\Postdoc_Margrie\Projects\L23\structure';
+str      = 'D:\Postdoc_Margrie\Projects\L23\structure';
 folder_list = uipickfiles('FilterSpec',str);
 load(char(folder_list));
 %% %% Read out important parameters
@@ -160,7 +160,7 @@ legend boxoff ;set(gca,'Ydir','reverse');yticks([100:100:400]);set(gca,'FontSize
 ;ylabel('Pial depth (µm)');xlabel('Cell count');box off;
  %% Plot average iviv cells maps
  plot_avg_maps(str,iviv_cells,ex_map,in_map,pia_input,10,0,[]);
- %% 
+ %% Plot example maps
   plot_avg_maps(str,116,ex_map,in_map,pia_input,1,0,[]);
 %% Show vertical per layer for iviv cells
  [stats_g] = display_inputs_part2([frv(iviv_cells,:)],[frh(iviv_cells,:)],frv(iviv_cells,1:16)-frv(iviv_cells,17:end),frh(iviv_cells,1:16)-frh(iviv_cells,17:end),[]);
@@ -230,6 +230,7 @@ hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqr
 mexp.CapSize=3;
 xlabel('Horizontal map position')
 hold on;text(2.5,0.6,'L5','FontSize',12);
+
 %% Plot centroid Cx fdr EX IN
 %% L23 and L4 centroid EX and IN
 corr_plot((ang_exL23(iviv_cells,3)-ang_exL23(iviv_cells,1))*69,(ang_inL23(iviv_cells,3)-ang_inL23(iviv_cells,1))*69,[],{'EX','IN',''});ylabel('IN C_{x} (µm)','Color','b');xlabel('EX C_{x} (µm)','Color','r');
@@ -246,115 +247,182 @@ aa=[find(isnan(temp2)); find(isnan(temp1))]
 temp1(aa)=[];
 temp2(aa)=[];
 corr_plot(temp1*69,temp2*69,[],{'EX','IN',''});ylabel('IN','Color','b');xlabel('EX','Color','r');%xlim([-200 200]);ylim([-200 200]);xlabel('EX C_{x} (µm)','Color','r');
-%% 
-
+%% Plot horizontal centroid per layer with ref line 
 g=find(ang_inL4(iviv_cells,3)*69-ang_inL4(iviv_cells,1)*69<135)
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);
 subplot(1,3,1);
 plot(ang_exL23(iviv_cells,3)*69-ang_exL23(iviv_cells,1)*69,ang_inL23(iviv_cells,3)*69-ang_inL23(iviv_cells,1)*69,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
-set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-100 100];
-ref.YData=[-100 100];
-ref.Color='k';box off;xlim([-115 100]);ylim([-115 100]);hold on;title('L23','FontWeight','normal');xticks([-100:50:100]);yticks([-100:50:100]);
+set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-160 160];xticks([-160:80:160]);yticks([-160:80:160]);
+ref.YData=[-160 160];
+ref.Color='k';box off;xlim([-160 160]);ylim([-160 160]);hold on;title('L23','FontWeight','normal');%xticks([-100:50:100]);yticks([-100:50:100]);
 subplot(1,3,2);
 plot(ang_exL4(iviv_cells,3)*69-ang_exL4(iviv_cells,1)*69,ang_inL4(iviv_cells,3)*69-ang_inL4(iviv_cells,1)*69,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
-set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-150 150];
-ref.YData=[-150 150];ylabel('IN C_{x} (µm)','Color','b')
-ref.Color='k';box off;xlim([-175 150]);ylim([-175 150]);hold on;title('L4','FontWeight','normal');xticks([-150:75:200]);yticks([-150:75:150]);
+set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[-160 160];
+ref.YData=[-160 160];ylabel('IN C_{x} (µm)','Color','b')
+ref.Color='k';box off;xlim([-160 160]);ylim([-160 160]);hold on;title('L4','FontWeight','normal');xticks([-160:80:160]);yticks([-160:80:160]);
 xlabel('EX C_{x} (µm)','Color','r')
 subplot(1,3,3);
-plot(ang_exL5(iviv_cells,3)*69-ang_exL5(iviv_cells,1)*69,ang_inL5(iviv_cells,3)*69-ang_inL5(iviv_cells,1)*69,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
+%L5, remove outlier
+tempL5ex=ang_exL5(iviv_cells,3)*69-ang_exL5(iviv_cells,1)*69;
+tempL5in=ang_inL5(iviv_cells,3)*69-ang_inL5(iviv_cells,1)*69;
+tempL5ex(find(tempL5ex<-400))=[];
+tempL5in(find(tempL5in<-400))=[];
+plot(tempL5ex,tempL5in,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
-ref.Color='k';box off;;hold on;title('L5','FontWeight','normal');xticks([-300:150:300]);yticks([-300:150:300]);
-%xlim([-335 300]);ylim([-335 300])
-ref.XData=[-300 300];
-ref.YData=[-300 300];
+ref.Color='k';box off;;hold on;title('L5','FontWeight','normal');%xticks([-300:150:300]);yticks([-300:150:300]);
+xlim([-160 160]);ylim([-160 160]);xticks([-160:80:160]);yticks([-160:80:160]);
+ ref.XData=[-160 160];
+ ref.YData=[-160 160];
 %% Rolling average
 parameter_vector = (ang_exL23(:,3)-ang_exL23(:,1))*69;
 parameter_vector2 = (ang_inL23(:,3)-ang_inL23(:,1))*69;
 rolling_avg_display(str,parameter_vector,parameter_vector2,65,0,1);hold on;ylabel('C_{x} (µm)','Color','k');hold on;xlabel('Direction preference (deg)')
 hold on;set(gca,'FontSize',10)
-%% 
+%% Circular correlation 
 a=[];
 a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
-figure;scatter(abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,5))
-
 [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), abs((ang_inL23(a,3)-ang_inL23(a,1))*69))
 %% ipsi contra
 tmp = cat(3,[str(:).contra],[str(:).ipsi]); 
-eye_sp = nansum(tmp,3)
+eye_sp = nansum(tmp,3);
 tmp2 = cat(3,eye_sp,[str(:).bino]*2);
-eye_spec=nansum(tmp2,3)
+eye_spec=nansum(tmp2,3);
 %% bino cells
 bino_dir=reshape([str(find(eye_spec==2)).Dir],[20,2])
 stats=paired_plot(bino_dir,1,{'b','r'})
-%% 
-bino_dir_d=[]
-bino_dir_d=reshape([str(:).Dir],[2,147])';
-%% 
-
-bino_dir_delta=bino_dir_d(:,1)-bino_dir_d(:,2)
-%% 
-
-figure;histogram(abs(bino_dir(:,1)-bino_dir(:,2)),5)
-%% 
-
-corr_plot(bino_dir(:,1)-bino_dir(:,2),diffL23fr(find(eye_spec==2)),[],{'Orientation along slice','IN',''});
-%% 
+%% ODI of cells used for comparison of driections
 corr_plot(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,3),{'Orientation along slice','IN',''});
-%% 
-
-corr_plot(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),od_out_iviv(a,3),{'Orientation along slice','IN',''});
-%% 
-close all
+%% Absolute Cx relative to axis of displacement
+close all;
+%a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
 fig3= figure;set(fig3, 'Name', 'Input distribution');set(fig3, 'Position', [200, 600, 200, 200]);set(gcf,'color','w');
 scatter(od_out_iviv(a,4)-45,abs((ang_inL23(a,3)-ang_inL23(a,1))*69),12,'bo','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
 %hold on;scatter(od_out_iviv(a,4)-45,(ang_inL23(a,3)-ang_inL23(a,1))*69,12,'ro','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
-
 [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), abs((ang_inL23(a,3)-ang_inL23(a,1))*69));
 text(-20,90,['cc=' num2str(round(rho1,3)) ' ' 'p<0.001'],'Color','b')
-
 hold on
 scatter(od_out_iviv(a,4)-45,abs((ang_exL23(a,3)-ang_exL23(a,1))*69),12,'ro','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
-
 [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), abs((ang_exL23(a,3)-ang_exL23(a,1))*69));
 text(-20,100,['cc=' num2str(round(rho1,3)) ' ' 'p<0.001'],'Color','r')
 set(gca,'FontSize',10);
 ylim([-10 100])
-%% 
-
+%% Bar plot Cx for IN and EX in L23
 a=[];
-a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
-sector=60;
-midpoint=130;
-
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+% sector=60;
+% midpoint=130;
+ sector=60;
+ midpoint=130;
 s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
 s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
-
 s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
 s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
-
 g1=[];
 g2=[];
 g3=[];
 g4=[];
-
 g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
 g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
 g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
 g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
-
 par=[];
 s1=[g1' g2'];
 s2=[g3' g4'];
 par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=od_out_iviv(a,3)
 par(g1)=par(g1)*-1
 [statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
-%% Correlation with DSI
-
-par2=[];
-par2=od_out_iviv(a,2);
-corr_plot(abs(par(s1)),par2(s1),[],{'PC1ex','PC1com','Pial depth'});
 %% 
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+b=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)<0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+
+binodir_b=reshape([str(b).Dir],[2,length(a)])';
+ binodir_delta_b=binodir_b(:,1)-binodir_b(:,2);
+% 
+idx_bi_b=find(abs(od_out_iviv(b,3))<0.1)
+id_ov_b=find(abs(binodir_delta_b(find(abs(od_out_iviv(b,3))<0.1)))>90)
+b(idx_bi_b(id_ov_b))=[]
+% sector=60;
+% midpoint=130;
+ sector=60;
+ midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(b,5)>s1a & od_out_iviv(b,5)<s1b) ;
+g4=find(od_out_iviv(b,5)>s2a & od_out_iviv(b,5)<s2b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
+par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=od_out_iviv(a,3)
+par(g1)=par(g1)*-1
+par(g3)=par(g3)*-1
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+%% 
+par2=[];
+%a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0); 
+par2=od_out_iviv(a,2);
+corr_plot(abs(par(s1)),par2(s1),[],{'Cx offset','DSI','Pial depth'});
+
+%% Bar plot 
+a=[];
+a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0); 
+sector=60;
+midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
+par=eye_spec(a)
+[statsout]=dual_barplot(par,s1,s2,0);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+%% Correlation with DSI
+a=[];
+par2=[];
+a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0); 
+par2=od_out_iviv(a,2);
+corr_plot(abs(par(s1)),par2(s1),[],{'Cx offset','DSI','Pial depth'});
 %% EX and IN
 par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 par1(g1)=par1(g1)*-1;
@@ -362,17 +430,34 @@ par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 par2(g1)=par2(g1)*-1;
 p1=paired_plot([par2(s1) par1(s1)],1,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
 
-%% 
-%% EX and IN
-par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
-
-par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
-
-p1=paired_plot([par2(s2) par1(s2)],1,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
-
 %% Correlation comparison across layers
 a=[];
-a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+% sector=60;
+% midpoint=130;
+ sector=60;
+ midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
 g1=[];g2=[];
 g1=s1;
 g2=s2;
@@ -404,40 +489,41 @@ hold on;plot([RLO10(2) RUP10(2)],[4 4],'-c');
 yticklabels({'EX','EX','IN','IN'});title('C_{x} L2/3 to C_{x} L4');
 legend('AL','NAL');legend boxoff;
 set(gca,'FontSize',11);
-%% 
-par=[];
-par=L23h(a,10);
-
-if t==0
-%    [k p]=ttest2(par(g1),par(g2));
-%    statsout=p;
-[p k]=ranksum(par(s1),par(s2));
-    statsout=p;
-elseif t==1
-    [p k]=ranksum(par(s1),par(s2),'tail','right');
-    statsout=p;
-else t==2
-    [p k]=ranksum(par(s1),par(s2),'tail','left');
-    statsout=p;
-end
-%% 
-par=[];
-par=L23h(a,10);
-dd=[par(s1);par(s2)]
-gr=[ones(length(par(s1)),1);ones(length(par(s2)),1)*2]
-figure;
-comb=[dd gr];
-for i=1:size(comb,2)-1   
-[p,tbl,stats] = kruskalwallis(comb(:,i),comb(:,end),'off');
-multicom(:,:,i) = multcompare(stats,'CType','bonferroni');
-signi_ev(i)=multicom(:,6,i)<0.05;
-end
 
 %% Plot horizontal fraction per layer
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+% sector=60;
+% midpoint=130;
+ sector=60;
+ midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+%START
 frac_h=[];
 frac_h=L23h(a,:);
+flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
+flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
 frac_diffh=[];
-frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
+% frac_diffh=frac_h(flip_hl,1:16)-frac_h(s1,17:end);
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 600, 700, 350]);set(gcf,'color','w');
 %EX and IN Horizontal
 subplot(1,3,1);hold on;
@@ -447,11 +533,11 @@ subplot(1,3,1);hold on;
 % exp=plot(frac_h(s1(i),17:end)'*-1,'-b');ylabel('Fraction of total input');box off;
 % exp.Color(4) = 0.05;
 % end
-mexp=errorbar(nanmean(frac_h(s1,1:16)),nanstd(frac_h(s1,1:16))/sqrt(size(frac_h(s1,:),1)),'Color',[0.7 0 0.4]);
+%mexp=errorbar(nanmean(frac_h(s1,1:16)),nanstd(frac_h(s1,1:16))/sqrt(size(frac_h(s1,:),1)),'Color',[0.7 0 0.4]);
+mexp=errorbar(nanmean( flip_hl),nanstd( flip_hl)/sqrt(size( flip_hl,1)),'Color',[0.7 0 0.4]);
 hold on;mexp.CapSize=3;
-
 hold on;
-mexp=errorbar(nanmean(frac_h(s1,17:end))*-1,nanstd(frac_h(s1,17:end))/sqrt(size(frac_h(s1,:),1))*-1,'Color',[0.7 0 0.4]);
+mexp=errorbar(nanmean( flip_hl_in)*-1,nanstd( flip_hl_in)/sqrt(size( flip_hl_in,1))*-1,'Color',[0.7 0 0.4]);
 hold on;mexp.CapSize=3;
 % hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'m');
 % mexp.CapSize=3;
@@ -480,11 +566,12 @@ hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M
 % mexp.CapSize=3;
 
 
-
 %L4
 frac_h=[];
 frac_h=L4h(a,:);
-frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
+flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
+flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
+%frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
 %EX and IN Horizontal
 subplot(1,3,2);hold on;
 % for i=1:size(frac_h(s1,:),1)
@@ -493,13 +580,11 @@ subplot(1,3,2);hold on;
 % exp=plot(frac_h(s1(i),17:end)'*-1,'-b');ylabel('Fraction of total input');box off;
 % exp.Color(4) = 0.05;
 % end
-mexp=errorbar(nanmean(frac_h(s1,1:16)),nanstd(frac_h(s1,1:16))/sqrt(size(frac_h(s1,:),1)),'Color',[0.7 0 0.4]);
-hold on;mexp.CapSize=3;
-
-hold on;
-mexp=errorbar(nanmean(frac_h(s1,17:end))*-1,nanstd(frac_h(s1,17:end))/sqrt(size(frac_h(s1,:),1))*-1,'Color',[0.7 0 0.4]);
+mexp=errorbar(nanmean( flip_hl),nanstd( flip_hl)/sqrt(size( flip_hl,1)),'Color',[0.7 0 0.4]);
 hold on;mexp.CapSize=3;
 hold on;
+mexp=errorbar(nanmean( flip_hl_in)*-1,nanstd( flip_hl_in)/sqrt(size( flip_hl_in,1))*-1,'Color',[0.7 0 0.4]);
+hold on;mexp.CapSize=3;
 frac_h=[];
 frac_h=L4h(a,:);
 frac_diffh=frac_h(s2,1:16)-frac_h(s2,17:end);
@@ -518,10 +603,13 @@ hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
 %hold on;text(2.5,0.55,'L4','FontSize',12);
 xlabel('Horizontal map position')
+
 %L5
 frac_h=[];
 frac_h=L5h(a,:);
-frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
+flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
+flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
+%frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
 %EX and IN Horizontal
 subplot(1,3,3);hold on;
 % for i=1:size(frac_h(s1,:),1)
@@ -530,13 +618,11 @@ subplot(1,3,3);hold on;
 % exp=plot(frac_h(s1(i),17:end)'*-1,'-b');ylabel('Fraction of total input');box off;
 % exp.Color(4) = 0.05;
 % end
-mexp=errorbar(nanmean(frac_h(s1,1:16)),nanstd(frac_h(s1,1:16))/sqrt(size(frac_h(s1,:),1)),'Color',[0.7 0 0.4]);
-hold on;mexp.CapSize=3;
-
-hold on;
-mexp=errorbar(nanmean(frac_h(s1,17:end))*-1,nanstd(frac_h(s1,17:end))/sqrt(size(frac_h(s1,:),1))*-1,'Color',[0.7 0 0.4]);
+mexp=errorbar(nanmean( flip_hl),nanstd( flip_hl)/sqrt(size( flip_hl,1)),'Color',[0.7 0 0.4]);
 hold on;mexp.CapSize=3;
 hold on;
+mexp=errorbar(nanmean( flip_hl_in)*-1,nanstd( flip_hl_in)/sqrt(size( flip_hl_in,1))*-1,'Color',[0.7 0 0.4]);
+hold on;mexp.CapSize=3;
 frac_h=[];
 frac_h=L5h(a,:);
 frac_diffh=frac_h(s2,1:16)-frac_h(s2,17:end);
@@ -554,108 +640,36 @@ mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(
 hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
 %hold on;text(2.5,0.55,'L5','FontSize',12);
-%% Later Medial
-%% Calculate difference between ex and in (ex-in) medial and lateral for whole map
-%mean
-L23h_medial=[nanmean(L23h(:,1:8),2) nanmean(L23h(:,17:24),2)];
-L23h_lateral=[nanmean(L23h(:,9:16),2) nanmean(L23h(:,25:end),2)];
-
-a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
-sector=60;
-midpoint=130;
-
-s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
-s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
-
-s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
-s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
-
-g1=[];
-g2=[];
-g3=[];
-g4=[];
-
-g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
-g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
-g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
-g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+%% Statistics
 par=[];
-s1=[g1' g2'];
-s2=[g3' g4'];
-par=L23h_medial(a,2);
-par2=L23h_lateral(a,2);
-par(g1)=par2(g1);
-[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
-% 
-% % %sum
-% frh_medial_s=[sum(frh(:,1:8),2) sum(frh(:,17:24),2)];
-% frh_lateral_s=[sum(frh(:,9:16),2) sum(frh(:,25:end),2)];
-%% 
+par=L23h(a,10);
+
+if t==0
+%    [k p]=ttest2(par(g1),par(g2));
+%    statsout=p;
+[p k]=ranksum(par(s1),par(s2));
+    statsout=p;
+elseif t==1
+    [p k]=ranksum(par(s1),par(s2),'tail','right');
+    statsout=p;
+else t==2
+    [p k]=ranksum(par(s1),par(s2),'tail','left');
+    statsout=p;
+end
+
 
 %% 
+
+%% Cecking all morpho parameters if needed
 miviv=find([str(:).iviv]==1 & morph_cells==1);
 smo=morph_cells(a)
 par=[];
 par=morph_parameters(a,1)
 [statsout]=dual_barplot(par,s1,s2,0);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
-%% 
-%% Morphology
-
-a=[];
-a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
-sector=60;
-midpoint=130;
-
-s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
-s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
-
-s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
-s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
-
-g1=[];
-g2=[];
-g3=[];
-g4=[];
-
-g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
-g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
-g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
-g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
-
-s1=[g1' g2'];
-s2=[g3' g4'];
-
-par1=ap_map(:,:,a);
-
-s1t=[];
-par1(:,:,g1)=flip(par1(:,:,g1));
-s1t=nansum(nansum(par1(:,1:8,s1)))
-s1M=s1t(:);
-s1t=[];
-s1t=nansum(nansum(par1(:,9:end,s1)))
-s1L=s1t(:);
-[s1M s1L]
-p1=paired_plot([s1M s1L],1,{'k','r'});xticklabels({'M','L'});ylabel('Density apical');;set(gca,'FontSize',10)
-
-%% Morphology
-
-
-par2=ba_map(:,:,a);
-s1t=[];
-par1(:,:,g1)=flip(par2(:,:,g1));
-s1t=nansum(nansum(par2(:,1:8,s1)))
-s1M=s1t(:);
-s1t=[];
-s1t=nansum(nansum(par2(:,9:end,s1)))
-s1L=s1t(:);
-[s1M s1L]
-
-p1=paired_plot([s1M s1L],1,{'k','r'});xticklabels({'M','L'});ylabel('Density basal');;set(gca,'FontSize',10)
 
 
 
-
-%% 
+%% Looking at span
 parameter_vector = span(:,1)*69;
 parameter_vector2 = span(:,4)*69;
 rolling_avg_display(str,parameter_vector,parameter_vector2,45,1,1);
@@ -664,20 +678,14 @@ ylabel('Horizontal extent')
 a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0); 
 sector=45;
 midpoint=130;
-
-
-
 s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
 s4a=[(midpoint)-sector/2];s4b=[(midpoint)+sector/2];
-
 g1=[];
 g2=[];
 g3=[];
 g4=[];
 s1=[];
 s2=[];
-
-
 g3=find(od_out_iviv(a,4)>s3a & od_out_iviv(a,4)<s3b);
 g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
 par=[];
@@ -687,9 +695,103 @@ par=span(a,1)*69;
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
 %% 
 
+
+%% Check visual non visual cells
+sector=60;
+midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+a=[];
+a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25 & od_out_iviv(:,5)>s1a & od_out_iviv(:,5)<s1b); 
+b=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25 & od_out_iviv(:,5)>s2a & od_out_iviv(:,5)<s2b)
+s1=[a' b'];
+s2=unres_id;
+par=(ang_inL23(:,3)-ang_inL23(:,1))*69;
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
 %% 
-%% Perform sholl anaylsis, this should be incoorporated into the structure
-%Get all morphtraces
+sector=60;
+midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+a=[];
+a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25 & od_out_iviv(:,5)>s3a & od_out_iviv(:,5)<s3b); 
+b=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25 & od_out_iviv(:,5)>s4a & od_out_iviv(:,5)<s4b)
+s1=[a' b'];
+s2=unres_id;
+par=abs((ang_inL23(:,3)-ang_inL23(:,1))*69);
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+
+%% 
+a=[];
+b=[];
+a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0.25); 
+b=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25 & od_out_iviv(:,5)>s2a & od_out_iviv(:,5)<s2b)
+s1=[a'];
+s2=unres_id;
+par=L1fr(:,2);
+[statsout]=dual_barplot(par,s1,s2,0);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+
+%% Using asymmerty as calculated by Volker S
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+% 
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+% sector=60;
+% midpoint=130;
+ sector=60;
+ midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
+
+frac_h=L23h(:,:);
+
+for i=1:length(frac_h)
+    frac_asy(i)=asymmetry_quantification(frac_h(i,1:16))
+    frac_asy_in(i)=asymmetry_quantification(frac_h(i,17:end))
+end
+
+par=[frac_asy(a).asymmetricComponent]-[frac_asy_in(a).asymmetricComponent]
+
+
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+%% 
+%% EX and IN
+% par1=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+% par2=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+% par2(g1)=par2(g1)*-1;
+% par1(g1)=par1(g1)*-1;
+par1=span(a,4)
+par2=span(a,1)
+p1=paired_plot([par2(s1) par1(s1)],1,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
+
+%% Correlation with DSI
+par=abs(span(a,1)-span(a,4))
+par2=[];
+%a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0); 
+par2=od_out_iviv(a,2);
+corr_plot(abs(par(s1))',par2(s1),[],{'Cx offset','DSI','Pial depth'});
+%% Morphology
 close all;
 for i=1:length(str)
     if ~isempty(str(i).morph)==1 
@@ -698,31 +800,141 @@ for i=1:length(str)
         zz{:,i}=NaN;
     end
 end
-[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,1);
+%% Basal
+for i=1:147
+   
+X_coord=[];
+Y_coord=[];
+try
+[B X_coord Y_coord]=B_tree_sw (zz{:,i}{2}, '-s');
+x_all_basal{:,i}=X_coord;
+y_all_basal{:,i}=Y_coord;
+catch
+  x_all_basal{:,i}=NaN;
+y_all_basal{:,i}=NaN;  
+end
+end
+%% Apical
+for i=1:147
+   
+X_coord=[];
+Y_coord=[];
+try
+[B X_coord Y_coord]=B_tree_sw (zz{:,i}{1}, '-s');
+x_all_apical{:,i}=X_coord;
+y_all_apical{:,i}=Y_coord;
+catch
+  x_all_apical{:,i}=NaN;
+y_all_apical{:,i}=NaN;  
+end
+end
+%% Basal
+for i=1:147
+   
+X_coord=[];
+Y_coord=[];
+try
+[T X_coord Y_coord]=T_tree_sw (zz{:,i}{2}, '-s');
+x_all_basal{:,i}=X_coord;
+y_all_basal{:,i}=Y_coord;
+catch
+  x_all_basal{:,i}=NaN;
+y_all_basal{:,i}=NaN;  
+end
+end
+%% 
+%% Basal
+for i=1:147
+   
+X_coord=[];
+Y_coord=[];
+try
+[T X_coord Y_coord]=T_tree_sw (zz{:,i}{1}, '-s');
+x_all_apical{:,i}=X_coord;
+y_all_apical{:,i}=Y_coord;
+catch
+  x_all_apical{:,i}=NaN;
+y_all_apical{:,i}=NaN;  
+end
+end
+
+%% Ocularity   
+par=eye_sp(resp_id)
+e1=find(par==0);
+e2=find(par==1);
+par2=(ang_inL4(resp_id,3)-ang_inL4(resp_id,1))*69
+%par2=span(resp_id,3)-span(resp_id,6)
+
+[statsout]=dual_barplot(par2,e1,e2,0);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+%% 
+  g1=[];
+  g2=[];
+   a=[];
+ a=find(od_out_iviv(:,1)>0.0 & abs(od_out_iviv(:,3))>0 & r_sq>0.2); 
+ par=od_out_iviv(a,2)
+   figure;scatter(par,tot_inputL4(a,1),10,od_out_iviv(a,2),'filled')
+   %% 
+     g1=[];
+  g2=[];
+   a=[];
+   cuty=0.5
+g1=find(abs(od_out_iviv(:,3))<cuty)
+g2=find(abs(od_out_iviv(:,3))>cuty)
+ par=L5fr(:,1)
+
+[statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);hold on
+%% 
+a=find(r_sq>0.1 & abs(od_out_iviv(:,3))>0)
+corr_plot(abs(tot_inputL4(a,1)-tot_inputL4(a,2)),abs(od_out_iviv(a,3)),od_out_iviv(a,3),{'EX','IN',''});ylabel('IN C_{x} (µm)','Color','b');xlabel('EX C_{x} (µm)','Color','r');
 %% 
 
-a=[];
-a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0); 
-sector=60;
+for i=1:147
+%whole map
+tmp1=ex_map_raw(3:end,:,i);
+tmp2=in_map_raw(:,:,i);
+% tmp1=ex_map(:,:,i);
+% tmp2=in_map(:,:,i);
+tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+%tot_input(i,:)=[sum(tmp1(:))/length(tmp1);sum(tmp2(:))/length(tmp2)];
+tmp1=[];
+tmp2=[];
+%L23
+tmp1=ex_map_raw(3:5,:,i);
+tmp2=in_map_raw(3:5,:,i);
+%  tmp1=ex_map(3:5,:,i);
+%  tmp2=in_map(3:5,:,i);
+tot_inputL23(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+tmp1=[];
+tmp2=[];
+%L4
+tmp1=ex_map_raw(6:7,:,i);
+tmp2=in_map_raw(6:7,:,i);
+%  tmp1=ex_map(6:7,:,i);
+%  tmp2=in_map(6:7,:,i);
+tot_inputL4(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+end
+%% 
+
+%% Span barplot
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0); 
+sector=45;
 midpoint=130;
-
-
-
 s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
 s4a=[(midpoint)-sector/2];s4b=[(midpoint)+sector/2];
-
 g1=[];
 g2=[];
 g3=[];
 g4=[];
 s1=[];
 s2=[];
-
-
 g3=find(od_out_iviv(a,4)>s3a & od_out_iviv(a,4)<s3b);
 g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
 par=[];
 s1=[g3'];
 s2=[g4'];
-par=dis_s_ba(a);
-[statsout]=dual_barplot(par,s1,s2,0);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+par=span(a,1)*69;
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'})
+%% 
+par1=L5fr(a,2);
+par2=od_out_iviv(a,1)
+corr_plot(par1(s1),par2(s1),[],{'EX','IN',''})
