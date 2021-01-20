@@ -36,6 +36,8 @@ frac_diffh=[];
 % frac_diffh=frac_h(flip_hl,1:16)-frac_h(s1,17:end);
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 600, 700, 350]);set(gcf,'color','w');
 %EX and IN Horizontal
+
+
 subplot(1,3,1);hold on;
 % for i=1:size(frac_h(s1,:),1)
 % exp=plot(frac_h(s1(i),1:16)','-r');ylabel('Fraction of total input');box off;
@@ -70,7 +72,11 @@ hold on;mexp.CapSize=3;
 hold on;
 mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(frac_h(s2,:),1))*-1,'--k');
 hold on;mexp.CapSize=3;
-hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
+hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');
+xlim([1 16]);ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
+xticks(1:5:16);xticklabels({'-552','-138','138','552'})
+
+%text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
 %hold on;text(2.5,0.4,'L2/3','FontSize',12);
 % hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh(:,:),1)),'b');
 % mexp.CapSize=3;
@@ -111,9 +117,11 @@ hold on;
 mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(frac_h(s2,:),1))*-1,'--k');
 hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
+xlim([1 16])
 %hold on;text(2.5,0.55,'L4','FontSize',12);
-xlabel('Horizontal map position')
-
+xlabel('Horizontal position (µm)')
+xticks(1:5:16);xticklabels({'-552','-138','138','552'})
+ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
 %L5
 frac_h=[];
 frac_h=L5h(a,:);
@@ -150,6 +158,10 @@ mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(
 hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
 %hold on;text(2.5,0.55,'L5','FontSize',12);
+xlim([1 16]);
+xticks(1:5:16);xticklabels({'-552','-138','138','552'})
+ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
+
 %% 
 %% Statistics
 for i=1:16;
