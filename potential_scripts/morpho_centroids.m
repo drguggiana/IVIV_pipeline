@@ -26,8 +26,8 @@ OS_cells = vertcat(str.OSIpref)>0.25;
 % OS_cells = tw<prctile(tw,25);
 
 % define the cells groups
-aligned_cells = OS_cells & (vertcat(str.ORIpref)<(angle_span+125)...
-    & vertcat(str.ORIpref)>(125-angle_span));
+aligned_cells = OS_cells & (vertcat(str.ORIpref)<(angle_span+135)...
+    & vertcat(str.ORIpref)>(135-angle_span));
 ortho_cells = OS_cells & (vertcat(str.ORIpref)<(angle_span+45)...
     & vertcat(str.ORIpref)>(45-angle_span));
 % generate a matrix with all the vectors
@@ -160,7 +160,7 @@ for morphotype = 1:2
         end
         % calculate the centroids
         out_ang = centroid_map(current_morpho(idx_start:idx_end,:,:),...
-            soma_center(:,1),soma_center(:,2),[],row_shift);
+            soma_center(:,1),soma_center(:,2),cat(1,str.pialD),row_shift);
         % get the corrected centroids
         cx = abs(out_ang(:,3) - out_ang(:,1));
         cy = abs(out_ang(:,4) - out_ang(:,2));
@@ -219,8 +219,8 @@ for layer = 1:2
         temp_average = zeros(celltype_num,2);
         % for all the groups
         for celltype = 1:celltype_num
-            temp_average(celltype,1) = nanmean(current_data(celltype_matrix(:,celltype),3));    
-            temp_average(celltype,2) = nanstd(current_data(celltype_matrix(:,celltype),3));
+            temp_average(celltype,1) = nanmean(current_data(celltype_matrix(:,celltype),1));    
+            temp_average(celltype,2) = nanstd(current_data(celltype_matrix(:,celltype),1))./sqrt();
         end
         bar(1:celltype_num,temp_average(:,1))
         hold on

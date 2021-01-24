@@ -326,7 +326,7 @@ end
 % %                 trace_color = 'r';
 % %             else
 % %                 %otherwise make it blue
-% %                 trace_color = 'b';
+% %                 trace_color = 'b';S
 % %             end
 %             %get the x vector, correcting for the array position
 %             x_vec = (1:length(squeeze(map_traces(x,y,1:sub_rat:end)))) + sep_factor*x;

@@ -4,6 +4,11 @@ clearvars
 close all
 
 Paths
+
+% load the main structure
+main_path = structure_file_path;
+str = load(main_path);
+str = str.str;
 %% Do a Hartigan's Dip test
 close all
 

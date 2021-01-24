@@ -1,7 +1,7 @@
 %% load the paths and clean up
 clearvars
 close all
-
+matlabrc
 Paths
 %% Load the relevant files
 
@@ -13,13 +13,13 @@ str = str.str;
 close all
 
 % define whether to do orientation or direction
-response = 'ori';
+response = 'dir';
 
 % define the metric to put in the title
-metric = 'sine_fit';
+metric = 'none';
 
 % define whether to plot the histogram
-plot_histo = 0;
+plot_histo = 1;
 
 % define whether to run the shuffles
 run_shuffle = 1;
@@ -37,7 +37,7 @@ switch response
         window = 45;
     case 'dir'
         angle_vector = cat(1,str.DIRpref);
-        selection_vector = cat(1,str.DSIpref)>0.1;
+        selection_vector = cat(1,str.DSIpref)>0.25;
         plot_limit = 360;
         axis_label = 'Direction';
         window = 65;
@@ -58,11 +58,12 @@ angle_vector = angle_vector(selection_vector);
 %     'ang_exL5_Vt,ang_inL5_Vt','ang_exL5_Al,ang_inL5_Al',...
 %     'ang_exL5_Rx,ang_inL5_Rx','ang_exL5_Ry,ang_inL5_Ry'};
 % plot_list = {'span_L23_ex,span_L23_in','span_L4_ex,span_L4_in','span_L5_ex,span_L5_in'};
-plot_list = {'frac_vert_exL23,frac_vert_inL23','frac_vert_exL4,frac_vert_inL4',...
-    'frac_vert_exL5,frac_vert_inL5'};
+% plot_list = {'frac_vert_exL23,frac_vert_inL23','frac_vert_exL4,frac_vert_inL4',...
+%     'frac_vert_exL5,frac_vert_inL5'};
 % plot_list = {'max_ex_v_L23,max_in_v_L23','max_ex_x_L23,max_in_x_L23','max_ex_y_L23,max_in_y_L23',...
 %     'max_ex_v_L4,max_in_v_L4','max_ex_x_L4,max_in_x_L4','max_ex_y_L4,max_in_y_L4',...
 %     'max_ex_v_L5,max_in_v_L5','max_ex_x_L5,max_in_x_L5','max_ex_y_L5,max_in_y_L5'};
+plot_list = {'ang_exL23_Dx,ang_inL23_Dx'};
 
 % get the number of plots
 plot_number = numel(plot_list);
@@ -80,7 +81,8 @@ for plots = 1:plot_number
     % get the number of parameters
     num_parameters = size(parameter_vector,2);
     % get a colormap
-    cmap = lines(num_parameters);
+%     cmap = lines(num_parameters);
+    cmap = [1 0 0;0 0 1];
     % save the p values
     pvals = zeros(2,num_parameters);
 
@@ -146,8 +148,9 @@ for plots = 1:plot_number
 %         if run_shuffle == 1
 %             shadedErrorBar(1:plot_limit,mean_shuffle,CI_shuffle,'transparent',1,'lineprops','k')
 %         end
-        xlabel(strcat(axis_label,'(deg)'))
-        ylabel('Parameter')
+        xlabel(strcat(axis_label,' (deg)'))
+%         ylabel('Parameter')
+        ylabel('C_x L2/3 (\mum)')
         switch metric
             case 'corr'
                 % remove nans and calculate the correlation
@@ -181,18 +184,23 @@ for plots = 1:plot_number
 
     end
     
-    legend(legend_cell,strsplit(plot_list{plots},','),'Interpreter','None','Location','best')
+%     legend(legend_cell,strsplit(plot_list{plots},','),'Interpreter','None','Location','best')
+    legend(legend_cell,{'EX','IN'},'Interpreter','None','Location','best')
     axis tight
+    set(gca,'TickLength',[0 0],'FontSize',15)
+
     
-    title(strjoin(string(pvals(:)),' '),'Interpreter','None')
+%     title(strjoin(string(pvals(:)),' '),'Interpreter','None')
     
     if plot_histo == 1
         % also add a histogram
         subplot(2,1,2)
         bar(rolling_counts)
-        set(gca,'XTick',20:20:plot_limit)
-        xlabel('Orientation (deg)')
-        ylabel('Nr points')
+        set(gca,'XTick',0:50:plot_limit)
+        xlabel('Direction (deg)')
+        ylabel('# cells/window')
+        set(gca,'TickLength',[0 0],'FontSize',15)
+        box off
     end
     
     % store the main results

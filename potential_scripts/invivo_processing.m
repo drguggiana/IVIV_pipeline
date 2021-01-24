@@ -13,6 +13,10 @@ str = str.str;
 % load the invivo structure
 invivo = load(invivo_path);
 invivo = invivo.L23_PC;
+
+% load the correction factor for the pial depth
+pia_correction = load(pia_correction_path);
+pia_correction = pia_correction.scale_di;
 %% Parse the invivo structure for what I need
 
 % get the number of experiments
@@ -29,6 +33,8 @@ for experiment = 1:experiment_number
     current_str = invivo(experiment).OD;
     % get the pia
     current_pia = invivo(experiment).pial_depth;
+    % correct based on the correction factor
+    current_pia = current_pia - pia_correction(experiment);
     % get the number of cells
     cell_num = size(current_str.contra,2);
     % start a counter
@@ -92,7 +98,9 @@ ORI_pref(ORI_pref>179.999999) = ORI_pref(ORI_pref>179.999999) - 180;
 piald = vertcat(invivo_str(OSI>0.25).pialD);
 
 % separate the orientation in bins based on pia
-[N,edges,bin] = histcounts(piald,[100 200 300 500]);
+% [N,edges,bin] = histcounts(piald,[100 200 300 500]);
+[N,edges,bin] = histcounts(piald,[100 200 250 500]);
+% [N,edges,bin] = histcounts(piald,3);
 
 % define edges for the angle bins
 % angle_edges = [0 45 90 135 180 225]-22.5;
