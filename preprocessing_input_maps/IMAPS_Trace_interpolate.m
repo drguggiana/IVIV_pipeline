@@ -187,7 +187,7 @@ time_pertrace = reshape(time_pertrace,[],1);
 close all
 
 %define the responsivity threshold
-std_threshold = 3;
+std_threshold = 2;
 %define the windowing threshold
 window_threshold = 3;
 

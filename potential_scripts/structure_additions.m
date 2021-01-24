@@ -11,67 +11,67 @@ str = load(main_path);
 str = str.str;
 % get the number of cells
 cell_num = size(str,1);
-%% Get rid of the 9 cells with NaN inhibition maps
+%% OFF Get rid of the 9 cells with NaN inhibition maps
 
-% allocate a vector to store the cells to keep
-keep_cells = ones(cell_num,1);
-% for all the cells
-for cells = 1:cell_num
-    % check if either the inhibiton or the excitation maps are NaN, if so,
-    % record it
-    if isnan(sum(str(cells).excMap(:))) || isnan(sum(str(cells).inhMap(:)))
-        keep_cells(cells) = 0;
-    end
-end
-
-% exclude the cells
-str = str(keep_cells==1);
-
-% update the cell_num
- cell_num = size(str,1);
+% % allocate a vector to store the cells to keep
+% keep_cells = ones(cell_num,1);
+% % for all the cells
+% for cells = 1:cell_num
+%     % check if either the inhibiton or the excitation maps are NaN, if so,
+%     % record it
+%     if isnan(sum(str(cells).excMap(:))) || isnan(sum(str(cells).inhMap(:)))
+%         keep_cells(cells) = 0;
+%     end
+% end
+% 
+% % exclude the cells
+% str = str(keep_cells==1);
+% 
+% % update the cell_num
+%  cell_num = size(str,1);
 %% Morpho density corr
-% calculate the correlation between morpho density and maps
-
-% % allocate memory for the correlations (exc/inh,apical/basal)
-% correlation_values = zeros(cell_num,2,2);
-
-% for all the cells
-for cells = 1:cell_num
-
-    % for the 2 types of map
-    for maps = 1:2
-        % get the map
-        switch maps
-            case 1
-                map = str(cells).excMap*-1;
-                term1 = 'exc';
-            case 2
-                map = str(cells).inhMap;
-                term1 = 'inh';
-        end
-        % get rid of layer 1
-        map = map(3:end,:);
-        % for both types of morpho map
-        for morph = 1:2
-            switch morph
-                case 1
-                    morpho = str(cells).morphoMap_apical_aligned;
-                    term2 = 'apical';
-                case 2
-                    morpho = str(cells).morphoMap_basal_aligned;
-                    term2 = 'basal';
-            end
-            % if morpho is empty, skip and load a NaN
-            if isempty(morpho)
-                str(cells).(strjoin({'corr',term1,term2},'_')) = NaN;
-                continue
-            end
-            morpho = morpho(3:end,:);
-            str(cells).(strjoin({'corr',term1,term2},'_')) = corr(map(:), morpho(:));
-        end
-        
-    end
-end
+% % calculate the correlation between morpho density and maps
+% 
+% % % allocate memory for the correlations (exc/inh,apical/basal)
+% % correlation_values = zeros(cell_num,2,2);
+% 
+% % for all the cells
+% for cells = 1:cell_num
+% 
+%     % for the 2 types of map
+%     for maps = 1:2
+%         % get the map
+%         switch maps
+%             case 1
+%                 map = str(cells).excMap*-1;
+%                 term1 = 'exc';
+%             case 2
+%                 map = str(cells).inhMap;
+%                 term1 = 'inh';
+%         end
+%         % get rid of layer 1
+%         map = map(3:end,:);
+%         % for both types of morpho map
+%         for morph = 1:2
+%             switch morph
+%                 case 1
+%                     morpho = str(cells).morphoMap_apical_aligned;
+%                     term2 = 'apical';
+%                 case 2
+%                     morpho = str(cells).morphoMap_basal_aligned;
+%                     term2 = 'basal';
+%             end
+%             % if morpho is empty, skip and load a NaN
+%             if isempty(morpho)
+%                 str(cells).(strjoin({'corr',term1,term2},'_')) = NaN;
+%                 continue
+%             end
+%             morpho = morpho(3:end,:);
+%             str(cells).(strjoin({'corr',term1,term2},'_')) = corr(map(:), morpho(:));
+%         end
+%         
+%     end
+% end
 %% Add the noise correlations
 
 % get the list of folders
@@ -159,51 +159,51 @@ iviv_vector = cat(1,iviv_vector{:});
 % iviv_vector = iviv_vector(correct_cells_SFTF,:);
 %% Save the noise correlations
 
-% get the noise correlations only for the matched cells
-% noise_matched = noise_OD(correct_cells,:,:);
-% noise_matched = noise_matched(correct_cells_SFTF,:,:);
-noise_matched = noise_OD(iviv_vector(:,1)==1,:,:);
-
-% get the cell IDs
-cell_id = cat(1,str.cellID);
-% get ids from the iviv vector
-iviv_id = iviv_vector(iviv_vector(:,1)==1,2);
-
-% for all the matched cells
-for cells = 1:size(noise_matched,1)
-    % get the boolean for selection of the cell
-    id_bool = cell_id==iviv_id(cells);
-    % if the cell is not here, print the id and skip
-    if sum(id_bool)==0
-        fprintf(strjoin({'Cell absent:',num2str(iviv_id(cells)),'\r\n'},'_'))
-        continue
-    end
-%     % take the correlation for the preferred direction
-%     [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
-%     % rectify the last bin
-%     if bin == 9
-%         bin = 1;
-%     elseif bin == 0
-%         str(id_bool).noise = NaN;
+% % get the noise correlations only for the matched cells
+% % noise_matched = noise_OD(correct_cells,:,:);
+% % noise_matched = noise_matched(correct_cells_SFTF,:,:);
+% noise_matched = noise_OD(iviv_vector(:,1)==1,:,:);
+% 
+% % get the cell IDs
+% cell_id = cat(1,str.cellID);
+% % get ids from the iviv vector
+% iviv_id = iviv_vector(iviv_vector(:,1)==1,2);
+% 
+% % for all the matched cells
+% for cells = 1:size(noise_matched,1)
+%     % get the boolean for selection of the cell
+%     id_bool = cell_id==iviv_id(cells);
+%     % if the cell is not here, print the id and skip
+%     if sum(id_bool)==0
+%         fprintf(strjoin({'Cell absent:',num2str(iviv_id(cells)),'\r\n'},'_'))
 %         continue
 %     end
-    % check the preference of the cell and take the corresponding average
-    if str(id_bool).contra == 1
-%         str(id_bool).noise = squeeze(noise_matched(cells,bin,1));
-        str(id_bool).noise = squeeze(mean(noise_matched(cells,:,1),2));
-    elseif str(id_bool).ipsi == 1
-%         str(id_bool).noise = squeeze(noise_matched(cells,bin,2));
-        str(id_bool).noise = squeeze(mean(noise_matched(cells,:,2),2));
-    else
-        if str(id_bool).ODIpref > 0
-%             str(id_bool).noise = squeeze(noise_matched(cells,bin,1));
-            str(id_bool).noise = squeeze(mean(noise_matched(cells,:,1),2));
-        else
-%             str(id_bool).noise = squeeze(noise_matched(cells,bin,2));
-            str(id_bool).noise = squeeze(mean(noise_matched(cells,:,2),2));
-        end
-    end
-end
+% %     % take the correlation for the preferred direction
+% %     [~,~,bin] = histcounts(str(id_bool).DIRpref,-22.5:45:382.5);
+% %     % rectify the last bin
+% %     if bin == 9
+% %         bin = 1;
+% %     elseif bin == 0
+% %         str(id_bool).noise = NaN;
+% %         continue
+% %     end
+%     % check the preference of the cell and take the corresponding average
+%     if str(id_bool).contra == 1
+% %         str(id_bool).noise = squeeze(noise_matched(cells,bin,1));
+%         str(id_bool).noise = squeeze(mean(noise_matched(cells,:,1),2));
+%     elseif str(id_bool).ipsi == 1
+% %         str(id_bool).noise = squeeze(noise_matched(cells,bin,2));
+%         str(id_bool).noise = squeeze(mean(noise_matched(cells,:,2),2));
+%     else
+%         if str(id_bool).ODIpref > 0
+% %             str(id_bool).noise = squeeze(noise_matched(cells,bin,1));
+%             str(id_bool).noise = squeeze(mean(noise_matched(cells,:,1),2));
+%         else
+% %             str(id_bool).noise = squeeze(noise_matched(cells,bin,2));
+%             str(id_bool).noise = squeeze(mean(noise_matched(cells,:,2),2));
+%         end
+%     end
+% end
 %% Align input maps horizontally at the subpixel level
 close all
 % plot the maps
@@ -563,26 +563,26 @@ for f = 1:num_fields
     end
 end
 %% Fix the orientation fields to match the convention of the horizontal
-% bar being 0 degrees
-
-% define the target fields
-ori_fields = {'ORIpref','Ori','Ori_sftf_all'};
-% replace the orientations in each of the affected fields
-% for all the cells
-for cells = 1:cell_num
-    
-    % for all the fields
-    for ori_field = 1:length(ori_fields)
-        
-        % get the value and correct it
-        temp_val = vertcat(str(cells).(ori_fields{ori_field})) + 90;
-        temp_val(temp_val>179.9999999) = temp_val(temp_val>179.9999999) - 180;
-        % replace it in the structure
-        str(cells).(ori_fields{ori_field}) = temp_val;
-    
-    
-    end
-end
+% % bar being 0 degrees
+% 
+% % define the target fields
+% ori_fields = {'ORIpref','Ori','Ori_sftf_all'};
+% % replace the orientations in each of the affected fields
+% % for all the cells
+% for cells = 1:cell_num
+%     
+%     % for all the fields
+%     for ori_field = 1:length(ori_fields)
+%         
+%         % get the value and correct it
+%         temp_val = vertcat(str(cells).(ori_fields{ori_field})) + 90;
+%         temp_val(temp_val>179.9999999) = temp_val(temp_val>179.9999999) - 180;
+%         % replace it in the structure
+%         str(cells).(ori_fields{ori_field}) = temp_val;
+%     
+%     
+%     end
+% end
 %% Calculate the maximum per layer subpixel
 
 % saved as l23 val,x,y, l4 val,x,y, l5 val,x,y
@@ -606,7 +606,6 @@ for cells = 1:cell_num
         
     end
 end
-
 %% OFF Plotting
 % figure
 % 

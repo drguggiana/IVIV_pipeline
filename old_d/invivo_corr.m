@@ -385,5 +385,5 @@ save_path = 'R:\Share\Simon\Drago_Volker_Simon\Spont_activity_out';
 save_name = strcat(datestr(now,'yymmdd_HHMM'),'_spontAct.mat');
 
 %save the file
-save(fullfile(save_path,save_name),'popcop_cell','event_store','noise_mat',...
-    'corr_mat','prctile_levels','dRoR_cell')
+% save(fullfile(save_path,save_name),'popcop_cell','event_store','noise_mat',...
+%     'corr_mat','prctile_levels','dRoR_cell')

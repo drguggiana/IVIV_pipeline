@@ -20,9 +20,9 @@ for target = 1:number_targets
         temp_var = vertcat(str(selection_vector).(field_name));
         switch column_name
             case 'Cx'
-                target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1));
+                target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1)).*69;
             case 'Cy'
-                target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2));
+                target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2)).*69;
             case 'Vt'
                 target_data(:,target) = temp_var(:,8);
             case 'Al'
@@ -36,9 +36,9 @@ for target = 1:number_targets
             case 'Ry'
                 target_data(:,target) = temp_var(:,4);
             case 'Dx'
-                target_data(:,target) = temp_var(:,3)-temp_var(:,1);
+                target_data(:,target) = (temp_var(:,3)-temp_var(:,1)).*69;
             case 'Dy'
-                target_data(:,target) = temp_var(:,4)-temp_var(:,2);
+                target_data(:,target) = (temp_var(:,4)-temp_var(:,2)).*69;
         end
     elseif contains(targets{target},'nw_')
         % parse the argument
