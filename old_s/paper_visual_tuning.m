@@ -205,8 +205,8 @@ subplot(1,3,3);
 %L5, remove outlier
 tempL5ex=ang_exL5(iviv_cells,3)*69-ang_exL5(iviv_cells,1)*69;
 tempL5in=ang_inL5(iviv_cells,3)*69-ang_inL5(iviv_cells,1)*69;
-tempL5ex(find(tempL5ex<-400))=[];
-tempL5in(find(tempL5in<-400))=[];
+ tempL5ex(find(tempL5ex<-400))=[];
+ tempL5in(find(tempL5in<-400))=[];
 plot(tempL5ex,tempL5in,'.','MarkerFaceColor','k','MarkerEdgeColor','k','MarkerSize',10);
 set(gcf,'color','w');ref= refline(1,0);set(gca,'FontSize',10);ref.LineStyle='--'
 ref.Color='k';box off;;hold on;title('L5','FontWeight','normal');%xticks([-300:150:300]);yticks([-300:150:300]);
@@ -331,11 +331,16 @@ par=[];
 s1=[g1' g2'];
 s2=[g3' g4'];
 %par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
-par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
-%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g1)=par(g1)*-1
-[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);ylim([-70 70]);yticks(-70:35:70)
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+%ylim([-70 70]);yticks(-70:35:70)
+ylim([-150 200]);yticks(-150:50:200)
 %% Plot fraction for aligned and non aligned 
 statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 
@@ -496,13 +501,14 @@ s1_out_or=shell_scholl_analysis_horizontal_vs1(s1_coord_or,5,300)
 s2_out_or=shell_scholl_analysis_horizontal_vs1(s2_coord_or,5,300);
 close all;
 %% Plot averages with shaded errorbar
-shadedErrorBar(s1_out_or.resampleX,s1_out_or.meanScholl,s1_out_or.stdScholl,'lineProps','m');
+figure;
+shadedErrorBar(s2_out_or.resampleX,s2_out_or.meanScholl,s2_out_or.stdScholl,'lineProps','m');
 hold on;
-shadedErrorBar(s2_out_or.resampleX,s2_out_or.meanScholl,s2_out_or.stdScholl,'lineProps','g');
+shadedErrorBar(s1_out_or.resampleX,s1_out_or.meanScholl,s1_out_or.stdScholl,'lineProps','g');
 legend('AL','NAL');legend boxoff;
 set(gcf,'color','w');box off;
 title('Basal tree')
-title('Apical tree')
+%title('Apical tree')
 legend('Aligned','NonAligned');ylabel('Horizontal sholl: Branch points');
 %% Test pial depth 
 s1=[];
@@ -592,3 +598,257 @@ hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L5');set(
 xlabel('EX-IN horizontal extent (µm)');
 %stats against 0
 [p,h] = signrank(diffL5fr_span);
+%% Overview of centroid x any with respect to soma for EX and IN, 
+a=iviv_cells;
+centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[]);
+%% 
+% Creating correlation matrix OSI, DSI, ODI
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+
+% binodir=reshape([str(a).Dir],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+% a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+% binodir=reshape([str(a).Ori],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) span(a,:) tot_inputL23(a,:) tot_inputL4(a,:) tot_inputL5(a,:) od_out_iviv(a,[1 2])]; 
+[R1,P1]=corrcoef(com,'rows','pairwise');
+G=correlation_matrix(com,0);title('');xticks([1:1:30]);yticks([1:1:30]);
+
+%% Subsample sigma based on quality of the fit
+a=[];
+a=find(r_sq>0.3);
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) span(a,:) tot_inputL23(a,:) tot_inputL4(a,:) tot_inputL5(a,:) od_out_iviv(a,[7])]; 
+G2=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+[R2,P2]=corrcoef(com,'rows','pairwise');
+%% 
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+% binodir=reshape([str(a).Ori],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) span(a,:) tot_inputL23(a,:) tot_inputL4(a,:) tot_inputL5(a,:) od_out_iviv(a,[6])]; 
+[R3,P3]=corrcoef(com,'rows','pairwise');
+G2=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%% 
+
+fG=[];fG2=[];
+fG=[R1([19 20],1:18)];
+fG2=[R2(19,1:18)];
+fG3=[R3(19,1:18)];
+fGf=[fG; fG2;fG3];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 200])
+imagesc(fGf);c=colorbar;pos = get(c,'Position');
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:18]);yticks([1:1:12])
+yticklabels({'gOSI','gDSI','TW','Ca_{peak}'});set(gca,'FontSize',10);
+xticklabels({'L2/3fr','L2/3fr','L4fr','L4fr','L5fr','L5fr','HEL2/3 ','HEL2/3','HEL4 ','HEL4','HEL5 ','HEL5','TL2/3 ','TL2/3','TL4 ','TL4','TL5 ','TL5'});xtickangle(45);set(gca,'FontSize',10);
+
+%% 
+%% Circular correlation for ORI
+a=[];
+a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Ori],[2,length(a)])';
+binodir_delta=binodir(:,1)-binodir(:,2);
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+rho1=[];
+pval1=[];
+par_c=[];
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) span(a,1) span(a,2) span(a,4)  tot_inputL23(a,1) tot_inputL23(a,2) tot_inputL4(a,1)...
+     ]
+for i=1:size(par_c,2)
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(a,4)), par_c(:,i))
+end
+%% 
+
+tempy=[];
+tempy=find(~isnan(span(a,3)));
+[rhx phx] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),span(a(tempy),3))
+tempy=[];
+tempy=find(~isnan(span(a,5)));
+[rhx2 phx2] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),span(a(tempy),5))
+tempy=[];
+tempy=find(~isnan(span(a,6)));
+[rhx3 phx2] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),span(a(tempy),6))
+tempy=[];
+tempy=find(~isnan(tot_inputL4(a,2)));
+[rhx4 phx4] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),tot_inputL4(a(tempy),2))
+tempy=[];
+tempy=find(~isnan(tot_inputL5(a,1)));
+[rhx5 phx5] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),tot_inputL5(a(tempy),1))
+tempy=[];
+tempy=find(~isnan(tot_inputL5(a,2)));
+[rhx6 phx6] = circ_corrcl(deg2rad(od_out_iviv(a(tempy),4)),tot_inputL5(a(tempy),2))
+%% 
+%% 
+
+%% Absolute Cx relative to axis of displacement
+% close all;
+% %a=find(od_out_iviv(:,1)<1 & od_out_iviv(:,2)>0.25); 
+% a=[];
+% a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+% binodir=reshape([str(a).Dir],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% % 
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+% fig3= figure;set(fig3, 'Name', 'Input distribution');set(fig3, 'Position', [200, 600, 200, 200]);set(gcf,'color','w');
+% scatter(od_out_iviv(a,4),(ang_inL23(a,3)-ang_inL23(a,1))*69,12,'bo','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
+% %hold on;scatter(od_out_iviv(a,4)-45,(ang_inL23(a,3)-ang_inL23(a,1))*69,12,'ro','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
+% [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), (ang_inL23(a,3)-ang_inL23(a,1))*69);
+% text(-20,90,['cc=' num2str(round(rho1,3)) ' ' 'p<0.001'],'Color','b')
+% hold on
+% scatter(od_out_iviv(a,4)-45,(ang_exL23(a,3)-ang_exL23(a,1))*69,12,'ro','filled');xlabel('\Delta  Angle from aligned');ylabel('|C_{x} (µm)|');
+% [rho1 pval1] = circ_corrcl(deg2rad(od_out_iviv(a,4)), (ang_exL23(a,3)-ang_exL23(a,1))*69);
+% text(-20,100,['cc=' num2str(round(rho1,3)) ' ' 'p<0.001'],'Color','r')
+% set(gca,'FontSize',10);
+% ylim([-10 100])
+%% Morpholgy with relation to Orientation prference 
+%% Perform sholl anaylsis, this should be incoorporated into the structure
+%Get all morphtraces
+close all;
+for i=1:length(str)
+    if ~isempty(str(i).morph)==1 
+    zz{:,i}=str(i).morphtraces;
+    else
+        zz{:,i}=NaN;
+    end
+end
+[max_s dis_s max_s_ba dis_s_ba]=sholl_analysis(zz,1:147,1);
+
+for i=1:length(str)
+    if ~isnan(str(i).morph(1))==1 & str(i).resp==1 & ~isnan(str(i).OSIpref)==1
+        m_res(i)=1;     
+    else
+       m_res(i)=NaN;
+    end
+end
+morph_res_sub=find(m_res==1);
+%R2 criterion
+morph_res_sub2=morph_res_sub;
+morph_res_sub2(find(r_sq(morph_res_sub2)<0.3))=[];
+%% 
+
+%% Circular correlation for ORI
+a=[];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
+par_c=[];rho1=[];pval1=[];
+ par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
+    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
+for i=1:10
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),4)), par_c(:,i))
+end
+%% 
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+%%  barplot
+a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0); 
+sector=45;
+midpoint=130;
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint)-sector/2];s4b=[(midpoint)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+s1=[];
+s2=[];
+g3=find(od_out_iviv(a,4)>s3a & od_out_iviv(a,4)<s3b);
+g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
+par=[];
+s1=[g3'];
+s2=[g4'];
+par=df(a,1);
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'});ylabel('Max horizontal extent apical')
+%% 
+mcell=find([str(:).iviv]==1 & morph_cells==1)
+morph_sel=[morph_parameters(mcell,[1 2]) max_s(mcell)' dis_s(mcell)' morph_parameters(mcell,[8]) morph_parameters(mcell,[11 12]) max_s_ba(mcell)' dis_s_ba(mcell)' morph_parameters(mcell,[18])]
+%% Histogram morpholgy parameters iviv
+stri={'RDA_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch (µm)','WHA',...
+     'RDB_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch(µm)','WHA'}
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200])
+ for i=1:10
+hold on;
+subplot(2,5,i)
+h=histogram(morph_sel(:,i),8,'FaceColor',[1 1 1],'EdgeColor',[0 0 0],'LineWidth',1.5)
+h.EdgeColor = 'k';
+h.FaceColor = [0.5 0.5 0.5];
+xlabel(stri(i));
+ylim([0 20]);
+xlim([0 max(morph_sel(:,i))+max(morph_sel(:,i))*0.25]);
+hAxis = gca;
+hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
+hAxis.XAxisLocation = 'bottom'
+box off
+%ylabel('Counts');
+ end
+%% 
+%% Plot correlation matrix, PANEL F
+df=[morph_parameters(morph_res_sub,9) morph_parameters(morph_res_sub,10)];
+db=[morph_parameters(morph_res_sub,19) morph_parameters(morph_res_sub,20)];
+com=[];com=[morph_parameters(morph_res_sub,2) nanmax(df,[],2) dis_s(morph_res_sub)'  morph_parameters(morph_res_sub,4)  max_s(morph_res_sub)' ...
+    morph_parameters(morph_res_sub,12) nanmax(db,[],2) dis_s_ba(morph_res_sub)'  morph_parameters(morph_res_sub,14) max_s_ba(morph_res_sub)'  od_out_iviv(morph_res_sub,[1 2 3 6])]
+G1=correlation_matrix(com,0);
+%% subsample TW
+df=[];db=[];
+df=[morph_parameters(morph_res_sub2,9) morph_parameters(morph_res_sub2,10)];
+db=[morph_parameters(morph_res_sub2,19) morph_parameters(morph_res_sub2,20)];
+com=[];com=[morph_parameters(morph_res_sub2,2) nanmax(df,[],2) dis_s(morph_res_sub2)'  morph_parameters(morph_res_sub2,4)  max_s(morph_res_sub2)' ...
+    morph_parameters(morph_res_sub2,12) nanmax(db,[],2) dis_s_ba(morph_res_sub2)'  morph_parameters(morph_res_sub2,14) max_s_ba(morph_res_sub2)'  od_out_iviv(morph_res_sub2,[7])]
+G2=[];
+G2=correlation_matrix(com,0);
+%% Circular correlation for ORI
+a=[];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
+par_c=[];rho1=[];pval1=[];
+ par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
+    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
+for i=1:10
+    [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),4)), par_c(:,i))
+end
+%% 
+
+% Circular correlation for DRI
+a=[]
+a=find(od_out_iviv(morph_res_sub,2)>0.25 & r_sq(morph_res_sub)>0.3) ; 
+par_c=[];
+rho2=[];pval2=[];
+ par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
+    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
+for i=1:10
+    [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),5)), par_c(:,i))
+end
+%% only signifcant from circ
+c_cor=[rho1;rho2]
+c_pva=[pval1;pval2]
+c_cor_e=c_cor;
+  m=c_pva<0.05;
+c_cor_e(m==0)=m(m==0);
+%% 
+Gf=G1(11:14,1:10)
+tG=[Gf;G2(11:end,1:10);c_cor_e;G1(14,1:10)]
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 500, 325]);imagesc(tG(1:7,:));c=colorbar;
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);
+xticks([1:1:12]);yticks([1:1:7]) 
+xticklabels({'Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Length','Max extent','Dis peak branch','Nr. branch points','Peak number crossing'});xtickangle(45);set(gca,'FontSize',12)
+yticklabels({'gOSI','gDSI','ODI','Ca_{peak}','TW','ORI','DIR','Pial depth'});set(gca,'FontSize',12)
+c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10);
+
+%% 
+[max_s_sub dis_s_sub max_s_ba_sub dis_s_ba_sub]=sholl_analysis(zz,mcell,1);
+%% 
+set(gcf,'color','w');
+box off;
+legend('Apical','Basal');legend boxoff;ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);

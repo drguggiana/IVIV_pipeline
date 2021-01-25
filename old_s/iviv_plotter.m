@@ -1,4 +1,4 @@
-function iviv_plotter(str,i)
+function iviv_plotter(str,i,nr)
 oris=[0:45:315];
 %--------------MORPHOLOGY
 
@@ -28,7 +28,7 @@ axes(ha(4));
  ylim([0 500]);
  axis off;
  set(gcf,'color','w');
- hold on;text(-40,-115,['#' num2str(i)]);
+ hold on;text(-40,-115,['#' num2str(nr)]);
        
 else
     m=plot(str(i).pialD,'Marker','^','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',4);
@@ -37,7 +37,7 @@ else
  ylim([0 500]);
  axis off;
  set(gcf,'color','w');
- hold on;text(-40,-115,['#' num2str(i)]);
+ hold on;text(-40,-115,['#' num2str(nr)]);
    end
 
 
