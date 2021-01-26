@@ -27,12 +27,15 @@ num_positions = temp_xsg.header.mapper.mapper.positionNumber;
 %define the interval to grab. Each recording is a second and the desired
 %range is 150 ms after the direct window (which occurs 7 ms after the 100ms
 %post stimulus onset)
+% we take 200 ms to give the interpolation a bit more room, it is trimmed
+% to 150ms in the next script
 trace_range = 1001:3000;
 %define the time interval for the background
 trace_background = 1:1000;
 %define the time interval for the direct window
 trace_direct = 1001:1070;
 trace_pseudodirect = 1001:1036;
+
 %allocate a matrix for them
 % map_matrix = zeros(length(trace_range),length(rand_ind));
 map_matrix = zeros(length(trace_range)*num_positions,map_num);
@@ -42,6 +45,9 @@ background_std = zeros(num_positions,map_num);
 %allocate memory for the direct and pseudodirect window std
 direct_std = zeros(num_positions,map_num);
 pseudodirect_std = zeros(num_positions,map_num);
+
+fs_std = zeros(num_positions,map_num);
+nonfs_std = zeros(num_positions,map_num);
 %allocate memory for the soma centers
 soma_center = zeros(map_num,2);
 
@@ -81,6 +87,7 @@ for maps = 1:map_num
     %calculate the direct window std
     direct_std(:,maps) = std(temp_trace(trace_direct,:),0,1);
     pseudodirect_std(:,maps) = std(temp_trace(trace_pseudodirect,:),0,1);
+    
     %trim the trace
     temp_trace = temp_trace(trace_range,:);
     %subtract background activity
@@ -93,6 +100,7 @@ for maps = 1:map_num
     background_std(:,maps) = background_std(temp_map(:),maps);
     direct_std(:,maps) = direct_std(temp_map(:),maps);
     pseudodirect_std(:,maps) = pseudodirect_std(temp_map(:),maps);
+    
     %reshape again and store
     map_matrix(:,maps) = reshape(temp_trace,length(trace_range)*num_positions,[]);
     %if not empty,save the soma center(assume that at least one of the xsg
@@ -104,6 +112,7 @@ for maps = 1:map_num
     else
         soma_center(maps,:) = NaN;
     end
+        
 end
 
 close(w_bar)
@@ -114,6 +123,7 @@ map_matrix = map_matrix(:,elim_vec==1);
 background_std = background_std(:,elim_vec==1);
 direct_std = direct_std(:,elim_vec==1);
 pseudodirect_std = pseudodirect_std(:,elim_vec==1);
+
 % map_matrix2 = map_matrix;
 %and also modify the folder vector (so I can refer back to the particular
 %maps)
@@ -190,7 +200,6 @@ close all
 std_threshold = 2;
 %define the windowing threshold
 window_threshold = 3;
-
 
 %calculate the std of each trace
 std_matrix = std(map_matrix2,0,1);

@@ -77,6 +77,9 @@ for setups = 1:2
     %store the in the info cell
     path_info{setups,1} = folder_all;
     path_info{setups,2} = ori_setup;
+    
+    % for debugging, leave only the first cell on each setup
+    path_info{setups,1} = path_info{setups,1}(3:4);
 end
 %% Run the interpolation software
 %for both setups
