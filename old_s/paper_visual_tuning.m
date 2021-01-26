@@ -1,6 +1,6 @@
 %% START
 %Load structure with 147 cells used for the paper
-str      = 'D:\Postdoc_Margrie\Projects\L23\structure';
+str      = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\old ivivstr';
 folder_list = uipickfiles('FilterSpec',str);
 load(char(folder_list));
 %% %% Read out important parameters
@@ -350,9 +350,10 @@ statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Morphology horizontal sholl analysis from VS
 %align all morhologies correctly using m_flip again (morph_flip is just a
 %147 matlab table with 1, 0 and NaN)
-cd('D:\Postdoc_Margrie\Projects\L23\structure\structure_with_morphflip info');
-load('morph_flip.mat');
-%% load cyl_coord
+morph_flip     = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\old ivivstr';
+folder_list = uipickfiles('FilterSpec',morph_flip);
+load(char(folder_list));
+%% load cyl_coord from Dropbox
 cd('C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Manuscript\split_paper\short_paper\Volker_xy_coord_branchpoint');
 load('cyl_coord.mat');
 %% orient all morpholgies medial to lateral
@@ -496,20 +497,58 @@ s1_coord_or.apical=s1_te_or;
 s1_coord_or.basal=s1_te2_or;
 s2_coord_or.apical=s2_te_or;
 s2_coord_or.basal=s2_te2_or;
-%% Plot aligned and non aligned groups
-s1_out_or=shell_scholl_analysis_horizontal_vs1(s1_coord_or,5,300)
-s2_out_or=shell_scholl_analysis_horizontal_vs1(s2_coord_or,5,300);
+%% Plot aligned and non aligned groups basal
+s1_out_orb=shell_scholl_analysis_horizontal_vs1(s1_coord_or,5,300,2)
+s2_out_orb=shell_scholl_analysis_horizontal_vs1(s2_coord_or,5,300,2);
 close all;
-%% Plot averages with shaded errorbar
-figure;
-shadedErrorBar(s2_out_or.resampleX,s2_out_or.meanScholl,s2_out_or.stdScholl,'lineProps','m');
+%% Plot aligned and non aligned groups apical
+s1_out_ora=shell_scholl_analysis_horizontal_vs1(s1_coord_or,5,300,1)
+s2_out_ora=shell_scholl_analysis_horizontal_vs1(s2_coord_or,5,300,1);
+close all;
+%% Plot averages with shaded errorbar 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 250]);
+subplot(1,2,2);
+shadedErrorBar(s2_out_orb.resampleX,s2_out_orb.meanScholl,s2_out_orb.stdScholl,'lineProps','m');
 hold on;
-shadedErrorBar(s1_out_or.resampleX,s1_out_or.meanScholl,s1_out_or.stdScholl,'lineProps','g');
+shadedErrorBar(s1_out_orb.resampleX,s1_out_orb.meanScholl,s1_out_orb.stdScholl,'lineProps','g');
 legend('AL','NAL');legend boxoff;
 set(gcf,'color','w');box off;
-title('Basal tree')
-%title('Apical tree')
-legend('Aligned','NonAligned');ylabel('Horizontal sholl: Branch points');
+title('Basal tree');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+legend('Aligned (135 deg)','NonAligned (45 deg)');xlabel('Distance from Soma (µm)');
+subplot(1,2,1);
+shadedErrorBar(s2_out_ora.resampleX,s2_out_ora.meanScholl,s2_out_ora.stdScholl,'lineProps','m');
+hold on;
+shadedErrorBar(s1_out_ora.resampleX,s1_out_ora.meanScholl,s1_out_ora.stdScholl,'lineProps','g');
+%legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Apical tree');
+ylabel('Horizontal sholl: Branch points');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+
+
+%% Statistics using all complexity points from -80 to +80 basal
+sect=find(s2_out_or.resampleX>20 & s2_out_or.resampleX<80);  
+alls1b=s1_out_orb.tempScholl(:,sect);
+alls2b=s2_out_orb.tempScholl(:,sect);
+% [p r]=ranksum(alls1b(:),alls2b(:));
+%% Statistics using all complexity points from -80 to +80 apical
+sect=find(s2_out_ora.resampleX>20 & s2_out_ora.resampleX<80);  
+alls1a=s1_out_ora.tempScholl(:,sect);
+alls2a=s2_out_ora.tempScholl(:,sect);
+% [p2 r2]=ranksum(alls1a(:),alls2a(:))
+%% 
+[p r]=ranksum(max(alls2b,[],2),max(alls1b,[],2))
+%% 
+
+dg=[max(alls2a,[],2); max(alls1a,[],2)]
+gg=[ones(1,length(max(alls2b,[],2)))'; ones(1,length(max(alls1b,[],2)))'*2] 
+s1=find(gg==1) 
+s2=find(gg==2) 
+par=dg;
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL','NAL'});ylabel('Max horizontal extent apical')
+%% 
+
+hold on;plot([1,2],[nanmedian(data(:,1)),nanmedian(data(:,2))],'k','LineWidth',3);
+box off;set(gca,'FontSize',10);
 %% Test pial depth 
 s1=[];
 s2=[];
@@ -767,10 +806,11 @@ s2=[];
 g3=find(od_out_iviv(a,4)>s3a & od_out_iviv(a,4)<s3b);
 g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
 par=[];
-s1=[g3'];
-s2=[g4'];
-par=df(a,1);
-[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'NAL','AL'});ylabel('Max horizontal extent apical')
+s2=[g3'];
+s1=[g4'];
+par=db(a,1);
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL','NAL'});ylabel('Max horizontal extent apical');set(gca,'FontSize',10)
+%title('Apical tree')
 %% 
 mcell=find([str(:).iviv]==1 & morph_cells==1)
 morph_sel=[morph_parameters(mcell,[1 2]) max_s(mcell)' dis_s(mcell)' morph_parameters(mcell,[8]) morph_parameters(mcell,[11 12]) max_s_ba(mcell)' dis_s_ba(mcell)' morph_parameters(mcell,[18])]
