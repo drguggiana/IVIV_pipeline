@@ -118,6 +118,43 @@ tmp1=ex_map(8:11,:,i);
 tmp2=in_map(8:11,:,i);
 tot_inputL5(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
 end
+%% Raw input maps 
+for i=1:length(str)
+%whole map
+tmp1=[];
+tmp2=[];
+tmp1=ex_map_raw(3:end,:,i);
+tmp2=in_map_raw(:,:,i);
+% tmp1=ex_map(:,:,i);
+% tmp2=in_map(:,:,i);
+tot_input(i,:)=[sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))];
+%tot_input(i,:)=[sum(tmp1(:))/length(tmp1);sum(tmp2(:))/length(tmp2)];
+%L1
+tmp1=[];
+tmp2=[];
+tmp1=ex_map_raw(1:2,:,i);
+tmp2=in_map_raw(1:2,:,i);
+tot_inputL1raw(i,:)=abs([sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))]);
+tmp1=[];
+tmp2=[];
+%L23
+tmp1=ex_map_raw(3:5,:,i);
+tmp2=in_map_raw(3:5,:,i);
+tot_inputL23raw(i,:)=abs([sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))]);
+tmp1=[];
+tmp2=[];
+%L4
+tmp1=ex_map_raw(6:7,:,i);
+tmp2=in_map_raw(6:7,:,i);
+tot_inputL4raw(i,:)=abs([sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))]);
+tmp1=[];
+tmp2=[];
+%L5
+tmp1=ex_map_raw(8:11,:,i);
+tmp2=in_map_raw(8:11,:,i);
+tot_inputL5raw(i,:)=abs([sum(tmp1(:))/length(nonzeros(tmp1));sum(tmp2(:))/length(nonzeros(tmp2))]);
+end
+
   %% Plot data with fits and calculate R2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
 for i=1:length(resp_id)
@@ -165,14 +202,14 @@ for i=1:length(r_sq)
     str(i).r_sq=r_sq(i);
 end
 %%  Histogram of pia distribution with color coded in vivo morpho by itself
-close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 300, 300]);
-hold on;histogram(pia_input(iviv_cells),'FaceColor','k','EdgeColor','k','Orientation','horizontal');
-hold on;histogram(pia_input(find([str(:).iviv]==1 & morph_cells==1)),'FaceColor','w','EdgeColor','k','Orientation','horizontal');
-legend([' in vivo + input  (n=' num2str(length(pia_input(iviv_cells))),')'],...
-    [' Morphology (n=' num2str(length(pia_input(find([str(:).iviv]==1 & morph_cells==1)))),')']);
-ylim([100 350])
-legend boxoff ;set(gca,'Ydir','reverse');yticks([100:100:400]);set(gca,'FontSize',10);
-;ylabel('Pial depth (µm)');xlabel('Cell count');box off;
+% close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 300, 300]);
+% hold on;histogram(pia_input(iviv_cells),'FaceColor','k','EdgeColor','k','Orientation','horizontal');
+% hold on;histogram(pia_input(find([str(:).iviv]==1 & morph_cells==1)),'FaceColor','w','EdgeColor','k','Orientation','horizontal');
+% legend([' in vivo + input  (n=' num2str(length(pia_input(iviv_cells))),')'],...
+%     [' Morphology (n=' num2str(length(pia_input(find([str(:).iviv]==1 & morph_cells==1)))),')']);
+% ylim([100 350])
+% legend boxoff ;set(gca,'Ydir','reverse');yticks([100:100:400]);set(gca,'FontSize',10);
+% ;ylabel('Pial depth (µm)');xlabel('Cell count');box off;
 %% FIGURE 2
 %% Show vertical per layer for iviv cells
  [stats_g] = display_inputs_part2([frv(iviv_cells,:)],[frh(iviv_cells,:)],frv(iviv_cells,1:16)-frv(iviv_cells,17:end),frh(iviv_cells,1:16)-frh(iviv_cells,17:end),[]);
@@ -252,6 +289,30 @@ hold on;scatter(tot_inputL4(:,1),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha'
 subplot(1,3,3);
 scatter(tot_inputL5(:,2),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
 hold on;scatter(tot_inputL5(:,1),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');ylim([0 1]);
+%% Raw input and selectivity 
+close all;
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 900, 200]);
+subplot(1,4,1);
+scatter(tot_inputL1raw(:,2),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
+hold on;text(0.4,1,'L1');set(gca,'FontSize',10);xlabel('PSC amplitude (pA)');xlim([-5 round(max(max(tot_inputL1raw)),-1)]);ylabel('gOSI');
+subplot(1,4,2);
+scatter(tot_inputL23raw(:,2),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
+hold on;scatter(tot_inputL23raw(:,1),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');ylim([0 1]);
+hold on;text(0.4,1,'L2/3');set(gca,'FontSize',10);xlabel('PSC amplitude (pA)');xlim([-5 round(max(max(tot_inputL23raw)),-1)])
+subplot(1,4,3);
+scatter(tot_inputL4raw(:,2),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
+hold on;scatter(tot_inputL4raw(:,1),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');ylim([0 1]);xlabel('PSC amplitude (pA)');
+hold on;text(0.3,1,'L4');set(gca,'FontSize',10);%xlim([-0.02 0.6])
+xlim([-5 round(max(max(tot_inputL4raw)),-1)])
+subplot(1,4,4);
+scatter(tot_inputL5raw(:,2),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
+hold on;scatter(tot_inputL5raw(:,1),od_out_iviv(:,1),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');xlabel('PSC amplitude (pA)');ylim([0 1]);%xlim([-0.02 0.6])
+hold on;text(0.3,1,'L5');set(gca,'FontSize',10);legend('IN','EX');
+legend boxoff;
+xlim([-5 round(max(max(tot_inputL5raw)),-1)])
+%% 
+
+
 %% Group selective and unselective cells
 g1=[];g2=[];
 t1=find(od_out_iviv(:,1)<=0.25)
@@ -259,6 +320,10 @@ g2=find(od_out_iviv(:,1)>0.25)
 g1=[unres_id t1'];
 par=L5fr(:,2);
 [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);hold on;xticklabels({'UT' ,'TU'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+%% Plot maps from these groups
+%%  Plot average iviv cells maps
+plot_avg_maps(str,g1,ex_map_raw,in_map_raw,pia_input,10,0,[]);
+plot_avg_maps(str,g2,ex_map_raw,in_map_raw,pia_input,10,0,[]);
 %% Plot vertical profile selective vs unselective profiles
 frac_v=frv;
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [300,100, 250, 300]);set(gcf,'color','w');
@@ -330,17 +395,57 @@ g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
 par=[];
 s1=[g1' g2'];
 s2=[g3' g4'];
-%par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 %par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
 %par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
 %par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
-par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g1)=par(g1)*-1
 [statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 %ylim([-70 70]);yticks(-70:35:70)
 ylim([-150 200]);yticks(-150:50:200)
+%% Getting the cell which are orientation selective but non direction slective
+b=[];
+%OSI>0.25 and DSI<0.25
+b=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)<0.25 & abs(od_out_iviv(:,3))>0); 
+%remove binocular cells that are oppsoite
+binodir=[];binodir_delta=[];
+binodir=reshape([str(b).Ori],[2,length(b)])';
+binodir_delta=binodir(:,1)-binodir(:,2);
+idx_bi=[]; idx_ov=[];
+idx_bi=find(abs(od_out_iviv(b,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(b,3))<0.1)))>45);
+b(idx_bi(id_ov))=[];
+%chose sctors for orientation
+sector=45;
+midpoint=130;
+s3a=[];s4a=[];s3b=[];s4b=[];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint)-sector/2];s4b=[(midpoint)+sector/2];
+g5=[];
+g6=[];
+%g5 contain the desired cells 
+g5=find(od_out_iviv(b,4)>s3a & od_out_iviv(b,4)<s3b);
+g6=find(od_out_iviv(b,4)>s4a & od_out_iviv(b,4)<s4b);
+%
+%% Combine these cells eith the prvious DSI>0.25 ones
+%INDICES ARE FO THE 147 now again
+idx_dsi_align=[a(s1); b(g5)];
+
+%% Centroid EX and IN 
+ par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+ par1(g1)=par1(g1)*-1;
+ par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+ par2(g1)=par2(g1)*-1;
+% par1=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+% par1(g1)=par1(g1)*-1;
+% par2=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+% par2(g1)=par2(g1)*-1;
+data=[par2(s1) par1(s1)];
+p1=paired_plot([par2(s1) par1(s1)],0,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)
+[p1]=signrank(data(:,1) ,data(:,2),'tail','left')
 %% Plot fraction for aligned and non aligned 
 statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 
@@ -431,10 +536,34 @@ s1_coord.apical=s1_te;
 s1_coord.basal=s1_te2;
 s2_coord.apical=s2_te;
 s2_coord.basal=s2_te2;
-%% Plot aligned and non aligned groups
-s1_out=shell_scholl_analysis_horizontal_vs1(s1_coord,5,300);
-s2_out=shell_scholl_analysis_horizontal_vs1(s2_coord,5,300);
+%% Plot aligned and non aligned groups APICAL
+s1_out_dira=shell_scholl_analysis_horizontal_vs1(s1_coord,5,300,1);
+s2_out_dira=shell_scholl_analysis_horizontal_vs1(s2_coord,5,300,1);
 close all;
+%% %% Plot aligned and non aligned groups BASAL
+s1_out_dirb=shell_scholl_analysis_horizontal_vs1(s1_coord,5,300,2);
+s2_out_dirb=shell_scholl_analysis_horizontal_vs1(s2_coord,5,300,2);
+close all;
+%% %% Plot averages with shaded errorbar 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 250]);
+subplot(1,2,2);
+shadedErrorBar(s2_out_dirb.resampleX,s2_out_dirb.meanScholl,s2_out_dirb.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(s1_out_dirb.resampleX,s1_out_dirb.meanScholl,s1_out_dirb.stdScholl,'lineProps','m');
+legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Basal tree');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+legend('NonAligned','Aligned');xlabel('Distance from Soma (µm)');
+subplot(1,2,1);
+shadedErrorBar(s2_out_dira.resampleX,s2_out_dira.meanScholl,s2_out_dira.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(s1_out_dira.resampleX,s1_out_dira.meanScholl,s1_out_dira.stdScholl,'lineProps','m');
+%legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Apical tree');
+ylabel('Horizontal sholl: Branch points');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+
+
 %% Direction biases
 shadedErrorBar(s1_out.resampleX,s1_out.meanScholl,s1_out.stdScholl,'lineProps','m');
 hold on;
@@ -526,17 +655,20 @@ ylabel('Horizontal sholl: Branch points');xlabel('Distance from Soma (µm)');set(
 
 
 %% Statistics using all complexity points from -80 to +80 basal
-sect=find(s2_out_or.resampleX>20 & s2_out_or.resampleX<80);  
-alls1b=s1_out_orb.tempScholl(:,sect);
-alls2b=s2_out_orb.tempScholl(:,sect);
-% [p r]=ranksum(alls1b(:),alls2b(:));
-%% Statistics using all complexity points from -80 to +80 apical
-sect=find(s2_out_ora.resampleX>20 & s2_out_ora.resampleX<80);  
-alls1a=s1_out_ora.tempScholl(:,sect);
-alls2a=s2_out_ora.tempScholl(:,sect);
-% [p2 r2]=ranksum(alls1a(:),alls2a(:))
-%% 
-[p r]=ranksum(max(alls2b,[],2),max(alls1b,[],2))
+% sect=find(s2_out_or.resampleX>20 & s2_out_or.resampleX<80);  
+% alls1b=s1_out_orb.tempScholl(:,sect);
+% alls2b=s2_out_orb.tempScholl(:,sect);
+% % [p r]=ranksum(alls1b(:),alls2b(:));
+% %% Statistics using all complexity points from -80 to +80 apical
+% sect=find(s2_out_ora.resampleX>20 & s2_out_ora.resampleX<80);  
+% alls1a=s1_out_ora.tempScholl(:,sect);
+% alls2a=s2_out_ora.tempScholl(:,sect);
+% % [p2 r2]=ranksum(alls1a(:),alls2a(:))
+
+%% Check whether different 
+p = ranksum(s1_out_ora.tempScholl(:),s2_out_ora.tempScholl(:))
+p = ranksum(s1_out_orb.tempScholl(:),s2_out_orb.tempScholl(:))
+
 %% 
 
 dg=[max(alls2a,[],2); max(alls1a,[],2)]
@@ -778,7 +910,12 @@ morph_res_sub=find(m_res==1);
 morph_res_sub2=morph_res_sub;
 morph_res_sub2(find(r_sq(morph_res_sub2)<0.3))=[];
 %% 
-
+df=[morph_parameters(:,9) morph_parameters(:,10)];
+db=[morph_parameters(:,19) morph_parameters(:,20)];
+a=[];
+a=morph_res_sub
+ par_c=[morph_parameters(a,2) df(a,1) dis_s(a)'  morph_parameters(a,4)  max_s(a)' ...
+    morph_parameters(a,12) db(a,2) dis_s_ba(a)'  morph_parameters(a,14) max_s_ba(a)']
 %% Circular correlation for ORI
 a=[];
 a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
@@ -789,8 +926,7 @@ for i=1:10
     [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),4)), par_c(:,i))
 end
 %% 
-df=[morph_parameters(:,9) morph_parameters(:,10)];
-db=[morph_parameters(:,19) morph_parameters(:,20)];
+
 %%  barplot
 a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0); 
 sector=45;
@@ -808,7 +944,7 @@ g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
 par=[];
 s2=[g3'];
 s1=[g4'];
-par=db(a,1);
+par=df(a,1);
 [statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL','NAL'});ylabel('Max horizontal extent apical');set(gca,'FontSize',10)
 %title('Apical tree')
 %% 
@@ -892,3 +1028,26 @@ c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 set(gcf,'color','w');
 box off;
 legend('Apical','Basal');legend boxoff;ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);
+%% 
+
+%% Read out orientation for barplots
+a=[];
+a=find(od_out_iviv(:,1)>0.25 & od_out_iviv(:,2)>0); 
+sector=50;
+midpoint=135;
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint)-sector/2];s4b=[(midpoint)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+s1=[];
+s2=[];
+g3=find(od_out_iviv(a,4)>s3a & od_out_iviv(a,4)<s3b);
+g4=find(od_out_iviv(a,4)>s4a & od_out_iviv(a,4)<s4b);
+par=[];
+s2=[g3'];
+s1=[g4'];
+%par=span(a,1)*69;
+par=span(a,4)*69;
+[statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL','NAL'});ylabel('L2/3 Horizontal extent (µm)');set(gca,'FontSize',10)

@@ -24,7 +24,7 @@ hold on;
     adj_x = ((16*69/2)-p_i(1))*(x_lim(2)-x_lim(1))/(16*69);
     adj_y = ((16*69/2)-p_i(2))*(y_lim(2)-y_lim(1))/(16*69);
     %plot the center
-    %plot(adj_x,adj_y,'^k','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',3);
+    plot(adj_x,adj_y,'^k','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',3);
    
     hold on;
   end
@@ -39,7 +39,7 @@ hold on;
     adj_x = ((16*69/2)-p_i(1))*(x_lim(2)-x_lim(1))/(16*69);
     adj_y = ((16*69/2)-p_i(2))*(y_lim(2)-y_lim(1))/(16*69);
     %plot the center
-   % plot(adj_x,adj_y,'^k','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',3)
+    plot(adj_x,adj_y,'^k','MarkerFaceColor','k','MarkerEdgeColor','w','MarkerSize',3)
     hold on;
   end
   subplot(1,3,3);
