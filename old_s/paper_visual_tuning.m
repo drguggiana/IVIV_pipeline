@@ -325,37 +325,103 @@ par=L5fr(:,2);
 plot_avg_maps(str,g1,ex_map_raw,in_map_raw,pia_input,10,0,[]);
 plot_avg_maps(str,g2,ex_map_raw,in_map_raw,pia_input,10,0,[]);
 %% Plot vertical profile selective vs unselective profiles
+alpha1 = 0.3; 
+alpha2 = 1; 
 frac_v=frv;
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [300,100, 250, 300]);set(gcf,'color','w');
-mexp=errorbar(nanmean(frac_v(g1,1:16)),1:16,nanstd(frac_v(g1,1:16))/sqrt(size(frac_v(g1,1:16),1)),'horizontal','r');set(gca,'Ydir','reverse');
+mexp=errorbar(nanmean(frac_v(g1,1:16)),1:16,nanstd(frac_v(g1,1:16))/sqrt(size(frac_v(g1,1:16),1)),'horizontal','Color',[1 0.3 0],'LineWidth',1.5);set(gca,'Ydir','reverse');
 mexp.CapSize=3;
-% Set transparency level (0:1)
-alpha = 0.3;   
+
 % Set transparency (undocumented)
-set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha])
- hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
- hold on;line([-1 1], [9 9],'Color','k','LineStyle','--');
-mexp2=errorbar(nanmean(frac_v(g1,17:end))*-1,1:16,nanstd(frac_v(g1,17:end))/sqrt(size(frac_v(g1,17:end),1)),'horizontal','b');set(gca,'Ydir','reverse');
-% Set transparency level (0:1)
-alpha = 0.3;   
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+ hold on;line([-1 1], [2.5 2.5],'Color','k','LineStyle','--');hold on;line([-1 1], [5.5 5.5],'Color','k','LineStyle','--');
+ hold on;line([-1 1], [11 11],'Color','k','LineStyle','--'); hold on;line([-1 1], [7.5 7.5],'Color','k','LineStyle','--');
+mexp2=errorbar(nanmean(frac_v(g1,17:end))*-1,1:16,nanstd(frac_v(g1,17:end))/sqrt(size(frac_v(g1,17:end),1)),'horizontal','Color',[0 0.9 1],'LineWidth',1.5);set(gca,'Ydir','reverse');
+  
 % Set transparency (undocumented)
-set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha])
+set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha1])
 mexp2.CapSize=3;xlim([-0.4 0.4]);xticks([-0.4:0.2:0.4]);hold on;ylim([1 16]);yticks([1:5:16]);yticklabels({'1','6','11','16'});xlabel('Fraction of total input');set(gca,'FontSize',10);ylabel('Depth (µm)');set(gca,'FontSize',10)
 hold on;
-mexp=errorbar(nanmean(frac_v(g2,1:16)),1:16,nanstd(frac_v(g2,1:16))/sqrt(size(frac_v(g2,1:16),1)),'horizontal','r','Linestyle', '--');set(gca,'Ydir','reverse');
- hold on;line([-1 1], [3 3],'Color','k','LineStyle','--');hold on;line([-1 1], [6 6],'Color','k','LineStyle','--');
- hold on;line([-1 1], [9 9],'Color','k','LineStyle','--');
+
+mexp=errorbar(nanmean(frac_v(g2,1:16)),1:16,nanstd(frac_v(g2,1:16))/sqrt(size(frac_v(g2,1:16),1)),'horizontal','Color',[1 0 0.2],'LineStyle',':','LineWidth',1.5);set(gca,'Ydir','reverse');
  alpha = 0.8;   
 % Set transparency (undocumented)
-set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha])
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
  mexp.CapSize=3;
-mexp2=errorbar(nanmean(frac_v(g2,17:end))*-1,1:16,nanstd(frac_v(g2,17:end))/sqrt(size(frac_v(g2,17:end),1)),'horizontal','b','Linestyle', '--');set(gca,'Ydir','reverse');
+mexp2=errorbar(nanmean(frac_v(g2,17:end))*-1,1:16,nanstd(frac_v(g2,17:end))/sqrt(size(frac_v(g2,17:end),1)),'horizontal','Color',[0.3 0 1],'LineStyle',':','LineWidth',1.5);set(gca,'Ydir','reverse');
 mexp2.CapSize=3;
 alpha = 0.8;   
 % Set transparency (undocumented)
-set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha]);
+set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha2]);
 box off;
+yticklabels({'69','414','759','1104'});
+%% Plot horizontal profile selective vs unselective profiles
+alpha1 = 0.3; 
+alpha2 = 1; 
+frac_h=L23h;
+frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
+fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 0, 700, 350]);set(gcf,'color','w');
+%EX and IN Horizontal
+subplot(1,3,1);hold on;
+mexp=errorbar(nanmean(frac_h(g1,1:16)),nanstd(frac_h(g1,1:16))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_h(g1,17:end))*-1,nanstd(frac_h(g1,17:end))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
 
+hold on;mexp=errorbar(nanmean(frac_h(g2,1:16)),nanstd(frac_h(g2,1:16))/sqrt(size(g2,1)),'Color',[1 0 0.2],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+hold on;mexp.CapSize=3;
+mexp=errorbar(nanmean(frac_h(g2,17:end))*-1,nanstd(frac_h(g2,17:end))/sqrt(size(g2,1)),'Color',[0.3 0 1],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
+xticklabels({'-552','-138','138','552'});
+ylabel('Fraction of total input');set(gca,'FontSize',10);
+
+frac_h=[];frac_h=L4h;
+subplot(1,3,2);hold on;
+mexp=errorbar(nanmean(frac_h(g1,1:16)),nanstd(frac_h(g1,1:16))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_h(g1,17:end))*-1,nanstd(frac_h(g1,17:end))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+
+hold on;mexp=errorbar(nanmean(frac_h(g2,1:16)),nanstd(frac_h(g2,1:16))/sqrt(size(g2,1)),'Color',[1 0 0.2],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+hold on;mexp.CapSize=3;
+mexp=errorbar(nanmean(frac_h(g2,17:end))*-1,nanstd(frac_h(g2,17:end))/sqrt(size(g2,1)),'Color',[0.3 0 1],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
+xticklabels({'-552','-138','138','552'});
+text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
+
+frac_h=[];frac_h=L5h;
+subplot(1,3,3);hold on;
+mexp=errorbar(nanmean(frac_h(g1,1:16)),nanstd(frac_h(g1,1:16))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_h(g1,17:end))*-1,nanstd(frac_h(g1,17:end))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+
+hold on;mexp=errorbar(nanmean(frac_h(g2,1:16)),nanstd(frac_h(g2,1:16))/sqrt(size(g2,1)),'Color',[1 0 0.2],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+hold on;mexp.CapSize=3;
+mexp=errorbar(nanmean(frac_h(g2,17:end))*-1,nanstd(frac_h(g2,17:end))/sqrt(size(g2,1)),'Color',[0.3 0 1],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
+xticklabels({'-552','-138','138','552'});
+
+%% 
+
+
+hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'m');
+mexp.CapSize=3;
+xlabel('Horizontal map position')
+hold on;text(2.5,0.6,'L2/3','FontSize',12);
+frac_h=L4h(iviv_cells,:);hold on;
 %% 
 
 
@@ -459,7 +525,7 @@ morph_flip     = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_st
 folder_list = uipickfiles('FilterSpec',morph_flip);
 load(char(folder_list));
 %% load cyl_coord from Dropbox
-cd('C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Manuscript\split_paper\short_paper\Volker_xy_coord_branchpoint');
+cd('C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Manuscript\split_paper\Paper 1\Volker_xy_coord_branchpoint');
 load('cyl_coord.mat');
 %% orient all morpholgies medial to lateral
 for i=1:length(str)
@@ -475,7 +541,7 @@ end
 figure;
 cr=1;scatter(cyl_coord.basal{1, cr}(:,1),cyl_coord.basal{1, cr}(:,3));
 hold on;scatter(cyl_coord.apical{1, cr}(:,1),cyl_coord.apical{1, cr}(:,3));
-%% 
+%% Plot exmaple cell for horizontal sholl analysis
 cr=3;
 figure;scatter(mx_basal{1, cr}(:,1),mx_basal{1, cr}(:,3));
 hold on;scatter(mx_apical{1, cr}(:,1),mx_apical{1, cr}(:,3));
@@ -488,7 +554,65 @@ data=mx_basal{1, cr}(:,1:2);
   data=mx_apical{1, cr}(:,1:2);
   output=scholl_analysis_horizontal_vs1(data,5,300);
  hold on; plot(output.resampleX,output.resampleScholl);
-%% 
+%% Read out iviv cells with morph
+for i=1:length(str)
+    if ~isnan(str(i).morph(1))==1  & str(i).iviv==1
+        m_iviv(i)=1;     
+    else
+       m_iviv(i)=NaN;
+    end
+end
+m_iviv_idx=find(m_iviv==1);
+%% Plot all cells with horizontal sholl analysis
+
+figure;hold on;
+for cr=1:length(m_iviv_idx)
+%     scatter(mx_basal{1, m_iviv_idx(cr)}(:,1),mx_basal{1, m_iviv_idx(cr)}(:,3));
+% hold on;scatter(mx_apical{1, m_iviv_idx(cr)}(:,1),mx_apical{1, m_iviv_idx(cr)}(:,3));
+% set(gcf,'color','w');box off;
+% axis off;set(gca, 'YDir','reverse');
+  data=mx_apical{1, m_iviv_idx(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color',[0.5 0.5 0.5]);
+data=mx_basal{1, m_iviv_idx(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+plot(output.resampleX,output.resampleScholl,'m');
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+
+end
+legend({'Apical','Basal'});legend boxoff
+%% Same for tuned and untuned
+
+g1=[];g2=[];
+t1=find(od_out_iviv(:,1)<=0.25) 
+g2=find(od_out_iviv(:,1)>0.25)
+g1=[unres_id t1'];
+mi_ut=intersect(g1,m_iviv_idx);
+mi_t=intersect(g2,m_iviv_idx);
+
+figure;hold on;
+hold on;
+for cr=1:length(mi_t)
+   data=mx_apical{1, mi_t(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color','m');
+data=mx_basal{1, mi_t(cr)}(:,1:2);
+
+end
+hold on;
+for cr=1:length(mi_ut)
+%     scatter(mx_basal{1, m_iviv_idx(cr)}(:,1),mx_basal{1, m_iviv_idx(cr)}(:,3));
+% hold on;scatter(mx_apical{1, m_iviv_idx(cr)}(:,1),mx_apical{1, m_iviv_idx(cr)}(:,3));
+% set(gcf,'color','w');box off;
+% axis off;set(gca, 'YDir','reverse');
+  data=mx_apical{1, mi_ut(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color','g');
+data=mx_basal{1, mi_ut(cr)}(:,1:2);
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+end
+
+legend({'Tuned','Untuned'});legend boxoff
 %% Read out desired cells for direction part
 a=[];
 a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
@@ -948,11 +1072,13 @@ par=df(a,1);
 [statsout]=dual_barplot(par,s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL','NAL'});ylabel('Max horizontal extent apical');set(gca,'FontSize',10)
 %title('Apical tree')
 %% 
-mcell=find([str(:).iviv]==1 & morph_cells==1)
-morph_sel=[morph_parameters(mcell,[1 2]) max_s(mcell)' dis_s(mcell)' morph_parameters(mcell,[8]) morph_parameters(mcell,[11 12]) max_s_ba(mcell)' dis_s_ba(mcell)' morph_parameters(mcell,[18])]
+mcell=find([str(:).iviv]==1 & morph_cells==1);
+morph_sel=[];
+morph_sel=[morph_parameters(mcell,[2]) morph_parameters(mcell,[9]) dis_s(mcell)' morph_parameters(mcell,[4]) max_s(mcell)' ...
+    morph_parameters(mcell,[12]) morph_parameters(mcell,[19]) dis_s_ba(mcell)' morph_parameters(mcell,[14]) max_s_ba(mcell)'];
 %% Histogram morpholgy parameters iviv
-stri={'RDA_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch (µm)','WHA',...
-     'RDB_{max}(µm)','Total Length (µm)','Peak Nr. crossing','Dis. peak branch(µm)','WHA'}
+stri={'Total Length (µm)','Horizontal extent', 'Dis. peak branch (µm)','Nr. branch points','Peak Nr. crossing',...
+     'Total Length (µm)','Horizontal extent', 'Dis. peak branch (µm)','Nr. branch points','Peak Nr. crossing'}
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200])
  for i=1:10
 hold on;

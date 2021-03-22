@@ -368,7 +368,7 @@ end
 %% Calculate the maximum horizontal span overall per layer
 [ex_spanhL23 ex_spanhL4 ex_spanhL5 in_spanhL23 in_spanhL4 in_spanhL5] = span_perLayer(ex_map,in_map,nan_vector);
 %% total sum absolute for ex and inh in pA
-for i=1:length(nan_vector(incl_idx:end))
+for i=1:147
 %whole map
 tmp1=ex_map(3:end,:,i);
 tmp2=in_map(:,:,i);

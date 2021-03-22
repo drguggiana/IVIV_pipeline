@@ -27,9 +27,11 @@ p1(i) = ranksum(y2(usec),valu(:,i))
 p2(i) = ranksum(y2(lsec),valu(:,i))
 end
 figure;set(gcf,'color','w');plot(1:size(valu,2),p1,'r--*');
-hold on;
-plot(1:size(valu,2),p2,'b--*');
+hold on;box off;
+plot(1:size(valu,2),p2,'b--*');xticklabels({'0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1' })
 hold on;line([1 size(valu,2)], [0.05 0.05],'Color','k','LineStyle','--');
 ylabel('p values');
 xlabel('relative pial depth');
+legend('upper comp','lower comp');
+legend boxoff
 end

@@ -49,11 +49,14 @@ sorted_correlation([data_morpho(:,10:19) max_b' dis_peakb'],pia_morpho',stri,'k'
 hold on;xlabel('Correlation with pial depth')
 hold on;set(gca,'FontSize',10);hold on;title('Basal')
 %% Sliding winddow analysis APICAL
-[p_wha1 p_wha2] = sliding_window_comp(pia_morpho,data_morpho(:,8));
+[p_wha1 p_wha2] = sliding_window_comp(pia_morpho,data_morpho(:,3));
 %[p_max_a1 p_max_a2] = sliding_window_comp(pia_morpho,max_a);
 %% Sliding winddow analysis BASAL
 [p_blb1 p_blb2] = sliding_window_comp(pia_morpho,data_morpho(:,15));
 [p_max_a1 p_max_a2] = sliding_window_comp(pia_morpho,data_morpho(:,13));
+%% 
+
+[cda] = RAFisher2cda(data_morpho(:,2)',1,1,0.05)
 %% Plot the 1 corrleation each for Apical and BAsal
 tr = rescale(pia_morpho);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 200]);

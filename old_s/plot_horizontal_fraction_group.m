@@ -30,8 +30,8 @@ s2=[g3' g4'];
 %START
 frac_h=[];
 frac_h=L23h(a,:);
-flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
-flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
+flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)]
 frac_diffh=[];
 % frac_diffh=frac_h(flip_hl,1:16)-frac_h(s1,17:end);
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 600, 700, 350]);set(gcf,'color','w');
@@ -85,8 +85,8 @@ xticks(1:5:16);xticklabels({'-552','-138','138','552'})
 %L4
 frac_h=[];
 frac_h=L4h(a,:);
-flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
-flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
+flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)]
 %frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
 %EX and IN Horizontal
 subplot(1,3,2);hold on;
@@ -122,11 +122,12 @@ xlim([1 16])
 xlabel('Horizontal position (µm)')
 xticks(1:5:16);xticklabels({'-552','-138','138','552'})
 ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
+
 %L5
 frac_h=[];
 frac_h=L5h(a,:);
-flip_hl=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
-flip_hl_in=[flip(frac_h(g1,17:end),2); frac_h(g2,17:end)]
+flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)];
 %frac_diffh=frac_h(s1,1:16)-frac_h(s1,17:end);
 %EX and IN Horizontal
 subplot(1,3,3);hold on;
@@ -164,7 +165,7 @@ ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
 
 %% 
 %% Statistics
-for i=1:16;
+for i=17:32;
 par=[];
 par=L23h(a,i);
 t=0;
@@ -182,7 +183,7 @@ else t==2
 end
 end
 
-for i=1:16;
+for i=17:32;;
 par=[];
 par=L4h(a,i);
 t=0;
@@ -200,7 +201,7 @@ else t==2
 end
 end
 
-for i=1:16;
+for i=17:32;
 par=[];
 par=L5h(a,i);
 t=0;

@@ -330,35 +330,42 @@ figure(17);c=colorbar;caxis([0 1]);c.Ticks=[0:0.5:1];h = gca; h.XAxis.Visible = 
 %% Save umap figures
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\200523_embedding\'
 savepdf_SW(fn,1);
-%% Creating correlation matrix
-com=[];com=[L23fr(:,1)  L23fr(:,2) L4fr(:,1)  L4fr(:,2) L5fr(:,1) L5fr(:,2) abs(ang_exL23(:,3)-ang_exL23(:,1))...
-    abs(ang_inL23(:,3)-ang_inL23(:,1)) abs(ang_exL23(:,4)-ang_exL23(:,2))...
-   abs(ang_inL23(:,4)-ang_inL23(:,2))  pia_input od_out_iviv(:,[1 2 3 6])]; 
+%% Creating correlation matrix OSI, DSI, ODI
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+% binodir=reshape([str(a).Ori],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) od_out_iviv(a,[1 2 3])]; 
 G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+
 %% Subsample sigma based on quality of the fit
 a=find(od_out_iviv(:,7)>0.3);
 com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
-    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
-   abs(ang_inL23(a,4)-ang_inL23(a,2))  pia_input(a) od_out_iviv(a,[7])]; 
+    abs(ang_inL23(a,3)-ang_inL23(a,1)) od_out_iviv(a,[7])]; 
 G2=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
 %% Circular correlation for ORI
-a=find(od_out_iviv(:,1)>0.25); 
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Ori],[2,length(a)])';
+binodir_delta=binodir(:,1)-binodir(:,2);
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+
 par_c=[];
- par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1)  L5fr(a,2) abs(ang_exL23(a,3)-ang_exL23(a,1))...
-    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
-   abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a)]
-for i=1:11
+ par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1)  L5fr(a,2) ang_exL23(a,3)-ang_exL23(a,1)...
+    ang_inL23(a,3)-ang_inL23(a,1)]
+for i=1:size(par_c,2)
     [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(a,4)), par_c(:,i))
 end
-% Circular correlation for DRI
-a=find(od_out_iviv(:,2)>0.25); 
-par_c=[];
- par_c=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1)  L5fr(a,2)  abs(ang_exL23(a,3)-ang_exL23(a,1))...
-    abs(ang_inL23(a,3)-ang_inL23(a,1)) abs(ang_exL23(a,4)-ang_exL23(a,2))...
-   abs(ang_inL23(a,4)-ang_inL23(a,2)) pia_input(a)]
-for i=1:11
-    [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(a,5)), par_c(:,i))
-end
+%% 
+
+
 %% only signifcant from circ
 c_cor=[rho1;rho2]
 c_pva=[pval1;pval2]
@@ -585,16 +592,18 @@ G2=[];
 G2=correlation_matrix(com,0);
 %% Circular correlation for ORI
 a=[];
-a=find(od_out_iviv(morph_res_sub,1)>0.25); 
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
 par_c=[];rho1=[];pval1=[];
  par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
     morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
 for i=1:10
     [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),4)), par_c(:,i))
 end
+%% 
+
 % Circular correlation for DRI
 a=[]
-a=find(od_out_iviv(morph_res_sub,2)>0.25); 
+a=find(od_out_iviv(morph_res_sub,2)>0.25 & r_sq(morph_res_sub)>0.3) ; 
 par_c=[];
 rho2=[];pval2=[];
  par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
@@ -661,10 +670,10 @@ c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSi
 %% Supplementary Figures
 %% Cell plotter, morphology, in vivo, maps , SUPPLEMENTRAY 1
 close all;
-for i=1:147;
+
 figure;
-iviv_plotter(str,i)
-end
+iviv_plotter(str,1)
+
 %% Save individual morpho, in vivo, maps panels
 fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Supp1\Block3\'
 savepdf_SW(fn,0);
