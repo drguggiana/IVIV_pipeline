@@ -344,9 +344,9 @@ a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ;
 corr_plot(df(a),od_out_iviv(morph_res_sub(a),4),[],{'','',''});
 %% extent vs ORI
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
-scatter(df(a),od_out_iviv(morph_res_sub(a),4));ylabel('ORI (deg)');xlabel('Horizontal Extent (microm)');box off
-ylim([0 180]);yticks(0:45:180)
-
+scatter(df(a),od_out_iviv(morph_res_sub(a),4),4,'o','MarkerEdgeColor','k','MarkerFaceColor','k');ylabel('ORI (deg)');xlabel('Horizontal Extent (µm)');box off
+ylim([0 180]);yticks(0:45:180);set(gca,'FontSize',10);text(360,180,'cc=0.5');
+text(360,160,'p<0.05');set(gca,'FontSize',10);
 %% Rolling average
 m_res=[];
 for i=1:length(str)
@@ -412,6 +412,7 @@ g1=[];g2=[];
 t1=find(od_out_iviv(:,1)<=0.25)
 g2=find(od_out_iviv(:,1)>0.25)
 g1=[unres_id t1'];
+g1=g1';
 % par=L5fr(:,2);
 % [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);hold on;xticklabels({'UT' ,'TU'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 %% Plot maps from these groups
@@ -449,9 +450,31 @@ alpha = 0.8;
 set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha2]);
 box off;
 yticklabels({'69','414','759','1104'});
+%% Plot vertical profile selective vs unselective profiles
+alpha1 = 0.3; 
+alpha2 = 1; 
+frac_vd=frv(:,1:16)-frv(:,17:end);
+fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [300,100, 250, 300]);set(gcf,'color','w');
+mexp=errorbar(nanmean(frac_vd(g1,:)),1:16,nanstd(frac_vd(g1,:))/sqrt(size(frac_vd(g1,:),1)),'horizontal','Color',[1 0.3 0],'LineWidth',1.5);set(gca,'Ydir','reverse');
+mexp.CapSize=3;
+% Set transparency (undocumented)
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+ hold on;line([-1 1], [2.5 2.5],'Color','k','LineStyle','--');hold on;line([-1 1], [5.5 5.5],'Color','k','LineStyle','--');
+ hold on;line([-1 1], [11 11],'Color','k','LineStyle','--'); hold on;line([-1 1], [7.5 7.5],'Color','k','LineStyle','--');
+
+mexp2=errorbar(nanmean(frac_vd(g2,:)),1:16,nanstd(frac_vd(g2,:))/sqrt(size(frac_vd(g1,:),1)),'horizontal','Color',[0 0.9 1],'LineWidth',1.5);set(gca,'Ydir','reverse');
+% Set transparency (undocumented)
+set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha1])
+mexp2.CapSize=3;xlim([-0.4 0.4]);xticks([-0.4:0.2:0.4]);hold on;ylim([1 16]);yticks([1:5:16]);yticklabels({'1','6','11','16'});xlabel('Fraction of total input');set(gca,'FontSize',10);ylabel('Depth (µm)');set(gca,'FontSize',10)
+hold on;
+box off;
+yticklabels({'69','414','759','1104'});xlabel('EX-IN Fraction of total input');set(gca,'FontSize',10);
+%legend('Untunded','Tuned')
+
 %% Plot horizontal profile selective vs unselective profiles
 alpha1 = 0.3; 
 alpha2 = 1; 
+frac_h=[];
 frac_h=L23h;
 frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 0, 700, 350]);set(gcf,'color','w');
@@ -507,6 +530,53 @@ set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Lin
 mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
 xticklabels({'-552','-138','138','552'});
+%% Plot horizontal profile selective vs unselective profiles
+alpha1 = 0.3; 
+alpha2 = 1; 
+frac_h=L23h;
+frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
+fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 0, 700, 350]);set(gcf,'color','w');
+%EX and IN Horizontal
+subplot(1,3,1);hold on;
+mexp=errorbar(nanmean(frac_diffh(g1,:)),nanstd(frac_diffh(g1,:))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_diffh(g2,:)),nanstd(frac_diffh(g2,:))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+xticklabels({'-552','-138','138','552'});
+ylabel('EX-IN Fraction of total input');set(gca,'FontSize',10);
+
+
+frac_h=[];frac_h=L4h;
+frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
+subplot(1,3,2);hold on;
+mexp=errorbar(nanmean(frac_diffh(g1,:)),nanstd(frac_diffh(g1,:))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_diffh(g2,:)),nanstd(frac_diffh(g2,:))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+xticklabels({'-552','-138','138','552'});
+text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
+
+frac_h=[];frac_h=L5h;
+frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
+subplot(1,3,3);hold on;
+mexp=errorbar(nanmean(frac_diffh(g1,:)),nanstd(frac_diffh(g1,:))/sqrt(size(g1,1)),'Color',[1 0.3 0],'LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+hold on;mexp.CapSize=3;
+hold on;mexp=errorbar(nanmean(frac_diffh(g2,:)),nanstd(frac_diffh(g2,:))/sqrt(size(g1,1)),'Color',[0 0.9 1],'LineWidth',1.5); 
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha1])
+xticklabels({'-552','-138','138','552'});set(gca,'FontSize',10);
+%% 
+
+hold on;mexp=errorbar(nanmean(frac_h(g2,1:16)),nanstd(frac_h(g2,1:16))/sqrt(size(g2,1)),'Color',[1 0 0.2],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+hold on;mexp.CapSize=3;
+mexp=errorbar(nanmean(frac_h(g2,17:end))*-1,nanstd(frac_h(g2,17:end))/sqrt(size(g2,1)),'Color',[0.3 0 1],'LineStyle',':','LineWidth',1.5);
+set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
+mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
+hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
+xticklabels({'-552','-138','138','552'});
 %% Difference horizontal ex and inh vs gOSI gDSI MEXICAN HAT THEORY
 a=[];a=find(~isnan(od_out_iviv(:,1)));
 corr_plot(span(a,1)-span(a,2),od_out_iviv(a,2),[],{'','',''});
@@ -532,7 +602,7 @@ id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
 a(idx_bi(id_ov))=[];
 % sector=60;
 % midpoint=130;
- sector=60;
+ sector=80;
  midpoint=130;
 s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
 s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
@@ -549,12 +619,12 @@ g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
 par=[];
 s1=[g1' g2'];
 s2=[g3' g4'];
-%par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 %par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
 %par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
 %par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
-par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
 par(s2)=par(s2)*-1
@@ -562,6 +632,62 @@ par(s2)=par(s2)*-1
 ylim([-70 70]);yticks(-70:35:70)
 ylim([-150 200]);yticks(-150:50:200)
 % ylim([-150 100]);yticks(-150:50:100)
+
+%% VOLKERS READOUT
+a=[];
+s1=[]; 
+s2=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1) %Simon <0.1
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90) %Simon <0.1 / 90
+% a(idx_bi(id_ov))=[]; %removed VS
+binoDirA=binodir;
+%define sectors width
+sector=60; %Simon 60
+%define midpoint of widows
+midpoint=130; %Simon 130
+%define range
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];g2=[];g3=[];g4=[];
+%VS - find mono cells belonging to sectors 
+bi_limit=0.1;
+idx_mono=find(abs(od_out_iviv(a,3))>bi_limit)
+g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
+g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
+g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
+%VS - find bi cells belonging to sectors 
+idx_bi=find(abs(od_out_iviv(a,3))<bi_limit)
+tempIdx=find(binodir(idx_bi,1)>s1a & binodir(idx_bi,1)<s1b & binodir(idx_bi,2)>s1a & binodir(idx_bi,2)<s1b);
+g1=[idx_mono(g1); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s2a & binodir(idx_bi,1)<s2b & binodir(idx_bi,2)>s2a & binodir(idx_bi,2)<s2b);
+g2=[idx_mono(g2); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s3a & binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a & binodir(idx_bi,2)<s3b);
+g3=[idx_mono(g3); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s4a & binodir(idx_bi,1)<s4b & binodir(idx_bi,2)>s4a & binodir(idx_bi,2)<s4b);
+g4=[idx_mono(g4); idx_bi(tempIdx)]
+par=[];
+%combine 315 and 135
+s1=[g1' g2'];
+%combine 45 and 225
+s2=[g3' g4'];
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+%par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=od_out_iviv(a,3)
+par(g2)=par(g2)*-1
+par(s2)=par(s2)*-1
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+ylim([-70 70]);yticks(-70:35:70)
+ylim([-150 200]);yticks(-150:50:200)
 %% Plot fraction for aligned and non aligned 
 statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Test ex and in differences
@@ -622,9 +748,9 @@ s1=[g1' g2'];
 s2=[g3' g4'];
 %% 
 par1=[];par2=[];
- par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+ par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
  par1(g2)=par1(g2)*-1;
- par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+ par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
  par2(g2)=par2(g2)*-1;
  %% 
  
@@ -632,3 +758,240 @@ par3=od_out_iviv(a,2);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
 scatter(par1(s1),par3(s1));ylabel('DSI');xlabel('Cx');box off
 ylim([0 1]);yticks(0:0.25:1);set(gca,'FontSize',10);
+
+
+
+%% OPTIONAL
+%horizontal sholl
+%% Morphology horizontal sholl analysis from VS
+%align all morhologies correctly using m_flip again (morph_flip is just a
+%147 matlab table with 1, 0 and NaN)
+morph_flip     = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\old ivivstr';
+folder_list = uipickfiles('FilterSpec',morph_flip);
+load(char(folder_list));
+%% load cyl_coord from Dropbox
+cd('C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Manuscript\split_paper\Paper 1\Volker_xy_coord_branchpoint');
+load('cyl_coord.mat');
+%% orient all morpholgies medial to lateral
+for i=1:length(str)
+    if morph_flip(i)==1
+mx_basal{:,i}= [cyl_coord.basal{1, i}(:,1:2)*-1 cyl_coord.basal{1, i}(:,3:end)];
+mx_apical{:,i}= [cyl_coord.apical{1, i}(:,1:2)*-1 cyl_coord.apical{1, i}(:,3:end)];
+    else
+        mx_basal{:,i}= cyl_coord.basal{1, i};
+        mx_apical{:,i}= cyl_coord.apical{1, i};
+    end
+end
+%% Plot examples with to check flip of morphology
+figure;
+cr=1;scatter(cyl_coord.basal{1, cr}(:,1),cyl_coord.basal{1, cr}(:,3));
+hold on;scatter(cyl_coord.apical{1, cr}(:,1),cyl_coord.apical{1, cr}(:,3));
+%% Plot exmaple cell for horizontal sholl analysis
+cr=3;
+figure;scatter(mx_basal{1, cr}(:,1),mx_basal{1, cr}(:,3));
+hold on;scatter(mx_apical{1, cr}(:,1),mx_apical{1, cr}(:,3));
+set(gcf,'color','w');box off;
+axis off;set(gca, 'YDir','reverse');
+data=mx_basal{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+  figure;plot(output.resampleX,output.resampleScholl);
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+  data=mx_apical{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl);
+ %% Plot two examples 143 and 122
+ cr=143;
+data=mx_basal{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+  figure;plot(output.resampleX,output.resampleScholl,'k--');
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+  data=mx_apical{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'k');
+ 
+  cr=122;
+data=mx_basal{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+  hold on;plot(output.resampleX,output.resampleScholl,'b--');
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+  data=mx_apical{1, cr}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'b');
+ xlabel('Distance from Soma (µm)')
+%% Read out iviv cells with morph
+for i=1:length(str)
+    if ~isnan(str(i).morph(1))==1  & str(i).iviv==1
+        m_iviv(i)=1;     
+    else
+       m_iviv(i)=NaN;
+    end
+end
+m_iviv_idx=find(m_iviv==1);
+%% Plot all cells with horizontal sholl analysis
+
+figure;hold on;
+for cr=1:length(m_iviv_idx)
+%     scatter(mx_basal{1, m_iviv_idx(cr)}(:,1),mx_basal{1, m_iviv_idx(cr)}(:,3));
+% hold on;scatter(mx_apical{1, m_iviv_idx(cr)}(:,1),mx_apical{1, m_iviv_idx(cr)}(:,3));
+% set(gcf,'color','w');box off;
+% axis off;set(gca, 'YDir','reverse');
+  data=mx_apical{1, m_iviv_idx(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color',[0.5 0.5 0.5]);
+data=mx_basal{1, m_iviv_idx(cr)}(:,1:2);
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+plot(output.resampleX,output.resampleScholl,'m');
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+
+end
+legend({'Apical','Basal'});legend boxoff
+%% Same for tuned and untuned
+
+g1=[];g2=[];
+t1=find(od_out_iviv(:,1)<=0.25);
+g2=find(od_out_iviv(:,1)>0.25);
+g1=[unres_id t1'];
+mi_ut=intersect(g1,m_iviv_idx);
+mi_t=intersect(g2,m_iviv_idx);
+
+figure;hold on;
+hold on;
+for cr=1:length(mi_t)
+   data=mx_apical{1, mi_t(cr)}(:,1:2);
+   tu_hor_ap{:,cr}=mx_apical{1, mi_t(cr)};
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color','m');
+data=mx_basal{1, mi_t(cr)}(:,1:2);
+tu_hor_ba{:,cr}=mx_basal{1, mi_t(cr)};
+end
+hold on;
+for cr=1:length(mi_ut)
+%     scatter(mx_basal{1, m_iviv_idx(cr)}(:,1),mx_basal{1, m_iviv_idx(cr)}(:,3));
+% hold on;scatter(mx_apical{1, m_iviv_idx(cr)}(:,1),mx_apical{1, m_iviv_idx(cr)}(:,3));
+% set(gcf,'color','w');box off;
+% axis off;set(gca, 'YDir','reverse');
+  data=mx_apical{1, mi_ut(cr)}(:,1:2);
+  utu_hor_ap{:,cr}=mx_apical{1, mi_ut(cr)};
+  output=scholl_analysis_horizontal_vs1(data,5,300);
+ hold on; plot(output.resampleX,output.resampleScholl,'Color','g');
+data=mx_basal{1, mi_ut(cr)}(:,1:2);
+  set(gcf,'color','w');box off;ylabel('Horizontal sholl: Branch points');
+  utu_hor_ba{:,cr}=mx_basal{1, mi_ut(cr)};
+end
+legend({'Tuned','Untuned'});legend boxoff
+%% Read out desired cells
+tu_coord.apical=tu_hor_ap;
+tu_coord.basal=tu_hor_ba;
+utu_coord.apical=utu_hor_ap;
+utu_coord.basal=utu_hor_ba;
+
+tu_out_ap=shell_scholl_analysis_horizontal_vs1(tu_coord,5,300,1);
+utu_out_ap=shell_scholl_analysis_horizontal_vs1(utu_coord,5,300,1);
+
+tu_out_ba=shell_scholl_analysis_horizontal_vs1(tu_coord,5,300,2);
+utu_out_ba=shell_scholl_analysis_horizontal_vs1(utu_coord,5,300,2);
+%% %% Plot averages with shaded errorbar 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 250]);
+subplot(1,2,2);
+shadedErrorBar(tu_out_ba.resampleX,tu_out_ba.meanScholl,tu_out_ba.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(utu_out_ba.resampleX,utu_out_ba.meanScholl,utu_out_ba.stdScholl,'lineProps','m');
+legend('Tuned','Untuned');legend boxoff;
+set(gcf,'color','w');box off;
+title('Basal tree');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+legend('Tuned','Untuned');xlabel('Distance from Soma (µm)');
+subplot(1,2,1);
+shadedErrorBar(tu_out_ap.resampleX,tu_out_ap.meanScholl,tu_out_ap.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(utu_out_ap.resampleX,utu_out_ap.meanScholl,utu_out_ap.stdScholl,'lineProps','m');
+%legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Apical tree');
+ylabel('Horizontal sholl: Branch points');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+
+
+%% Read out desired cells for direction part
+a=[];
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+ binodir_delta=binodir(:,1)-binodir(:,2);
+idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+a(idx_bi(id_ov))=[];
+ sector=60;
+ midpoint=130;
+s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+g1=[];
+g2=[];
+g3=[];
+g4=[];
+g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+par=[];
+s1=[g1' g2'];
+s2=[g3' g4'];
+%% Do some further extraction and direction aligning 
+for i=1:length(a)
+te{:,i}= mx_apical{1, a(i)};
+te2{:,i}= mx_basal{1, a(i)};
+end
+%for groups s1 and s2
+for i=1:length(s1)
+s1_te{:,i}=te{1,s1(i)};
+s1_te2{:,i}=te2{1,s1(i)};
+end
+%flip acccording to direction 315
+s1_te{:,1}=s1_te{:,1}*-1;
+s1_te{:,2}=s1_te{:,2}*-1;
+
+for i=1:length(s2)
+s2_te{:,i}=te{1,s2(i)};
+s2_te2{:,i}=te2{1,s2(i)};
+end
+s1_coord.apical=s1_te;
+s1_coord.basal=s1_te2;
+s2_coord.apical=s2_te;
+s2_coord.basal=s2_te2;
+%% Plot aligned and non aligned groups APICAL
+s1_out_dira=shell_scholl_analysis_horizontal_vs1(s1_coord,5,300,1);
+s2_out_dira=shell_scholl_analysis_horizontal_vs1(s2_coord,5,300,1);
+close all;
+%% %% Plot aligned and non aligned groups BASAL
+s1_out_dirb=shell_scholl_analysis_horizontal_vs1(s1_coord,5,300,2);
+s2_out_dirb=shell_scholl_analysis_horizontal_vs1(s2_coord,5,300,2);
+close all;
+%% %% Plot averages with shaded errorbar 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 250]);
+subplot(1,2,2);
+shadedErrorBar(s2_out_dirb.resampleX,s2_out_dirb.meanScholl,s2_out_dirb.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(s1_out_dirb.resampleX,s1_out_dirb.meanScholl,s1_out_dirb.stdScholl,'lineProps','m');
+legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Basal tree');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+legend('NonAligned','Aligned');xlabel('Distance from Soma (µm)');
+subplot(1,2,1);
+shadedErrorBar(s2_out_dira.resampleX,s2_out_dira.meanScholl,s2_out_dira.stdScholl,'lineProps','g');
+hold on;
+shadedErrorBar(s1_out_dira.resampleX,s1_out_dira.meanScholl,s1_out_dira.stdScholl,'lineProps','m');
+%legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Apical tree');
+ylabel('Horizontal sholl: Branch points');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10)
+
+
+%% Direction biases
+shadedErrorBar(s1_out.resampleX,s1_out.meanScholl,s1_out.stdScholl,'lineProps','m');
+hold on;
+shadedErrorBar(s2_out.resampleX,s2_out.meanScholl,s2_out.stdScholl,'lineProps','g');
+legend('AL','NAL');legend boxoff;
+set(gcf,'color','w');box off;
+title('Basal tree')
+%title('Apical tree')
+legend('Aligned','NonAligned');ylabel('Horizontal sholl: Branch points');
+

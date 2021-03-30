@@ -16,8 +16,8 @@ lab_tree=stri(k);
 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 600])
 for i=1:length(corr_tree)
-hold on;scatter(corr_tree(i),i,col,'filled')
-hold on;plot([low_tree(i) up_tree(i)],[i i],col);
+hold on;scatter(corr_tree(i),i,'MarkerFaceColor',col,'MarkerEdgeColor',col)
+hold on;plot([low_tree(i) up_tree(i)],[i i],'Color',col);
 if p_tree(i)<0.001
     text(1.05,i,'***')
 elseif p_tree(i)<0.01
