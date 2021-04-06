@@ -1,4 +1,4 @@
-function r2 = fit_sine(x,y,varargin)
+function [r2 x yp] = fit_sine(x,y,varargin)
 % taken from https://www.mathworks.com/matlabcentral/answers/121579-curve-fitting-to-a-sinusoidal-function
 
 if length(varargin) >= 2
@@ -26,12 +26,13 @@ if length(varargin)>=1
     if varargin{1}
 %         figure(1)
 
-        plot(x,y,'k',  x,yp, 'r')
+        %plot(x,y,'k',  x,yp, 'r')
 
 %         plot(x,y,'b',  x,yp, 'r')
-        plot(x,yp, 'm',x,y,'ok')
-
-        grid
+        %plot(x,yp, 'm',x,y,'ok')
+p1=plot(x,yp, 'm')
+p1.Color(4)=0.5
+        %grid
     end
 end
 

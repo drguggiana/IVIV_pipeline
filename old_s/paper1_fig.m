@@ -342,11 +342,40 @@ a=[];
 df=[];db=[];df=[morph_parameters(morph_res_sub,9)];db=[morph_parameters(morph_res_sub,19)];
 a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
 corr_plot(df(a),od_out_iviv(morph_res_sub(a),4),[],{'','',''});
-%% extent vs ORI
+%% extent vs ORI apical dendrite
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
-scatter(df(a),od_out_iviv(morph_res_sub(a),4),4,'o','MarkerEdgeColor','k','MarkerFaceColor','k');ylabel('ORI (deg)');xlabel('Horizontal Extent (µm)');box off
-ylim([0 180]);yticks(0:45:180);set(gca,'FontSize',10);text(360,180,'cc=0.5');
-text(360,160,'p<0.05');set(gca,'FontSize',10);
+scatter(od_out_iviv(morph_res_sub(a),4),df(a),7,'o','MarkerEdgeColor','k','MarkerFaceColor','k');xlabel('ORI (deg)');ylabel('Horizontal Extent (µm)');box off
+xlim([0 180]);xticks(0:45:180);set(gca,'FontSize',10);text(100,400,'cc=0.5');
+text(150,400,'p<0.05');set(gca,'FontSize',10);
+[m k]=sort(od_out_iviv(morph_res_sub(a),4))
+tempn=df(a)
+hold on;
+[r2_ap x yp] = fit_sine(m',tempn(k)',1);
+[mean_shuffle_ap CI_shuffle_ap] = shuffle_plot(m,tempn(k));
+hold on;
+text(25,400,['R2=' mat2str(round(r2_ap,2))],'Color','m');
+set(gca,'FontSize',10);
+%% extent vs ORI basaldendrite
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
+scatter(od_out_iviv(morph_res_sub(a),4),db(a),7,'o','MarkerEdgeColor','k','MarkerFaceColor','k');xlabel('ORI (deg)');ylabel('Horizontal Extent (µm)');box off
+xlim([0 180]);xticks(0:45:180);set(gca,'FontSize',10);text(100,400,'cc=0.19');
+text(160,400,'n.s.');set(gca,'FontSize',10);
+ylim([100 400]);
+[m k]=sort(od_out_iviv(morph_res_sub(a),4))
+tempn=db(a)
+hold on
+[r2_ba x yp] = fit_sine(m',tempn(k)',1);
+[mean_shuffle_ba CI_shuffle_ba] = shuffle_plot(m,tempn(k));
+hold on;
+text(25,400,['R2=' mat2str(round(r2_ba,2))],'Color','m');
+set(gca,'FontSize',10);
+%% compare to shuffle 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 230, 250]);
+b1=bar(1:2,[r2_ap r2_ba]); b1.FaceColor=[0.5 0.5 0.5];
+hold on
+errorbar(1:2,vertcat(mean_shuffle_ap,mean_shuffle_ba),vertcat(CI_shuffle_ap(1),CI_shuffle_ba(1)),vertcat(CI_shuffle_ap(2),CI_shuffle_ba(2)),'ok')
+ylabel('R squared');xticklabels({'Apical','Basal'});box off;
+set(gca,'FontSize',10);
 %% Rolling average
 m_res=[];
 for i=1:length(str)
@@ -450,7 +479,7 @@ alpha = 0.8;
 set([mexp2.Bar, mexp2.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp2.Line.ColorData(1:3); 255*alpha2]);
 box off;
 yticklabels({'69','414','759','1104'});
-%% Plot vertical profile selective vs unselective profiles
+%% Plot vertical profile selective vs unselective profiles difference EX and iN
 alpha1 = 0.3; 
 alpha2 = 1; 
 frac_vd=frv(:,1:16)-frv(:,17:end);
@@ -591,6 +620,10 @@ parameter_vector = (ang_exL23(:,3)-ang_exL23(:,1))*69;
 parameter_vector2 = (ang_inL23(:,3)-ang_inL23(:,1))*69;
 rolling_avg_display(str,parameter_vector,parameter_vector2,65,0,1);hold on;ylabel('C_{x} (µm)','Color','k');hold on;xlabel('Direction preference (deg)')
 hold on;set(gca,'FontSize',10)
+%% 
+
+hold on;
+plot(xf2,yf2*69,'k')
 %% Bar plot Cx for IN and EX in L23, L4, L5
 a=[];
 a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
@@ -602,7 +635,7 @@ id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
 a(idx_bi(id_ov))=[];
 % sector=60;
 % midpoint=130;
- sector=80;
+ sector=60;
  midpoint=130;
 s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
 s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
@@ -627,10 +660,10 @@ par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
-par(s2)=par(s2)*-1
+par(g4)=par(g4)*-1
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
-ylim([-70 70]);yticks(-70:35:70)
-ylim([-150 200]);yticks(-150:50:200)
+% ylim([-70 70]);yticks(-70:35:70)
+% ylim([-150 200]);yticks(-150:50:200)
 % ylim([-150 100]);yticks(-150:50:100)
 
 %% VOLKERS READOUT
@@ -645,7 +678,7 @@ binodir_delta=binodir(:,1)-binodir(:,2);
 % a(idx_bi(id_ov))=[]; %removed VS
 binoDirA=binodir;
 %define sectors width
-sector=60; %Simon 60
+sector=80; %Simon 60
 %define midpoint of widows
 midpoint=130; %Simon 130
 %define range
@@ -655,7 +688,7 @@ s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
 s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
 g1=[];g2=[];g3=[];g4=[];
 %VS - find mono cells belonging to sectors 
-bi_limit=0.1;
+bi_limit=0.25;
 idx_mono=find(abs(od_out_iviv(a,3))>bi_limit)
 g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
 g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
@@ -677,17 +710,381 @@ s1=[g1' g2'];
 %combine 45 and 225
 s2=[g3' g4'];
 par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
-%par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
-%par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
-%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
-%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
-%par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+ %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%  par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%  par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%  par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+%  par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
-par(s2)=par(s2)*-1
+par(g4)=par(g4)*-1
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
-ylim([-70 70]);yticks(-70:35:70)
-ylim([-150 200]);yticks(-150:50:200)
+ ylim([-70 70]);yticks(-70:35:70)
+% ylim([-150 200]);yticks(-150:50:200)
+
+%% 
+%  par1=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+%  par1(g2)=par(g2)*-1
+% par3=od_out_iviv(a,2);
+% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
+% scatter(par1(s1),par3(s1));ylabel('DSI');xlabel('Cx');box off
+% ylim([0 1]);yticks(0:0.25:1);set(gca,'FontSize',10);
+
+%% Read out horizontal fraction per layer for sectors
+frac_h=[];
+%L23
+frac_h=L23h(a,:);
+%L4
+% frac_h=L4h(a,:);
+%L5
+% frac_h=L5h(a,:);
+%flip g1 which is 135 EX
+%hor_s1_ex=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+hor_s1_ex=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
+%hor_s1_ex=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
+%sector 45/225 EX
+% hor_s2_ex=[frac_h(s2,1:16)];
+hor_s2_ex=[frac_h(g3,1:16); flip(frac_h(g4,1:16),2)]; %VS19/3/21
+%flip g1 which is 135 IN
+ hor_s1_in=[frac_h(g1,17:32); flip(frac_h(g2,17:32),2)];
+%hor_s1_in=[flip(frac_h(g1,17:32),2); frac_h(g2,17:32)];
+%sector 45/225 IN
+hor_s2_in=[frac_h(s2,17:32)];
+hor_s2_in=[frac_h(g3,17:32); flip(frac_h(g4,17:32),2)]; %VS19/3/21
+% figure;plot(hor_s1_ex','--r');title('135 & 315');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s1_in'*-1,'--b');
+% figure;plot(hor_s2_ex','--r');title('45 & 225');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s2_in'*-1,'--b');
+%% analysis VS
+%--------------------------------------------------------------------------
+DSI_s1=od_out_iviv(a(s1),2);
+
+% rate of rise
+rise=[];
+decay=[];
+riseIN=[];
+decayIN=[];
+
+for i=1:size(hor_s1_ex,1)
+output=rise_decay_quantification(hor_s1_ex(i,:));
+%output=rise_decay_quantification(hor_s1_in(i,:));
+rise(i)=output.RHS_rise;
+decay(i)=output.LHS_rise;
+output=rise_decay_quantification(hor_s1_in(i,:));
+riseIN(i)=output.RHS_rise;
+decayIN(i)=output.LHS_rise;
+end;
+%EX
+rise_mean_ex=mean(rise);
+rise_std_ex=std(rise)/sqrt(length(rise));
+decay_mean_ex=mean(decay);
+decay_std_ex=std(decay)/sqrt(length(decay));
+riseAligned_ex=rise;
+decayAligned_ex=decay;
+riseDecayAligned_ex=[rise; decay];
+
+% rate of rise orthogonal
+rise=[];
+decay=[];
+for i=1:size(hor_s2_ex,1)
+output=rise_decay_quantification(hor_s2_ex(i,:));
+rise(i)=output.RHS_rise;
+decay(i)=output.LHS_rise;
+end;
+
+riseDecayNL=[rise; decay];
+riseNL_mean=mean(rise);
+riseNL_std=std(rise)/sqrt(length(rise));
+decayNL_mean=mean(decay);
+decayNL_std=std(decay)/sqrt(length(decay));
+'rise decay orthogonal'
+[H,P]=ttest(rise,decay)
+
+
+%IN
+rise_mean_in=mean(riseIN);
+rise_std_in=std(riseIN)/sqrt(length(riseIN));
+decay_mean_in=mean(decayIN);
+decay_std_in=std(decayIN)/sqrt(length(decayIN));
+riseAligned_in=riseIN;
+decayAligned_in=decayIN;
+riseDecayAligned_in=[riseIN; decayIN];
+
+% rate of rise orthogonal
+rise=[];
+decay=[];
+riseIN=[];
+decayIN=[];
+for i=1:size(hor_s2_ex,1)
+output=rise_decay_quantification(hor_s2_in(i,:));
+rise(i)=output.RHS_rise;
+decay(i)=output.LHS_rise;
+end;
+
+riseDecayNL_in=[rise; decay];
+riseNL_mean_in=mean(rise);
+riseNL_std_in=std(rise)/sqrt(length(rise));
+decayNL_mean_in=mean(decay);
+decayNL_std_in=std(decay)/sqrt(length(decay));
+% 'rise decay orthogonal'
+% [H,P]=ttest(rise,decay)
+
+% figure;
+% x = 1:4;
+% data = [rise_mean decay_mean riseNL_mean decayNL_mean]';
+% err = [decay_std rise_std decayNL_std riseNL_std];
+% bar(x,data)                
+% set(gca,'Fontsize',18)
+% hold on
+% er = errorbar(x,data,err,err);    
+% er.Color = [0 0 0];                            
+% er.LineStyle = 'none';
+% ylabel('length of rise (m.u.)')
+% % xlim([0.2 4.8])
+% set(gca,'xTickLabel',{'pref.' 'non-pref.' 'othog.(L)' 'othog.(R)'})
+% 
+% figure;hold on;subplot(1,2,1);plot(riseDecayAligned,'-ob');
+% ylabel('length of rise (m.u.)')
+% xlim([0.5 2.5])
+% ylim([0 6.55])
+% set(gca,'Fontsize',18)
+% set(gca,'xTickLabel',{'pref.' 'non-pref.'})
+% subplot(1,2,2);plot(riseDecayNL,'-or')
+% xlim([0.5 2.5])
+% ylim([0 6.55])
+% set(gca,'Fontsize',18)
+% set(gca,'xTickLabel',{'othog.(L)' 'othog.(R)'})
+% % %---------------------------------------------------------------------------
+% figure;hold on;plot(decayAligned./riseAligned,DSI_s1,'ob')
+% ylabel('DSI');xlabel('ratio rate of rise');
+% [R,P] = corrcoef([decayAligned./riseAligned],[DSI_s1]);
+% {'decay/rise' num2str([R(1,2) P(1,2)])}
+% set(gca,'Fontsize',18)
+% 
+% figure;hold on;plot(decayAligned-riseAligned,DSI_s1,'ob')
+% ylabel('DSI');xlabel('difference length of rise (m.u.)');
+% 'difference length of rise'
+% [R,P] = corrcoef([decayAligned-riseAligned],[DSI_s1])
+% set(gca,'Fontsize',18)
+% 
+% figure;hold on;plot(2*1./riseAligned./(1./decayAligned+1./riseAligned)-1,DSI_s1,'ob')
+% ylabel('DSI');xlabel('rate of rise disparity index');
+% 'rate of rise disparity index'
+% [R,P] = corrcoef(2./riseAligned./(1./decayAligned+1./riseAligned),DSI_s1)
+% set(gca,'Fontsize',18)
+
+
+% 
+% signrank(riseDecayAligned(1,:),riseDecayAligned(2,:),'tail','right')
+
+
+%% alinged cells rise pref and null EXCITATION
+cl={'r','r'};
+data=[];data=riseDecayAligned_ex';
+fig3= figure;set(fig3, 'Name', 'Paired comp');set(fig3, 'Position', [200, 300, 200, 200]);set(gcf,'color','w');
+hold on;
+for i=1:length(data)
+     pl=plot([1,2],[data(:,1),data(:,2)],'color','r');    
+end
+
+hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,1)))' ones(1,length(data(:,2)))'*2],...
+    'categoryMarkers',{'o','o'},'categoryColors',cl);hold on;
+%hold on;plot([1,2],[nanmedian(data(:,1)),nanmedian(data(:,2))],'k','LineWidth',3);
+%hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
+box off;set(gca,'FontSize',10);
+hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','r','Markersize',7);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
+title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10)
+%% non alinged cells rise pref and null
+cl={'k','k'};
+data=[];data=riseDecayNL';
+fig3= figure;set(fig3, 'Name', 'Paired comp');set(fig3, 'Position', [200, 300, 200, 200]);set(gcf,'color','w');
+hold on;
+for i=1:length(data)
+     pl=plot([1,2],[data(:,1),data(:,2)],'color',[0.5 0.5 0.5]);    
+end
+
+hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,1)))' ones(1,length(data(:,2)))'*2],...
+    'categoryMarkers',{'o','o'},'categoryColors',cl);hold on;
+%hold on;plot([1,2],[nanmedian(data(:,1)),nanmedian(data(:,2))],'k','LineWidth',3);
+%hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
+box off;set(gca,'FontSize',10);
+hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','k','Markersize',7);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
+xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10)
+%% alinged cells rise pref and null INHIBITION
+cl={'b','b'};
+data=[];data=riseDecayAligned_in';
+fig3= figure;set(fig3, 'Name', 'Paired comp');set(fig3, 'Position', [200, 300, 200, 200]);set(gcf,'color','w');
+hold on;
+for i=1:length(data)
+     pl=plot([1,2],[data(:,1),data(:,2)],'color','b');    
+end
+
+hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,1)))' ones(1,length(data(:,2)))'*2],...
+    'categoryMarkers',{'o','o'},'categoryColors',cl);hold on;
+%hold on;plot([1,2],[nanmedian(data(:,1)),nanmedian(data(:,2))],'k','LineWidth',3);
+%hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
+box off;set(gca,'FontSize',10);
+hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','b','Markersize',7);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10)
+%% non alinged cells rise pref and null INHIBITION
+cl={'k','k'};
+data=[];data=riseDecayNL_in';
+fig3= figure;set(fig3, 'Name', 'Paired comp');set(fig3, 'Position', [200, 300, 200, 200]);set(gcf,'color','w');
+hold on;
+for i=1:length(data)
+     pl=plot([1,2],[data(:,1),data(:,2)],'color',[0.5 0.5 0.5]);    
+end
+
+hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,1)))' ones(1,length(data(:,2)))'*2],...
+    'categoryMarkers',{'o','o'},'categoryColors',cl);hold on;
+%hold on;plot([1,2],[nanmedian(data(:,1)),nanmedian(data(:,2))],'k','LineWidth',3);
+%hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
+box off;set(gca,'FontSize',10);
+hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','k','Markersize',7);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
+xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10)
+%% 
+% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
+% s1=scatter([riseAligned./decayAligned],[DSI_s1],10,'MarkerEdgeColor','k','MarkerFaceColor','k')
+% [R,P] = corrcoef([riseAligned./decayAligned],[DSI_s1]);ylim([0.25 1]);yticks([0.25:0.25:1])
+% {'decay/rise' num2str([R(1,2) P(1,2)])};%xlim([0.4 1.2]);
+% 
+% ylabel('gDSI');xlabel('Ratio rate of rise');
+% title([' r=' round(num2str(R(2))) ' p< 0.01'],'FontWeight','Normal');
+%% Correlation ratio of rise and DSI EX aligned
+corr_plot([decayAligned_ex./riseAligned_ex]',[DSI_s1],[],{'','',''});ylim([0.25 1]);yticks([0.25:0.25:1]);
+ylabel('gDSI');xlabel('Ratio rate of rise EX');set(gca,'Fontsize',10);xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
+%% Correlation ratio of rise and DSI IN aligned
+corr_plot([decayAligned_in./riseAligned_in]',[DSI_s1],[],{'','',''});ylim([0.25 1]);yticks([0.25:0.25:1]);
+ylabel('gDSI');xlabel('Ratio rate of rise IN');set(gca,'Fontsize',10);xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
+%% Correlation ratio of rise EX and IN aligned
+corr_plot([decayAligned_ex./riseAligned_ex]',[decayAligned_in./riseAligned_in]',[],{'','',''});
+%ylim([0.25 1]);yticks([0.25:0.25:1]);
+ylabel('Ratio rate of rise IN');xlabel('Ratio rate of rise EX');set(gca,'Fontsize',10);
+% xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
+%% 
+
+% frac_h=[];
+% flip_hl=[];
+% flip_h2=[];
+% frac_h=L23h(a,:);
+% flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+% flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)];
+% flip_h2=[frac_h(g3,1:16); flip(frac_h(g4,1:16),2)];
+% %flip_h2=[frac_h(g4,1:16); frac_h(g3,1:16)];
+% flip_h2_in=[frac_h(g3,17:end); flip(frac_h(g4,17:end),2)];
+% %flip_h2_in=[frac_h(g4,17:end); frac_h(g3,17:end)];
+% frac_diffh=[];
+% % frac_diffh=frac_h(flip_hl,1:16)-frac_h(s1,17:end);
+% fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 600, 700, 350]);set(gcf,'color','w');
+% %EX and IN Horizontal
+% subplot(1,3,1);hold on;
+% mexp=errorbar(nanmean(flip_hl),nanstd(flip_hl)/sqrt(size(flip_hl,1)),'Color','r');
+% hold on;mexp.CapSize=3;
+% hold on;
+% mexp=errorbar(nanmean(flip_hl_in)*-1,nanstd( flip_hl_in)/sqrt(size( flip_hl_in,1))*-1,'Color','b');
+% hold on;mexp.CapSize=3;
+% % hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqrt(size(frac_diffh,1)),'m');
+% % mexp.CapSize=3;
+% ylabel('Fraction of total input');
+% frac_h=[];
+% frac_h=L23h(a,:);
+% frac_diffh=[];
+% frac_diffh=frac_h(s2,1:16)-frac_h(s2,17:end);
+% hold on;
+% mexp=errorbar(nanmean(flip_h2),nanstd(flip_hl)/sqrt(size(flip_h2,1)),'--k');
+% hold on;mexp.CapSize=3;
+% hold on;
+% mexp=errorbar(nanmean(flip_h2_in)*-1,nanstd(flip_h2_in)/sqrt(size(flip_h2_in,1))*-1,'--k');
+% hold on;mexp.CapSize=3;
+% hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');
+% xlim([1 16]);ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
+% xticks(1:5:16);xticklabels({'-552','-138','138','552'});
+% 
+% stats1=[]
+% for i=17:32;
+%     
+% par=[];
+% par=L23h(a,i);
+% t=2;
+% if t==0
+% %    [k p]=ttest2(par(g1),par(g2));
+% %    statsout=p;
+% [p k]=ranksum(par(s1),par(s2));
+%     stats1(i)=p
+% elseif t==1
+%     [p k]=ranksum(par(s1),par(s2),'tail','right');
+%     stats1(i)=p
+% else t==2
+%     [p k]=ranksum(par(s1),par(s2),'tail','left');
+%     stats1(i)=p
+% end
+% end
+
+
+%% Plotting infividual horizontal profiles and average EX and IN
+frac_h=[];
+flip_hl=[];
+flip_h2=[];
+frac_h=L23h(a,:);
+flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
+flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)];
+flip_h2=[frac_h(g3,1:16); flip(frac_h(g4,1:16),2)];
+%flip_h2=[frac_h(g4,1:16); frac_h(g3,1:16)];
+flip_h2_in=[frac_h(g3,17:end); flip(frac_h(g4,17:end),2)];
+fig3= figure;set(fig3, 'Name', 'comp hori');set(fig3, 'Position', [200, 300, 350, 400]);set(gcf,'color','w');
+hold on;
+for i=1:size(flip_h2,1)
+hold on;
+p1=plot(flip_h2(i,1:16),'Color','k')
+p1.Color(4)=0.25
+end
+hold on;
+for i=1:size(flip_hl,1)
+hold on;
+p1=plot(flip_hl(i,1:16),'r')
+p1.Color(4)=0.25
+end
+hold on;
+plot(nanmean(flip_h2),'Color','k','LineWidth',1.5);
+hold on;
+plot(nanmean(flip_hl),'Color','r','LineWidth',1.5);
+box off
+
+
+%Inhibition 
+hold on;
+for i=1:size(flip_h2_in,1)
+hold on;
+p1=plot(flip_h2_in(i,1:16)*-1,'Color','k')
+p1.Color(4)=0.25
+end
+hold on;
+for i=1:size(flip_hl_in,1)
+hold on;
+p1=plot(flip_hl_in(i,1:16)*-1,'b')
+p1.Color(4)=0.25
+end
+hold on;
+plot(nanmean(flip_h2_in)*-1,'Color','k','LineWidth',1.5);
+hold on;
+plot(nanmean(flip_hl_in)*-1,'Color','b','LineWidth',1.5);
+box off
+hold on;line([8.5 8.5], [-0.35 0.35],'Color','k','LineStyle','--');
+xlim([1 16]);ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
+ xticks(1:5:16);xticklabels({'-552','-138','138','552'});
+ xlabel('Horizontal position (µm)');ylabel('Fraction of total input');
+set(gca,'Fontsize',10);
+%% 
+
+shadedErrorBar(1:16,nanmean(flip_hl),nanstd(flip_hl)/sqrt(length(flip_hl)),'lineProps','g');
+hold on; shadedErrorBar(1:16,nanmean(flip_h2),nanstd(flip_h2)/sqrt(length(flip_h2)),'lineProps','m');
+
 %% Plot fraction for aligned and non aligned 
 statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Test ex and in differences

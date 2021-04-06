@@ -12,7 +12,7 @@ orientation_vector = cat(1,str.ORIpref);
 % add osi cutoff
 cutoff_osi = 0.25;
 % get the osi
-osi = cat(1,str.DSIpref);
+osi = cat(1,str.OSIpref);
 %osi = cat(1,str.OSIpref);
 % get the vector
 osi_selection = osi > cutoff_osi;
@@ -93,8 +93,10 @@ else or==2
 direction_vector = cat(1,str.DIRpref);
 % add osi cutoff
 cutoff_dsi = 0.25;
+% cutoff_
 % get the osi
 dsi = cat(1,str.DSIpref);
+% odi= cat(1,str.ODIpref);
 % get the vector
 dsi_selection = dsi >cutoff_dsi;
 % get the selected traces

@@ -261,7 +261,7 @@ diffL5fr=L5frt(:,1)-L5frt(:,2);
 spandL23=span(:,1)-span(:,4);
 spandL4=span(:,2)-span(:,5);
 spandL5=span(:,3)-span(:,6);
-%%  Histogram of pia distribution for ephys
+%%  Histogram of pia distribution for inputs
  close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 225]);
  hold on;histogram(pia_input,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
   ylabel('Pial depth (µm)');xlabel('Cell count');box off;
@@ -298,18 +298,21 @@ scatter(L4fr(:,1)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
 ref.XData=[0 0.7];xticks([0:0.15:0.7]);
+
 subplot(1,3,2);
 scatter(L4fr(:,2)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
  %set(gca, 'YDir','reverse');
  xlim([0 0.6])
  text(0.1,0.99,'r=-0.41');text(0.1,0.9,'p<0.001');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
-ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
+ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';;xlabel('Fraction')
 ref.XData=[0 0.6];xticks([0:0.15:0.6]);
+
 subplot(1,3,3);
 scatter(L4fr(:,1)'-L4fr(:,2)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','m');
  %set(gca, 'YDir','reverse');
- xlim([-0.2 0.6])
+ xlim([-0.2 0.6]);
+ xlabel('\Delta EX-IN vertical fraction')
 %  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 % ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
 % ref.XData=[0 0.6];xticks([0:0.15:0.6]);

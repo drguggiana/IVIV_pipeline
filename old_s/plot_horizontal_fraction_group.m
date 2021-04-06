@@ -1,37 +1,86 @@
 function statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Plot horizontal fraction per layer per direction group
+% a=[];
+% a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+% binodir=reshape([str(a).Dir],[2,length(a)])';
+%  binodir_delta=binodir(:,1)-binodir(:,2);
+% % 
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1)
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
+% a(idx_bi(id_ov))=[];
+% % sector=60;
+% % midpoint=130;
+%  sector=60;
+%  midpoint=130;
+% s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
+% s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
+% s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
+% s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
+% g1=[];
+% g2=[];
+% g3=[];
+% g4=[];
+% g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
+% g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
+% g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
+% g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+% par=[];
+% s1=[g1' g2'];
+% s2=[g3' g4'];
+
 a=[];
+s1=[]; 
+s2=[];
 a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
 binodir=reshape([str(a).Dir],[2,length(a)])';
- binodir_delta=binodir(:,1)-binodir(:,2);
-% 
-idx_bi=find(abs(od_out_iviv(a,3))<0.1)
-id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90)
-a(idx_bi(id_ov))=[];
-% sector=60;
-% midpoint=130;
- sector=60;
- midpoint=130;
+binodir_delta=binodir(:,1)-binodir(:,2);
+% idx_bi=find(abs(od_out_iviv(a,3))<0.1) %Simon <0.1
+% id_ov=find(abs(binodir_delta(find(abs(od_out_iviv(a,3))<0.1)))>90) %Simon <0.1 / 90
+% a(idx_bi(id_ov))=[]; %removed VS
+binoDirA=binodir;
+%define sectors width
+sector=80; %Simon 60
+%define midpoint of widows
+midpoint=130; %Simon 130
+%define range
 s1a=[midpoint-sector/2];s1b=[midpoint+sector/2];
 s2a=[(midpoint+180)-sector/2];s2b=[(midpoint+180)+sector/2];
 s3a=[(midpoint-90)-sector/2];s3b=[(midpoint-90)+sector/2];
 s4a=[(midpoint+90)-sector/2];s4b=[(midpoint+90)+sector/2];
-g1=[];
-g2=[];
-g3=[];
-g4=[];
-g1=find(od_out_iviv(a,5)>s1a & od_out_iviv(a,5)<s1b) ;
-g2=find(od_out_iviv(a,5)>s2a & od_out_iviv(a,5)<s2b);
-g3=find(od_out_iviv(a,5)>s3a & od_out_iviv(a,5)<s3b);
-g4=find(od_out_iviv(a,5)>s4a & od_out_iviv(a,5)<s4b);
+g1=[];g2=[];g3=[];g4=[];
+%VS - find mono cells belonging to sectors 
+bi_limit=0.25;
+idx_mono=find(abs(od_out_iviv(a,3))>bi_limit)
+g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
+g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
+g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
+%VS - find bi cells belonging to sectors 
+idx_bi=find(abs(od_out_iviv(a,3))<bi_limit)
+tempIdx=find(binodir(idx_bi,1)>s1a & binodir(idx_bi,1)<s1b & binodir(idx_bi,2)>s1a & binodir(idx_bi,2)<s1b);
+g1=[idx_mono(g1); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s2a & binodir(idx_bi,1)<s2b & binodir(idx_bi,2)>s2a & binodir(idx_bi,2)<s2b);
+g2=[idx_mono(g2); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s3a & binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a & binodir(idx_bi,2)<s3b);
+g3=[idx_mono(g3); idx_bi(tempIdx)]
+tempIdx=find(binodir(idx_bi,1)>s4a & binodir(idx_bi,1)<s4b & binodir(idx_bi,2)>s4a & binodir(idx_bi,2)<s4b);
+g4=[idx_mono(g4); idx_bi(tempIdx)]
 par=[];
+%combine 315 and 135
 s1=[g1' g2'];
+%combine 45 and 225
 s2=[g3' g4'];
+
+
 %START
 frac_h=[];
 frac_h=L23h(a,:);
 flip_hl=[frac_h(g1,1:16); flip(frac_h(g2,1:16),2)];
-flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)]
+flip_hl_in=[frac_h(g1,17:end); flip(frac_h(g2,17:end),2)];
+%flip_h2=[frac_h(g3,1:16); flip(frac_h(g4,1:16),2)];
+flip_h2=[frac_h(g4,1:16); flip(frac_h(g3,1:16),2)];
+%flip_h2_in=[frac_h(g3,17:end); flip(frac_h(g4,17:end),2)];
+flip_h2_in=[frac_h(g4,17:end); flip(frac_h(g2,17:end),2)];
 frac_diffh=[];
 % frac_diffh=frac_h(flip_hl,1:16)-frac_h(s1,17:end);
 fig7= figure;set(fig7, 'Name', 'Input distribution');set(fig7, 'Position', [200, 600, 700, 350]);set(gcf,'color','w');
@@ -67,10 +116,10 @@ subplot(1,3,1);hold on;
 % exp.Color(4) = 0.05;
 % end
 hold on;
-mexp=errorbar(nanmean(frac_h(s2,1:16)),nanstd(frac_h(s2,1:16))/sqrt(size(frac_h(s1,:),1)),'--k');
+mexp=errorbar(nanmean(flip_h2),nanstd(flip_hl)/sqrt(size(flip_h2,1)),'--k');
 hold on;mexp.CapSize=3;
 hold on;
-mexp=errorbar(nanmean(frac_h(s2,17:end))*-1,nanstd(frac_h(s2,17:end))/sqrt(size(frac_h(s2,:),1))*-1,'--k');
+mexp=errorbar(nanmean(flip_h2_in)*-1,nanstd(flip_h2_in)/sqrt(size(flip_h2_in,1))*-1,'--k');
 hold on;mexp.CapSize=3;
 hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');
 xlim([1 16]);ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
@@ -165,7 +214,7 @@ ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);
 
 %% 
 %% Statistics
-for i=17:32;
+for i=1:16;
 par=[];
 par=L23h(a,i);
 t=0;
@@ -183,7 +232,7 @@ else t==2
 end
 end
 
-for i=17:32;;
+for i=1:16;;
 par=[];
 par=L4h(a,i);
 t=0;
@@ -201,7 +250,7 @@ else t==2
 end
 end
 
-for i=17:32;
+for i=1:16;
 par=[];
 par=L5h(a,i);
 t=0;
