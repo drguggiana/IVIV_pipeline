@@ -709,18 +709,18 @@ par=[];
 s1=[g1' g2'];
 %combine 45 and 225
 s2=[g3' g4'];
-par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+%par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
  %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
-%  par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
-%  par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
-%  par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
-%  par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+  par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+  %par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+ %par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
 par(g4)=par(g4)*-1
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
- ylim([-70 70]);yticks(-70:35:70)
-% ylim([-150 200]);yticks(-150:50:200)
+ %ylim([-70 70]);yticks(-70:35:70)
+ ylim([-150 200]);yticks(-150:100:200)
 
 %% 
 %  par1=(ang_exL23(a,3)-ang_exL23(a,1))*69;
@@ -1089,15 +1089,15 @@ hold on; shadedErrorBar(1:16,nanmean(flip_h2),nanstd(flip_h2)/sqrt(length(flip_h
 statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Test ex and in differences
 %% Centroid EX and IN 
-% par1=[];par2=[];
-%  par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+ par1=[];par2=[];
+  par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 %  par1(g2)=par1(g2)*-1;
-%  par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+  par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %  par2(g2)=par2(g2)*-1;
-par1=[];par2=[];
- par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par1=[];par2=[];
+ %par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
  par1(g2)=par1(g2)*-1;
- par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+ %par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
  par2(g2)=par2(g2)*-1;
 data=[par2(s1) par1(s1)];
 p1=paired_plot([par2(s1) par1(s1)],0,{'r','b'});xticklabels({'EX','IN'});ylabel('C_{x} (µm)');set(gca,'FontSize',10)

@@ -148,14 +148,14 @@ hold on;set(gca,'FontSize',10);hold on;title('Active');
 tr=[];tr = rescale(pia_ephys);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 200]);
 subplot(1,2,1);
-scatter(data_ephys(:,14)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor',[0 0.5 0.5]);
+scatter(data_ephys(:,14)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
  %set(gca, 'YDir','reverse');
  title('Passive');text(55,0.99,'r=-0.29');text(55,0.9,'p<0.001');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Tau (ms)')
 xlim([10 70]);ref.XData=[15 70];xticks([10:20:80]);
 subplot(1,2,2);
-scatter(data_ephys(:,4),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+scatter(data_ephys(:,4),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor',[0 0.5 0.5]);
  %set(gca, 'YDir','reverse');
   title('Active');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[30 90];xticks([0:30:90]);
@@ -193,6 +193,7 @@ morph_sel=[data_morpho(:,[1 3 5 6 7 8 9]) max_a' dis_peaka'];
 [coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
 [coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(zscore(morph_sel));
 var_exp(explained_ephys,[],[]); 
+var_exp(explained_morph,[],[]); 
 %% 
  tr=[];
  tr = rescale(pia_ephys);
@@ -279,22 +280,24 @@ plot_avg_maps(str_imap,80,ex_map,in_map,pia_input,1,0,[]);
 %% %Pial depth correlation with EX IN L23, L4, L5 for panel F
 plot_fraction(L23fr,L4fr,L5fr,pia_input);
 %% 
-%% Correlation with pial depth: Active using sorted correlation plot
-stri={'L2/3 Vfr_{EX}','L4 Vfr_{EX}','L5 Vfr_{EX}','L2/3 Vfr_{IN}','L4 Vfr_{IN}','L5 Vfr_{IN}','L2/3 Vfr_{d}','L4 Vfr_{d}','L5 Vfr_{d}',...
-   'L2/3 HEX_{EX}','L4 HEx_{EX}','L5 HEx_{EX}','L2/3 HEx_{IN}','L4 HEx_{IN}','L5 HEx_{IN}','L2/3 HEx_{d}','L4 HEx_{d}','L5 HEx_{d}'}
-sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2)...
-    diffL23fr,diffL4fr,diffL4fr,span,spandL23,spandL4,spandL5],pia_input,stri,[0.5 0.5 0.5])
+%% Correlation with pial depth: Vertical fraction
+stri={'L2/3_{EX}','L4_{EX}','L5_{EX}','L2/3_{IN}','L4_{IN}','L5_{IN}','L2/3_{EX-IN}','L4_{EX-IN}','L5_{EX-IN}'}
+sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5])
 hold on;xlabel('Correlation with pial depth')
-hold on;set(gca,'FontSize',10);hold on;title('Active');
-
-%% 
+hold on;set(gca,'FontSize',10);hold on;title('Vertical fraction');
+%% Correlation with pial depth: Maximum horizontal extent
+stri={'L2/3_{EX}','L4_{EX}','L5_{EX}','L2/3_{IN}','L4_{IN}','L5_{IN}','L2/3_{EX-IN}','L4_{EX-IN}','L5_{EX-IN}'}
+sorted_correlation([span,spandL23,spandL4,spandL5],pia_input,stri,[0.5 0.5 0.5])
+hold on;xlabel('Correlation with pial depth')
+hold on;set(gca,'FontSize',10);hold on;title('Maximal horizontal extent');
+%% Plot most significant corrleations vertical fractions
 tr=[];tr = rescale(pia_input);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);
 subplot(1,3,1);
 scatter(L4fr(:,1)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');
  %set(gca, 'YDir','reverse');
  xlim([0 0.7])
- text(0.1,0.99,'r=-0.41');text(0.1,0.9,'p<0.001');
+ text(0.1,0.99,'r=0.41');text(0.1,0.9,'p<0.001');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
 ref.XData=[0 0.7];xticks([0:0.15:0.7]);
@@ -303,7 +306,7 @@ subplot(1,3,2);
 scatter(L4fr(:,2)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
  %set(gca, 'YDir','reverse');
  xlim([0 0.6])
- text(0.1,0.99,'r=-0.41');text(0.1,0.9,'p<0.001');
+ text(0.1,0.99,'r=0.3');text(0.1,0.9,'p<0.001');
  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';;xlabel('Fraction')
 ref.XData=[0 0.6];xticks([0:0.15:0.6]);
@@ -312,13 +315,108 @@ subplot(1,3,3);
 scatter(L4fr(:,1)'-L4fr(:,2)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','m');
  %set(gca, 'YDir','reverse');
  xlim([-0.2 0.6]);
- xlabel('\Delta EX-IN vertical fraction')
+ xlabel('\Delta EX-IN vertical fraction');
+ hold on;line([0 0], [0 1],'Color','k','LineStyle','--');xlim([-0.4 0.5]);
 %  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
 % ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
 % ref.XData=[0 0.6];xticks([0:0.15:0.6]);
 
+%% Plot most significant corrleations horizontal extent
+tr=[];tr = rescale(pia_input);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 200]);
+subplot(1,3,1);
+scatter(span(:,1)'*69,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','r');
+ %set(gca, 'YDir','reverse');
+ xlim([0 15*69]);
+ text(800,0.99,'r=-0.3');text(800,0.9,'p<0.001');
+ hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+ ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Horizontal Extent (µm)')
+ ref.XData=[0 15*69];xticks([0:500:1000]);
+
+subplot(1,3,2);
+scatter(span(:,4)'*69,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','b');
+ %set(gca, 'YDir','reverse');
+ xlim([0 15*69]);
+ text(800,0.99,'r=-0.22');text(800,0.9,'p<0.001');
+ hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+ ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Horizontal Extent (µm)')
+ ref.XData=[0 15*69];xticks([0:500:1000]);
+
+subplot(1,3,3);
+scatter(spandL23*69,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','m');
+ %set(gca, 'YDir','reverse');
+ xlim([-500 500]);
+ xlabel('\Delta EX-IN vertical fraction');
+
+ %ref.XData=[0 4];xticks([0:1:4]);
+ylabel('Relative pial position');xlabel('\Delta EX-IN horizontal extent')
+ hold on;line([0 0], [0 1],'Color','k','LineStyle','--');set(gca,'FontSize',10)
+%% PCA with whole maps
+ [coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,imaps_id);
+%% Plot correlation matrix of map scores
+tr=[];tr = rescale(pia_input);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
+scatter(score_com(:,1),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('Relative pial position');xlabel('PC1_{com}');set(gca,'FontSize',10);
+ hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+ ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k'; 
+  text(-2,0.99,'r=0.44');text(-2,0.9,'p<0.001');
 %% 
-sort_fractions_input([pia_input L4fr],1,'L2/3')
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%TEST FOR CLUSTERABILITY%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%% 
+
+dip_test_SW(score_ephys(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+dip_test_SW(score_morph(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+dip_test_SW(score_com(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+
+
+
+%% 
+%% UMAP embedding
+% get the pial depth
+pialD=cat(1,str.pialD);
+% get the layer 4 excitation
+frac4ex = cat(1,str.frac_vert);
+frac4ex = sum(frac4ex(:,6:7),2);
+% get the inhibitory L23 angle
+
+% get the inhibitory L23 x centroid
+centroidX23in=abs(ang_inL23(:,3)-ang_inL23(:,1));
+centroidY23in=abs(ang_inL23(:,4)-ang_inL23(:,2));
+% assemble the feature vector
+% cell_cell = cat(2,pialD,frac4ex,...
+%     centroidX23in);
+cell_cell = cat(2,pialD,frac4ex,...
+     centroidX23in,centroidY23in);
+% cell_cell = cat(2,pcs(:,2),ang);
+cell_cell = normr_2(cell_cell,2);
+%% Run UMAP on the data
+% run the embedding from scratch
+[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 30, 'min_dist', 0.5);
+
+%% Figure 4 panels
+close all;
+%UMAP projections Panel C and D
+%load embedding
+%load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\embedding_X_only\reduced_data.mat');
+%in vitro values
+plot_list = {'frac_vert','ang_inL23','pialD','span'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%in vivo values non cyclic 
+plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref'};
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
+%cyclic values
+plot_list ={'ORIpref','DIRpref'}
+plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'phasemap');
+autoArrangeFigures;
 
 
 
@@ -327,7 +425,7 @@ sort_fractions_input([pia_input L4fr],1,'L2/3')
 plot_avg_maps(str_imap,44,ex_map,in_map,pia_input,1,0,[]);
 
 %% 
-dip_test_SW(data_ephys(:,[4 13:15 17]),1,{'PC1','PC2','PC3'});
+
 %% 
 dip_test_SW(data_morpho(:,[1 3 7 8 9 10 ]),1,{'PC1','PC2','PC3'});
 %% 

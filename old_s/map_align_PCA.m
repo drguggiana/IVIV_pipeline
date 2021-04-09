@@ -1,15 +1,15 @@
-function map_align_PCA(str)
+function [coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,c_id)
 %% Define array names and get the arrays without NaNs etc.
 field_list = {'subpixel_raw_excMap','subpixel_raw_inhMap','pialD'};
 % get the number of fields
 field_number = length(field_list);
 % get a vector with the cells to use
 %iviv_cells = [str(:).iviv]==1;
-iviv_cells = [str(:).resp]==1;
- dsi_cells=[str(:).DSIpref]>0.25;
-morpho_cells = ~cellfun(@isempty, {str.morph});
+% iviv_cells = [str(:).resp]==1;
+%  dsi_cells=[str(:).DSIpref]>0.25;
+% morpho_cells = ~cellfun(@isempty, {str.morph});
 % cell_idx = find(iviv_cells&morpho_cells);
- cell_idx = find(iviv_cells);
+ cell_idx = c_id;
  %cell_idx=find(dsi_cells);
 %cell_idx = 1:length(str);
 % get the number of cells to include
@@ -95,28 +95,28 @@ for cells = 1:length(nan_vector(incl_idx:end));
     ov_map_bin(:,:,cells) = squeeze(sum(cat(3,bin_excm,bin_inh),3))./2;  
     %layers(:,:,cells)=str(nan_vector(i)).layers;
 end
-%% Morphology and Cell ID and iviv cell ID
-%morphtraces are always there but str.morph are the ones that are decent
-%traced and used for analysis
-for i=1:length(nan_vector)
-    cellID_str(i)=str(nan_vector(i)).cellID;
-    if ~isnan(str(nan_vector(i)).morph)==1;
-        morph_cells(i)=1;
-        %m_flip_a(i)=str(nan_vector(i)).morph_flip_again;
-        morph_parameters(i,:)=str(nan_vector(i)).morph;
-    else
-        morph_cells(i)=0;
-       % m_flip_a(i)=NaN;
-         morph_parameters(i,:)=ones(1,24)*NaN;
-    end
-end
-morph_cells_id=find(morph_cells==1);
-iviv_celid=find([str(nan_vector).iviv]==1);
-%% Get the morphology density maps
-for i=1:length(nan_vector)   
-        morpho_basal{i,:}=str(nan_vector(i)).morphoMap_basal_aligned;
-        morpho_apical{i,:}=str(nan_vector(i)).morphoMap_apical_aligned;     
-end
+% %% Morphology and Cell ID and iviv cell ID
+% %morphtraces are always there but str.morph are the ones that are decent
+% %traced and used for analysis
+% for i=1:length(nan_vector)
+%     cellID_str(i)=str(nan_vector(i)).cellID;
+%     if ~isnan(str(nan_vector(i)).morph)==1;
+%         morph_cells(i)=1;
+%         %m_flip_a(i)=str(nan_vector(i)).morph_flip_again;
+%         morph_parameters(i,:)=str(nan_vector(i)).morph;
+%     else
+%         morph_cells(i)=0;
+%        % m_flip_a(i)=NaN;
+%          morph_parameters(i,:)=ones(1,24)*NaN;
+%     end
+% end
+% morph_cells_id=find(morph_cells==1);
+% iviv_celid=find([str(nan_vector).iviv]==1);
+% %% Get the morphology density maps
+% for i=1:length(nan_vector)   
+%         morpho_basal{i,:}=str(nan_vector(i)).morphoMap_basal_aligned;
+%         morpho_apical{i,:}=str(nan_vector(i)).morphoMap_apical_aligned;     
+% end
 %% Align the exc and inh maps vertically
 % distance between squares
 grid_distance = 69;
@@ -141,8 +141,8 @@ aligned_maps_exraw = zeros(cell_num,16+bin_num,16);
 aligned_maps_inraw = zeros(cell_num,16+bin_num,16);
 aligned_maps_ov = zeros(cell_num,16+bin_num,16);
 aligned_maps_diff = zeros(cell_num,16+bin_num,16);
-aligned_maps_basal = zeros(cell_num,16+bin_num,16);
-aligned_maps_apical = zeros(cell_num,16+bin_num,16);
+% aligned_maps_basal = zeros(cell_num,16+bin_num,16);
+% aligned_maps_apical = zeros(cell_num,16+bin_num,16);
 
 % for all the cells
 for cells = 1:cell_num
@@ -155,16 +155,16 @@ for cells = 1:cell_num
     aligned_maps_diff(cells,(1:16)+(1+bin_num-cell_soma),:) = reshape(clean_diff(:,cells),16,16);
     aligned_maps_exraw(cells,(1:16)+(1+bin_num-cell_soma),:) = reshape(clean_exraw(:,cells),16,16);
     aligned_maps_inraw(cells,(1:16)+(1+bin_num-cell_soma),:) = reshape(clean_inraw(:,cells),16,16);
-    % if the morpho is missing, skip
-    if ~isempty(morpho_basal{cells}) && sum(morpho_basal{cells}(:) > 0)
-        aligned_maps_basal(cells,(1:16)+(1+bin_num-cell_soma),:) = ...
-            morpho_basal{cells};        
-    end
-    % if the morpho is missing, skip
-    if ~isempty(morpho_apical{cells}) && sum(morpho_apical{cells}(:) > 0)
-        aligned_maps_apical(cells,(1:16)+(1+bin_num-cell_soma),:) = ...
-            morpho_apical{cells};        
-    end
+%     % if the morpho is missing, skip
+%     if ~isempty(morpho_basal{cells}) && sum(morpho_basal{cells}(:) > 0)
+%         aligned_maps_basal(cells,(1:16)+(1+bin_num-cell_soma),:) = ...
+%             morpho_basal{cells};        
+%     end
+%     % if the morpho is missing, skip
+%     if ~isempty(morpho_apical{cells}) && sum(morpho_apical{cells}(:) > 0)
+%         aligned_maps_apical(cells,(1:16)+(1+bin_num-cell_soma),:) = ...
+%             morpho_apical{cells};        
+%     end
 end
 aligned_maps_ex = reshape(aligned_maps_ex,cell_num,[]);
 aligned_maps_in = reshape(aligned_maps_in,cell_num,[]);
@@ -172,8 +172,8 @@ aligned_maps_ov = reshape(aligned_maps_ov,cell_num,[]);
 aligned_maps_diff = reshape(aligned_maps_diff,cell_num,[]);
 aligned_maps_exraw = reshape(aligned_maps_exraw,cell_num,[]);
 aligned_maps_inraw = reshape(aligned_maps_inraw,cell_num,[]);
-aligned_maps_basal = reshape(aligned_maps_basal,cell_num,[]);
-aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
+% aligned_maps_basal = reshape(aligned_maps_basal,cell_num,[]);
+% aligned_maps_apical = reshape(aligned_maps_apical,cell_num,[]);
 %% Align the exc and inh maps horizontally
 clean_ex = aligned_maps_ex';
 clean_in = aligned_maps_in';
@@ -181,11 +181,11 @@ clean_exraw = aligned_maps_exraw';
 clean_inraw = aligned_maps_inraw';
 clean_ov = aligned_maps_ov';
 clean_diff = aligned_maps_diff';
-clean_basal = aligned_maps_basal;
-clean_apical = aligned_maps_apical;
+% clean_basal = aligned_maps_basal;
+% clean_apical = aligned_maps_apical;
 % get the center of the soma
 
-soma_centers = cat(1,str(:).somaCenter);
+soma_centers = cat(1,str(cell_idx).somaCenter);
 soma_centers = soma_centers(non_nan_cells,1)- min(soma_centers(non_nan_cells,1));
 % % define the cell number
 % cell_num = size(clean_ex,2);
@@ -208,8 +208,8 @@ center_bins = discretize(soma_centers, edges);
     aligned_maps_inraw = zeros(cell_num,16+bin_num, 16+hbin_num);
     aligned_maps_ov = zeros(cell_num,16+bin_num, 16+hbin_num);
     aligned_maps_diff = zeros(cell_num,16+bin_num, 16+hbin_num);
-    aligned_maps_basal = zeros(cell_num,16+bin_num, 16+hbin_num);
-    aligned_maps_apical = zeros(cell_num,16+bin_num, 16+hbin_num);
+%     aligned_maps_basal = zeros(cell_num,16+bin_num, 16+hbin_num);
+%     aligned_maps_apical = zeros(cell_num,16+bin_num, 16+hbin_num);
     % for all the cells
     for cells = 1:cell_num
         % get the cells displacement
@@ -254,7 +254,8 @@ pia_input=pia_input(incl_idx:end);
 [coeff_com,score_com,latent_com,~,explained_com,mu] = pca([cat(1,aligned_maps_ex) cat(1,aligned_maps_in)]);
 % [coeff_basal,score_basal,latent_basal,~,explained_basal,mu] = pca(aligned_maps_basal(morph_cells_id,:,:));
 % [coeff_apical,score_apical,latent_apical,~,explained_apical,mu] = pca(aligned_maps_apical(morph_cells_id,:,:));
-[coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(morph_parameters(morph_cells_id,1:21));
+%% 
+%[coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(morph_parameters(morph_cells_id,1:21));
 %% Display variance explained for ex and in maps
 var_exp(explained_in,explained_ex,{'Inhibition','Excitation'});legend boxoff;
 %% %% Display variance explained combined

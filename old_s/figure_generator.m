@@ -416,22 +416,13 @@ fn='C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure3
 savepdf_SW(fn,1);
 %% UMAP embedding
 % get the pial depth
-pialD=cat(1,str.pialD);
-% get the layer 4 excitation
-frac4ex = cat(1,str.frac_vert);
-frac4ex = sum(frac4ex(:,6:7),2);
-% get the inhibitory L23 angle
-
-% get the inhibitory L23 x centroid
-centroidX23in=abs(ang_inL23(:,3)-ang_inL23(:,1));
-centroidY23in=abs(ang_inL23(:,4)-ang_inL23(:,2));
+pialD=pia_morpho;
 % assemble the feature vector
 % cell_cell = cat(2,pialD,frac4ex,...
 %     centroidX23in);
-cell_cell = cat(2,pialD,frac4ex,...
-     centroidX23in,centroidY23in);
+cell_cell = pialD';
 % cell_cell = cat(2,pcs(:,2),ang);
-cell_cell = normr_2(cell_cell,2);
+%cell_cell = normr_2(cell_cell,2);
 %% Run UMAP on the data
 % run the embedding from scratch
 [reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 30, 'min_dist', 0.5);
