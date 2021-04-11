@@ -373,58 +373,205 @@ ylabel('Relative pial position');xlabel('PC1_{com}');set(gca,'FontSize',10);
 
 %% 
 
+
+
+%% Passive ephys and apical
+ephys_sel=[];ephys_sel=[data_ephys(:,13:17)];
+morph_sel=[];morph_sel=[data_morpho(:,1:9) max_a' dis_peaka'];
+score_ephys=[];
+[coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
+[coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(zscore(morph_sel));
+var_exp(explained_ephys,[],[]); 
+var_exp(explained_morph,[],[]); 
+
+%% Active ephys and basal
+ephys_sel_a=[];ephys_sel_a=[data_ephys(:,[1:7 18])];
+morph_sel_ba=[];morph_sel_ba=[data_morpho(:,10:19) max_b' dis_peakb'];
+[coeff_ephys_a,score_ephys_a,latent_ephys_a,~,explained_ephys_a,mu] = pca(zscore(ephys_sel_a));
+[coeff_morph_ba,score_morph_ba,latent_morph_ba,~,explained_morph_ba,mu] = pca(zscore(morph_sel_ba));
+%% PC with dip test
 dip_test_SW(score_ephys(:,[1 2 3]),0,{'PC1','PC2','PC3'});
 dip_test_SW(score_morph(:,[1 2 3]),0,{'PC1','PC2','PC3'});
 dip_test_SW(score_com(:,[1 2 3]),0,{'PC1','PC2','PC3'});
-
-
-
 %% 
-%% UMAP embedding
-% get the pial depth
-pialD=cat(1,str.pialD);
-% get the layer 4 excitation
-frac4ex = cat(1,str.frac_vert);
-frac4ex = sum(frac4ex(:,6:7),2);
-% get the inhibitory L23 angle
 
-% get the inhibitory L23 x centroid
-centroidX23in=abs(ang_inL23(:,3)-ang_inL23(:,1));
-centroidY23in=abs(ang_inL23(:,4)-ang_inL23(:,2));
-% assemble the feature vector
-% cell_cell = cat(2,pialD,frac4ex,...
-%     centroidX23in);
-cell_cell = cat(2,pialD,frac4ex,...
-     centroidX23in,centroidY23in);
-% cell_cell = cat(2,pcs(:,2),ang);
-cell_cell = normr_2(cell_cell,2);
-%% Run UMAP on the data
-% run the embedding from scratch
-[reduced_data, umap] = run_umap(cell_cell, 'n_neighbors', 30, 'min_dist', 0.5);
-
-%% Figure 4 panels
-close all;
-%UMAP projections Panel C and D
-%load embedding
-%load('C:\Users\Simon-localadmin\Documents\MargrieLab\PhDprojects\L23\Paper\Figure4\embedding_X_only\reduced_data.mat');
-%in vitro values
-plot_list = {'frac_vert','ang_inL23','pialD','span'};
-plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
-%in vivo values non cyclic 
-plot_list = {'OSIpref','DSIpref','ODIpref','Sigmapref','Capeakpref'};
-plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'parula');
-%cyclic values
-plot_list ={'ORIpref','DIRpref'}
-plotting_embedding_str(reduced_data, str, plot_list, 0,0, 'phasemap');
-autoArrangeFigures;
+%umap_plot(ephys_sel, pia_ephys,'Pial depth');
+umap_plot(score_ephys(:,[1 2 3]), pia_ephys,'Pial depth');
+%% 
+umap_plot(score_ephys_a(:,[1 2 3]), pia_ephys,'Pial depth');
+ 
+%% Mopho all properties apical
+%umap_plot([data_morpho(:,1:9) max_a' dis_peaka'], pia_morpho,'Pial depth')
+umap_plot(score_morph(:,[1 2 3]), pia_morpho,'Pial depth');
+%% basal
+umap_plot(score_morph_ba(:,[1 2 3]), pia_morpho,'Pial depth');
+%% Input 
+umap_plot(score_com(:,[1 2 3]), pia_input','Pial depth');
 
 
 
+%% INVIVO
+
+%% in vivo in vitro comparison
+% LOAD data structure, you need uipickfiles function
+out_dir='C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\structures_invivo'
+directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitymoph atm:191804
+filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
+load(char(filename));%load mat file
+%% %% Read out ori pref of all 
+ [od_out sftf_out sftf_sel sftf_pref spon_out pia_all delta_Ca fit_Ca] = concat_invivo(L23_PC_new);
+ %% 
+ figure;histogram(fit_Ca)
+ tt=max(delta_Ca,[],2)
+
+ %% 
+ a=[];a=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & od_out(:,3)>0.5)
+ %% 
+ 
+  discretize_plot(pia_all(a),2,od_out(a,1),1)
+  %% 
+   discretize_plot(pia_all,3,od_out(:,8),1)
 %% 
 %% 
 plot_avg_maps(str_imap,44,ex_map,in_map,pia_input,1,0,[]);
 
 %% 
+  g1=[];
+  g2=[];
+   a=[];
+ a=find(od_out(:,8)==1 & abs(od_out(:,3))>0); 
+  g1=find(pia_all(a)<200)  
+  g2=find(pia_all(a)>290)
+  par=od_out(a,4)
+  [statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+  %% 
+  a=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0); 
+   g1=[];
+  g2=[];
+  g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'<200);  
+  g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>300);  
+  
+  
+  figure;histogram(max(delta_Ca(g1,:),[],2),10,'Normalization','probability');hold on;histogram(max(delta_Ca(g2,:),[],2),10,'Normalization','probability')
+  nanmean(max(delta_Ca(g1,:),[],2))
+   nanmean(max(delta_Ca(g2,:),[],2))
+   
+   %% Responiveness per depth
+   
+    a=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0); 
+   g1=[];
+  g2=[];
+  g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'<200);  
+  
+ figure;histogram(max(delta_Ca(g1,:),[],2),10,'Normalization','probability');
+ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
+   %% 
+    g1=[];
+  g2=[];
+  g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>50 & pia_all'<200);  
+  g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>50 & pia_all'>300);  
+     figure;histogram(od_out(g1,1),8,'Normalization','probability');hold on;histogram(od_out(g2,1),8,'Normalization','probability')
+  nanmean(od_out(g1,1))
+   nanmean(od_out(g2,1))
+   
+   %% 
+     g1=[];
+  g2=[];
+  g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'<200);  
+  g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>300);  
+     figure;histogram(od_out(g1,4),8,'Normalization','probability');hold on;histogram(od_out(g2,4),8,'Normalization','probability')
+  nanmean(od_out(g1,4))
+   nanmean(od_out(g2,4))
+   %% 
+       g1=[];
+  g2=[];
+  g1=find(pia_all'<200);  
+  g2=find(pia_all'>300);  
+     figure;histogram(sftf_out(g1,2),8,'Normalization','probability');hold on;histogram(sftf_out(g2,2),8,'Normalization','probability')
+  nanmean(od_out(g1,4))
+   nanmean(od_out(g2,4))
+   %% 
+    a=find(od_out_iviv(:,1)>0)
+com=[];com=[L23fr(a,1)  L23fr(a,2) L4fr(a,1)  L4fr(a,2) L5fr(a,1) L5fr(a,2)...
+    span(a,:) pia_input(a) od_out_iviv(a,[1:end])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%% 
+    a=find(od_out_iviv(:,1)>0)
+com=[];com=[score_com(a,[1 2 3]) od_out_iviv(a,[1:end])]; 
+G=correlation_matrix(com,0);title('');xticks([1:1:16]);yticks([1:1:16]);
+%% 
+
+figure;scatter(com(:,3),com(:,7))
+   
+   %% 
+   %INVIVO INVITRO
+   od_out_iviv=[[str(imaps_id).OSIpref];[str(imaps_id).DSIpref];[str(imaps_id).ODIpref];[str(imaps_id).ORIpref];[str(imaps_id).DIRpref]...
+              ;[str(imaps_id).Capeakpref];[str(imaps_id).Sigmapref];[str(imaps_id).SF];[str(imaps_id).TF];[str(imaps_id).sad];[str(imaps_id).noise];[str(imaps_id).pci]]';
+   
+   %% 
+   figure;scatter([str(imaps_id).Ca_peak_sftf],[str(imaps_id).pia_invivo])
+   
+   
+   %% 
+    g1=[];
+  g2=[];
+  g1=find(od_out_iviv(:,6)>0 & [str(imaps_id).pia_invivo]'<200);  
+  g2=find(od_out_iviv(:,6)>0 & [str(imaps_id).pia_invivo]'>250 & [str(imaps_id).pia_invivo]'<300);  
+     figure;histogram(od_out_iviv(g1,6),8,'Normalization','probability');hold on;histogram(od_out_iviv(g2,6),8,'Normalization','probability')
+  nanmean(od_out_iviv(g1,6))
+   nanmean(od_out_iviv(g2,6))
+   
+   %% 
+   
+   
+   %% 
+   figure;scatter([str(imaps_id).pia_invivo]',L4fr(:,1));
+   
+   figure;scatter(od_out_iviv(:,6),[str(imaps_id).pia_invivo]',20,L4fr(:,1),'filled');
+   %% 
+   
+   g1=[];
+  g2=[];
+  g1=find(pia_input<200);  
+  g2=find(pia_input>250);  
+     figure;histogram(od_out_iviv(g1,4),8,'Normalization','probability');
+     hold on;histogram(od_out_iviv(g2,4),8,'Normalization','probability')
+  nanmean(od_out_iviv(g1,4))
+   nanmean(od_out_iviv(g2,4))
+   %% 
+   
+  figure;scatter(od_out_iviv(:,4),L4fr(:,1));
+  [r p]=corrcoef(od_out_iviv(:,5),L4fr(:,1),'rows','pairwise')
+  %% 
+  
+   a=find(od_out_iviv(:,2)>0);  
+   g1=[];
+  g2=[];
+g1=find(pia_input<200)
+g2=find(pia_input>220)
+par=od_out_iviv(:,1)
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+%% 
+ a=find(od_out_iviv(:,1)>0);  
+   g1=[];
+  g2=[];
+g1=find(pia_input<200)
+g2=find(pia_input>250)
+par=od_out_iviv(:,1)
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
+
+%% 
+
+figure;scatter(L4fr(:,1),od_out_iviv(:,1),20,pia_input,'filled')
+%% 
+
+   a=find(od_out(:,1)>0);  
+   g1=[];
+  g2=[];
+g1=find(pia_all<200) ;
+g2=find(pia_all>300) ;
+par=od_out(:,1)
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);
 
 %% 
 dip_test_SW(data_morpho(:,[1 3 7 8 9 10 ]),1,{'PC1','PC2','PC3'});
