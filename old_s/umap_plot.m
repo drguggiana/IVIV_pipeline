@@ -14,12 +14,14 @@ cell_cell = normr_2(cell_cell,2);
 
 %% 
 if size(vis_data,1)==1
+    cmap='plasma';
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 350, 300]);
 set(gcf,'color','w');
 hold on
 scatter(cell_cell(:,1),cell_cell(:,2),30,vis_data,'filled')
-;hold on;colorbar;xlabel('dim1');ylabel('dim2');
+;hold on;colormap(cmap);colorbar;xlabel('dim1');ylabel('dim2');
 title(desc);
+
 else
     
 end
