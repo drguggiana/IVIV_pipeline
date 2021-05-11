@@ -301,7 +301,7 @@ G2=[];
 G2=correlation_matrix(com,0);
 %% Circular correlation for ORI
 a=[];
-df=[];db=[];
+df=[];db=[];corr 
 df=[morph_parameters(morph_res_sub,9)];
 db=[morph_parameters(morph_res_sub,19)];
 a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 

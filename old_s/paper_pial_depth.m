@@ -61,6 +61,20 @@ p1.Color(4) = 0.1;
 hold on;
 end
 box off;legend('Apical','Basal');legend boxoff;ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);
+%% 
+
+
+[sex, ddex, sdex, XPex, YPex, ZPex, iDex] = sholl_tree(str_all(morph_id(86)).tr_basal, 20, '-s');
+[sex1, ddex1, sdex1, XPex1, YPex1, ZPex1, iDex1] = sholl_tree(str_all(morph_id(86)).tr_apical, 20, '-s');
+%% 
+
+hold on
+p1=plot(ddex,sex,'-m','LineWidth',1);
+p1.Color(4) = 1;
+hold on;
+p1=plot(ddex1,sex1,'-k','LineWidth',1);
+p1.Color(4) = 1;
+hold on;
 %% Correlation with pial depth: APICAL using sorted correlation plot
 stri={'Radial Dis._{max} (µm)','Total Length (µm)','Path Length_{max} (µm)','Branch Points','Branch Order_{max}','Branch Length_{mean} (µm)','Width / Height','Width','Height','Peak Nr. cross','Dis. peak branch (µm)'};
 sorted_correlation([data_morpho(:,1:9) max_a' dis_peaka'],pia_morpho',stri,'k',1)
@@ -112,9 +126,21 @@ P=[];yfit=[];
     plot(score_morph_a(:,2),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
 
 %% Ephys
-
-
-
+load('D:\Munich_backup_harddriveNEW\THESIS\Ephys\ephys.mat')
+%example cells
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 800, 175]);
+subplot(1,3,1)
+%Rheobase +30 pA
+%up: SW1504080002:151.8
+plot(ephys.spike_traces{:,:,48}(:,9),'k');box off;ylim([-80 80]);;yticks([-80:40:80]);
+%mid: SW150403004: 222.2
+subplot(1,3,2)
+plot(ephys.spike_traces{:,:,46}(:,14),'k');box off;ylim([-80 80]);;yticks([-80:40:80]);
+%low: SW150403004: 342
+subplot(1,3,3)
+ plot(ephys.spike_traces{:,:,34}(:,17),'k');ylim([-80 80]);yticks([-80:40:80]);
+ %ephys.spike_traces{:,:,34}(1,17)
+box off;
 %% %% Read out which ones have ephys or not 
 str_all=str;
 for i=1:length(str_all)
@@ -172,10 +198,10 @@ scatter(data_ephys(:,14)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor
  title('Passive');text(55,0.99,'r=-0.29');text(55,0.9,'p<0.001');
  hold on;
  %ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];
- xticks([0:1:4]);
+ xlim([10 80]);xticks([0:20:80]);
 %ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';
 ylabel('Relative pial position');xlabel('Tau (ms)')
-xlim([10 70]);
+
 %ref.XData=[15 70];xticks([10:20:80]);
 P=[];yfit=[];
  P = polyfit(data_ephys(:,14)',tr,1);
@@ -188,10 +214,10 @@ scatter(score_ephys(:,1),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor'
  %set(gca, 'YDir','reverse');
  hold on;
  %ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[30 90];
- xticks([0:30:90]);
+ xticks([-5:2:5]);
 %ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';
 ylabel('Relative pial position');xlabel('PC1 (53%)')
-xlim([-5 4]);%xticks([40:80:280]);
+xlim([-5 5]);%xticks([40:80:280]);
 text(3.5,0.99,'r=-0.32');text(3.5,0.9,'p<0.001');
 
 P=[];yfit=[];
@@ -587,7 +613,18 @@ od_out_iviv=[[str(imaps_id).OSIpref];[str(imaps_id).DSIpref];[str(imaps_id).ODIp
               ;[str(imaps_id).Capeakpref];[str(imaps_id).Sigmapref];[str(imaps_id).SF];[str(imaps_id).TF];[str(imaps_id).sad];[str(imaps_id).noise];[str(imaps_id).pci]]';
           %% 
           
-          
+    %% calculate R2 of fit
+    oris=[0:45:315];
+yp=fit_Ca(:,oris+1);
+for i=1:length(fit_Ca)
+    y=delta_Ca(i,:)
+    ym=mean(y);
+    yp=fit_Ca(i,oris+1);
+r2=1-(sum(sqrt((y-yp).^2))/sum(sqrt((y-ym).^2)))
+r2_all(i)=r2;
+end
+ figure;set(gcf,'color','w');scatter(od_out(:,1),r2_all);box off;
+ xlabel('gOSI');ylabel('R2 of fit');      
   %% Responiveness per depth in vivo all 
   tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
 g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.33);
@@ -621,7 +658,7 @@ xlabel('R / R0_{max}'); set(gca,'FontSize',10);
 %   [statsout]=dual_barplot(par,g1,g3,2);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
 %% Overal binary responsiveness: no difference
 tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
-g1=find(tr'<=0.25);
+g1=find(tr'<=0.5);
 g2=find(tr'>0.25 & tr'<=0.5);  
 g3=find(tr'>0.5); 
 
@@ -666,9 +703,9 @@ par=max(delta_Ca(:,:),[],2);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
 'mc','k',...
-'medc','m'); box off; ylabel('R / R0_{max}'),legend('');legend boxoff;set(gca,'FontSize',10);
+'medc','m'); box off; ylabel('R / R0_{max}'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3));
-xlabel('Relative pial position');
+xlabel('Relative pial position');hold on;
 
 
   %% ODI per depth in vivo all 
@@ -697,7 +734,8 @@ g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.5);
 g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
 g3=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'>0.5);  
 par=[];
-par=od_out(:,3);
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
 [statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
 %% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
@@ -755,10 +793,11 @@ h1=histogram(od_out(g3,1),20,'Normalization','probability');h1.FaceColor='w';box
 hold on;plot(nanmean(od_out(g3,1)),0.35,'kv');hold on;plot(nanmedian(od_out(g3,1)),0.35,'mv');
 %% 
 %% stats barplot;  split L2/3 in half: OSI
-g1=[];g2=[];g3=[];
-g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.5);
-g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
-g3=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'>0.5);  
+qua = quantile(max(delta_Ca,[],2),0.75)
+g1=[];g2=[];g3=[];tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & r2_all'>0.3 & max(delta_Ca,[],2)>qua & tr'<=0.5);
+g2=find(od_out(:,8)==1 & r2_all'>0.3 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  r2_all'>0.3 & max(delta_Ca,[],2)>qua & tr'>0.5);  
 par=[];
 par=od_out(:,1);
 [statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
@@ -768,7 +807,7 @@ par=[];
 par=od_out(:,1);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
 'mc','k',...
-'medc','m'); box off; ylabel('OSI'),legend('');legend boxoff;
+'medc','m'); box off; ylabel('gOSI'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3))
   xlabel('Relative pial position');
 
@@ -829,6 +868,24 @@ xlabel('Preferred Orientation (deg)')
 ylabel('Fraction of cells');set(gca,'FontSize',10);
 b1(1).FaceColor='k';
 b1(2).FaceColor=[0.5 0.5 0.5];
+%% %% stats barplot;  split L2/3 in half: OSI
+g1=[];g2=[];g3=[];tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & od_out(:,1)>0.25 & max(delta_Ca,[],2)>0 & tr'<=0.5);
+g2=find(od_out(:,8)==1 & od_out(:,1)>0.25 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  od_out(:,1)>0.25 & max(delta_Ca,[],2)>0 & tr'>0.5);  
+par=[];
+par=od_out(:,4);
+[statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+%% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
+par=[];
+par=od_out(:,4);
+hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
+'mc','k',...
+'medc','m'); box off; ylabel('Preffered Orientation (deg)'),legend('');legend boxoff;
+[p k]=ranksum(par(g1),par(g3))
+  xlabel('Relative pial position');
+  
 %% 
 ORI_pref=[];ORI_pref=od_out(:,4);
 ORI_pref = ORI_pref + 90;
