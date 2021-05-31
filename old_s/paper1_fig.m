@@ -709,18 +709,18 @@ par=[];
 s1=[g1' g2'];
 %combine 45 and 225
 s2=[g3' g4'];
-%par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
- %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+ par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
   par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
-  %par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
-%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
- %par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+  par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+ par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
 par(g4)=par(g4)*-1
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
- %ylim([-70 70]);yticks(-70:35:70)
- ylim([-150 200]);yticks(-150:100:200)
+ ylim([-70 70]);yticks(-70:35:70)
+ %ylim([-150 200]);yticks(-150:100:200)
 
 %% 
 %  par1=(ang_exL23(a,3)-ang_exL23(a,1))*69;
@@ -909,7 +909,7 @@ hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,
 %hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
 box off;set(gca,'FontSize',10);
 hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','k','Markersize',7);
- [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10)
 %% alinged cells rise pref and null INHIBITION
@@ -927,7 +927,7 @@ hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,
 %hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
 box off;set(gca,'FontSize',10);
 hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','b','Markersize',7);
- [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10)
 %% non alinged cells rise pref and null INHIBITION
@@ -945,7 +945,7 @@ hold on;pS=plotSpread([data(:,1),data(:,2)],'categoryIdx',[ones(1,length(data(:,
 %hold on;plot([1,2],[nanmean(data(:,1)),nanmean(data(:,2))],'k','LineWidth',3);
 box off;set(gca,'FontSize',10);
 hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','k','Markersize',7);
- [p1]=signrank(data(:,1) ,data(:,2),'tail','right');p1=round(p1,3);
+ [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10)
 %% 
@@ -1090,9 +1090,9 @@ statsout=plot_horizontal_fraction_group(str,od_out_iviv,L23h,L4h,L5h)
 %% Test ex and in differences
 %% Centroid EX and IN 
  par1=[];par2=[];
-  par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+  par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %  par1(g2)=par1(g2)*-1;
-  par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+  par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
 %  par2(g2)=par2(g2)*-1;
 %par1=[];par2=[];
  %par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
@@ -1109,7 +1109,7 @@ xlabel('delta EX-IN');ylabel('Counts');set(gca,'FontSize',10);
 hold on;line([0 0], [0 5],'Color','k','LineStyle','--');
 hold on;scatter(nanmean(par2(s1)-par1(s1)),5,'kv','filled');
 [h,p] = ttest(par2(s1)-par1(s1));
-p = signrank(par2(s1)-par1(s1));
+p = signrank(par2(s1)-par1(s1))
 %% 
 par3=od_out_iviv(a,2);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 250, 250]);
@@ -1392,3 +1392,45 @@ title('Basal tree')
 %title('Apical tree')
 legend('Aligned','NonAligned');ylabel('Horizontal sholl: Branch points');
 
+%% 
+
+%% Plot difference between vertical excitation and inhbition per cell
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
+subplot(3,1,1);
+histogram(diffL23fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL23fr),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L2/3');ylabel('Cell Counts');set(gca,'FontSize',10);text(-0.5,28,'IN','Color','b');
+set(gca,'FontSize',10);text(0.5,28,'EX','Color','r');set(gca,'FontSize',10)
+subplot(3,1,2);
+histogram(diffL4fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL4fr),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L4');set(gca,'FontSize',10);set(gca,'FontSize',10);
+subplot(3,1,3);
+histogram(diffL5fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL5fr),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L5');set(gca,'FontSize',10);ylabel('Cell Counts');xlabel('EX-IN vertical fraction')
+%stats against 0
+[p,h] = signrank(diffL5fr);
+%% %% Plot difference between horizintal excitation and inhbition per cell SPAN
+diffL23fr_span=span(:,1)-span(:,4)
+diffL4fr_span=span(:,2)-span(:,5)
+diffL5fr_span=span(:,3)-span(:,6)
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
+subplot(3,1,1);
+histogram(diffL23fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL23fr_span*69),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L2/3');ylabel('Cell Counts');set(gca,'FontSize',10)
+subplot(3,1,2);
+histogram(diffL4fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL4fr_span*69),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L4');set(gca,'FontSize',10);;set(gca,'FontSize',10);
+text(-300,28,'IN','Color','b');set(gca,'FontSize',10);text(300,28,'EX','Color','r');set(gca,'FontSize',10)
+subplot(3,1,3);
+histogram(diffL5fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL5fr_span*69),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L5');set(gca,'FontSize',10);
+xlabel('EX-IN horizontal extent (µm)');
+%stats against 0

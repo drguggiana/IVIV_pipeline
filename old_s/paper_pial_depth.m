@@ -17,6 +17,12 @@ morph_id=find(morph==1);
                [str_all(morph_id).BOA]' [str_all(morph_id).BLA]' [str_all(morph_id).WHA]' [str_all(morph_id).XSA]' [str_all(morph_id).YSA]' ...
                [str_all(morph_id).RDB]' [str_all(morph_id).LB]' [str_all(morph_id).PLB]' [str_all(morph_id).BPB]'...
                [str_all(morph_id).BOB]' [str_all(morph_id).BLB]' [str_all(morph_id).WHB]' [str_all(morph_id).XSB]' [str_all(morph_id).YSB]' [str_all(morph_id).NB]']];
+           %% 
+           
+       mean_ap= nanmean([data_morpho(:,1:9) max_a' dis_peaka']);
+         mean_ba= nanmean([data_morpho(:,10:19) max_b' dis_peakb']);
+        
+          
 %% Read out pial depth
 for i=1:length(morph_id)
 if isnan(str_all(morph_id(i)).pialD) ==0    
@@ -229,6 +235,7 @@ P=[];yfit=[];
 %% Overlapping morpho ephys
 [~,ia,ib] =intersect(ephys_id,morph_id)
 %% Read out 33 cells that overlap
+data_ephys_both=[];
 data_morph_both=[];
 data_morph_both=[data_morpho(ib,:)];
 data_ephys_both=[data_ephys(ia,:)];
@@ -238,17 +245,17 @@ pia_both=[pia_morpho(ib)];
 ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
 G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
 
-%% 
+%% Apical
 ap_morph=[];
 ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
 %ap_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
 G2=correlation_matrix([ap_morph data_ephys_both(:,[1:7 18])],0);
-%% 
+%% Basal
 
 ap_morph=[];
 ap_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
 G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
-%% 
+%% Fugyre correlation matrix
 
 [R2,P2]=corrcoef([ap_morph data_ephys_both(:,[13:17])],'rows','pairwise');
 
@@ -262,13 +269,13 @@ xtickangle(45);set(gca,'FontSize',10);
 
 
 %% PCA for morpho ephys
-
-ephys_sel=data_ephys(:,[13 14 15 17]);
-morph_sel=[data_morpho(:,[1 3 5 6 7 8 9]) max_a' dis_peaka'];
-[coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
-[coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(zscore(morph_sel));
-var_exp(explained_ephys,[],[]); 
-var_exp(explained_morph,[],[]); 
+% 
+% ephys_sel=data_ephys(:,[13 14 15 17]);
+% morph_sel=[data_morpho(:,[1 3 5 6 7 8 9]) max_a' dis_peaka'];
+% [coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
+% [coeff_morph,score_morph,latent_morph,~,explained_morph,mu] = pca(zscore(morph_sel));
+% var_exp(explained_ephys,[],[]); 
+% var_exp(explained_morph,[],[]); 
 %% 
  tr=[];
  tr = rescale(pia_ephys);
@@ -346,12 +353,12 @@ spandL5=span(:,3)-span(:,6);
  ylim([100 400])
  set(gca,'Ydir','reverse');yticks([100:100:400]);set(gca,'FontSize',10);xlim([0 40]);
 %% Show three map examples
-% cell
-plot_avg_maps(str_imap,110,ex_map,in_map,pia_input,1,0,[]);
-%% 
-plot_avg_maps(str_imap,108,ex_map,in_map,pia_input,1,0,[]);
-%% 
-plot_avg_maps(str_imap,80,ex_map,in_map,pia_input,1,0,[]);
+% cell 180
+plot_avg_maps(str_imap,110,ex_map_raw,in_map_raw,pia_input,1,0,[]);
+%% 165
+plot_avg_maps(str_imap,108,ex_map_raw,in_map_raw,pia_input,1,0,[]);
+%% 320
+plot_avg_maps(str_imap,80,ex_map_raw,in_map_raw,pia_input,1,0,[]);
 %% %Pial depth correlation with EX IN L23, L4, L5 for panel F
 plot_fraction(L23fr,L4fr,L5fr,pia_input);
 %% 
@@ -572,29 +579,31 @@ dip_test_SW(score_com(:,[1 2 3]),0,{'PC1','PC2','PC3'});
 %% Ephys PC1 vs PC2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
 scatter(score_ephys(:,1),score_ephys(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-ylabel('PC2_e');xlabel('PC1_e');set(gca,'FontSize',10);
+ylabel('PC2 ephys');xlabel('PC1 ephys');set(gca,'FontSize',10);
 %% Morpho PC1 vs PC2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
 scatter(score_morph(:,1),score_morph(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-ylabel('PC2_m');xlabel('PC1_m');set(gca,'FontSize',10);
+ylabel('PC2 morph');xlabel('PC1 morph');set(gca,'FontSize',10);
 %% Input PC1 vs PC2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
 scatter(score_com(:,1),score_com(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-ylabel('PC2_i');xlabel('PC1_i');set(gca,'FontSize',10);
+ylabel('PC2 input');xlabel('PC1 input');set(gca,'FontSize',10);
 %% 
-
+tr=[]; tr=rescale(pia_ephys);
 %umap_plot(ephys_sel, pia_ephys,'Pial depth');
-umap_plot(score_ephys(:,[1 2 3]), pia_ephys,'Pial depth');
+umap_plot(score_ephys(:,[1 2 3]), tr,'');
 %% 
 umap_plot(score_ephys_a(:,[1 2 3]), pia_ephys,'Pial depth');
  
 %% Mopho all properties apical
+tr=[]; tr=rescale(pia_morpho);
 %umap_plot([data_morpho(:,1:9) max_a' dis_peaka'], pia_morpho,'Pial depth')
-umap_plot(score_morph_a(:,[1 2 3]), pia_morpho,'Pial depth');
+umap_plot(score_morph_a(:,[1 2 3]), tr,'');
 %% basal
 umap_plot(score_morph_ba(:,[1 2 3]), pia_morpho,'Pial depth');
 %% Input 
-umap_plot(score_com(:,[1 2 3]), pia_input','Pial depth');
+tr=[]; tr=rescale(pia_input');
+umap_plot(score_com(:,[1 2 3]), tr,'Pial depth');
 
 
 
@@ -625,6 +634,73 @@ r2_all(i)=r2;
 end
  figure;set(gcf,'color','w');scatter(od_out(:,1),r2_all);box off;
  xlabel('gOSI');ylabel('R2 of fit');      
+ 
+ 
+ %% 
+   tr=[];tr=rescale(pia_all);
+stri={'gOSI','gDSI','ODI','Tuning Width','R / R0_{max}'};
+a=[];a=find(od_out(:,1)>0.25);
+a=[];a=r2_all'<0.3;
+gOSI=od_out(:,1);
+gOSI(a)=NaN;
+a=[];a=r2_all'<0.3;
+gDSI=od_out(:,2);
+gDSI(a)=NaN;
+a=[];a=r2_all'<0.3;
+TW=od_out(:,7);
+TW(a)=NaN;
+sorted_correlation([gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2)],tr',stri,[0.5 0.5 0.5],1);
+xlabel('Correlation with pial depth');
+%% 
+X=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2) tr']
+X(any(isnan(X),2),:) = [];
+[coeff_invivo,score_invivo,latent_invivo,~,explained_invivo,mu] = pca(zscore(X(:,1:5)));
+%% 
+
+dip_test_SW(score_invivo(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% 
+
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_invivo(:,1),score_invivo(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 visresp');xlabel('PC1 visresp');set(gca,'FontSize',10);
+%% 
+tr=rescale(pia_all);
+umap_plot(score_invivo(:,[1 2 3]), X(:,6)','');
+
+%% 
+
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
+scatter(od_out(:,3),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('Relative pial position');xlabel('ODI');set(gca,'FontSize',10);
+ %hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+ %ref.YData=[0 1];
+ yticks([0:0.25:1]);
+ %ref.Color='k'; 
+  %text(-2,0.99,'r=0.44');text(-2,0.9,'p<0.001');
+  
+   P=[];yfit=[];
+   ty=find(isnan(od_out(:,3))==0);
+ P = polyfit(od_out(ty,3),tr(ty)',1);
+    yfit = P(1)*od_out(ty,3)+P(2);
+    hold on;
+    plot(od_out(ty,3),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
+%% 
+
+ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
+scatter(max(delta_Ca(:,:),[],2),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('Relative pial position');xlabel('ODI');set(gca,'FontSize',10);
+ %hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+ %ref.YData=[0 1];
+ yticks([0:0.25:1]);
+ %ref.Color='k'; 
+  %text(-2,0.99,'r=0.44');text(-2,0.9,'p<0.001');
+  
+   P=[];yfit=[];
+   ty=find(isnan(od_out(:,2))==0);
+ P = polyfit(od_out(ty,2),tr(ty)',1);
+    yfit = P(1)*od_out(ty,2)+P(2);
+    hold on;
+    plot(od_out(ty,2),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
   %% Responiveness per depth in vivo all 
   tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
 g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.33);
@@ -700,14 +776,25 @@ par=max(delta_Ca(:,:),[],2);
 [statsout]=dual_barplot(par,g1,g3,2);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
  
 %% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
 'mc','k',...
 'medc','m'); box off; ylabel('R / R0_{max}'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3));
 xlabel('Relative pial position');hold on;
 
+%% 
+figure;
 
+
+hold on;pS=plotSpread({par(g1);par(g3)},'categoryIdx',[ones(length(par(g1)),1);ones(length(par(g3)),1)*2],...
+    'categoryMarkers',{'o','o'},'categoryColors',{'r','b'});hold on;
+
+dat=[];
+   dat=[par(g1);par(g3)];
+   gro=[ones(length(par(g1)),1);ones(length(par(g3)),1)*2];
+ 
+boxplot(dat,gro,'Colors','k','Symbol','');
   %% ODI per depth in vivo all 
 tr=[];tr=rescale(pia_all);g1=[];g2=[];g3=[];
 g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.33);
@@ -738,7 +825,7 @@ par=[];
 par=(od_out(:,3));
 [statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
 %% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
 par=[];
 par=od_out(:,3);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
@@ -802,7 +889,7 @@ par=[];
 par=od_out(:,1);
 [statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
 %% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
 par=[];
 par=od_out(:,1);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
@@ -843,26 +930,29 @@ piald=rescale(piald);
 % ORI_pref(ORI_pref>180) = ORI_pref(ORI_pref>180) - 180;
 ORI_pref = ORI_pref + 90;
 ORI_pref(ORI_pref>179.999999) = ORI_pref(ORI_pref>179.999999) - 180;
-
+angle_edges=[];
 % separate the orientation in bins based on pia
 [N,edges,bin] = histcounts(piald,[0 0.5  1]);
 % [N,edges,bin] = histcounts(piald,3);
-angle_edges = [0 35 80 125 170 225]-22.5;
-%angle_edges = [0 45 90 135];
+%angle_edges = [0 35 80 125 170 225]-22.5;
+angle_edges = [0 45 90 135 180];
 % allocate memory for the bin results
-depth_bins = zeros(size(N,2),size(angle_edges,2)-2);
+% depth_bins = zeros(size(N,2),size(angle_edges,2)-2);
+depth_bins = zeros(size(N,2),size(angle_edges,2)-1);
 % for all the depth bins
 for bins = 1:size(N,2)
     % bin the angles
     temp_bins = histcounts(ORI_pref(bins==bin),angle_edges,'Normalization','probability');
-    % combine the edge bins
-    depth_bins(bins,:) = [temp_bins(2:4),sum(temp_bins([1,5]))];
+    depth_bins(bins,:) = temp_bins
+%     % combine the edge bins
+%     depth_bins(bins,:) = [temp_bins(2:4),sum(temp_bins([1,5]))];
 end
 
 % plot the results
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 300]);
 b1=bar(depth_bins');box off
-set(gca,'XTickLabels',string(angle_edges(2:5)+22.5))
+%set(gca,'XTickLabels',string(angle_edges(2:5)+22.5))
+set(gca,'XTickLabels',string(angle_edges));
 legend({'<0.5','>0.5'});legend boxoff
 xlabel('Preferred Orientation (deg)')
 ylabel('Fraction of cells');set(gca,'FontSize',10);
@@ -877,7 +967,7 @@ par=[];
 par=od_out(:,4);
 [statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
 %% Violin boxplot;  split L2/3 in half: Responsiveness amplitude
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 400]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
 par=[];
 par=od_out(:,4);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
@@ -1116,3 +1206,9 @@ pcs     =[1 2 3 4 5 6];
 %pcs     =[5];
 %including the 6 PCs = pial depth 
 [idx_input, clustering_input, leafOrder] = hca(data_morpho(:,[1 3 7 8 9 10]),0,'ward',clu_num,pia_morpho,1,0.75);%call function for clustering
+
+
+
+
+%% 
+
