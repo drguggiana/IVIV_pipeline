@@ -18,11 +18,11 @@ morph_id=find(morph==1);
                [str_all(morph_id).RDB]' [str_all(morph_id).LB]' [str_all(morph_id).PLB]' [str_all(morph_id).BPB]'...
                [str_all(morph_id).BOB]' [str_all(morph_id).BLB]' [str_all(morph_id).WHB]' [str_all(morph_id).XSB]' [str_all(morph_id).YSB]' [str_all(morph_id).NB]']];
            %% 
-           
-       mean_ap= nanmean([data_morpho(:,1:9) max_a' dis_peaka']);
-         mean_ba= nanmean([data_morpho(:,10:19) max_b' dis_peakb']);
-        
-          
+%            
+%        mean_ap= nanmean([data_morpho(:,1:9) max_a' dis_peaka']);
+%          mean_ba= nanmean([data_morpho(:,10:19) max_b' dis_peakb']);
+%         
+%           
 %% Read out pial depth
 for i=1:length(morph_id)
 if isnan(str_all(morph_id(i)).pialD) ==0    
@@ -69,7 +69,6 @@ end
 box off;legend('Apical','Basal');legend boxoff;ylabel('Nr. dendritic crossings');xlabel('Distance from Soma (µm)');set(gca,'FontSize',10);
 %% 
 
-
 [sex, ddex, sdex, XPex, YPex, ZPex, iDex] = sholl_tree(str_all(morph_id(86)).tr_basal, 20, '-s');
 [sex1, ddex1, sdex1, XPex1, YPex1, ZPex1, iDex1] = sholl_tree(str_all(morph_id(86)).tr_apical, 20, '-s');
 %% 
@@ -100,6 +99,11 @@ hold on;set(gca,'FontSize',10);hold on;title('Basal')
 %% PCA for apical morphology
 [coeff_morph_a,score_morph_a,latent_morph_a,~,explained_morph_a,mu] = pca(zscore([data_morpho(:,1:9) max_a' dis_peaka']));
 var_exp(explained_morph_a,[],[]); 
+%% 
+%% PCA for basal morphology
+[coeff_morph_b,score_morph_b,latent_morph_b,~,explained_morph_b,mu] = pca(zscore([data_morpho(:,10:19) max_b' dis_peakb']));
+var_exp(explained_morph_b,[],[]); 
+
 %% Plot the 1 corrleation each for Apical and BAsal
 tr = rescale(pia_morpho);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 500]);
@@ -636,8 +640,8 @@ end
  xlabel('gOSI');ylabel('R2 of fit');      
  
  
- %% 
-   tr=[];tr=rescale(pia_all);
+%% Sorted correlation checked with multiple comparison
+tr=[];tr=rescale(pia_all);
 stri={'gOSI','gDSI','ODI','Tuning Width','R / R0_{max}'};
 a=[];a=find(od_out(:,1)>0.25);
 a=[];a=r2_all'<0.3;
@@ -651,21 +655,37 @@ TW=od_out(:,7);
 TW(a)=NaN;
 sorted_correlation([gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2)],tr',stri,[0.5 0.5 0.5],1);
 xlabel('Correlation with pial depth');
-%% 
-X=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2) tr']
-X(any(isnan(X),2),:) = [];
-[coeff_invivo,score_invivo,latent_invivo,~,explained_invivo,mu] = pca(zscore(X(:,1:5)));
-%% 
+%% perform PCA remove NaNs;
+invivo_feat=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2) tr']
+invivo_feat(any(isnan(invivo_feat),2),:) = [];
+[coeff_invivo,score_invivo,latent_invivo,~,explained_invivo,mu] = pca(zscore(invivo_feat(:,1:5)));
+%% Show PC2 vs pial depth 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
+scatter(score_invivo(:,2),invivo_feat(:,6),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ %set(gca, 'YDir','reverse');
+ hold on;
+ %ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[30 90];
+% xticks([-5:2:5]);
+%ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';
+ylabel('Relative pial position');xlabel('PC2 (22%)')
+%xlim([-5 5]);%xticks([40:80:280]);
+text(4,0.99,'r=0.1');text(4,0.9,'p<0.01');
+axis square
+P=[];yfit=[];
+ P = polyfit(score_invivo(:,2),invivo_feat(:,6),1);
+    yfit = P(1)*score_invivo(:,2)'+P(2);
+    hold on;
+    plot(score_invivo(:,2)',yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
 
-dip_test_SW(score_invivo(:,[1 2 3]),0,{'PC1','PC2','PC3'});
-%% 
-
+%% PC1 invivo vs PC2 invivo 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
 scatter(score_invivo(:,1),score_invivo(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-ylabel('PC2 visresp');xlabel('PC1 visresp');set(gca,'FontSize',10);
-%% 
+ylabel('PC2 visresp');xlabel('PC1 visresp');set(gca,'FontSize',10);xticks([-5:2.5:5])
+%% Dip test invivo using the first 3 PCs
+dip_test_SW(score_invivo(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% UMAP plot
 tr=rescale(pia_all);
-umap_plot(score_invivo(:,[1 2 3]), X(:,6)','');
+umap_plot(score_invivo(:,[1 2 3]), invivo_feat(:,6)','');
 
 %% 
 

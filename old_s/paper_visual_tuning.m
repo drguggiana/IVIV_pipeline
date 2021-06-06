@@ -892,7 +892,7 @@ hold on;scatter(nanmean(diffL5fr_span*69),30,'kv','filled');ylabel('Cell Counts'
 hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L5');set(gca,'FontSize',10);
 xlabel('EX-IN horizontal extent (µm)');
 %stats against 0
-[p,h] = signrank(diffL5fr_span);
+[p,h] = signrank(diffL5fr_span)
 %% Overview of centroid x any with respect to soma for EX and IN, 
 a=iviv_cells;
 centroid_plot(a,ang_exL23,ang_exL4,ang_exL5,ang_inL23,ang_inL4,ang_inL5,0,[],[]);
