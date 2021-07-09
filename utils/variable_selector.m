@@ -20,7 +20,7 @@ for target = 1:number_targets
         temp_var = vertcat(str(selection_vector).(field_name));
         switch column_name
             case 'Cx'
-                target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1));
+                target_data(:,target) = temp_var(:,3)-temp_var(:,1);
             case 'Cy'
                 target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2));
             case 'Vt'
@@ -48,7 +48,7 @@ for target = 1:number_targets
         temp_var = vertcat(str(selection_vector).(field_name));
         switch column_name
             case 'Cx'
-                target_data(:,target) = abs(temp_var(:,3)-temp_var(:,1));
+                target_data(:,target) = temp_var(:,3)-temp_var(:,1);
             case 'Cy'
                 target_data(:,target) = abs(temp_var(:,4)-temp_var(:,2));
             case 'Vt'

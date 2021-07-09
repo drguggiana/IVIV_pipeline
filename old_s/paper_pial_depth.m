@@ -25,12 +25,15 @@ morph_id=find(morph==1);
 %           
 %% Read out pial depth
 for i=1:length(morph_id)
+    temp=str_all(morph_id(i)).cellName
+  name_morph{i}=temp(1:end-4);
 if isnan(str_all(morph_id(i)).pialD) ==0    
 pia_morpho(i)=str_all(morph_id(i)).pialD;
 else
-pia_morpho(i)=str_all(morph_id(i)).pia;    
+pia_morpho(i)=str_all(morph_id(i)).pia;   
 end
 end
+length(unique(name_morph))
 %%  Histogram of pia distribution for morpho
  close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 225]);
  hold on;histogram(pia_morpho,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
@@ -114,7 +117,7 @@ scatter(data_morpho(:,7)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor
 %  hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; ref.XData=[0 4];xticks([0:1:4]);
 % ref.YData=[1 0];yticks([0:0.25:1]);ref.Color='k';
 ylabel('Relative pial position');xlabel('Width / Height');
-text(4,0.99,['r=-0.64']);text(4,0.9,['p<0.001']);set(gca,'FontSize',10);xlim([0 4.5]);
+text(4,0.99,['r=-0.64']);text(4,0.9,['p<0.001']);set(gca,'FontSize',10);xlim([0 4.5]);ylim([0 1])
  P = polyfit(data_morpho(:,7)',tr,1);
     yfit = P(1)*data_morpho(:,7)'+P(2);
     hold on;
@@ -152,6 +155,7 @@ subplot(1,3,3)
  %ephys.spike_traces{:,:,34}(1,17)
 box off;
 %% %% Read out which ones have ephys or not 
+ephys=[];
 str_all=str;
 for i=1:length(str_all)
     if isnan(str_all(i).Vmin)==0
@@ -161,6 +165,12 @@ for i=1:length(str_all)
     end
 end
 ephys_id=find(ephys==1);
+
+for i=1:length(ephys_id)
+   temp=str_all(ephys_id(i)).cellName
+  name_ephys{i}=temp(1:end-4);
+end
+length(unique(name_ephys))
 %% Read out morphology parameters for apical and basal tree
   data_ephys=[[str_all(ephys_id).Vmin]' [str_all(ephys_id).Vpeak]' [str_all(ephys_id).Vthresh]' [[str_all(ephys_id).Vslope]'...
                [str_all(ephys_id).Vhalf]' [str_all(ephys_id).Vamp]' [str_all(ephys_id).AHP]' [str_all(ephys_id).APrise]' [str_all(ephys_id).APfall]' ...
@@ -244,6 +254,13 @@ data_morph_both=[];
 data_morph_both=[data_morpho(ib,:)];
 data_ephys_both=[data_ephys(ia,:)];
 pia_both=[pia_morpho(ib)];
+trm=morph_id(ib);
+for i=1:length(trm)
+    temp=str_all(trm(i)).cellName
+  name_mephys{i}=temp(1:end-4);
+end
+length(unique(name_mephys))   
+
 %% Correlation of both
 %Passive with apical parameters
 ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
@@ -309,6 +326,11 @@ for i=1:length(str)
 end
 imaps_id=find(imaps==1);
 imaps_id(44)=[];
+for i=1:length(imaps_id)
+    temp=str_all(imaps_id(i)).cellName
+  name_maps{i}=temp(1:end-4);
+end
+length(unique(name_maps))  
 %% 
 for i=1:length(imaps_id)
 ex_map(:,:,i) = str(imaps_id(i)).subpixel_excMap;
@@ -499,13 +521,24 @@ data_mi_morph=[];data_mi_input=[];
 data_mi_morph=[data_morpho(ib,:)];
 data_mi_input=[data_input(ia,:)];
 pia_mi=[pia_morpho(ib)];
+trmm=morph_id(ib);
+for i=1:length(trmm)
+    temp=str_all(trmm(i)).cellName
+  name_mmaps{i}=temp(1:end-4);
+end
+length(unique(name_mmaps))  
 %% 
 com=[];com=[data_mi_morph data_mi_input]
 G2=correlation_matrix([data_mi_morph data_mi_input],0);
 
-%% 
+%% Basal
 ba_input=[data_mi_morph(:,10:19) max_b(ib)' dis_peakb(ib)'];
 [R2,P2]=corrcoef([ba_input data_mi_input],'rows','pairwise');
+G2=correlation_matrix([ba_input data_mi_input],0);
+%% 
+ap_input=[data_mi_morph(:,1:9) max_a(ib)' dis_peaka(ib)'];
+[R2,P2]=corrcoef([ap_input data_mi_input],'rows','pairwise');
+G2=correlation_matrix([ap_input data_mi_input],0);
 %% 
 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 450, 300])
@@ -515,7 +548,7 @@ colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:5])
 
 %% Plot specific input and morpho
 tr=[]; tr=rescale(pia_mi);
-corr_plot(data_mi_input(:,10),ba_input(:,7),tr,{'Input Horizontal extent L2/3_{EX}','Width / Height_{basal}','Relative pial position'});
+corr_plot(data_mi_input(:,10),ba_input(:,8),tr,{'Input Horizontal extent L2/3_{EX}','Width / Height_{basal}','Relative pial position'});
 %% 
 tr=[]; tr=rescale(pia_mi);
 cmap='plasma'
@@ -659,6 +692,14 @@ xlabel('Correlation with pial depth');
 invivo_feat=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2) tr']
 invivo_feat(any(isnan(invivo_feat),2),:) = [];
 [coeff_invivo,score_invivo,latent_invivo,~,explained_invivo,mu] = pca(zscore(invivo_feat(:,1:5)));
+%% 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
+imagesc(coeff_invivo([3 5 4 1 2],1:3));
+[cmap]=buildcmap('bwg');
+colormap(cmap);caxis([-1 1]);xticks([1:1:3]);yticks([1:1:5]);colorbar;
+xticklabels({'PC1','PC2','PC3'});
+yticklabels({'ODI','R / R0_{max}','Tuning Width','gOSI','gDSI'});
+set(gca,'FontSize',10);
 %% Show PC2 vs pial depth 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
 scatter(score_invivo(:,2),invivo_feat(:,6),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');

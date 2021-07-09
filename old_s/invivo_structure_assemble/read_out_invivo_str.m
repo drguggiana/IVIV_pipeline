@@ -5,7 +5,7 @@ directory=out_dir;% use cobined date structure named Data_SWMF_combined_qualitym
 filename=uipickfiles('FilterSpec',directory)%pathname, you need uipickfiles function
 load(char(filename));%load mat file
 %% save location
-adata_dir='C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\invivo_only_str'
+adata_dir='C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\Stage2_invivo_only_str'
 
 %% Excel sheet directory
 ExpXls            = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full_structure\L23PC_project_all_invivo.xlsx';%directory where excel batch file is located;change accordingly
@@ -13,7 +13,7 @@ ExpXls            = 'C:\Users\simonw\S1-V1 interaction Dropbox\Simon Weiler\Full
 batchopt          = parseExperimentsXls_L23(ExpXls);%calls the nested function parseExperimentsXls_dLGN and considers the user flag (1 or 0)
 nummice           = length(batchopt.mouse);%length of experiments to be analyzed
 %% 
-
+L23_PC=L23_PC_new;
 adder=1;%counting variable
 for i=1:length(L23_PC)
    temp=[]
@@ -427,6 +427,29 @@ for i=1:length(nan_vector)
     invivo_struct(nan_vector(i)).error_pref=od_out_iviv(i,10);
     invivo_struct(nan_vector(i)).r2_pref=od_out_iviv(i,11);
     invivo_struct(nan_vector(i)).tun_pref=od_out_iviv(i,12);
+end
+
+
+%% Fix the orientation fields to match the convention of the horizontal
+% % bar being 0 degrees
+
+% define the target fields
+ori_fields = {'ORIpref','Ori','Ori_sftf_all','Ori_sftf'};
+% replace the orientations in each of the affected fields
+% for all the cells
+for cells = 1:length(nan_vector)
+
+    % for all the fields
+    for ori_field = 1:length(ori_fields)
+
+        % get the value and correct it
+        temp_val = vertcat(invivo_struct(cells).(ori_fields{ori_field})) + 90;
+        temp_val(temp_val>179.9999999) = temp_val(temp_val>179.9999999) - 180;
+        % replace it in the structure
+        invivo_struct(cells).(ori_fields{ori_field}) = temp_val;
+
+
+    end
 end
 %% Save
   cd(adata_dir);

@@ -1,6 +1,6 @@
 function [r2 x yp] = fit_sine(x,y,varargin)
 % taken from https://www.mathworks.com/matlabcentral/answers/121579-curve-fitting-to-a-sinusoidal-function
-
+ax=1:0.5:180;
 if length(varargin) >= 2
     per = varargin{2};
 else
@@ -20,6 +20,7 @@ fcn = @(b) sum((fit(b,x) - y).^2);                              % Least-Squares 
 s = fminsearch(fcn, [yr; -1;  ym]);                       % Minimise Least-Squares
 % xp = linspace(min(x),max(x));
 
+ypa=fit(s,ax);
 yp = fit(s,x);
 
 if length(varargin)>=1
@@ -30,8 +31,8 @@ if length(varargin)>=1
 
 %         plot(x,y,'b',  x,yp, 'r')
         %plot(x,yp, 'm',x,y,'ok')
-p1=plot(x,yp, 'm')
-p1.Color(4)=0.5
+p1=plot(ax,ypa, 'm');
+p1.Color(4)=0.5;
         %grid
     end
 end
