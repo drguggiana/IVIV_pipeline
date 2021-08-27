@@ -879,7 +879,7 @@ title('r. pia pos. >0.66','FontWeight','Normal','FontSize',10);set(gca,'FontSize
 %% stats barplot;  split L2/3 in half: ODI
 g1=[];g2=[];g3=[];
 g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.5);
-g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
 g3=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'>0.5);  
 par=[];
 %par=abs(od_out(:,3));
@@ -894,6 +894,84 @@ hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1
 'medc','m'); box off; ylabel('ODI'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3))
   xlabel('Relative pial position');
+  %% 
+  
+ %qua = quantile(max(delta_Ca,[],2),0.2)
+ qua_contra=[];
+ qua_ipsi=[];
+ for i=1:10
+ qua_contra(:,i)=quantile(max(Ca_peak_od(:,1:8),[],2),i*0.1);
+  qua_ipsi(:,i)=quantile(max(Ca_peak_od(:,9:end),[],2),i*0.1);
+  
+ end
+  figure;plot(qua_contra,'--+');hold on;plot(qua_ipsi,'--+');ylabel('dR / R0_{max}');xlabel('Quartiles');legend({'contra', 'ipsi'})
+  %% 
+  
+  g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh) &  max(Ca_peak_od(:,9:end),[],2)>qua_ipsi(gh) & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh) &  max(Ca_peak_od(:,9:end),[],2)>qua_ipsi(gh) & tr'>0.5);  
+  %% 
+  gh=8
+  g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh) &  max(Ca_peak_od(:,9:end),[],2)>qua_ipsi(gh) & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh) &  max(Ca_peak_od(:,9:end),[],2)>qua_ipsi(gh) & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
+[statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+%% 
+
+  gh=3
+  g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh)  & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh)  & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
+[statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+%% 
+close all;
+statsout=[]
+for gh=1:9
+ 
+  g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,9:16),[],2)<qua_ipsi(gh)  & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  max(Ca_peak_od(:,9:16),[],2)<qua_ipsi(gh)  & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
+[statsout(gh)]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+end
+%% 
+
+close all;
+statsout2=[]
+for gh=1:9
+ 
+  g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,1:8),[],2)<qua_contra(gh)  & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 &  max(Ca_peak_od(:,1:8),[],2)<qua_contra(gh)  & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
+[statsout2(gh)]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+end
+%% 
+
+figure;plot(statsout2,'--x');hold on;plot(statsout,'--x');ylabel('p-value of Wilcoxon test');xlabel('Quartile');legend({'contra', 'ipsi'});ylim([0 0.5])
+%% 
+figure;
+scatter(od_out(:,3),max(Ca_peak_od(:,1:8),[],2))
+hold on;
+scatter(od_out(:,3),max(Ca_peak_od(:,9:end),[],2)); ylabel('dR / R0_{max}');xlabel('ODI')
+%% 
+
+figure;
+scatter(od_out(:,3),max(Ca_peak_od(:,1:8),[],2)-max(Ca_peak_od(:,9:end),[],2))
 %% 
 con_e= find(od_out(:,9)==1);
 ips_e= find(od_out(:,10)==1);

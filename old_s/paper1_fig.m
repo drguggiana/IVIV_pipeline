@@ -752,11 +752,11 @@ s1=[g1' g2'];
 %combine 45 and 225
 s2=[g3' g4'];
 par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
- par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
-  par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
-  par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
-par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
- par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+ %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%   par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%   par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+% par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+%  par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 par(g2)=par(g2)*-1
 par(g4)=par(g4)*-1
@@ -776,6 +776,7 @@ par(g4)=par(g4)*-1
 frac_h=[];
 %L23
 frac_h=L23h(a,:);
+hor_s1_ex=[];hor_s2_ex=[];
 %L4
 % frac_h=L4h(a,:);
 %L5
@@ -788,10 +789,10 @@ hor_s1_ex=[flip(frac_h(g1,1:16),2); frac_h(g2,1:16)];
 % hor_s2_ex=[frac_h(s2,1:16)];
 hor_s2_ex=[frac_h(g3,1:16); flip(frac_h(g4,1:16),2)]; %VS19/3/21
 %flip g1 which is 135 IN
- hor_s1_in=[frac_h(g1,17:32); flip(frac_h(g2,17:32),2)];
-%hor_s1_in=[flip(frac_h(g1,17:32),2); frac_h(g2,17:32)];
+ %hor_s1_in=[frac_h(g1,17:32); flip(frac_h(g2,17:32),2)];
+hor_s1_in=[flip(frac_h(g1,17:32),2); frac_h(g2,17:32)];
 %sector 45/225 IN
-hor_s2_in=[frac_h(s2,17:32)];
+%hor_s2_in=[frac_h(s2,17:32)];
 hor_s2_in=[frac_h(g3,17:32); flip(frac_h(g4,17:32),2)]; %VS19/3/21
 % figure;plot(hor_s1_ex','--r');title('135 & 315');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s1_in'*-1,'--b');
 % figure;plot(hor_s2_ex','--r');title('45 & 225');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s2_in'*-1,'--b');
@@ -953,7 +954,7 @@ box off;set(gca,'FontSize',10);
 hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','k','Markersize',7);
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
-xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10)
+xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10);
 %% alinged cells rise pref and null INHIBITION
 cl={'b','b'};
 data=[];data=riseDecayAligned_in';
@@ -971,7 +972,7 @@ box off;set(gca,'FontSize',10);
 hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),'ok','MarkerFaceColor','b','Markersize',7);
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
-xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10)
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
 %% non alinged cells rise pref and null INHIBITION
 cl={'k','k'};
 data=[];data=riseDecayNL_in';

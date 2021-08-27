@@ -1,4 +1,4 @@
-function [od_out sftf_out sftf_sel sftf_pref spon_out pia_all delta_Ca fit_Ca] = concat_invivo(L23_PC)
+function [od_out sftf_out sftf_sel sftf_pref spon_out pia_all delta_Ca fit_Ca  Ca_peak_od] = concat_invivo(L23_PC)
 for i=1:length(L23_PC)
     %pia
     pia{i,:}=L23_PC(i).pial_depth;
@@ -303,5 +303,6 @@ pOSI_all=[];
   pia_all=pial_all;
   delta_Ca=delta_Ca;
   fit_Ca=fit_Ca;
+  Ca_peak_od=Ca_peak_od;
   
 end
