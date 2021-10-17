@@ -230,13 +230,17 @@ morph_sel=[];
 morph_sel=[morph_parameters(mcell,[2]) morph_parameters(mcell,[9]) dis_s(mcell)' morph_parameters(mcell,[4]) max_s(mcell)' ...
     morph_parameters(mcell,[12]) morph_parameters(mcell,[19]) dis_s_ba(mcell)' morph_parameters(mcell,[14]) max_s_ba(mcell)'];
 %% Select all visual responsive cells
+m_res=[];
 for i=1:length(str)
     if ~isnan(str(i).morph(1))==1 & str(i).resp==1 & ~isnan(str(i).OSIpref)==1
         m_res(i)=1;     
+    elseif ~isnan(str(i).morph(1))==1  & str(i).iviv==1 & str(i).resp==0 
+        m_res(i)=0;  
     else
        m_res(i)=NaN;
     end
 end
+morph_res_sub=[];
 morph_res_sub=find(m_res==1);
 %R2 criterion for good fitted cells
 morph_res_sub2=morph_res_sub;
@@ -268,14 +272,14 @@ ylabel('Tuning Width','Color','k');
 df=[morph_parameters(morph_res_sub,9)];
 db=[morph_parameters(morph_res_sub,19)];
 com=[];com=[morph_parameters(morph_res_sub,2) nanmax(df,[],2) dis_s(morph_res_sub)'  morph_parameters(morph_res_sub,4)  max_s(morph_res_sub)' ...
-    morph_parameters(morph_res_sub,12) nanmax(db,[],2) dis_s_ba(morph_res_sub)'  morph_parameters(morph_res_sub,14) max_s_ba(morph_res_sub)'  od_out_iviv(morph_res_sub,[1 2 3 6])]
+    morph_parameters(morph_res_sub,12) nanmax(db,[],2) dis_s_ba(morph_res_sub)'  morph_parameters(morph_res_sub,14) max_s_ba(morph_res_sub)'  pia_input(morph_res_sub') od_out_iviv(morph_res_sub,[1 2 3 6])]
 G1=correlation_matrix(com,0);
 %% subsample TW
 df=[];db=[];
 df=[morph_parameters(morph_res_sub2,9)];
 db=[morph_parameters(morph_res_sub2,19)];
 com=[];com=[morph_parameters(morph_res_sub2,2) nanmax(df,[],2) dis_s(morph_res_sub2)'  morph_parameters(morph_res_sub2,4)  max_s(morph_res_sub2)' ...
-    morph_parameters(morph_res_sub2,12) nanmax(db,[],2) dis_s_ba(morph_res_sub2)'  morph_parameters(morph_res_sub2,14) max_s_ba(morph_res_sub2)'  od_out_iviv(morph_res_sub2,[7])]
+    morph_parameters(morph_res_sub2,12) nanmax(db,[],2) dis_s_ba(morph_res_sub2)'  morph_parameters(morph_res_sub2,14) max_s_ba(morph_res_sub2)'   pia_input(morph_res_sub2') od_out_iviv(morph_res_sub2,[7])]
 G2=[];
 G2=correlation_matrix(com,0);
 %% Circular correlation for ORI
@@ -286,8 +290,9 @@ db=[morph_parameters(morph_res_sub,19)];
 a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
 par_c=[];rho1=[];pval1=[];
  par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
-    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
-for i=1:10
+    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))' pia_input(morph_res_sub(a))]
+for i=1:size(par_c,2)
+
     [rho1(i) pval1(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),4)), par_c(:,i))
 end
 % Circular correlation for DRI
@@ -296,8 +301,9 @@ a=find(od_out_iviv(morph_res_sub,2)>0.25 & r_sq(morph_res_sub)>0.3) ;
 par_c=[];
 rho2=[];pval2=[];
  par_c=[morph_parameters(morph_res_sub(a),2) nanmax(df(a),[],2) dis_s(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),4)  max_s(morph_res_sub(a))' ...
-    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))']
-for i=1:10
+    morph_parameters(morph_res_sub(a),12) nanmax(db(a),[],2) dis_s_ba(morph_res_sub(a))'  morph_parameters(morph_res_sub(a),14) max_s_ba(morph_res_sub(a))'  pia_input(morph_res_sub(a))]
+for i=1:size(par_c,2)
+
     [rho2(i) pval2(i)] = circ_corrcl(deg2rad(od_out_iviv(morph_res_sub(a),5)), par_c(:,i))
 end
 % only signifcant from circ
@@ -307,13 +313,14 @@ c_cor_e=c_cor;
   m=c_pva<0.05;
 c_cor_e(m==0)=m(m==0);
 %% Plot correlation matrix for S3 panel C
-Gf=G1(11:14,1:10)
-tG=[Gf;G2(11:end,1:10);c_cor_e;G1(14,1:10)]
+%Gf=G1(11:14,1:10)
+Gf=G1(12:15,1:11)
+tG=[Gf;G2(12:end,1:11);c_cor_e;G1(15,1:11)]
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 500, 325]);imagesc(tG(1:7,:));c=colorbar;
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);
 xticks([1:1:12]);yticks([1:1:7]) 
-xticklabels({'Total Length','Horizontal extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Length','Horizontal extent','Dis peak branch','Nr. branch points','Peak number crossing'});xtickangle(45);set(gca,'FontSize',12)
+xticklabels({'Total Length','Horizontal extent','Dis peak branch','Nr. branch points','Peak number crossing','Total Length','Horizontal extent','Dis peak branch','Nr. branch points','Peak number crossing', 'Pial depth'});xtickangle(45);set(gca,'FontSize',12)
 yticklabels({'gOSI','gDSI','ODI','Ca_{peak}','TW','ORI','DIR','Pial depth'});set(gca,'FontSize',12)
 c.Label.String = 'r';set(gca,'FontSize',10); c.Ticks=[-1:0.5:1]; set(gca,'FontSize',10);
 %% Rolling average setup/readout + plot circular correlation plots + sine fits
@@ -375,9 +382,173 @@ hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
 hAxis.XAxisLocation = 'bottom'
 box off
  end
+ %% 
+  id_m=143;
+ %plot_morphologies(str,id_m,1,1,1);
+id_m2=122;
+ %plot_morphologies(str,id_m2,1,1,1);
+fit_ex1=[]
+%Plot the tuning curves and width from the folders
+%cell 143
+load('D:\Postdoc_Margrie\Projects\L23\Paper1\Revision\example_peak_curves_cell143\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex1=Fit(1).ipsi.FittedDataOri
+ind_tr1=peaks(1).ipsi;
+%cell 122
+load('D:\Postdoc_Margrie\Projects\L23\Paper1\Revision\example_peak_curves_cell121\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
+fit_ex2=Fit(2).contra.FittedDataOri;
+ind_tr2=peaks(2).contra;
+%call function shift_ori for plotting PANEL A,B
+shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,od_out_iviv(id_m,1),od_out_iviv(id_m2,1),od_out_iviv(id_m,7),od_out_iviv(id_m2,7));
+%% 
 
- 
- 
+ %% Reviewers
+ a1=[];a2=[]; b=[];a=[];
+a1=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)<65)
+a2=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>150)
+b=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>65 & od_out_iviv(morph_res_sub,4)<150)
+ a=[a1;a2];
+ color_id={[0.7 0 0.4],[0 0.5 0.5]};
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 400]);
+subplot(2,2,1)
+for i=1:length(a)
+  m=plot_tree(str(morph_res_sub(a(i))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(a(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{2};
+         set(gca,'Ydir','reverse');
+  xlim([-250 250]);
+ ylim([0 450]);
+ axis off;
+ set(gcf,'color','w');
+end
+subplot(2,2,3)
+  for i=1:length(b)
+  m=plot_tree(str(morph_res_sub(b(i))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(b(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{1};;
+         set(gca,'Ydir','reverse');
+  xlim([-250 250]);
+ ylim([0 450]);
+ axis off;
+ set(gcf,'color','w');
+end
+%  morph_parameters(morph_res_sub(a),9)
+%  figure;
+%   m=plot_tree(str(morph_res_sub(a(1))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(a(1))).morphtraces{1,5} 0],[],1,'-b');hold on;
+  
+%Basael
+subplot(2,2,2)
+for i=1:length(a)
+  m=plot_tree(str(morph_res_sub(a(i))).morphtraces{1,2},[1 0 0],[0 str(morph_res_sub(a(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{2};
+         set(gca,'Ydir','reverse');
+  xlim([-250 250]);
+ ylim([0 450]);
+ %axis off;
+ grid on
+ set(gcf,'color','w');
+end
+subplot(2,2,4)
+  for i=1:length(b)
+  m=plot_tree(str(morph_res_sub(b(i))).morphtraces{1,2},[1 0 0],[0 str(morph_res_sub(b(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{1};
+         set(gca,'Ydir','reverse');
+  xlim([-250 250]);
+ ylim([0 450]);
+ axis off;
+ set(gcf,'color','w');
+  end
+
+  
+  %% Reviewer 2
+ %1) TW
+  close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 700, 200]);
+subplot(1,3,1);histogram(pia_input(morph_res_sub2),'BinLimits',[min(pia_input(morph_res_sub2)),max(pia_input(morph_res_sub2))],'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
+  ylabel('Pial depth (µm)');xlabel('Cell count');box off;
+  subplot(1,3,2);scatter(max_s(morph_res_sub2),pia_input(morph_res_sub2),'ko','filled');
+xlabel('Peak Nr. crossing','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
+set(gcf,'color','w')
+[r p]=corrcoef(max_s(morph_res_sub2),pia_input(morph_res_sub2))
+  subplot(1,3,3);scatter(morph_parameters(morph_res_sub2,4) ,pia_input(morph_res_sub2),'ko','filled');
+xlabel('Nr. branch points','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
+set(gcf,'color','w')
+ morph_parameters(morph_res_sub(a),4) 
+ [r p]=corrcoef(morph_parameters(morph_res_sub2,4),pia_input(morph_res_sub2))
+  %ylim([min(pia_input(morph_res_sub2)) max(pia_input(morph_res_sub2))])
+  
+ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300]);
+scatter(od_out_iviv(morph_res_sub2,1),pia_input(morph_res_sub2),'ko','filled');
+xlabel('gOSI','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
+set(gcf,'color','w')
+[r p]=corrcoef(od_out_iviv(morph_res_sub2,1),pia_input(morph_res_sub2))
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300]);
+scatter(od_out_iviv(morph_res_sub2,7),pia_input(morph_res_sub2),'ko','filled');
+xlabel('Tuning Width (deg)','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
+set(gcf,'color','w')
+[r p]=corrcoef(od_out_iviv(morph_res_sub2,7),pia_input(morph_res_sub2))
+
+%% All tuning curves / normalized
+
+ori=90-[1:1:180];
+pori=[0:45:315];
+peak=max(fit_ex1);
+find(fit_ex1==peak);
+peak2=max(fit_ex2);
+find(fit_ex2==peak2);
+
+
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
+for i=1:length(resp_id)
+subplot(6,10,i)
+
+fit_ex1=[];
+
+if str(resp_id(i)).ipsi==1 
+    fit_ex1=str(resp_id(i)).fit_resp(361:end)
+    peak=max(fit_ex1);
+ plot(fit_ex1/peak,'k');
+ ylim([0 1])
+ ylabel('Norm. resp.');
+box off
+tw1=od_out_iviv(resp_id(i),7);
+text(360,0.98,[num2str(round(tw1,2))]);
+elseif str(resp_id(i)).contra==1 
+      fit_ex1=str(resp_id(i)).fit_resp(1:360);
+    peak=max(fit_ex1);
+ plot(fit_ex1/peak,'k');
+  ylim([0 1])
+  ylabel('Norm. resp.');
+  box off
+  tw1=od_out_iviv(resp_id(i),7);
+text(360,0.98,[num2str(round(tw1,2))]);
+else str(resp_id(i)).bino==1 
+    if str(resp_id(i)).ODIpref>0 
+     fit_ex1=str(resp_id(i)).fit_resp(1:360);
+    peak=max(fit_ex1);
+ plot(fit_ex1/peak,'k');
+ ylim([0 1])
+ ylabel('Norm. resp.');
+ box off
+ tw1=od_out_iviv(resp_id(i),7);
+text(360,0.98,[num2str(round(tw1,2))]);
+    else str(resp_id(i)).ODIpref<0 
+          fit_ex1=str(resp_id(i)).fit_resp(361:end);
+    peak=max(fit_ex1);
+ plot(fit_ex1/peak,'k');
+ ylim([0 1])
+ylabel('Norm. resp.');
+box off
+tw1=od_out_iviv(resp_id(i),7);
+text(360,0.98,[num2str(round(tw1,2))]);
+    end
+end
+
+end
+
+
+
+
+
+%% 
+
+
 %% Figure 3: Laminar and horizontal distributions of local excitatory and inhibitory inputs to functionally characterized cells are diverse
 % Panel C and part of panel A is an entire scheme produced in Adobe Illustrator
 %% Plot example maps for panel A
@@ -621,7 +792,15 @@ par(g4)=par(g4)*-1;
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 ylim([-70 70]);yticks(-70:35:70);
 %ylim([-150 200]);yticks(-150:100:200);
-
+%% 
+par=[];
+%combine 315 and 135
+s1=[g1' g2'];
+%combine 45 and 225
+s2=[g3' g4'];
+%UNCOMMENT FOR LAYER AND EX/IN, respectively 
+par=(ang_inL23(a,3)-ang_exL23(a,1))*69;
+[statsout]=dual_barplot(abs(par),s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 %% Centroid EX and IN 
  par1=[];par2=[];
 %    par1=(ang_inL23(a,3)-ang_inL23(a,1))*69;

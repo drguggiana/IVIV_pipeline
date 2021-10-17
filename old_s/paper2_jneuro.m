@@ -90,6 +90,10 @@ hold on;xlim([0.5 3.5]);
 %% PCA for basal morphology
 [coeff_morph_b,score_morph_b,latent_morph_b,~,explained_morph_b,mu] = pca(zscore([data_morpho(:,10:19) max_b' dis_peakb']));
 var_exp(explained_morph_b,[],[]); 
+
+%% PCA for both apical and basal
+[coeff_morph,score_morph,latent_morph,~,explained_morph,mua] = pca(zscore([data_morpho max_a' dis_peaka' max_b' dis_peakb']));
+var_exp(explained_morph_a,[],[]);
 %% Plot the 1 corrleation each for Apical raw and PCA Panel F and G
 tr = rescale(pia_morpho);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 500]);
@@ -180,6 +184,11 @@ hold on;set(gca,'FontSize',10);hold on;title('Active');
 ephys_sel=[];ephys_sel=[data_ephys(:,13:17)];score_ephys=[];
 [coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
 var_exp(explained_ephys,[],[]); 
+%% 
+ephys_sel=[];ephys_sel=[data_ephys(:,[1:7 18])];score_ephys=[];
+[coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
+var_exp(explained_ephys,[],[]);
+
 %% Plot the 1 corrleation each for passive and active
 tr=[];tr = rescale(pia_ephys);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 200]);
@@ -515,6 +524,7 @@ par=max(delta_Ca(:,:),[],2);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
 hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
 'mc','k',...
-'medc','m'); box off; ylabel('R / R0_{max}'),legend('');legend boxoff;
+'medc','m'); box off; ylabel('dR / R0_{max}'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3));
 xlabel('Relative pial position');hold on;
+%% 
