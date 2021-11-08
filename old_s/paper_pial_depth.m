@@ -895,6 +895,14 @@ hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1
 [p k]=ranksum(par(g1),par(g3))
   xlabel('Relative pial position');
   %% 
+  orient={'0', '45' , '90','135','180','225','270','315'}
+  ex_c=6
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 300]);;plot(Ca_peak_od(ex_c,1:8)');hold on;plot(Ca_peak_od(ex_c,9:end)');box off;
+   ylabel('dR / R0_{max}');xlabel('Direction');xticklabels(orient)
+   %% 
+     figure;set(gcf,'color','w');histogram(max(Ca_peak_od(:,1:8),[],2),100);hold on;histogram(max(Ca_peak_od(:,9:end),[],2),100);xlim([0 1000]);box off;
+   xlabel('dR / R0_{max}');ylabel('Counts');legend({'contra','ipsi'})
+  %% 
   
  %qua = quantile(max(delta_Ca,[],2),0.2)
  qua_contra=[];
@@ -904,7 +912,43 @@ hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1
   qua_ipsi(:,i)=quantile(max(Ca_peak_od(:,9:end),[],2),i*0.1);
   
  end
-  figure;plot(qua_contra,'--+');hold on;plot(qua_ipsi,'--+');ylabel('dR / R0_{max}');xlabel('Quartiles');legend({'contra', 'ipsi'})
+  figure;set(gcf,'color','w');plot(qua_contra,'--+');hold on;plot(qua_ipsi,'--+');ylabel('dR / R0_{max}');xlabel('Quantiles');legend({'contra', 'ipsi'});box off;
+  
+  %% 
+  g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=max(Ca_peak_od(:,9:16),[],2);
+[statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+
+%% 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
+par=[];
+par=max(Ca_peak_od(:,1:8),[],2);
+hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
+'mc','k',...
+'medc','m'); box off; ylabel('CONTRA dR / R0_{max}'),legend('');legend boxoff;
+[p k]=ranksum(par(g1),par(g3))
+  xlabel('Relative pial position');
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 260, 400]);
+par=[];
+par=max(Ca_peak_od(:,9:16),[],2);
+hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1 1 1],'edgecolor','k',...
+'mc','k',...
+'medc','m'); box off; ylabel('IPSI dR / R0_{max}'),legend('');legend boxoff;
+[p k]=ranksum(par(g1),par(g3))
+  xlabel('Relative pial position');
+  %% 
+figure;set(gcf,'color','w')
+scatter(od_out(:,3),max(Ca_peak_od(:,1:8),[],2))
+hold on;
+scatter(od_out(:,3),max(Ca_peak_od(:,9:end),[],2)); ylabel('dR / R0_{max}');xlabel('ODI');box off
+  
+  %% 
+  
   %% 
   
   g1=find(od_out(:,8)==1 & max(Ca_peak_od(:,1:8),[],2)>qua_contra(gh) &  max(Ca_peak_od(:,9:end),[],2)>qua_ipsi(gh) & tr'<=0.5);
@@ -964,10 +1008,7 @@ end
 
 figure;plot(statsout2,'--x');hold on;plot(statsout,'--x');ylabel('p-value of Wilcoxon test');xlabel('Quartile');legend({'contra', 'ipsi'});ylim([0 0.5])
 %% 
-figure;
-scatter(od_out(:,3),max(Ca_peak_od(:,1:8),[],2))
-hold on;
-scatter(od_out(:,3),max(Ca_peak_od(:,9:end),[],2)); ylabel('dR / R0_{max}');xlabel('ODI')
+
 %% 
 
 figure;

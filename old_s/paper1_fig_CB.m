@@ -383,24 +383,141 @@ hAxis.XAxisLocation = 'bottom'
 box off
  end
  %% 
-  id_m=143;
- %plot_morphologies(str,id_m,1,1,1);
+id_m=143;
+%plot_morphologies(str,id_m,1,1,1,1);
 id_m2=122;
- %plot_morphologies(str,id_m2,1,1,1);
+%plot_morphologies(str,id_m2,1,1,1);
 fit_ex1=[]
 %Plot the tuning curves and width from the folders
 %cell 143
 load('D:\Postdoc_Margrie\Projects\L23\Paper1\Revision\example_peak_curves_cell143\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
 fit_ex1=Fit(1).ipsi.FittedDataOri
-ind_tr1=peaks(1).ipsi;
+%ind_tr1=peaks(1).deltapeaks_averagetrace_ipsi;
+ind_tr1=peaks(1).mean_trial_ipsi
+ind_tr1_sigma=peaks(1).mean_trial_ipsi;
+%% 
+
 %cell 122
 load('D:\Postdoc_Margrie\Projects\L23\Paper1\Revision\example_peak_curves_cell121\ORIanalyis_z8_meds_trace_mean_zeroneg_fit_NP_detrend_globalF0.mat')
 fit_ex2=Fit(2).contra.FittedDataOri;
-ind_tr2=peaks(2).contra;
-%call function shift_ori for plotting PANEL A,B
-shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,od_out_iviv(id_m,1),od_out_iviv(id_m2,1),od_out_iviv(id_m,7),od_out_iviv(id_m2,7));
+%ind_tr2=peaks(2).deltapeaks_averagetrace_contra;
+%ind_tr2=peaks(2).mean_trial_contra;
+%ind_tr2=peaks(2).deltapeaks_contra;
+ind_tr2=peaks(2).mean_trial_contra;
+ind_tr2_sigma=peaks(2).mean_trial_contra;%figure;hold on;errorbar(pori,ind_tr1/max(ind_tr1),(nanstd(ind_tr1_sigma,[],2)/sqrt(4))/max(nanmean(ind_tr1_sigma)))
+figure;hold on;errorbar(pori,nanmean(ind_tr1,2),nanstd(ind_tr1,[],2)/sqrt(4));
+%% 
+peak=max(fit_ex1);
+find(fit_ex1==peak);
+peak2=max(fit_ex2);
+find(fit_ex2==peak2);
+pori=[0:45:315];
+ori=90-[1:1:180];
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 200, 700, 250]);
+subplot(1,3,1)
+%errorbar(pori,nanmean(ind_tr1,2)/max(nanmean(ind_tr1,2)),(nanstd(ind_tr1,[],2)/sqrt(4))/max(nanmean(ind_tr1,2)))
+errorbar(pori,nanmean(ind_tr1,2),nanstd(ind_tr1,[],2)/sqrt(4),'-o','Color','k');hold on
+
+hold on;box off
+ylabel('dR/R0');xlabel('Direction (deg)');
+%yticks([0:0.5:1.5]);
+%ylim([0 1.7]);
+xlim([0 315]);xticks([0:45:315]);xtickangle(45);
+set(gca,'FontSize',10);
+ylim([-5 60]);
+text(10,60,['gOSI= ' num2str(round(od_out_iviv(id_m,1),2))]);
+
+subplot(1,3,2)
+hold on;box off
+errorbar(pori,nanmean(ind_tr2,2),nanstd(ind_tr2,[],2)/sqrt(4),'-o','Color','b')
+ylim([-5 60]);
+text(10,60,['gOSI= ' num2str(round(od_out_iviv(id_m2,1),2))],'Color','b');ylabel('dR/R0')
+xlim([0 315]);xticks([0:45:315]);xtickangle(45);xlabel('Direction (deg)');set(gca,'FontSize',10);
+
+
+subplot(1,3,3)
+plot(circshift(ori,find(fit_ex1==peak)-90),fit_ex1-BaselineRsp1,'k');
+hold on;
+plot(circshift(ori,find(fit_ex2==peak2)-90),fit_ex2-BaselineRsp2,'b');
+hold on;box off;
+xlabel('Distance from pref. orientation (deg)');
+text(10,60,['TW= ' num2str(round(od_out_iviv(id_m2,7),2))]);
+hold on;box off
+text(10,55,['TW= ' num2str(round(od_out_iviv(id_m2,7),2))],'Color','b');
+%yticks([0:0.2:1]);
+ylim([-5 60]);
+set(gca,'FontSize',10);
+ylabel('Normalized response');
+
+
+% subplot(1,3,3)
+% plot(circshift(ori,find(fit_ex1==peak)-90),fit_ex1/max(fit_ex1),'k');
+% hold on;
+% plot(circshift(ori,find(fit_ex2==peak2)-90),fit_ex2/max(fit_ex2),'b');
+% hold on;box off;
+% xlabel('Distance from pref. orientation (deg)');
+% text(50,0.3,['TW= ' num2str(round(od_out_iviv(id_m2,7),2))]);
+% hold on;box off
+% text(50,0.2,['TW= ' num2str(round(od_out_iviv(id_m2,7),2))],'Color','b');
+% yticks([0:0.2:1]);
+% set(gca,'FontSize',10);
+% ylabel('Normalized response');
+
 %% 
 
+
+%call function shift_ori for plotting PANEL A,B
+
+%figure;hold on;errorbar(pori,ind_tr2/max(ind_tr2),(nanstd(ind_tr2_sigma,[],2)/sqrt(4))/max(nanmean(ind_tr2_sigma)))
+% figure;hold on;errorbar(pori,nanmean(ind_tr2,2),nanstd(ind_tr2,[],2)/sqrt(4));
+% hold on;errorbar(pori,nanmean(ind_tr1,2),nanstd(ind_tr1,[],2)/sqrt(4))
+%% 
+figure;plot(peaks(2).deltapeaks_contra);
+%% 
+figure;
+hold on;plot(pori,str(id_m2).TCpref,'--o');ylabel('Peak delta response');xlabel('Directions')
+%% 
+
+hold on;plot(pori,str(id_m).TCpref,'k');
+
+%% 
+figure;
+hold on;plot(str(id_m).fit_resp(361:end)-BaselineRsp1);
+ hold on;plot(pori,str(id_m).TCpref-BaselineRsp1,'k');
+%% 
+
+ hold on;plot(FittedData1);
+ hold on;plot(pori,str(id_m).TCpref,'k');
+%% 
+
+
+%% 
+figure;
+hold on;plot(str(id_m2).fit_resp(1:360));
+hold on;plot(FittedData2)
+
+%% 
+
+hold on;plot(str(id_m).fit_resp(361:end));
+%% 
+
+shift_ori(fit_ex1,fit_ex2,ind_tr1,ind_tr2,ind_tr1_sigma,ind_tr2_sigma,od_out_iviv(id_m,1),od_out_iviv(id_m2,1),od_out_iviv(id_m,7),od_out_iviv(id_m2,7));
+pori=[0:45:315];
+%% get orientation tuning curve 
+
+[FittedData1, BaselineRsp1, PrefRsp1, PrefDir1, Sigma1, OppResp1, Error1, R21 ] = FIT_Carandini( str(id_m).TCpref );
+[FittedData2, BaselineRsp2, PrefRsp2, PrefDir2, Sigma2, OppResp2, Error2, R22 ] = FIT_Carandini( str(id_m2).TCpref );
+figure;hold on;plot(oris,str(id_m).TCpref,'--o');hold on;plot(FittedData1,'-');
+figure;hold on;plot(oris,str(id_m2).TCpref,'--o');hold on;plot(FittedData2,'-');
+%% 
+ori=90-[1:1:180];
+[TuningCurve1] = TT_FoldedTuningCurve(FittedData1);
+[TuningCurve2] = TT_FoldedTuningCurve(FittedData2);
+peak=max(TuningCurve1);
+figure;plot(TuningCurve1);hold on;plot(TuningCurve2)
+figure;plot(circshift(ori,find(TuningCurve1==peak)-90),TuningCurve1,'k');
+peak2=max(TuningCurve2);
+hold on;plot(circshift(ori,find(TuningCurve2==peak2)-90),TuningCurve2,'r');
  %% Reviewers
  a1=[];a2=[]; b=[];a=[];
 a1=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)<65)
@@ -459,96 +576,100 @@ subplot(2,2,4)
   
   %% Reviewer 2
  %1) TW
-  close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 700, 200]);
-subplot(1,3,1);histogram(pia_input(morph_res_sub2),'BinLimits',[min(pia_input(morph_res_sub2)),max(pia_input(morph_res_sub2))],'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
+  close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 700, 450]);
+subplot(2,3,1);histogram(pia_input(morph_res_sub2),'BinLimits',[min(pia_input(morph_res_sub2)),max(pia_input(morph_res_sub2))],'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
   ylabel('Pial depth (µm)');xlabel('Cell count');box off;
-  subplot(1,3,2);scatter(max_s(morph_res_sub2),pia_input(morph_res_sub2),'ko','filled');
+  subplot(2,3,2);scatter(max_s(morph_res_sub2),pia_input(morph_res_sub2),'ko','filled');
 xlabel('Peak Nr. crossing','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w')
 [r p]=corrcoef(max_s(morph_res_sub2),pia_input(morph_res_sub2))
-  subplot(1,3,3);scatter(morph_parameters(morph_res_sub2,4) ,pia_input(morph_res_sub2),'ko','filled');
+  subplot(2,3,3);scatter(morph_parameters(morph_res_sub2,4) ,pia_input(morph_res_sub2),'ko','filled');
 xlabel('Nr. branch points','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w')
  morph_parameters(morph_res_sub(a),4) 
  [r p]=corrcoef(morph_parameters(morph_res_sub2,4),pia_input(morph_res_sub2))
   %ylim([min(pia_input(morph_res_sub2)) max(pia_input(morph_res_sub2))])
-  
- fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300]);
+ subplot(2,3,4);
 scatter(od_out_iviv(morph_res_sub2,1),pia_input(morph_res_sub2),'ko','filled');
 xlabel('gOSI','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w')
 [r p]=corrcoef(od_out_iviv(morph_res_sub2,1),pia_input(morph_res_sub2))
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300]);
+ subplot(2,3,5);
 scatter(od_out_iviv(morph_res_sub2,7),pia_input(morph_res_sub2),'ko','filled');
 xlabel('Tuning Width (deg)','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w')
 [r p]=corrcoef(od_out_iviv(morph_res_sub2,7),pia_input(morph_res_sub2))
 
-%% All tuning curves / normalized
+%% Morphologu pf unresponsive cells 
 
-ori=90-[1:1:180];
-pori=[0:45:315];
-peak=max(fit_ex1);
-find(fit_ex1==peak);
-peak2=max(fit_ex2);
-find(fit_ex2==peak2);
+mg1=[];mg2=[];mo_unres=[];mo_res=[]
+mg1=find(od_out_iviv(:,1)<0.25 & m_res'==1); 
+mg2=find(m_res==0)';
+mo_unres=[mg1; mg2];
+mo_res=find(od_out_iviv(:,1)>0.25 & m_res'==1); 
+
+par=[];
+par=max_s;
+%par=max_s_ba;
+%par=morph_parameters(:,4)
+
+[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Untuned' ,'Tuned'});xtickangle(45);
+ylabel('Peak nr. Sholl crossing');set(gca,'FontSize',10);
+%ylim([-70 70]);yticks(-70:35:70);
+title('Apical')
+
+par=[];
+par=max_s_ba;
+%par=morph_parameters(:,4)
+
+[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Untuned' ,'Tuned'});xtickangle(45);
+ylabel('Peak nr. Sholl crossing');set(gca,'FontSize',10);
+%ylim([-70 70]);yticks(-70:35:70);
+title('Basal')
+%% Sholl for aligned vs non_aligned
+df=[];db=[];df=[morph_parameters(morph_res_sub,9)];db=[morph_parameters(morph_res_sub,19)];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ;
+ty=[];ty=morph_res_sub(a);
+%par=abs(ang_inL4(a,3)*69-ang_inL4(a,1)*69)
+% par=ang_inL23(a,8)*69
+% g1_1=find(od_out_iviv(ty,4)>0 & od_out_iviv(ty,4)<60) ;
+% g1_2=find(od_out_iviv(ty,4)>150);
+% g2_1=find(od_out_iviv(ty,4)>60 & od_out_iviv(ty,4)<150);
+% g2=find(od_out_iviv(ty,4)>100 & od_out_iviv(ty,4)<150);
+% [statsout]=dual_barplot(par,g1,g2,0);xticks([1:1:2]);
+% xticklabels({'10-60°','100-150°'});xtickangle(45);
+% ylabel('CVL L2/3 (µm)','Color','k'); ;set(gca,'FontSize',10);
 
 
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
-for i=1:length(resp_id)
-subplot(6,10,i)
 
-fit_ex1=[];
-
-if str(resp_id(i)).ipsi==1 
-    fit_ex1=str(resp_id(i)).fit_resp(361:end)
-    peak=max(fit_ex1);
- plot(fit_ex1/peak,'k');
- ylim([0 1])
- ylabel('Norm. resp.');
-box off
-tw1=od_out_iviv(resp_id(i),7);
-text(360,0.98,[num2str(round(tw1,2))]);
-elseif str(resp_id(i)).contra==1 
-      fit_ex1=str(resp_id(i)).fit_resp(1:360);
-    peak=max(fit_ex1);
- plot(fit_ex1/peak,'k');
-  ylim([0 1])
-  ylabel('Norm. resp.');
-  box off
-  tw1=od_out_iviv(resp_id(i),7);
-text(360,0.98,[num2str(round(tw1,2))]);
-else str(resp_id(i)).bino==1 
-    if str(resp_id(i)).ODIpref>0 
-     fit_ex1=str(resp_id(i)).fit_resp(1:360);
-    peak=max(fit_ex1);
- plot(fit_ex1/peak,'k');
- ylim([0 1])
- ylabel('Norm. resp.');
- box off
- tw1=od_out_iviv(resp_id(i),7);
-text(360,0.98,[num2str(round(tw1,2))]);
-    else str(resp_id(i)).ODIpref<0 
-          fit_ex1=str(resp_id(i)).fit_resp(361:end);
-    peak=max(fit_ex1);
- plot(fit_ex1/peak,'k');
- ylim([0 1])
-ylabel('Norm. resp.');
-box off
-tw1=od_out_iviv(resp_id(i),7);
-text(360,0.98,[num2str(round(tw1,2))]);
-    end
+sa={};
+dda={};
+for i=1:length(ty)
+    temp={}
+    temp=zz{ty(i)};
+    
+[sa{i}, dda{i}, sd, XP, YP, ZP, iD] = sholl_tree(temp{1,1}, 20, '-s');
+norm_sa{i}=sa{i}/max(sa{i});
 end
-
-end
-
-
-
-
-
 %% 
+colorMap = [linspace(0,1,256)', zeros(256,2)]
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 700, 450]);
+Z=od_out_iviv(ty,4)/max(od_out_iviv(ty,4));
+colorMap = [linspace(0,1,256)', zeros(256,2)]
+for i=1:length(ty)
+ hold on;
+ %scatter(dda{i},norm_sa{i},25,repmat(od_out_iviv(ty(i),4),length(dda{i}),1),'filled')
+ plot(dda{i},norm_sa{i},'color',[Z(i) 0 0],'LineWidth',1.5)
+    
+end
+colormap(colorMap);
+colorbar('Ticks',[0,0.25,0.5,0.75,1],...
+         'TickLabels',{'0','45','90','135','180'});
+     xlabel('Distance from Soma (microm)');
+     ylabel('Normalized Nr. dendritic crossing');
 
 
+    
 %% Figure 3: Laminar and horizontal distributions of local excitatory and inhibitory inputs to functionally characterized cells are diverse
 % Panel C and part of panel A is an entire scheme produced in Adobe Illustrator
 %% Plot example maps for panel A
@@ -792,6 +913,61 @@ par(g4)=par(g4)*-1;
 [statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 ylim([-70 70]);yticks(-70:35:70);
 %ylim([-150 200]);yticks(-150:100:200);
+%% REVIEWER
+
+a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0); 
+binodir=reshape([str(a).Dir],[2,length(a)])';
+binodir_delta=binodir(:,1)-binodir(:,2);
+binoDirA=binodir;
+%define sectors width
+sector1=30; 
+sector2=50;
+%define midpoint of widows
+midpoint1=120; 
+midpoint2=30;
+%define range
+s1a=[midpoint1-sector1];s1b=[midpoint1+sector2];
+s2a=[(midpoint1+180)-sector1];s2b=[(midpoint1+180)+sector2];
+s3a=[midpoint2-sector1];s3b=[midpoint2+sector2];
+s4a=[(midpoint2+180)-sector1];s4b=[(midpoint2+180)+sector2];
+g1=[];g2=[];g3=[];g4=[];
+%VS - find mono cells belonging to sectors 
+bi_limit=0.25;
+idx_mono=find(abs(od_out_iviv(a,3))>bi_limit)
+g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
+g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
+g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
+%VS - find bi cells belonging to sectors 
+idx_bi=find(abs(od_out_iviv(a,3))<bi_limit)
+tempIdx=find(binodir(idx_bi,1)>s1a & binodir(idx_bi,1)<s1b & binodir(idx_bi,2)>s1a & binodir(idx_bi,2)<s1b);
+g1=[idx_mono(g1); idx_bi(tempIdx)];
+tempIdx=find(binodir(idx_bi,1)>s2a & binodir(idx_bi,1)<s2b & binodir(idx_bi,2)>s2a & binodir(idx_bi,2)<s2b);
+g2=[idx_mono(g2); idx_bi(tempIdx)];
+tempIdx=find(binodir(idx_bi,1)>s3a & binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a & binodir(idx_bi,2)<s3b);
+g3=[idx_mono(g3); idx_bi(tempIdx)];
+tempIdx=find(binodir(idx_bi,1)>s4a & binodir(idx_bi,1)<s4b & binodir(idx_bi,2)>s4a & binodir(idx_bi,2)<s4b);
+g4=[idx_mono(g4); idx_bi(tempIdx)];
+par=[];
+%combine 315 and 135
+s1=[g1' g2'];
+%combine 45 and 225
+s2=[g3' g4'];
+%UNCOMMENT FOR LAYER AND EX/IN, respectively 
+par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
+%par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+% par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=od_out_iviv(a,3)
+%SWITCH SIGN CAUSE OF FLIP
+par(g2)=par(g2)*-1;
+par(g4)=par(g4)*-1;
+[statsout]=dual_barplot(par,s1,s2,2);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+ylim([-70 70]);yticks(-70:35:70);
+%ylim([-150 200]);yticks(-150:100:200);
+
 %% 
 par=[];
 %combine 315 and 135
@@ -799,7 +975,7 @@ s1=[g1' g2'];
 %combine 45 and 225
 s2=[g3' g4'];
 %UNCOMMENT FOR LAYER AND EX/IN, respectively 
-par=(ang_inL23(a,3)-ang_exL23(a,1))*69;
+par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 [statsout]=dual_barplot(abs(par),s1,s2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
 %% Centroid EX and IN 
  par1=[];par2=[];
@@ -898,6 +1074,7 @@ hor_s2_in=[frac_h(g3,17:32); flip(frac_h(g4,17:32),2)]; %VS19/3/21
 % figure;plot(hor_s2_ex','--r');title('45 & 225');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s2_in'*-1,'--b');
 DSI_s1=od_out_iviv(a(s1),2);
 
+
 % rate of rise
 rise=[];
 decay=[];
@@ -936,8 +1113,9 @@ riseNL_mean=mean(rise);
 riseNL_std=std(rise)/sqrt(length(rise));
 decayNL_mean=mean(decay);
 decayNL_std=std(decay)/sqrt(length(decay));
-'rise decay orthogonal'
-[H,P]=ttest(rise,decay)';
+
+
+[H,P]=ttest(rise,decay);
 
 
 %IN
