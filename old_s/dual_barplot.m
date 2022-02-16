@@ -1,8 +1,11 @@
 function [statsout]=dual_barplot(par,g1,g2,t)
 gr_nr=2;
-color_id={[0.7 0 0.4],[0 0.5 0.5]};
+%color_id={[0.7 0 0.4],[0 0.5 0.5]};
 %color_id={[0.5 0.5 0.5],[0.7 0 0.4]};
 %color_id={[0.5 0.5 0.5],[0.8500, 0.3250, 0.0980]};
+%color_id={[0 0 1],[1 0 0]};
+%color_id={[1 0 0],[0.5 0.5 0.5]};
+color_id={[0.5 0.5 0.5],[0.8500 0.3250 0.0980]};
 fig7= figure;set(fig7, 'Name', 'Barplot groups');set(fig7, 'Position', [400, 500, 150, 200]);set(gcf,'color','w');
 for i=1:gr_nr
 gr_m=[nanmean(par(g1)) nanmean(par(g2))];  

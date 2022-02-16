@@ -160,10 +160,10 @@ end
 % Plot data with fits and calculate R2
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 200, 1600, 800]);
 for i=1:length(resp_id)
-subplot(6,10,i)
+subplot(6,10,i);
 hold on;plot(oris,str(resp_id(i)).TCpref,'--o');
 y=str(resp_id(i)).TCpref;
-ym=mean(y)
+ym=mean(y);
 ;xticks([0:90:360]);
 hold on;
 if str(resp_id(i)).ipsi==1 
@@ -176,20 +176,20 @@ elseif str(resp_id(i)).contra==1
      yp=(str(resp_id(i)).fit_resp(1:360));
  yp_s=yp(oris+1);
 else str(resp_id(i)).bino==1 
-    if str(resp_id(i)).ODIpref>0 
-    hold on;plot(str(resp_id(i)).fit_resp(1:360))
+    if str(resp_id(i)).ODIpref>0;
+    hold on;plot(str(resp_id(i)).fit_resp(1:360));
         yp=(str(resp_id(i)).fit_resp(1:360));
  yp_s=yp(oris+1);
-    else str(resp_id(i)).ODIpref<0 
-        ;hold on;plot(str(resp_id(i)).fit_resp(361:end))
+    else str(resp_id(i)).ODIpref<0; 
+        ;hold on;plot(str(resp_id(i)).fit_resp(361:end));
             yp=(str(resp_id(i)).fit_resp(361:end));
  yp_s=yp(oris+1);
     end
 end
 r2=1-(sum(sqrt((y-yp_s').^2))/sum(sqrt((y-ym).^2)));
-r_square(i)=r2
+r_square(i)=r2;
 title([num2str(str(resp_id(i)).OSIpref) ' / ' num2str(r_square(i))]);
-y=[]
+y=[];
 ym=[];
 yp=[];
 yp_s=[];
@@ -324,32 +324,44 @@ ylim([5 40]);yticks([0:10:40]);
 %plot peak nr of sholl crossings BASAL vs TW, PANEL H
 corr_plot(max_s_ba(morph_res_sub2)',od_out_iviv(morph_res_sub2,7),[],{'','',''});xlim([0 30]);
 ylabel('Tuning Width','Color','k');set(gca,'FontSize',10)
+%% TW branch points
+corr_plot(morph_parameters(morph_res_sub2,4)',od_out_iviv(morph_res_sub2,7)',[],{'','',''});
+
+%% gOSI
+corr_plot(morph_parameters(morph_res_sub,4)',od_out_iviv(morph_res_sub,1)',[],{'','',''});
+%% gOSI
+corr_plot(max_s(morph_res_sub),od_out_iviv(morph_res_sub,1)',[],{'','',''});
+%% TW
+corr_plot(morph_parameters(morph_res_sub2,14)',od_out_iviv(morph_res_sub2,7)',[],{'','',''});
 %% Check tuning width error based on Rev3
-data=[];data=od_out_iviv(morph_res_sub2,7);
-pall=[];rall=[];
-psel=[];rsel=[];
-count=1
-for k=1:1000
-for i=1:length(data);
-data_m=[];tt1=[];tt2=[];
-data_m=data;
-ved=1:length(data);
-tt1=randperm(length(data),i);
-[tf, loc] = ismember(ved,tt1);
-tt2=find(tf==0);
-data_m(tt1)=data_m(tt1)+10;
-data_m(tt2)=data_m(tt2)-10;
-[r p]=corrcoef(max_s(morph_res_sub2)',data_m);
-psel(i)=p(2);
-rsel(i)=r(2);
-end
-pall(count,:)=psel;
-rall(count,:)=rsel;
-count=count+1;
-end
-figure;set(gcf,'color','w');
-subplot(2,1,1);histogram(rall(:));xlabel('Pearson Correlation R');
-subplot(2,1,2);histogram(pall(:));xlabel('p-Value');
+
+%DRAGO
+
+% data=[];data=od_out_iviv(morph_res_sub2,7);
+% pall=[];rall=[];
+% psel=[];rsel=[];
+% count=1
+% for k=1:1000
+% for i=1:length(data);
+% data_m=[];tt1=[];tt2=[];
+% data_m=data;
+% ved=1:length(data);
+% tt1=randperm(length(data),i);
+% [tf, loc] = ismember(ved,tt1);
+% tt2=find(tf==0);
+% data_m(tt1)=data_m(tt1)+10;
+% data_m(tt2)=data_m(tt2)-10;
+% [r p]=corrcoef(max_s(morph_res_sub2)',data_m);
+% psel(i)=p(2);
+% rsel(i)=r(2);
+% end
+% pall(count,:)=psel;
+% rall(count,:)=rsel;
+% count=count+1;
+% end
+% figure;set(gcf,'color','w');
+% subplot(2,1,1);histogram(rall(:));xlabel('Pearson Correlation R');
+% subplot(2,1,2);histogram(pall(:));xlabel('p-Value');
 %% %% Prepare corr matrix for S3
 df=[morph_parameters(morph_res_sub,9)];
 db=[morph_parameters(morph_res_sub,19)];
@@ -517,13 +529,13 @@ box off
  end
  %% Reviewer 1 overview
  a1=[];a2=[]; b=[];a=[];
-a1=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)<65)
-a2=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>150)
-b=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>65 & od_out_iviv(morph_res_sub,4)<150)
- a=[a1;a2];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>18  & od_out_iviv(morph_res_sub,4)<68)
+%a2=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>150)
+b=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & od_out_iviv(morph_res_sub,4)>71 & od_out_iviv(morph_res_sub,4)<121)
+ %a=[a1;a2];
  color_id={[0.7 0 0.4],[0 0.5 0.5]};
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 500, 400]);
-subplot(2,2,1)
+subplot(2,2,3)
 for i=1:length(a)
   m=plot_tree(str(morph_res_sub(a(i))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(a(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
         m.EdgeColor = color_id{2};
@@ -533,7 +545,9 @@ for i=1:length(a)
  axis off;
  set(gcf,'color','w');
 end
-subplot(2,2,3)
+
+
+subplot(2,2,1)
   for i=1:length(b)
   m=plot_tree(str(morph_res_sub(b(i))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(b(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
         m.EdgeColor = color_id{1};;
@@ -548,7 +562,7 @@ end
 %   m=plot_tree(str(morph_res_sub(a(1))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(a(1))).morphtraces{1,5} 0],[],1,'-b');hold on;
   
 %Basael
-subplot(2,2,2)
+subplot(2,2,4)
 for i=1:length(a)
   m=plot_tree(str(morph_res_sub(a(i))).morphtraces{1,2},[1 0 0],[0 str(morph_res_sub(a(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
         m.EdgeColor = color_id{2};
@@ -559,7 +573,7 @@ for i=1:length(a)
  grid on
  set(gcf,'color','w');
 end
-subplot(2,2,4)
+subplot(2,2,2)
   for i=1:length(b)
   m=plot_tree(str(morph_res_sub(b(i))).morphtraces{1,2},[1 0 0],[0 str(morph_res_sub(b(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
         m.EdgeColor = color_id{1};
@@ -570,21 +584,90 @@ subplot(2,2,4)
  set(gcf,'color','w');
   end
 
-  
+%% Sorted plot
+ a=[];
+df=[];db=[];df=[morph_parameters(morph_res_sub,9)];db=[morph_parameters(morph_res_sub,19)];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3) ; 
+exte=df(a);
+ jj=[];
+% [tt jj]=sort(df(a));
+[tt jj]=sort(od_out_iviv(morph_res_sub(a),4),'ascend')
+% oriu=od_out_iviv(morph_res_sub(a),4);
+% oriu_s=oriu(jj);
+%
+hl=[];
+exte_s=exte(jj)
+hl=exte(jj)/max(exte(jj));
+%hl=oriu(jj)/max(oriu(jj));
+ 
+% cmap1='plasma';
+% cmm=colormap(cmap1);
+% cmm_don=downsample(cmm,8);
+% cmap=cmm_don(jj,:)
+
+for i=1:30
+allc{i}=str(morph_res_sub(a(i))).morphtraces 
+end
+figure;
+for i=1:30
+subplot(1,30,i)
+  m=plot_tree(allc{1,jj(i)}{1,1},[1 0 0],[0 allc{1,jj(i)}{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = [hl(i) 0 0];
+         set(gca,'Ydir','reverse');
+  xlim([-250 250]);
+ ylim([0 300]);
+ axis off;
+ set(gcf,'color','w');
+%title(num2str(oriu_s(i)))
+%title(num2str(exte_s(i)))
+end
+
+% for i=1:30
+% subplot(5,6,i)
+%   m=plot_tree(str(morph_res_sub(a(i))).morphtraces{1,1},[1 0 0],[0 str(morph_res_sub(a(i))).morphtraces{1,5} 0],[],1,'-b');hold on;
+%         m.EdgeColor = [1 0 0];
+%          set(gca,'Ydir','reverse');
+%   xlim([-350 350]);
+%  ylim([0 450]);
+%  %axis off;
+%  set(gcf,'color','w');
+% %title(num2str(df(i)))
+% title(num2str(exte(i)))
+% end
+
+%% Example of elomgated and not elongated 
+figure;
+color_id={[0.7 0 0.4],[0 0.5 0.5]};
+  m=plot_tree(allc{1,jj(1)}{1,1},[1 0 0],[0 allc{1,jj(1)}{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{2};
+         set(gca,'Ydir','reverse');
+         hold on
+    m=plot_tree(allc{1,jj(25)}{1,1},[1 0 0],[0 allc{1,jj(15)}{1,5} 0],[],1,'-b');hold on;
+        m.EdgeColor = color_id{1};
+         set(gca,'Ydir','reverse');
+         xlim([-250 250]);
+ ylim([0 300]);
+ axis off;
+ set(gcf,'color','w');
+%title(num2str(oriu_s(i)))
+%title(num2str(exte_s(i)))
+
+
+
   %% Reviewer 2
  %1) TW
   close all;fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 1000, 200]);
 subplot(1,5,1);histogram(pia_input(morph_res_sub2),'BinLimits',[min(pia_input(morph_res_sub2)),max(pia_input(morph_res_sub2))],'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','Orientation','horizontal');
   ylabel('Pial depth (µm)');xlabel('Cell count');box off;
 
-  subplot(1,5,2);scatter(max_s(morph_res_sub2),pia_input(morph_res_sub2),'ko','filled');
+  subplot(1,5,3);scatter(max_s(morph_res_sub2),pia_input(morph_res_sub2),'ko','filled');
 xlabel('Peak Nr. crossing','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w');xlim([0 15]);  title('Apical');
 [r p]=corrcoef(max_s(morph_res_sub2),pia_input(morph_res_sub2))
 text(2,300,['r=' num2str(round(r(2),3))]);
 text(8,300,['p=' num2str(round(p(2),3))]);set(gca,'FontSize',10);
 
-  subplot(1,5,3);scatter(morph_parameters(morph_res_sub2,4) ,pia_input(morph_res_sub2),'ko','filled');
+  subplot(1,5,2);scatter(morph_parameters(morph_res_sub2,4) ,pia_input(morph_res_sub2),'ko','filled');
 xlabel('Nr. branch points','Color','k');ylabel('Pial depth (µm)','Color','k');set(gca,'FontSize',10)
 set(gcf,'color','w');  
  morph_parameters(morph_res_sub(a),4) 
@@ -614,7 +697,8 @@ text(22,300,['p=' num2str(round(p(2),3))]);set(gca,'FontSize',10);
 mg1=[];mg2=[];mo_unres=[];mo_res=[]
 mg1=find(od_out_iviv(:,1)<0.25 & m_res'==1); 
 mg2=find(m_res==0)';
-mo_unres=[mg1; mg2];
+%mo_unres=[mg1; mg2];
+mo_unres=[mg2];
 mo_res=find(od_out_iviv(:,1)>0.25 & m_res'==1); 
 
 par=[];
@@ -622,7 +706,7 @@ par=max_s;
 %par=max_s_ba;
 %par=morph_parameters(:,4)
 
-[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Untuned' ,'Tuned'});xtickangle(45);
+[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Unresponsive' ,'Tuned'});xtickangle(45);
 ylabel('Peak nr. Sholl crossing');set(gca,'FontSize',10);
 %ylim([-70 70]);yticks(-70:35:70);
 title('Apical')
@@ -631,7 +715,7 @@ par=[];
 par=max_s_ba;
 %par=morph_parameters(:,4)
 
-[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Untuned' ,'Tuned'});xtickangle(45);
+[statsout]=dual_barplot(par,mo_unres,mo_res,1);xticks([1:1:2]);hold on;xticklabels({'Unresponsive' ,'Tuned'});xtickangle(45);
 ylabel('Peak nr. Sholl crossing');set(gca,'FontSize',10);
 %ylim([-70 70]);yticks(-70:35:70);
 title('Basal')
@@ -722,6 +806,8 @@ ref.Color='k';box off;;hold on;title('L5','FontWeight','normal');%xticks([-300:1
 xlim([-160 160]);ylim([-160 160]);xticks([-160:80:160]);yticks([-160:80:160]);
 ref.XData=[-160 160];
 ref.YData=[-160 160];
+%% 
+
  %% Group selective and unselective cells and plot vertical profile, panel F
 g1=[];g2=[];
 t1=find(od_out_iviv(:,1)<=0.25);
@@ -792,7 +878,7 @@ mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xtic
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
 xticklabels({'-552','-138','138','552'});
 ylabel('Fraction of total input');set(gca,'FontSize',10);
-
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
 %%%%L4
 L4hm=[];
 L4hm=L4h;
@@ -818,7 +904,7 @@ mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xtic
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
 xticklabels({'-552','-138','138','552'});
 text(2.5,0.4,'M');text(13,0.4,'L');set(gca,'FontSize',10);
-
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
 %%%%%L5
 L5hm=[];
 L5hm=L5h;
@@ -842,7 +928,7 @@ mexp=errorbar(nanmean(frac_h(g2,17:end))*-1,nanstd(frac_h(g2,17:end))/sqrt(size(
 set([mexp.Bar, mexp.Line], 'ColorType', 'truecoloralpha', 'ColorData', [mexp.Line.ColorData(1:3); 255*alpha2])
 mexp.CapSize=3;ylim([-0.4 0.4]);yticks([-0.4:0.2:0.4]);hold on;xlim([1 16]);xticks([1:5:16]);xticklabels({'1','6','11','16'});
 hold on;line([8.5 8.5], [-1 1],'Color','k','LineStyle','--');
-xticklabels({'-552','-138','138','552'});
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
 % Statistics
 p1=[];
 for i=1:size(L23hm,2);
@@ -931,9 +1017,9 @@ s2=[g3' g4'];
 %par=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
 %par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
-%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
 %par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
- par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+ %par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
 %par=od_out_iviv(a,3)
 %SWITCH SIGN CAUSE OF FLIP
 par(g2)=par(g2)*-1;
@@ -957,8 +1043,8 @@ par=(ang_exL23(a,3)-ang_inL23(a,1))*69;
    par2=(ang_exL23(a,3)-ang_exL23(a,1))*69;
 %     par1=(ang_inL4(a,3)-ang_inL4(a,1))*69;
 %   par2=(ang_exL4(a,3)-ang_exL4(a,1))*69;
- par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
-  par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+%  par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%   par2=(ang_exL5(a,3)-ang_exL5(a,1))*69;
 %  par2(g2)=par2(g2)*-1;
 %par1=[];par2=[];
  %par1=(ang_inL5(a,3)-ang_inL5(a,1))*69;
@@ -1021,7 +1107,7 @@ plot(nanmean(flip_hl_in)*-1,'Color','b','LineWidth',1.5);box off;
 hold on;line([8.5 8.5], [-0.35 0.35],'Color','k','LineStyle','--');
 xlim([1 16]);ylim([-0.35 0.35]);yticks(-0.35:0.35:0.35);xticks(1:5:16);xticklabels({'-552','-138','138','552'});
 xlabel('Horizontal position (µm)');ylabel('Fraction of total input');set(gca,'Fontsize',10);
-
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
 
 
 
@@ -1149,6 +1235,7 @@ xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
 xticks([1,2])
 mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
          'TickLabels',{'0','0.25','0.5','0.75','1'});  set(get(mm,'title'),'string','gDSI');ylim([1 6.5])
+     [p1]=signrank(data(:,1) ,data(:,2));p1=round(p1,3);
 %% Alternative now test with gDSI as coulour after REVIEW
 %colorMap = [linspace(0,1,length(DSI_s2))', zeros(length(DSI_s2),1) linspace(0,1,length(DSI_s2))'];
 cm_don=[];cmap1='plasma';
@@ -1189,6 +1276,7 @@ xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
 xticks([1,2])
 mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
          'TickLabels',{'0','0.25','0.5','0.75','1'});set(get(mm,'title'),'string','gDSI');ylim([1 6.5]);
+     [p1]=signrank(data(:,1) ,data(:,2));p1=round(p1,3)
 %% Alternative now test with gDSI as coulour after REVIEW
 %colorMap = [linspace(0,1,length(DSI_s2))', zeros(length(DSI_s2),1) linspace(0,1,length(DSI_s2))'];
 cm_don=[];cmap1='plasma';
@@ -1216,3 +1304,44 @@ ylabel('gDSI');xlabel('Ratio rate of rise');set(gca,'Fontsize',10);xlim([0.4 1.8
 %% Correlation ratio of rise and DSI IN aligned
 corr_plot([decayAligned_in./riseAligned_in]',[DSI_s1],[],{'','',''});ylim([0.25 1]);yticks([0.25:0.25:1]);
 ylabel('gDSI');xlabel('Ratio rate of rise IN');set(gca,'Fontsize',10);xlim([0.4 1.8]);xticks([0.6:0.4:1.8]);
+%% 
+
+%% Plot difference between vertical excitation and inhbition per cell
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
+subplot(3,1,1);
+histogram(diffL23fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL23fr),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L2/3');ylabel('Cell Counts');set(gca,'FontSize',10);text(-0.5,28,'IN','Color','b');
+set(gca,'FontSize',10);text(0.5,28,'EX','Color','r');set(gca,'FontSize',10)
+subplot(3,1,2);
+histogram(diffL4fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL4fr),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L4');set(gca,'FontSize',10);set(gca,'FontSize',10);
+subplot(3,1,3);
+histogram(diffL5fr(iviv_cells),'BinWidth',0.07,'FaceColor','w');box off;ylim([0 30]);xlim([-0.7 0.7]);xticks([-0.7:0.35:0.7]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL5fr),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-0.5,24,'L5');set(gca,'FontSize',10);ylabel('Cell Counts');xlabel('EX-IN vertical fraction')
+%stats against 0
+[p,h] = signrank(diffL5fr);
+%% %% Plot difference between horizintal excitation and inhbition per cell SPAN
+diffL23fr_span=span(:,1)-span(:,4)
+diffL4fr_span=span(:,2)-span(:,5)
+diffL5fr_span=span(:,3)-span(:,6)
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
+subplot(3,1,1);
+histogram(diffL23fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL23fr_span*69),30,'kv','filled')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L2/3');ylabel('Cell Counts');set(gca,'FontSize',10)
+subplot(3,1,2);
+histogram(diffL4fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL4fr_span*69),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L4');set(gca,'FontSize',10);;set(gca,'FontSize',10);
+text(-300,28,'IN','Color','b');set(gca,'FontSize',10);text(300,28,'EX','Color','r');set(gca,'FontSize',10)
+subplot(3,1,3);
+histogram(diffL5fr_span(iviv_cells)*69,'BinWidth',69,'FaceColor','w');box off;ylim([0 30]);
+xlim([-600 600]);xticks([-600:300:600]);yticks([0:15:30]);
+hold on;scatter(nanmean(diffL5fr_span*69),30,'kv','filled');ylabel('Cell Counts')
+hold on;line([0 0], [0 30],'Color','k','LineStyle','--');text(-500,24,'L5');set(gca,'FontSize',10);
+xlabel('EX-IN horizontal extent (µm)');

@@ -250,7 +250,7 @@ temp=zz{143};
 figure;
 [s, dd, sd, XP, YP, ZP, iD] = sholl_tree(temp{1,1}, 20, '-s');
 [sb, ddb, sdb, XP, YP, ZP, iD] = sholl_tree(temp{1,2}, 20, '-s');
-temp=zz{122}
+temp=zz{122};
 [s1, dd1, sd1, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,1}, 20, '-s');
 [s1b, dd1b, sd1b, XP1, YP1, ZP1, iD1] = sholl_tree(temp{1,2}, 20, '-s');
 close(gcf);
@@ -355,6 +355,70 @@ hold on
 hold on;
 text(25,400,['R2=' mat2str(round(r2_ba,2))],'Color','m');
 set(gca,'FontSize',10);
+%% Compare using bins: REVIEWER
+a=[];
+df=[];db=[];df=[morph_parameters(morph_res_sub,9)];db=[morph_parameters(morph_res_sub,19)];
+a=find(od_out_iviv(morph_res_sub,1)>0.25 & r_sq(morph_res_sub)>0.3 & ...
+    abs(od_out_iviv(morph_res_sub,3))>0) ;
+% binoori=reshape([str(morph_res_sub(a)).Ori],[2,length(morph_res_sub(a))])';
+% binodir_delta=binoori(:,1)-binoori(:,2);
+% binoOriA=binoori;
+s1a=[];s2a=[];s1b=[];s2b=[]
+%define sectors width
+sector1=12; 
+sector2=28;
+%define midpoint of widows
+midpoint1=106; 
+midpoint2=53;
+%define range
+s1a=[midpoint1-sector1]
+s1b=[midpoint1+sector2]
+s2a=[midpoint2-sector2]
+s2b=[midpoint2+sector1]
+
+
+g1=[];g2=[];g3=[];g4=[];
+%VS - find mono cells belonging to sectors 
+% bi_limit=0.25;
+% idx_mono=find(abs(od_out_iviv(morph_res_sub(a),3))>bi_limit)
+% g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
+% g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
+% %g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+% g3=find(od_out_iviv(a(idx_mono),5)>s3a | od_out_iviv(a(idx_mono),5)<s3b);
+% %g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
+% g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
+% %VS - find bi cells belonging to sectors 
+% idx_bi=find(abs(od_out_iviv(a,3))<bi_limit)
+% tempIdx=find(binodir(idx_bi,1)>s1a & binodir(idx_bi,1)<s1b & binodir(idx_bi,2)>s1a & binodir(idx_bi,2)<s1b);
+% g1=[idx_mono(g1); idx_bi(tempIdx)];
+% tempIdx=find(binodir(idx_bi,1)>s2a & binodir(idx_bi,1)<s2b & binodir(idx_bi,2)>s2a & binodir(idx_bi,2)<s2b);
+% g2=[idx_mono(g2); idx_bi(tempIdx)];
+% tempIdx=find(binodir(idx_bi,1)>s3a & binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a & binodir(idx_bi,2)<s3b);
+% g3=[idx_mono(g3); idx_bi(tempIdx)];
+% tempIdx=find(binodir(idx_bi,1)>s4a & binodir(idx_bi,1)<s4b & binodir(idx_bi,2)>s4a & binodir(idx_bi,2)<s4b);
+% g4=[idx_mono(g4); idx_bi(tempIdx)];
+% par=[];
+% %combine 315 and 135
+% s1=[g1' g2'];
+% %combine 45 and 225
+% s2=[g3' g4'];
+ g1=find(od_out_iviv(morph_res_sub(a),4)>s1a & od_out_iviv(morph_res_sub(a),4)<s1b);
+ g2=find(od_out_iviv(morph_res_sub(a),4)>s2a & od_out_iviv(morph_res_sub(a),4)<s2b);
+
+%UNCOMMENT FOR LAYER AND EX/IN, respectively 
+par=df
+%par=(ang_inL23(a,3)-ang_inL23(a,1))*69;
+%par=(ang_exL4(a,3)-ang_exL4(a,1))*69;
+%par=(ang_inL4(a,3)-ang_inL4(a,1))*69;
+%par=(ang_exL5(a,3)-ang_exL5(a,1))*69;
+% par=(ang_inL5(a,3)-ang_inL5(a,1))*69;
+%par=od_out_iviv(a,3)
+%SWITCH SIGN CAUSE OF FLIP
+
+[statsout]=dual_barplot(par,g1,g2,1);xticks([1:1:2]);hold on;xticklabels({'AL' ,'NAL'});ylabel('C_{x} (µm)');set(gca,'FontSize',10);xtickangle(45);
+%ylim([-70 70]);yticks(-70:35:70);
+%ylim([-150 200]);yticks(-150:100:200);
+
 %% Compare to shuffle shown in S4 panel D
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [400, 600, 230, 250]);
 b1=bar(1:2,[r2_ap r2_ba]); b1.FaceColor=[0.5 0.5 0.5];hold on;
@@ -919,24 +983,38 @@ a=find(od_out_iviv(:,1)>0 & od_out_iviv(:,2)>0.25 & abs(od_out_iviv(:,3))>0);
 binodir=reshape([str(a).Dir],[2,length(a)])';
 binodir_delta=binodir(:,1)-binodir(:,2);
 binoDirA=binodir;
+% %define sectors width
+% sector1=30; 
+% sector2=50;
+% %define midpoint of widows
+% midpoint1=120; 
+% midpoint2=30;
 %define sectors width
-sector1=30; 
-sector2=50;
+sector1=24; 
+sector2=56;
 %define midpoint of widows
-midpoint1=120; 
-midpoint2=30;
+midpoint1=106; 
+midpoint2=53;
 %define range
-s1a=[midpoint1-sector1];s1b=[midpoint1+sector2];
-s2a=[(midpoint1+180)-sector1];s2b=[(midpoint1+180)+sector2];
-s3a=[midpoint2-sector1];s3b=[midpoint2+sector2];
-s4a=[(midpoint2+180)-sector1];s4b=[(midpoint2+180)+sector2];
+s1a=[midpoint1-sector1]
+s1b=[midpoint1+sector2]
+s2a=[(midpoint1+180)-sector1]
+s2b=[(midpoint1+180)+sector2]
+s3a=357;
+s3b=77;
+s4a=[(midpoint2+180)-sector2]
+s4b=[(midpoint2+180)+sector1]
+%% 
+
 g1=[];g2=[];g3=[];g4=[];
 %VS - find mono cells belonging to sectors 
 bi_limit=0.25;
 idx_mono=find(abs(od_out_iviv(a,3))>bi_limit)
 g1=find(od_out_iviv(a(idx_mono),5)>s1a & od_out_iviv(a(idx_mono),5)<s1b);
 g2=find(od_out_iviv(a(idx_mono),5)>s2a & od_out_iviv(a(idx_mono),5)<s2b);
-g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+%g3=find(od_out_iviv(a(idx_mono),5)>s3a & od_out_iviv(a(idx_mono),5)<s3b);
+g3=find(od_out_iviv(a(idx_mono),5)>s3a | od_out_iviv(a(idx_mono),5)<s3b);
+%g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
 g4=find(od_out_iviv(a(idx_mono),5)>s4a & od_out_iviv(a(idx_mono),5)<s4b);
 %VS - find bi cells belonging to sectors 
 idx_bi=find(abs(od_out_iviv(a,3))<bi_limit)
@@ -944,7 +1022,7 @@ tempIdx=find(binodir(idx_bi,1)>s1a & binodir(idx_bi,1)<s1b & binodir(idx_bi,2)>s
 g1=[idx_mono(g1); idx_bi(tempIdx)];
 tempIdx=find(binodir(idx_bi,1)>s2a & binodir(idx_bi,1)<s2b & binodir(idx_bi,2)>s2a & binodir(idx_bi,2)<s2b);
 g2=[idx_mono(g2); idx_bi(tempIdx)];
-tempIdx=find(binodir(idx_bi,1)>s3a & binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a & binodir(idx_bi,2)<s3b);
+tempIdx=find(binodir(idx_bi,1)>s3a | binodir(idx_bi,1)<s3b & binodir(idx_bi,2)>s3a | binodir(idx_bi,2)<s3b);
 g3=[idx_mono(g3); idx_bi(tempIdx)];
 tempIdx=find(binodir(idx_bi,1)>s4a & binodir(idx_bi,1)<s4b & binodir(idx_bi,2)>s4a & binodir(idx_bi,2)<s4b);
 g4=[idx_mono(g4); idx_bi(tempIdx)];
@@ -1073,7 +1151,7 @@ hor_s2_in=[frac_h(g3,17:32); flip(frac_h(g4,17:32),2)]; %VS19/3/21
 % figure;plot(hor_s1_ex','--r');title('135 & 315');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s1_in'*-1,'--b');
 % figure;plot(hor_s2_ex','--r');title('45 & 225');hold on;line([8.5 8.5], [-0.4 0.4],'Color','k','LineStyle','--');hold on;plot(hor_s2_in'*-1,'--b');
 DSI_s1=od_out_iviv(a(s1),2);
-
+DSI_s2=od_out_iviv(a(s2),2);
 
 % rate of rise
 rise=[];
@@ -1162,7 +1240,28 @@ hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+%% Alternative now test with gDSI as coulour after REVIEW
+colorMap = [linspace(0,1,length(DSI_s1))', zeros(length(DSI_s1),1) linspace(0,1,length(DSI_s1))'];
 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 200]);
+data=[];data=riseDecayAligned_ex';
+Z=sort(DSI_s1/max(DSI_s1));
+for i=1:length(Z)
+ hold on;
+ plot([1,2],[data(i,1),data(i,2)],'color',[Z(i) 0 Z(i)],'LineWidth',1) 
+ hold on; scatter([1,2],[data(i,1),data(i,2)],'MarkerFaceColor',[Z(i) 0 Z(i)],...
+     'MarkerEdgeColor',[Z(i) 0 Z(i)]) 
+% hold on;pS=plotSpread([data(i,1),data(i,2)],'categoryIdx',[ones(1,length(data(i,1)))' ones(1,length(data(i,2)))'*2],...
+%     'categoryMarkers',{'o','o'},'categoryColors',{colorMap(i,:),colorMap(i,:)});hold on;
+end
+xlim([0 3])
+colormap(colorMap);
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+xticks([1,2])
+mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
+         'TickLabels',{'0','0.25','0.5','0.75','1'});
+  
+set(get(mm,'title'),'string','gDSI');
 %% non alinged cells rise pref and null EXCITATION
 cl={'k','k'};
 data=[];data=riseDecayNL';
@@ -1181,6 +1280,29 @@ hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10);
+%% 
+%% Alternative now test with gDSI as coulour after REVIEW
+colorMap = [linspace(0,1,length(DSI_s2))', zeros(length(DSI_s2),1) linspace(0,1,length(DSI_s2))'];
+
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 200]);
+data=[];data=riseDecayNL';
+Z=[];Z=sort(DSI_s2/max(DSI_s2));
+for i=1:length(Z)
+ hold on;
+ plot([1,2],[data(i,1),data(i,2)],'color',[Z(i) 0 Z(i)],'LineWidth',1) 
+ hold on; scatter([1,2],[data(i,1),data(i,2)],'MarkerFaceColor',[Z(i) 0 Z(i)],...
+     'MarkerEdgeColor',[Z(i) 0 Z(i)]) 
+% hold on;pS=plotSpread([data(i,1),data(i,2)],'categoryIdx',[ones(1,length(data(i,1)))' ones(1,length(data(i,2)))'*2],...
+%     'categoryMarkers',{'o','o'},'categoryColors',{colorMap(i,:),colorMap(i,:)});hold on;
+end
+xlim([0 3])
+colormap(colorMap);
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+xticks([1,2])
+mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
+         'TickLabels',{'0','0.25','0.5','0.75','1'});
+  
+set(get(mm,'title'),'string','gDSI');
 
 %% alinged cells rise pref and null INHIBITION
 cl={'b','b'};
@@ -1200,7 +1322,28 @@ hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+%% Alternative now test with gDSI as coulour after REVIEW
+colorMap = [zeros(length(DSI_s1),1), zeros(length(DSI_s1),1) linspace(0,1,length(DSI_s1))'];
 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 200]);
+data=[];data=riseDecayAligned_in';
+Z=sort(DSI_s1/max(DSI_s1));
+for i=1:length(Z)
+ hold on;
+ plot([1,2],[data(i,1),data(i,2)],'color',[0 0 Z(i)],'LineWidth',1) 
+ hold on; scatter([1,2],[data(i,1),data(i,2)],'MarkerFaceColor',[0 0 Z(i)],...
+     'MarkerEdgeColor',[0 0 Z(i)]) 
+% hold on;pS=plotSpread([data(i,1),data(i,2)],'categoryIdx',[ones(1,length(data(i,1)))' ones(1,length(data(i,2)))'*2],...
+%     'categoryMarkers',{'o','o'},'categoryColors',{colorMap(i,:),colorMap(i,:)});hold on;
+end
+xlim([0 3])
+colormap(colorMap);
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+xticks([1,2])
+mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
+         'TickLabels',{'0','0.25','0.5','0.75','1'});
+  
+set(get(mm,'title'),'string','gDSI');
 %% non alinged cells rise pref and null INHIBITION
 cl={'k','k'};
 data=[];data=riseDecayNL_in';
@@ -1219,10 +1362,31 @@ hold on;errorbar([0.75 2.25],nanmean(data),nanstd(data,[],1)/sqrt(length(data)),
  [p1]=signrank(data(:,1) ,data(:,2),'tail','left');p1=round(p1,3);
 title([' p=' num2str(p1) ', n=' num2str(length(data))],'FontWeight','Normal');
 xticklabels({'NAL (M)','NAL (L)'});ylabel('Length of rise');set(gca,'FontSize',10);
+%% Alternative now test with gDSI as coulour after REVIEW
+colorMap = [zeros(length(DSI_s2),1), zeros(length(DSI_s2),1) linspace(0,1,length(DSI_s2))'];
 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [100, 600, 250, 200]);
+data=[];data=riseDecayNL_in';
+Z=[];Z=sort(DSI_s2/max(DSI_s2));
+for i=1:length(Z)
+ hold on;
+ plot([1,2],[data(i,1),data(i,2)],'color',[0 0 Z(i)],'LineWidth',1) 
+ hold on; scatter([1,2],[data(i,1),data(i,2)],'MarkerFaceColor',[0 0 Z(i)],...
+     'MarkerEdgeColor',[0 0 Z(i)]) 
+% hold on;pS=plotSpread([data(i,1),data(i,2)],'categoryIdx',[ones(1,length(data(i,1)))' ones(1,length(data(i,2)))'*2],...
+%     'categoryMarkers',{'o','o'},'categoryColors',{colorMap(i,:),colorMap(i,:)});hold on;
+end
+xlim([0 3])
+colormap(colorMap);
+xticklabels({'Pref','Null'});ylabel('Length of rise');set(gca,'FontSize',10);
+xticks([1,2])
+mm=colorbar('Ticks',[0,0.25,0.5,0.75,1],...
+         'TickLabels',{'0','0.25','0.5','0.75','1'});
+  
+set(get(mm,'title'),'string','gDSI');
 %% Correlation ratio of rise and DSI EX aligned
 corr_plot([decayAligned_ex./riseAligned_ex]',[DSI_s1],[],{'','',''});ylim([0.25 1]);yticks([0.25:0.25:1]);
-ylabel('gDSI');xlabel('Ratio rate of rise EX');set(gca,'Fontsize',10);xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
+ylabel('gDSI');xlabel('Ratio rate of rise EX');set(gca,'Fontsize',10);%xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
 %% Correlation ratio of rise and DSI IN aligned
 corr_plot([decayAligned_in./riseAligned_in]',[DSI_s1],[],{'','',''});ylim([0.25 1]);yticks([0.25:0.25:1]);
 ylabel('gDSI');xlabel('Ratio rate of rise IN');set(gca,'Fontsize',10);xlim([0.6 1.8]);xticks([0.6:0.4:1.8]);
