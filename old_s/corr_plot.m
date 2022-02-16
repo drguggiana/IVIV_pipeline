@@ -4,16 +4,17 @@ if isempty(par3)==1
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [900, 500, 200, 200]);
  [R P]=corrcoef(par1,par2);s=scatter(par1,par2,4,'o','MarkerEdgeColor','k','MarkerFaceColor','k');box off;xlabel(label_names{1});ylabel(label_names{2});
 %set(gca,'Ydir','reverse');
- if P(2)<0.05 & P(2)>0.01
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
-     
- elseif P(2)<0.01 & P(2)>0.001
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
- elseif P(2)<0.001
-    title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
- else
-     title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
- end
+%  if P(2)<0.05 & P(2)>0.01
+%      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.05'])
+%      
+%  elseif P(2)<0.01 & P(2)>0.001
+%      title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.01'])
+%  elseif P(2)<0.001
+%     title(['r= ' mat2str(round(R(2),2)) ' ' 'p<0.001'])
+%  else
+%      title(['r= ' mat2str(round(R(2),2)) ' ' 'n.s'])
+%  end
+title(['r= ' mat2str(round(R(2),2)) ' ' 'p= ' mat2str(round(P(2),3))])
   P = polyfit(par1,par2,1);
     yfit = P(1)*par1+P(2);
     hold on;

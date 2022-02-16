@@ -20,6 +20,9 @@ hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqr
 mexp.CapSize=3;
 xlabel('Horizontal map position')
 hold on;text(2.5,0.6,'L2/3','FontSize',12);
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
+
+
 frac_h=L4h(iviv_cells,:);hold on;
 
 frac_diffh=frac_h(:,1:16)-frac_h(:,17:end);
@@ -41,6 +44,8 @@ hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqr
 mexp.CapSize=3;
 xlabel('Horizontal map position');
 hold on;text(2.5,0.6,'L4','FontSize',12);
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
+
 
 frac_h=L5h(iviv_cells,:);
 
@@ -63,4 +68,5 @@ hold on;mexp=errorbar(nanmean(frac_diffh(:,1:16)),nanstd(frac_diffh(:,1:16))/sqr
 mexp.CapSize=3;
 xlabel('Horizontal map position')
 hold on;text(2.5,0.6,'L5','FontSize',12);
+set(gca,'XTick',[1.2536 4.8768 8.5 12.1232 15.7464],'XTickLabel',{'-500' '-250' '0'  '250' '500'});
 end
