@@ -89,19 +89,35 @@ end
 %all morpho parameters are normally distributed!
 %Histograms
 stri={'Radial Dis._{max} (µm)','Total Length (µm)','Path Length_{max} (µm)','Branch Points','Branch Order_{max}',...
-    'Branch Length_{mean} (µm)','Width / Height','Width','Height','Peak Nr. cross','Dis. peak branch (µm)'...
-    'Radial Dis._{max} (µm)','Total Length (µm)','Path Length_{max} (µm)','Branch Points','Branch Order_{max}','Branch Length_{mean} (µm)'...
-    ,'Width / Height','Width','Height','Nr. Branches','Peak Nr. cross','Dis. peak branch (µm)'};
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 600]);
- for i=1:size(data_morpho_all,2)
+    'Branch Length_{mean} (µm)','Width / Height','Width','Height','Peak Nr. cross','Dis. peak branch (µm)'};
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 400]);
+ for i=1:11
 hold on;
-subplot(5,5,i)
+subplot(3,5,i)
 h=histogram(data_morpho_all(:,i),8,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','LineWidth',1)
 h.EdgeColor = 'w';
 h.FaceColor = [0.6 0.6 0.6];
 xlabel(stri(i));
 %ylim([0 1]);
 xlim([0 max(data_morpho_all(:,i))+max(data_morpho_all(:,i))*0.25]);
+hAxis = gca;
+hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
+hAxis.XAxisLocation = 'bottom'
+box off
+ end
+
+ stri={'Radial Dis._{max} (µm)','Total Length (µm)','Path Length_{max} (µm)','Branch Points','Branch Order_{max}','Branch Length_{mean} (µm)'...
+    ,'Width / Height','Width','Height','Nr. Branches','Peak Nr. cross','Dis. peak branch (µm)'}
+ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 400]);
+ for i=1:12
+hold on;
+subplot(3,5,i)
+h=histogram(data_morpho_all(:,i+11),8,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','LineWidth',1)
+h.EdgeColor = 'w';
+h.FaceColor = [0.6 0.6 0.6];
+xlabel(stri(i));
+%ylim([0 1]);
+xlim([0 max(data_morpho_all(:,i+11))+max(data_morpho_all(:,i+11))*0.25]);
 hAxis = gca;
 hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
 hAxis.XAxisLocation = 'bottom'
@@ -118,6 +134,7 @@ sorted_correlation([data_morpho(:,10:19) max_b' dis_peakb'],pia_morpho',stri,'m'
 hold on;xlabel('Correlation with pial depth')
 hold on;set(gca,'FontSize',10);hold on;title('Basal');
 %% PCA for apical morphology
+score_morph_a=[];
 [coeff_morph_a,score_morph_a,latent_morph_a,~,explained_morph_a,mu] = pca(zscore([data_morpho(:,1:9) max_a' dis_peaka']));
 var_exp(explained_morph_a,[],[]);
 %show only first three as suggested from TR
@@ -167,8 +184,25 @@ spanv_soma(i)= max(str(morph_id(i)).tr_soma.Y)-min(str(morph_id(i)).tr_soma.Y);
 spanh_soma(i)= max(str(morph_id(i)).tr_soma.X)-min(str(morph_id(i)).tr_soma.X);
 end
 area_soma=area_soma';
-
-
+%% Reviewer Figure pial depth vs soma shape
+tr = rescale(pia_morpho);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 680, 220]);
+[r p]= corrcoef(area_soma,tr);
+subplot(1,3,1);scatter(area_soma,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('Relative pial position');xlabel('Soma area (µm^2)');
+text(400,1,['r=' num2str(round(r(2),2))]);text(400,0.85,['p=' num2str(round(p(2),2))]);
+[r p]= corrcoef(spanv_soma,tr);
+set(gca,'FontSize',10);axis square;
+subplot(1,3,2);scatter(spanv_soma,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+xlabel('Soma vertical extent (µm)');
+text(20,1,['r=' num2str(round(r(2),2))]);text(20,0.85,['p=' num2str(round(p(2),2))]);
+set(gca,'FontSize',10);axis square;
+subplot(1,3,3);scatter(spanh_soma,tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+[r p]= corrcoef(spanh_soma,tr);
+xlabel('Soma horizontal extent (µm)');
+text(20,1,['r=' num2str(round(r(2),2))]);text(20,0.85,['p=' num2str(round(p(2),2))]);
+set(gca,'FontSize',10)
+axis square;
 
  %% Ephys Figure 2
 %load example traces for Panel A
@@ -223,7 +257,7 @@ end
 stri={'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'...
     'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)',...
     'APV_{half} (mV)','APV_{amp} (mV)','AHP (mV)','APfreq (Hz)'}
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 600]);
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 500]);
  for i=1:size(data_ephys_all,2)
 hold on;
 subplot(4,5,i)
@@ -313,6 +347,7 @@ end
 length(unique(name_mephys))   
 %% Correlation of both
 %Passive with apical parameters
+ap_morph=[];
 ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
 G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
 %% Apical
@@ -332,6 +367,11 @@ imagesc(R2(12:end,1:11));c=colorbar;pos = get(c,'Position');
 yticklabels({'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'});set(gca,'FontSize',10);
 xticklabels({'Radial Dis._{max}','Total Length','Path Length_{max}','Branch Points','Branch Order_{max}','Branch Length_{mean}','Width / Height','Width','Height','Peak Nr. cross','Dis. peak branch'});
 xtickangle(45);set(gca,'FontSize',10);
+%% %% PCA for both ephys and morpho
+morpha_ephys=[];morpha_ephys=[ap_morph data_ephys_both(:,[13:17])];score_morpha_ephys=[];
+[coeff_morpha_ephys,score_morpha_ephys,latent_morpha_ephys,~,explained_morpha_ephys,mu] = pca(zscore(morpha_ephys));
+var_exp(explained_morpha_ephys,[],[]); 
+
 %% Input connectivity Figure 3 
 %% Input maps
 str_all=str;
@@ -393,7 +433,7 @@ plot_avg_maps(str_imap,110,ex_map_raw,in_map_raw,pia_input,1,0,[]);
 % cell 80, 320 microm depth
 plot_avg_maps(str_imap,80,ex_map_raw,in_map_raw,pia_input,1,0,[]);
 %% Check for normality of parameters and show distribution of data 
- data_input=[L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr,span*69];
+ data_input=[];data_input=[L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr,span*69];
 for i=1:size(data_input,2)
     norm_input(i)=kstest(data_input(:,i));
 end
@@ -403,7 +443,7 @@ stri={'L2/3_{EX}','L4_{EX}','L5_{EX}','L2/3_{IN}','L4_{IN}','L5_{IN}'...
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 400]);
  for i=1:15
 hold on;
-subplot(3,5,i)
+subplot(3,6,i)
 h=histogram(data_input(:,i),8,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','LineWidth',1)
 h.EdgeColor = 'w';
 h.FaceColor = [0.6 0.6 0.6];
@@ -513,7 +553,7 @@ P = polyfit(score_com(:,1),tr,1);
 ia=[];ib=[];
 [~,ia,ib] =intersect(imaps_id,morph_id)
 %% Read out cells that overlap morpho input
-data_input=[L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr...
+ data_input=[];data_input=[L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL5fr...
     span,spandL23,spandL4,spandL5];
 data_mi_morph=[];data_mi_input=[];
 data_mi_morph=[data_morpho(ib,:)];
@@ -534,6 +574,7 @@ ba_input=[data_mi_morph(:,10:19) max_b(ib)' dis_peakb(ib)'];
 [R2,P2]=corrcoef([ba_input data_mi_input],'rows','pairwise');
 G2=correlation_matrix([ba_input data_mi_input],0);
 %% Apical
+ap_input=[];
 ap_input=[data_mi_morph(:,1:9) max_a(ib)' dis_peaka(ib)'];
 [R2,P2]=corrcoef([ap_input data_mi_input],'rows','pairwise');
 G2=correlation_matrix([ap_input data_mi_input],0);
@@ -542,6 +583,13 @@ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 450, 300])
 imagesc(R2(13:end,1:12));c=colorbar;pos = get(c,'Position');
 [cmap]=buildcmap('bwg');
 colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:5])
+%% PCA for morpho and input
+data_input_morph=[];explained_data_input_morph=[];
+data_input_morph=[data_mi_morph data_mi_input(:,[1:6 10:15])];score_data_input_morph=[];
+data_input_morph(isnan(data_input_morph))=0;
+[coeff_data_input_morph,score_data_input_morph,latent_data_input_morph,~,explained_data_input_morph,mu] = pca(zscore(data_input_morph))
+% var_exp(explained_data_input_morph,[],[]); 
+
 
 %% Plot example correlation for Panel I
 tr=[]; tr=rescale(pia_mi);
@@ -582,7 +630,7 @@ r2_all(i)=r2;
 end
 figure;set(gcf,'color','w');scatter(od_out(:,1),r2_all);box off;
 xlabel('gOSI');ylabel('R2 of fit');      
- %% 
+
 %% Sorted correlation checked with multiple comparison; Panel C left
 tr=[];tr=rescale(pia_all);
 stri={'gOSI','gDSI','ODI','Tuning Width','R / R0_{max}'};
@@ -597,7 +645,30 @@ a=[];a=r2_all'<0.3;
 TW=od_out(:,7);
 TW(a)=NaN;
 sorted_correlation([gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2)],tr',stri,[0.5 0.5 0.5],1);
-xlabel('Correlation with pial depth');
+xlabel('Correlation with pial depth');xlim([-0.3 0.3]);xticks([-0.3:0.1:0.3]);
+%%  %% Histogram and test for normality 
+ data_invivo=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2)];
+for i=1:size(data_invivo,2)
+    norm_invivo(i)=kstest(data_invivo(:,i));
+end
+%Histograms
+stri={'gOSI','gDSI','ODI','Tuning Width','R / R0_{max}'};
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 700, 150]);
+ for i=1:size(data_invivo,2)
+hold on;
+subplot(1,5,i)
+h=histogram(data_invivo(:,i),8,'FaceColor',[0.6 0.6 0.6],'EdgeColor','w','LineWidth',1)
+h.EdgeColor = 'w';
+h.FaceColor = [0.6 0.6 0.6];
+xlabel(stri(i));
+%ylim([0 1]);
+%xlim([0 max(data_invivo(:,i))+max(data_invivo(:,i))*0.25]);
+hAxis = gca;
+hAxis.YAxisLocation = 'left';    % 'left' (default) or 'right'
+hAxis.XAxisLocation = 'bottom'
+box off
+ end
+
 %% perform PCA remove NaNs;
 invivo_feat=[gOSI gDSI od_out(:,3) TW max(delta_Ca(:,:),[],2) tr']
 invivo_feat(any(isnan(invivo_feat),2),:) = [];
@@ -635,3 +706,67 @@ hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1
 [p k]=ranksum(par(g1),par(g3));
 xlabel('Relative pial position');hold on;
 %% 
+
+
+%% Figure 5
+%% PC with dip test
+dip_test_SW(score_morph_a(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% 
+dip_test_SW(score_ephys(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% 
+dip_test_SW(score_com(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% Dip test invivo using the first 3 PCs
+dip_test_SW(score_invivo(:,[1 2 3]),0,{'PC1','PC2','PC3'});
+%% Ephys PC1 vs PC2
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_ephys(:,1),score_ephys(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 ephys');xlabel('PC1 ephys');set(gca,'FontSize',10);
+%% Morpho PC1 vs PC2
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_morph_a(:,1),score_morph_a(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 morph');xlabel('PC1 morph');set(gca,'FontSize',10);
+%% Input PC1 vs PC2
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_com(:,1),score_com(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 input');xlabel('PC1 input');set(gca,'FontSize',10);
+%% PC1 invivo vs PC2 invivo 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_invivo(:,1),score_invivo(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 visresp');xlabel('PC1 visresp');set(gca,'FontSize',10);xticks([-5:2.5:5])
+%% UMAP plot invivo
+tr=rescale(pia_all);
+umap_plot(score_invivo(:,[1 2 3]), invivo_feat(:,6)','');
+%% UMAP ephys
+tr=[]; tr=rescale(pia_ephys);
+%umap_plot(ephys_sel, pia_ephys,'Pial depth');
+umap_plot(score_ephys(:,[1 2 3]), tr,'');
+%% Mopho all properties apical
+tr=[]; tr=rescale(pia_morpho);
+%umap_plot([data_morpho(:,1:9) max_a' dis_peaka'], pia_morpho,'Pial depth')
+umap_plot(score_morph_a(:,[1 2 3]), tr,'');
+%% umap Input 
+tr=[]; tr=rescale(pia_input');
+umap_plot(score_com(:,[1 2 3]), tr,'Pial depth');
+
+
+
+%% Reviewer add multimodal 
+%1. morph and ephys
+dip_test_SW(score_morpha_ephys(:,[1 2 3]),0,{'PC1','PC2','PC3'});ylim([0 30])
+
+%% Pc1 vs PC2 morho and ephys 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_morpha_ephys(:,1),score_morpha_ephys(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 me_com');xlabel('PC1 me_com');set(gca,'FontSize',10);
+%% UMAP 
+tr=[];tr=rescale(pia_both);
+umap_plot(score_morpha_ephys(:,[1 2 3]), tr,'');
+%% Morpho and inpu map 
+dip_test_SW(score_data_input_morph(:,[1 2 3]),0,{'PC1','PC2','PC3'});ylim([0 30])
+%% Pc1 vs PC2 morho and input 
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+scatter(score_data_input_morph(:,1),score_data_input_morph(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+ylabel('PC2 me_com');xlabel('PC1 me_com');set(gca,'FontSize',10);
+%% UMAP 
+tr=[];tr=rescale(pia_mi);
+umap_plot(score_data_input_morph(:,[1 2 3]), tr,'');
