@@ -359,6 +359,18 @@ G2=correlation_matrix([ap_morph data_ephys_both(:,[1:7 18])],0);
 % ap_morph=[];
 % ap_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
 % G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
+%% 
+pp_morph=[];
+pp_morph=[data_morph_both(:,[2 11]) soma_morph_both ];
+G2=correlation_matrix([pp_morph data_ephys_both(:,[1:7 18])],0);
+%%  Check soma size with subthrshold properties for reviewer 2
+
+stri={'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'}
+%sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5],1)
+[corr_tree p_tree]=sorted_correlation(data_ephys_both(:,[13:17]),soma_morph_both,stri,[0.5 0.5 0.5],1)
+hold on;xlabel('Correlation with pial depth')
+hold on;set(gca,'FontSize',10);hold on;title('Vertical fraction');
+
 %% correlation matrix; non multiple comparison corrected; Panel G
 [R2,P2]=corrcoef([ap_morph data_ephys_both(:,[13:17])],'rows','pairwise');
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 450, 300])
@@ -704,10 +716,18 @@ hold on;violin({par(g1) par(g3)},'xlabel',{'< 0.5','> 0.5'},'facecolor',[1 1 1;1
 'mc','k',...
 'medc','m'); box off; ylabel('dR / R0_{max}'),legend('');legend boxoff;
 [p k]=ranksum(par(g1),par(g3));
+[kt pt]=ttest2(par(g1),par(g3));
 xlabel('Relative pial position');hold on;
-%% 
-
-
+%% ODI
+g1=[];g2=[];g3=[];
+g1=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'<=0.5);
+%g2=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & pia_all'>200 & pia_all'<300);  
+g3=find(od_out(:,8)==1 & max(delta_Ca,[],2)>0 & tr'>0.5);  
+par=[];
+%par=abs(od_out(:,3));
+par=(od_out(:,3));
+[statsout]=dual_barplot(par,g1,g3,0);xticks([1:1:2]);hold on;set(gca,'FontSize',10);xtickangle(45);
+[kt pt]=ttest2(par(g1),par(g3))
 %% Figure 5
 %% PC with dip test
 dip_test_SW(score_morph_a(:,[1 2 3]),0,{'PC1','PC2','PC3'});
