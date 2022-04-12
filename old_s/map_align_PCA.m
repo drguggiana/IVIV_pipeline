@@ -1,4 +1,4 @@
-function [coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,c_id)
+function [ aligned_maps_ex aligned_maps_in coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,c_id)
 %% Define array names and get the arrays without NaNs etc.
 field_list = {'subpixel_raw_excMap','subpixel_raw_inhMap','pialD'};
 % get the number of fields

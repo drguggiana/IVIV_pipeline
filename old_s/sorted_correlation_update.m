@@ -1,18 +1,21 @@
-function [corr_tree p_tree]=sorted_correlation(data,sort_data,stri,col,bon)
+function [corr_tree p_tree]=sorted_correlation_update(data,sort_data,stri,col,bon)
 
 com=[];com=[data sort_data];
 %[R1,P1,RLO1,RUP1]=corrcoef(com,'rows','pairwise');
-[R1,P1,RLO1,RUP1]=corr(com,'Type','Spearman','Rows','pairwise');
-
-
+[R1,P1]=corr(com,'Type','Spearman','Rows','pairwise');
+[conf_pearson conf_spearman conf_kendall] = conf_interval(data , sort_data);
+RLO1=conf_spearman(1,:);
+RUP1=conf_spearman(2,:);
 corr_tree=[];k=[];
 [corr_tree k]=sort(R1(end,1:end-1));
 temp1=[];temp2=[];temp3=[];
-temp1=RLO1(end,1:end-1);
-temp2=RUP1(end,1:end-1);
+%  temp1=RLO1(end,1:end-1);
+%  temp2=RUP1(end,1:end-1);
+temp1=RLO1;
+temp2=RUP1;
 up_tree=[];low_tree=[];
-up_tree=temp1(k);
-low_tree=temp2(k);
+up_tree=temp2(k);
+low_tree=temp1(k);
 temp3=[];temp3=P1(end,1:end-1);
 p_tree=temp3(k);
 lab_tree=stri(k);

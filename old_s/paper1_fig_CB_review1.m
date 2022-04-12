@@ -634,6 +634,39 @@ end
 % %title(num2str(df(i)))
 % title(num2str(exte(i)))
 % end
+%% 
+%df=[];db=[];df=[morph_parameters(morph_res_sub,9)];db=[morph_parameters(morph_res_sub,19)];
+a=[];a=find(od_out_iviv(morph_res_sub,2)>0.1 & r_sq(morph_res_sub)>0.3) ; 
+ jj=[];
+% [tt jj]=sort(df(a));
+[tt jj]=sort(od_out_iviv(morph_res_sub(a),2),'ascend')
+exte=od_out_iviv(morph_res_sub(a),2);
+hl=[];
+hl=parula;
+ak=[];ak=[1:16:256]
+for i=1:length(jj)
+allc{i}=str(morph_res_sub(a(i))).morphtraces 
+end
+fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400,200]);
+for i=13:16
+    c=i+2;
+subplot(1,4,i-12)
+  m1=plot_tree(allc{1,jj(c)}{1,1},[1 0 0],[0 allc{1,jj(c)}{1,5} 0],[],1,'-b');hold on;
+  m2=plot_tree(allc{1,jj(c)}{1,2},[1 0 0],[0 allc{1,jj(c)}{1,5} 0],[],1,'-b');hold on;
+  m3=plot_tree(allc{1,jj(c)}{1,3},[1 0 0],[0 allc{1,jj(c)}{1,5} 0],[],1,'-b');hold on;
+        m1.EdgeColor = hl(i+ak(i)-1,:)
+        m2.EdgeColor = hl(i+ak(i)-1,:)
+        m3.EdgeColor = hl(i+ak(i)-1,:)
+         set(gca,'Ydir','reverse');
+   xlim([-400 400]);
+   ylim([-800 800]);
+ axis off;
+ set(gcf,'color','w');
+%title(num2str(oriu_s(i)))
+%title(num2str(exte_s(i)))
+end
+
+
 
 %% Example of elomgated and not elongated 
 figure;
