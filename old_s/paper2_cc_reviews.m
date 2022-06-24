@@ -170,7 +170,7 @@ yfit = P(1)*score_morph_a(:,2)'+P(2);hold on;
 plot(score_morph_a(:,2),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
  
 %% correlation score and pial depth
- [rho,pval]=corr(score_morph_a(:,1),tr','Type','Spearman','Rows','complete');
+ [rho,pval]=corr(score_morph_a(:,1),tr','Type','Spearman','Rows','complete')
   [rho,pval]=corr(score_morph_a(:,2),tr','Type','Spearman','Rows','complete');
    [rho,pval]=corr(score_morph_a(:,3),tr','Type','Spearman','Rows','complete');
 
@@ -193,6 +193,15 @@ for i=1:length(morph_id)
 area_soma(i) = polyarea(str(morph_id(i)).tr_soma.X,str(morph_id(i)).tr_soma.Y);
 spanv_soma(i)= max(str(morph_id(i)).tr_soma.Y)-min(str(morph_id(i)).tr_soma.Y);
 spanh_soma(i)= max(str(morph_id(i)).tr_soma.X)-min(str(morph_id(i)).tr_soma.X);
+temp_somay= max(str(morph_id(i)).tr_soma.Y);
+temp_idx=find(temp_somay==str(morph_id(i)).tr_soma.Y);
+temp_somax=str(morph_id(i)).tr_soma.X(temp_idx(1));
+temp_apicalx=str(morph_id(i)).tr_apical.X(1);
+temp_apicaly=str(morph_id(i)).tr_apical.Y(1);
+% temp_apicaly=min(str(morph_id(i)).tr_soma.Y);
+% temp_idx2=find(temp_apicaly==str(morph_id(i)).tr_soma.Y);
+% temp_apicalx=str(morph_id(i)).tr_soma.X(temp_idx2(1));
+soma_pyh(i)=sqrt((temp_somax-temp_apicalx)^2+(temp_somay-temp_apicaly)^2)
 end
 area_soma=area_soma';
 
@@ -336,10 +345,10 @@ hold on;set(gca,'FontSize',10);hold on;title('Active');
 ephys_sel=[];ephys_sel=[data_ephys(:,13:17)];score_ephys=[];
 [coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
 var_exp(explained_ephys,[],[]); 
-%% 
-ephys_sel=[];ephys_sel=[data_ephys(:,[1:7 18])];score_ephys=[];
-[coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
-var_exp(explained_ephys,[],[]);
+%% PCA for active ephys
+% ephys_sel=[];ephys_sel=[data_ephys(:,[1:7 18])];score_ephys=[];
+% [coeff_ephys,score_ephys,latent_ephys,~,explained_ephys,mu] = pca(zscore(ephys_sel));
+% var_exp(explained_ephys,[],[]);
 
 %% Plot the 1 corrleation each for passive and active
 tr=[];tr = rescale(pia_ephys);
@@ -367,10 +376,8 @@ P=[];yfit=[];
     hold on;
     plot(score_ephys(:,1)',yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
 
-%% Interdepende of passive properties 
-
+%% Interdepende of passive properties for Supp 2 C
 [Rpass Ppass]=corr([data_ephys(:,13:17)],'Type','Spearman','Rows','pairwise');
-
 [G2 adj_pv]=correlation_matrix([data_ephys(:,13:17)],1);
 Rpass=tril(Rpass);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
@@ -381,7 +388,7 @@ yticklabels({'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'});s
 xticklabels({'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'});
 xtickangle(45);set(gca,'FontSize',10);
 
- %% MORPHO AND EPHYS
+ %% MORPHO AND EPHYS combined in same cells
 %% Overlapping morpho ephys
 [~,ia,ib] =intersect(ephys_id,morph_id)
 %% Read out 33 cells that overlap
@@ -403,33 +410,28 @@ for i=1:length(trm)
 end
 length(unique(name_mephys))   
 %% Correlation of both
-%Passive with apical parameters
-ap_morph=[];
-ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
-G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
-%% Apical
-ap_morph=[];
-ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
-%ap_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
-G2=correlation_matrix([ap_morph data_ephys_both(:,[1:7 18])],1);
-%% 
-
-% %% Basal
- ba_morph=[];
- ba_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
- G2=correlation_matrix([ba_morph data_ephys_both(:,[13:17])],1);
-%% 
-pp_morph=[];
-pp_morph=[data_morph_both(:,[2 11]) soma_morph_both ];
-G2=correlation_matrix([pp_morph data_ephys_both(:,[1:7 18])],0);
+% %Passive with apical parameters
+% ap_morph=[];
+% ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
+% G2=correlation_matrix([ap_morph data_ephys_both(:,[13:17])],0);
+% %% Apical
+% ap_morph=[];
+% ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
+% %ap_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
+% G2=correlation_matrix([ap_morph data_ephys_both(:,[1:7 18])],1);
+% % %% Basal
+%  ba_morph=[];
+%  ba_morph=[data_morph_both(:,10:end) max_b(ib)' dis_peakb(ib)'];
+%  G2=correlation_matrix([ba_morph data_ephys_both(:,[13:17])],1);
+% pp_morph=[];
+% pp_morph=[data_morph_both(:,[2 11]) soma_morph_both ];
+% G2=correlation_matrix([pp_morph data_ephys_both(:,[1:7 18])],0);
 %% Check for nromality
-
-for i=1:size(ap_morph,2)
-    norm_morphocom(i)=kstest(ap_morph(:,i));
-    norm_morphocom_lil(i)=lillietest(ap_morph(:,i));
-end
+% for i=1:size(ap_morph,2)
+%     norm_morphocom(i)=kstest(ap_morph(:,i));
+%     norm_morphocom_lil(i)=lillietest(ap_morph(:,i));
+% end
 %%  Check soma size with subthreshold properties for reviewer 2
-
 stri={'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'}
 %sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5],1)
 [corr_tree1 p_tree1]=sorted_correlation_update(data_ephys_both(:,[13:17]),soma_morph_both,stri,[0.5 0.5 0.5],1)
@@ -481,14 +483,13 @@ passive_totla=R1(6,1:5)';
 % hold on;set(gca,'FontSize',10);hold on; 
 % [R1,P1]=corr([data_ephys_both(:,[13:17]),data_morph_both(:,11)],'Type','Spearman','Rows','pairwise');
 % passive_totlb=R1(6,1:5)';
-%% show in matrix
+%% show in matrix subthrshold with soma pramaters and total length of dendrites
 % fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 400])
 % imagesc([passive_soma passive_somav passive_somah passive_totla passive_totlb]);c=colorbar;pos = get(c,'Position');
 % [cmap]=buildcmap('bwg');colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:5])
 % yticklabels({'V_{rest}','Tau','R_{in}','Sag Ratio','Rheobase'});set(gca,'FontSize',10);
 % xticklabels({'Soma cross-sectional area','Soma vertical diameter','Soma horizontal diameter','Total length apical','Total length basal'});
 % xtickangle(45);set(gca,'FontSize',10);
-
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 400])
 imagesc([passive_soma passive_somav passive_somah passive_totla]);c=colorbar;pos = get(c,'Position');
 [cmap]=buildcmap('bwg');colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:5])
@@ -496,11 +497,12 @@ yticklabels({'V_{rest}','Tau','R_{in}','Sag Ratio','Rheobase'});set(gca,'FontSiz
 xticklabels({'Soma cross-sectional area','Soma vertical diameter','Soma horizontal diameter','Total length dendrites'});
 xtickangle(45);set(gca,'FontSize',10);
 
-%% 
+%% Suprathreshold vs Soma area and total length 
 % stri={'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)','APV_{half} (mV)','APV_{amp} (mV)','AHP (mV)','APfreq (Hz)'};
 % [corr_tree1 p_tree1]=sorted_correlation_update([data_ephys_both(:,[1:7 18])],data_morph_both(:,11),stri,[0.5 0.5 0.5],1)
 stri={'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)','APV_{half} (mV)','APV_{amp} (mV)','AHP (mV)','APfreq (Hz)'};
- [corr_tree1 p_tree1]=sorted_correlation_update([data_ephys_both(:,[1:7 18])],data_morph_both(:,2)+data_morph_both(:,11),stri,[0.5 0.5 0.5],1)
+corr_tree1=[]; p_tree1=[];
+[corr_tree1 p_tree1]=sorted_correlation_update([data_ephys_both(:,[1:7 18])],data_morph_both(:,2)+data_morph_both(:,11),stri,[0.5 0.5 0.5],1)
 %%  Check soma size and total length apical basal with suprathreshold properties for reviewer 2: NONE IS significant after multiple correction
 % [R1,P1]=corr([data_ephys_both(:,[1:7 18]),soma_morph_both],'Type','Spearman','Rows','pairwise');
 % active_soma=R1(9,1:8)';
@@ -514,9 +516,10 @@ stri={'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)',
 % yticklabels({'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)','APV_{half} (mV)','APV_{amp} (mV)','AHP (mV)','APfreq (Hz)'});set(gca,'FontSize',10);
 % xticklabels({'Soma area (µm^2)','Total length apical (µm)','Total length basal (µm)'});
 % xtickangle(45);set(gca,'FontSize',10);
-
+R1=[];P1=[];
 [R1,P1]=corr([data_ephys_both(:,[1:7 18]),soma_morph_both],'Type','Spearman','Rows','pairwise');
 active_soma=R1(9,1:8)';
+R1=[];P1=[];
 [R1,P1]=corr([data_ephys_both(:,[1:7 18]),data_morph_both(:,2)+data_morph_both(:,11)],'Type','Spearman','Rows','pairwise');
 active_tota=R1(9,1:8)';
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 500])
@@ -525,8 +528,7 @@ imagesc([active_soma active_tota]);c=colorbar;pos = get(c,'Position');
 yticklabels({'APV_{min} (mV)','APV_{peak} (mV)','APV_{thresh} (mV)','APV_{slope} (mV)','APV_{half} (mV)','APV_{amp} (mV)','AHP (mV)','APfreq (Hz)'});set(gca,'FontSize',10);
 xticklabels({'Soma area','Total length dendrites'});
 xtickangle(45);set(gca,'FontSize',10);
-%% 
-%% Plot correlation total length APICAL vs tau/Rin
+%% Plot correlation total length APICAL vs tau/Rin for Reviewer Figure 1
 tr=[];tr = data_morph_both(:,2)
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
 [rho,pval]=corr(data_ephys_both(:,[15]),tr,'Type','Spearman','Rows','complete');
@@ -540,7 +542,7 @@ scatter(data_ephys_both(:,[14]),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFac
 text(60,4100,['r=' num2str(round(rho,2))]);text(60,3800,['p=' num2str(round(pval,2))]);hold on;title('Apical')
 ylabel('Total length apical (µm)');xlabel('Tau (ms)')
 
-%% Plot correlation total length BASAL vs tau/Rin
+%% Plot correlation total length BASAL vs tau/Rin for Reviewer Figure 1
 tr=[];tr = data_morph_both(:,11)
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
 [rho,pval]=corr(data_ephys_both(:,[15]),tr,'Type','Spearman','Rows','complete');
@@ -567,44 +569,31 @@ fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250]);
 scatter(data_ephys_both(:,[14]),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
 text(60,8100,['r=' num2str(round(rho,2))]);text(60,7800,['p=' num2str(round(pval,2))]);hold on;
 ylabel('Total length dendrites (µm)');xlabel('Tau (ms)')
-
-
-%% correlation matrix; non multiple comparison corrected; Panel G
-% %[R2,P2]=corrcoef([ap_morph data_ephys_both(:,[13:17])],'rows','pairwise');
-% [R2,P2]=corr([ap_morph data_ephys_both(:,[13:17])],'Type','Spearman','Rows','complete');
-% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 450, 300])
-% imagesc(R2(12:end,1:11));c=colorbar;pos = get(c,'Position');
-% [cmap]=buildcmap('bwg');colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:5])
-% yticklabels({'V_{rest} (mV)','Tau (ms)','R_{in} (MO)','Sag Ratio','Rheobase'});set(gca,'FontSize',10);
-% xticklabels({'Radial Dis._{max}','Total Length','Path Length_{max}','Branch Points','Branch Order_{max}','Branch Length_{mean}','Width / Height','Width','Height','Peak Nr. cross','Dis. peak branch'});
-% xtickangle(45);set(gca,'FontSize',10);
-%% %% PCA for both ephys and morpho
+%% %% PCA for both ephys and morpho for apical and ephys
+ap_morph=[]; ap_morph=[data_morph_both(:,1:9) max_a(ib)' dis_peaka(ib)'];
 morpha_ephys=[];morpha_ephys=[ap_morph data_ephys_both(:,[13:17])];score_morpha_ephys=[];
 [coeff_morpha_ephys,score_morpha_ephys,latent_morpha_ephys,~,explained_morpha_ephys,mu] = pca(zscore(morpha_ephys));
 var_exp(explained_morpha_ephys,[],[]); 
+% %% PCA ephys_morpho combined vs pial depth
+% tr=[];tr = rescale(pia_both);
+% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 200, 200]);
+% [rho,pval]=corr(score_morpha_ephys(:,2),pia_both','Type','Spearman','Rows','complete');
+% scatter(score_morpha_ephys(:,2),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+% text(55,0.99,['r=' num2str(round(rho,2))]);text(55,0.9,'p<0.01');hold on;title('Ephys+Morph combined PCA')
+% ylabel('Relative pial position');xlabel('PC2com (21%)')
+% P=[];yfit=[];
+%  P = polyfit(score_morpha_ephys(:,2)',tr,1);
+%     yfit = P(1)*score_morpha_ephys(:,2)'+P(2);
+%     hold on;
+%     plot(score_morpha_ephys(:,2)',yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
 
-
-
-%% PCA ephys_morpho combined vs pial depth
-tr=[];tr = rescale(pia_both);
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 200, 200]);
-[rho,pval]=corr(score_morpha_ephys(:,2),pia_both','Type','Spearman','Rows','complete');
-scatter(score_morpha_ephys(:,2),tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-text(55,0.99,['r=' num2str(round(rho,2))]);text(55,0.9,'p<0.01');hold on;title('Ephys+Morph combined PCA')
-ylabel('Relative pial position');xlabel('PC2com (21%)')
-P=[];yfit=[];
- P = polyfit(score_morpha_ephys(:,2)',tr,1);
-    yfit = P(1)*score_morpha_ephys(:,2)'+P(2);
-    hold on;
-    plot(score_morpha_ephys(:,2)',yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
-
- %% Correlation plot sorted
- tr=[];tr = rescale(pia_both);
-stri={'PC1com','PC2com','PC3com','PC4','PC5'}
-%sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5],1)
-sorted_correlation_update([score_morpha_ephys(:,1:3)],tr',stri,[0.5 0.5 0.5],1)
-hold on;xlabel('Correlation with pial depth')
-hold on;set(gca,'FontSize',10);hold on;title('Principal components');
+%  %% Correlation plot sorted
+%  tr=[];tr = rescale(pia_both);
+% stri={'PC1com','PC2com','PC3com','PC4','PC5'}
+% %sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5],1)
+% sorted_correlation_update([score_morpha_ephys(:,1:3)],tr',stri,[0.5 0.5 0.5],1)
+% hold on;xlabel('Correlation with pial depth')
+% hold on;set(gca,'FontSize',10);hold on;title('Principal components');
 %% Input connectivity Figure 3 
 %% Input maps
 str_all=str;
@@ -669,7 +658,7 @@ plot_avg_maps(str_imap,108,ex_map_raw,in_map_raw,pia_input,1,0,[]);
 plot_avg_maps(str_imap,110,ex_map_raw,in_map_raw,pia_input,1,0,[]);
 % cell 80, 320 microm depth
 plot_avg_maps(str_imap,80,ex_map_raw,in_map_raw,pia_input,1,0,[]);
-%% Check for normality of parameters and show distribution of data 
+%% Check for normality of parameters and show distribution of data for Supplementary Fig 3.  
  data_input=[];data_input=[L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr,span*69];
 for i=1:size(data_input,2)
     [norm_input(i)]=kstest(data_input(:,i));
@@ -710,7 +699,7 @@ stri={'L2/3_{EX}','L4_{EX}','L5_{EX}','L2/3_{IN}','L4_{IN}','L5_{IN}','L2/3_{EX-
 sorted_correlation_update([span],pia_input,stri,[0.5 0.5 0.5],1);
 hold on;xlabel('Correlation with pial depth')
 hold on;set(gca,'FontSize',10);hold on;title('Maximal horizontal extent');
-%% Plot most significant corrleations vertical fractions; Panel E
+%% Plot most significant corrleations vertical fractions; supp fig 3 C
 tr=[];tr = rescale(pia_input);
 %L4 EX
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
@@ -748,7 +737,10 @@ scatter(L4fr(:,1)'-L4fr(:,2)',tr,20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceC
 % ref.YData=[0 1];yticks([0:0.25:1]);ref.Color='k';ylabel('Relative pial position');xlabel('Fraction')
 % ref.XData=[0 0.6];xticks([0:0.15:0.6]);
  text(-0.3,0.99,['r=' num2str(round(rho,2))]);%text(-0.3,0.9,'n.s.');
- %% Plot most significant corrleations horizontal extent; Panel F
+ %% L23 fraction vs pial depth 
+ [rho,pval]=corr(L23fr(:,1),tr,'Type','Spearman','Rows','complete')
+ [rho,pval]=corr(L23fr(:,2),tr,'Type','Spearman','Rows','complete')
+ %% Plot most significant corrleations horizontal extent; supp fig 3 D
 tr=[];tr = rescale(pia_input);
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 600]);
 %L2/3 EX
@@ -783,24 +775,24 @@ xlabel('\Delta EX-IN vertical fraction');
 xlabel('\Delta EX-IN horizontal extent')
 hold on;line([0 0], [0 1],'Color','k','LineStyle','--');set(gca,'FontSize',10)
 text(400,0.99,['r=' num2str(round(rho,2))]);text(400,0.9,'n.s.');
-%% 
+%% Span vs L23, L4 and difference L23EX-IN
 [rho,pval]=corr(tiedrank(span(:,1)*69),tr,'Type','Spearman','Rows','complete')
 [rho,pval]=corr(tiedrank(span(:,4)*69),tr,'Type','Spearman','Rows','complete')
 [rho,pval]=corr(tiedrank(spandL23*69),tr,'Type','Spearman','Rows','complete')
 %% PCA with whole maps; Panel F
-[coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,imaps_id); 
+[aligned_maps_ex_all aligned_maps_in_all coeff_ex,score_ex,coeff_in,score_in,coeff_com,score_com] = map_align_PCA(str,imaps_id); 
 %% Plot correlation matrix of map scores; Panel G
-[Rinpu Pinput]=corr([score_ex(:,1:3) pia_input],'Type','Spearman','Rows','pairwise');
-G2=[];adj_pv=[];[G2 adj_pv]=correlation_matrix([score_ex(:,1:3) pia_input],1);
-Rinpu=tril(Rinpu);
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
-imagesc(Rinpu);
-c=colorbar;pos = get(c,'Position');
-[cmap]=buildcmap('bwg');colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:4])
-yticklabels({'PC1','PC2','PC3','Pial depth'});set(gca,'FontSize',10);
-xticklabels({'PC1','PC2','PC3','Pial depth'});set(gca,'FontSize',10);
-xtickangle(45);set(gca,'FontSize',10);
-%% 
+% [Rinpu Pinput]=corr([score_com(:,1:3) pia_input],'Type','Spearman','Rows','pairwise');
+% G2=[];adj_pv=[];[G2 adj_pv]=correlation_matrix([score_com(:,1:3) pia_input],1);
+% Rinpu=tril(Rinpu);
+% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 300, 300])
+% imagesc(Rinpu);
+% c=colorbar;pos = get(c,'Position');
+% [cmap]=buildcmap('bwg');colormap(cmap);caxis([-1 1]);xticks([1:1:11]);yticks([1:1:4])
+% yticklabels({'PC1','PC2','PC3','Pial depth'});set(gca,'FontSize',10);
+% xticklabels({'PC1','PC2','PC3','Pial depth'});set(gca,'FontSize',10);
+% xtickangle(45);set(gca,'FontSize',10);
+%% Plot sorted correlation for PC1-3 and pial depth for Fig 3G
 tr=[];tr = rescale(pia_input);
 stri={'PC1','PC2','PC3','PC4','PC5'}
 %sorted_correlation([L23fr(:,1),L4fr(:,1),L5fr(:,1),L23fr(:,2),L4fr(:,2),L5fr(:,2),diffL23fr,diffL4fr,diffL4fr],pia_input,stri,[0.5 0.5 0.5],1)
@@ -820,6 +812,9 @@ P = polyfit(score_com(:,1),tr,1);
     yfit = P(1)*score_com(:,1)+P(2);
     hold on;
     plot(score_com(:,1),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w'); 
+ %% L23 diff vs PC1weight and L4diff vs PC3
+[rho,pval]=corr(score_com(:,1),L23fr(:,1)-L23fr(:,2),'Type','Spearman','Rows','complete')
+[rho,pval]=corr(score_com(:,3),L4fr(:,1)-L4fr(:,2),'Type','Spearman','Rows','complete')
 %% Input maps to morphology
 %% Overlapping morpho input
 ia=[];ib=[];
@@ -874,36 +869,36 @@ hold on;set(gca,'FontSize',10);hold on;title('Principal components');
 
 
 %% Plot example correlation for Panel I
-tr=[]; tr=rescale(pia_mi);
-cmap='plasma'
-fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 300])
-scatter(data_mi_input(:,10)*69,ba_input(:,7),30,tr,'filled');
-ylabel('Basal Width / Height');xlabel('Input Horizontal extent L2/3_{EX} (µm)');set(gca,'FontSize',10);
- %hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
- %ref.YData=[0 2.6];;ref.Color='k'; 
- ylim([0.5 2.6]);xlim([0 1100]);
- colormap(cmap);box off; hold on; c=colorbar;%c.Label.String = 'Relative pial position'
- text(100,2.5,'r=0.34');text(100,2.4,'p<0.001');
-   P=[];yfit=[];
- P = polyfit(data_mi_input(:,10)'*69,ba_input(:,7)',1);
-    yfit = P(1)*data_mi_input(:,10)'*69+P(2);
-    hold on;
-    plot(data_mi_input(:,10)'*69,yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w');   %% 
- %% 
- [aligned_maps_ex aligned_maps_in coeff_ex_b,score_ex_b,coeff_in_b,score_in_b,coeff_com_b,score_com_b] = map_align_PCA(str,imaps_id(ia)); 
- %% 
- [coeff_com_all,score_com_all,latent_com_all,~,explained_com_all,mu_all] = pca([cat(1,aligned_maps_ex) cat(1,aligned_maps_in) ap_input]);
+% tr=[]; tr=rescale(pia_mi);
+% cmap='plasma'
+% fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 400, 300])
+% scatter(data_mi_input(:,10)*69,ba_input(:,7),30,tr,'filled');
+% ylabel('Basal Width / Height');xlabel('Input Horizontal extent L2/3_{EX} (µm)');set(gca,'FontSize',10);
+%  %hold on;ref= refline(0,1);set(gca,'FontSize',10);ref.LineStyle='--'; %ref.XData=[0 4];xticks([0:1:4]);
+%  %ref.YData=[0 2.6];;ref.Color='k'; 
+%  ylim([0.5 2.6]);xlim([0 1100]);
+%  colormap(cmap);box off; hold on; c=colorbar;%c.Label.String = 'Relative pial position'
+%  text(100,2.5,'r=0.34');text(100,2.4,'p<0.001');
+%    P=[];yfit=[];
+%  P = polyfit(data_mi_input(:,10)'*69,ba_input(:,7)',1);
+%     yfit = P(1)*data_mi_input(:,10)'*69+P(2);
+%     hold on;
+%     plot(data_mi_input(:,10)'*69,yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set(gcf,'color','w');   %% 
+%  %% 
+%  [aligned_maps_ex aligned_maps_in coeff_ex_b,score_ex_b,coeff_in_b,score_in_b,coeff_com_b,score_com_b] = map_align_PCA(str,imaps_id(ia)); 
+%  %% 
+%  [coeff_com_all,score_com_all,latent_com_all,~,explained_com_all,mu_all] = pca([cat(1,aligned_maps_ex) cat(1,aligned_maps_in) ap_input]);
  %% 
 
- fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
-scatter(score_com_all(:,1),score_com_all(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-ylabel('PC2 mi com');xlabel('PC1 mi com');set(gca,'FontSize',10);
-%% 
-
-dip_test_SW(score_com_all(:,[1 2 3]),0,{'PC1','PC2','PC3'});ylim([0 30])
-%% UMAP 
-tr=[];tr=rescale(pia_mi);
-umap_plot(score_com_all(:,[1 2 3]), tr,'');
+%  fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
+% scatter(score_com_all(:,1),score_com_all(:,2),20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
+% ylabel('PC2 mi com');xlabel('PC1 mi com');set(gca,'FontSize',10);
+% %% 
+% 
+% dip_test_SW(score_com_all(:,[1 2 3]),0,{'PC1','PC2','PC3'});ylim([0 30])
+% %% UMAP 
+% tr=[];tr=rescale(pia_mi);
+% umap_plot(score_com_all(:,[1 2 3]), tr,'');
 %% INVIVO, Figure 4
 
 %% in vivo in vitro comparison
@@ -1066,7 +1061,7 @@ ylabel('PC2 me_com');xlabel('PC1 me_com');set(gca,'FontSize',10);
 %% UMAP 
 tr=[];tr=rescale(pia_both);
 umap_plot(score_morpha_ephys(:,[1 2 3]), tr,'');
-%% Morpho and inpu map 
+%% Morpho and input map 
 dip_test_SW(score_data_input_morph(:,[1 2 3]),0,{'PC1','PC2','PC3'});ylim([0 30])
 %% Pc1 vs PC2 morho and input 
 fig1=figure;set(gcf,'color','w');set(fig1, 'Position', [200, 200, 250, 250])
