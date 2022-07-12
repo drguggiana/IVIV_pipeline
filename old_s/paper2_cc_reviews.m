@@ -190,9 +190,11 @@ plot(score_morph_a(:,2),yfit,'-','Color',[0.5 0.5 0.5]);set(gca,'box','off');set
 %% Reading out soma area
 area_soma=[];
 for i=1:length(morph_id)
-area_soma(i) = polyarea(str(morph_id(i)).tr_soma.X,str(morph_id(i)).tr_soma.Y);
-spanv_soma(i)= max(str(morph_id(i)).tr_soma.Y)-min(str(morph_id(i)).tr_soma.Y);
+%area_soma(i) = polyarea(str(morph_id(i)).tr_soma.X,str(morph_id(i)).tr_soma.Y);
+%spanv_soma(i)= max(str(morph_id(i)).tr_soma.Y)-min(str(morph_id(i)).tr_soma.Y);
 spanh_soma(i)= max(str(morph_id(i)).tr_soma.X)-min(str(morph_id(i)).tr_soma.X);
+spanv_soma(i)=str(morph_id(i)).v_diameter;
+area_soma(i) =spanv_soma(i)* spanh_soma(i) ;
 temp_somay= max(str(morph_id(i)).tr_soma.Y);
 temp_idx=find(temp_somay==str(morph_id(i)).tr_soma.Y);
 temp_somax=str(morph_id(i)).tr_soma.X(temp_idx(1));
@@ -239,12 +241,12 @@ text(400,1,['r=' num2str(round(r(1),2))]);text(400,0.85,['p=' num2str(round(p(1)
 [r p]= corr(spanv_soma',tr','Type','Spearman','Rows','complete');
 set(gca,'FontSize',10);axis square;
 subplot(1,3,2);scatter(spanv_soma',tr',20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
-xlabel('Soma vertical extent (µm)');
+xlabel('Soma vertical extent (µm)');xlim([0 30])
 text(20,1,['r=' num2str(round(r(1),2))]);text(20,0.85,['p=' num2str(round(p(1),2))]);
 set(gca,'FontSize',10);axis square;
 subplot(1,3,3);scatter(spanh_soma',tr',20,'filled', 'MarkerFaceAlpha',3/8,'MarkerFaceColor','k');
 [r p]= corr(spanh_soma',tr','Type','Spearman','Rows','complete');
-xlabel('Soma horizontal extent (µm)');
+xlabel('Soma horizontal extent (µm)');xlim([0 30])
 text(20,1,['r=' num2str(round(r(1),2))]);text(20,0.85,['p=' num2str(round(p(1),2))]);
 set(gca,'FontSize',10)
 axis square;
